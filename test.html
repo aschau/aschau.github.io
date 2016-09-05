@@ -144,7 +144,69 @@
 		<div class= "embed-responsive embed-responsive-16by9">
 			<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/ClHu3XQBnGU"></iframe>
 		</div>
+		
+				
+		<div class="container">
+		
+			<h2>Wells are sections with borders and grey backgrounds</h2>
+			
+			<div class="well">Basic Well</div>
+			<div class="well well-sm">Basic Well</div>
+			
+			<div class="alert alert-success">Congratulations!</div>
+			
+			<div class="alert alert-info">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Don't forget her birthday!
+			</div>
+			
+			<div class="alert alert-danger fade in">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Don't forget her birthday!
+			</div>
+			
+		</div>
 	</div>
+	
+	<div id="wrapper">
+		
+		<!--Sidebar-->
+		<div id="sidebar-wrapper">
+			<ul class="sidebar-nav">
+				<li><a href="#">Account</a></li>
+				<li><a href="#">Settings</a></li>
+				<li><a href="#">Logout</a></li>
+			</ul>
+			
+		</div>
+		
+		<!--Page Content-->
+		<div id="page-content-wrapper">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-lg-12">
+						<a href="#" class="btn btn-success" id="menu-toggle">Menu</a>
+						<h1>Sidebar Layouts</h1>
+						<p>I love pretzels. I love pretzels. I love pretzels. I love pretzels. 
+						I love pretzels. I love pretzels. I love pretzels. 
+						I love pretzels. I love pretzels. I love pretzels. 
+						I love pretzels. I love pretzels. I love pretzels. 
+						I love pretzels. I love pretzels. I love pretzels. 
+						I love pretzels. I love pretzels. I love pretzels. 
+						I love pretzels. I love pretzels.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+	</div>
+	
+	<!-- Menu Toggle Script-->
+	<script>
+		$("#menu-toggle").click( function(e) {
+			e.preventDefault();
+			$("#wrapper").toggleClass("menuDisplayed")
+		});
+	</script>
 
 </body>
 </html>

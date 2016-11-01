@@ -1,0 +1,79 @@
+*{
+	margin: 0px;
+	padding: 0px;
+}
+
+header, section, footer, aside, nav, article, hgroup{
+	display: block;
+}
+
+body{
+	width: 100%;
+}
+
+#body{
+	max-width: 100%;
+	margin: 20px 0px;
+}
+
+#intro_section
+{
+
+}
+
+#intro_section p{
+	font: 250% Tahoma;
+	color: white;
+}
+
+#intro_content
+{
+	background: url(../img/GameBackground3.png) no-repeat;
+	background-size: cover; 
+	text-align: center;
+}
+
+#top_menu{
+	text-align: right;
+	padding: 10px;
+	background: black;
+	border: 2px solid white;
+	color: white;
+}
+
+#top_menu li:first-child{
+	float: left;
+}
+
+#top_menu li{
+	display: inline-block;
+	list-style: none;
+	padding: 5px;
+	font: bold 14px Tahoma;
+}
+
+#intro_content{
+	padding-top: 200px;
+	padding-bottom: 200px;
+}
+
+#main_section{
+	border: 1px solid blue;
+	margin: 20px;
+	padding: 20px;
+}
+
+#side_bar{
+	position: absolute;
+	border: 1px solid black;
+	width: 100px;
+	margin: 20px 0px;
+	padding: 30px;
+	background: rgb(50, 100, 200);
+}
+
+#footer{
+	text-align: center;
+	padding: 20px;
+	border-top: 2px solid black;
+}

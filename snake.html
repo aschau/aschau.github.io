@@ -1,0 +1,366 @@
+	<!-- 
+Andrew Steven Chau 56951511
+Elaine Chieng 55852758
+Tiffany Lam 31174165
+Jessica Lim 49545398
+-->
+
+<html>
+  <head>
+	<style>
+		input, textarea {border:1px solid #CCC;margin:0px;padding:0px}
+
+        #ip {line-height:20px}
+        #port {line-height:20px}
+		#ID {line-height:20px}
+		#body {max-width:1000px;}
+		#log {width:900;height	:200px}
+		#message {width:100%;line-height:20px}
+		canvas 
+		{
+			display: block;
+			border: 1px solid #000;
+			margin: auto;
+		}
+	</style>
+	
+	<!-- Snake.js = Game -->
+	<script src="snake.js"></script>
+	
+	<!-- No idea what this does -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	
+	<!-- how the client will communicate with the server -->
+	<script src="fancywebsocket.js"></script>
+	
+	<script>
+		//Main = main() of game, not yet initialized because wait for players to connect
+		var Main;
+
+		//log - adds text to console, ex. log("scumbag")
+		function log( text ) {
+			$log = $('#log');
+			//Add text to log
+			$log.append(($log.val()?"\n":'')+text);
+			//Autoscroll
+			$log[0].scrollTop = $log[0].scrollHeight - $log[0].clientHeight;
+		}
+
+		//Send message to server, ex. send("scumbag")
+		function send( text ) {
+			Server.send( 'message', text );
+		}
+
+		// Start Connection, Main thing to focus on
+        function connect(){
+            log('Breeding snakes...');
+			Server = new FancyWebSocket('ws://' + document.getElementById('ip').value + ':' + document.getElementById('port').value);
+
+			//I have no idea
+			$('#message').keypress(function(e) {
+				if ( e.keyCode == 13 && this.value ) {
+					log( 'You: ' + this.value );
+					send( this.value );
+					$(this).val('');
+				}
+			});
+
+			//Let the user know we're connected
+			Server.bind('open', function() {
+                document.getElementById("cntBtn").disabled = true;
+				log( "Snakes laid eggs." );
+			});
+			
+			//OH NOES! Disconnection occurred.
+			Server.bind('close', function( data ) {
+                document.getElementById("cntBtn").disabled = false;
+				log( "R.I.P. Snakes 2k16" );
+				running = false;
+			});
+
+			//Log any messages sent from server
+			Server.bind('message', function( payload ) 
+			{
+				//tells the game to start, payload (Message from server) == "Start" when server gets two clients
+				if (payload == "Start")
+				{
+					//running determines whether or not the game will keep looping
+					running = true;
+					Server.send('message', "ID: " + document.getElementById('id').value);
+					//starts the game
+				}
+				
+				else if (payload == "End")
+				{	
+					//Stops the game when client disconnects
+					running = false;
+				}
+				
+				else if (payload.split(": ")[1] == "Pause")
+				{
+					running = false;
+				}
+								
+				//Standard format of our messages (payload): "Client #: TYPE OF MESSAGE (EX. "PICKUP", "ID", "P1SCORE"): message: TIMESTAMP" -->
+				//ex. Scumbag 1: Player 1 Score: 1: 1456113806 -->
+				
+				//reason for removal of initial snake 1/2 message = extrapolation. each client will now create an object for the other player at start
+				
+				else if(payload.split(": ")[1] == "Snake 1 Tail")
+				{
+				    //Scumbag 0: Snake 1 Tail: 0, 0: DIRECTION: snake.last.x, snake.last.y: TIMESTAMP
+				    var tail = snake.remove();
+				    //console.log("Snake 1: " + tail.x + ", " + tail.y);
+				    snake.insert(parseInt(payload.split(": ")[2].split(", ")[0]), parseInt(payload.split(": ")[2].split(", ")[1]));
+				    snake.direction = parseInt(payload.split(": ")[3]);
+				    grid.set(EMPTY, tail.x, tail.y);
+				    grid.set(SNAKE, parseInt(payload.split(": ")[2].split(", ")[0]), parseInt(payload.split(": ")[2].split(", ")[1]));
+					
+				}
+				
+				else if(payload.split(": ")[1] == "Snake 2 Tail")
+				{
+					//Scumbag 1: Snake 2 Tail: 0, 0: DIRECTION: snake2.last.x, snake2.last.y: TIMESTAMP
+				    var tail2 = snake2.remove();
+				    //console.log("Snake 2: " + tail2.x + ", " + tail2.y);
+					snake2.insert(parseInt(payload.split(": ")[2].split(", ")[0]), parseInt(payload.split(": ")[2].split(", ")[1]));
+					snake2.direction = parseInt(payload.split(": ")[3]);
+					grid.set(EMPTY, tail2.x, tail2.y);
+					grid.set(SNAKE2, parseInt(payload.split(": ")[2].split(", ")[0]), parseInt(payload.split(": ")[2].split(", ")[1]));
+				}
+                
+				//how we keep track of children
+				else if (payload.split(": ")[1] == "Snake 1 Child")
+				{
+				    grid.set(SNAKE, parseInt(payload.split(": ")[2].split(", ")[0]), parseInt(payload.split(": ")[2].split(", ")[1]));
+				}
+
+				else if (payload.split(": ")[1] == "Snake 2 Child")
+				{
+				    grid.set(SNAKE2, parseInt(payload.split(": ")[2].split(", ")[0]), parseInt(payload.split(": ")[2].split(", ")[1]));
+				}
+				
+				//Checking to see which client you are. If you connected first you're clientid 0, otherwise clientid 1
+				//after you know which clientid you are, you can send the correct message to the other client as to which id you are
+				else if (payload.split(": ")[1] == "ID")
+				{
+					clientid = payload.split(": ")[0].split(" ")[1];
+					if (clientid == "0")
+					{
+						id1 = document.getElementById('id').value;
+						send("Name 1: " + id1);
+					}
+					
+					else
+					{
+						id2 = document.getElementById('id').value;
+						send("Name 2: " + id2);
+					}
+					//console.log(clientid);
+					Main = new main();
+					return;
+				}
+				
+				//receive name/id of other client
+				else if (payload.split(": ")[1] == "Name 1")
+				{
+				    id1 = payload.split(": ")[2];
+				    return;
+				}
+				
+				else if (payload.split(": ")[1] == "Name 2")
+				{
+				    id2 = payload.split(": ")[2];
+				    return;
+				}
+				
+				//recieving initial pickup of the game, separate from the regular pickup message because player 2 sets the pickup
+				//after making sure both clients are connected
+				else if (payload.split(": ")[1] == "Initial Pickup") 
+				{
+					//sets pickup after receiving information about location from server -->
+					//message = "#x, #y", (EX. "3, 7")-->
+					//grid.set(type of object in grid, xpos, ypos) -->
+					//console.log(payload);
+				    grid.set(PICKUP, parseInt(payload.split(": ")[2].split(", ")[0]), parseInt(payload.split(": ")[2].split(", ")[1]));
+				}
+				
+				//regular set of pickup
+				else if (payload.split(": ")[1] == "Pickup") 
+				{
+					//sets pickup after receiving information about location from server -->
+					//message = Scumbag #: Pickup: #x, #y: Snake #, (EX. 3, 7: 1)-->
+					//grid.set(type of object in grid, xpos, ypos) -->
+				    //console.log(payload);
+				    //print out latency after calculation
+				    var current = Date.now();
+				    var split_message = payload.split(": ");
+				    ////SCUMBAG #: MESSAGE TYPE: MESSAGE: TIMESTAMP
+				    if (split_message.length > 1)
+				    {
+				        log("Message Type: " + split_message[1] + "| Latency: " + (current - parseInt(split_message[split_message.length - 1])) + " milliseconds.");
+				    }
+
+				    grid.set(PICKUP, parseInt(payload.split(": ")[2].split(", ")[0]), parseInt(payload.split(": ")[2].split(", ")[1]));
+					if (clientid != payload.split(": ")[0].split(" ")[1])
+					{
+					    var tw = canvas.width / grid.width;
+					    var th = canvas.height / grid.height;
+					    //whoever got the pickup's tail gets extended
+					    if (payload.split(": ")[3] == "" + SNAKE)
+					    {
+					        ctx.fillStyle = "#0000FF";
+
+
+					        var tail = {x:snake.last.x, y:snake.last.y};
+							if (snake.direction == LEFT)
+							{
+							    snake.insert(tail.x - 1, tail.y);
+							    grid.set(SNAKE, tail.x - 1, tail.y);
+							    ctx.fillRect((tail.x-1) * tw, (tail.y) * th, tw, th);
+							}
+							
+							else if (snake.direction == RIGHT)
+							{
+							    snake.insert(tail.x + 1, tail.y);
+							    grid.set(SNAKE, tail.x + 1, tail.y);
+                                ctx.fillRect((tail.x+1) * tw, tail.y * th, tw, th);
+							}
+							
+							else if (snake.direction == UP)
+							{
+							    snake.insert(tail.x, tail.y - 1);
+							    grid.set(SNAKE, tail.x, tail.y - 1);
+							    ctx.fillRect((tail.x) * tw, (tail.y - 1) * th, tw, th);
+							}
+							
+							else if (snake.direction == DOWN)
+							{
+							    snake.insert(tail.x, tail.y + 1);
+							    grid.set(SNAKE, tail.x, tail.y + 1);
+							    ctx.fillRect((tail.x) * tw, (tail.y + 1) * th, tw, th);
+							}
+						}
+						
+						else
+					    {
+					        ctx.fillStyle = "#FF0000";
+
+					        var tail = {x: snake2.last.x, y: snake2.last.y};
+					        if (snake2.direction == LEFT)
+							{
+								snake2.insert(tail.x - 1, tail.y);
+								grid.set(SNAKE2, tail.x - 1, tail.y);
+								ctx.fillRect((tail.x - 1) * tw, (tail.y) * th, tw, th);
+							}
+							
+							else if (snake2.direction == RIGHT)
+							{
+							    snake2.insert(tail.x + 1, tail.y);
+							    grid.set(SNAKE2, tail.x + 1, tail.y);
+							    ctx.fillRect((tail.x + 1) * tw, (tail.y) * th, tw, th);
+							}
+							
+							else if (snake2.direction == UP)
+							{
+							    snake2.insert(tail.x, tail.y - 1);
+							    grid.set(SNAKE2, tail.x, tail.y - 1);
+							    ctx.fillRect((tail.x) * tw, (tail.y - 1) * th, tw, th);
+							}
+							
+							else if (snake2.direction == DOWN)
+							{
+							    snake2.insert(tail.x, tail.y + 1);
+							    grid.set(SNAKE2, tail.x, tail.y + 1);
+							    ctx.fillRect((tail.x) * tw, (tail.y + 1) * th, tw, th);
+							}
+						}
+					}
+				}
+				
+				//when snake moves it sets the last spot it was in its body to empty
+				else if (payload.split(": ")[1] == "Empty")
+				{
+					grid.set(EMPTY, parseInt(payload.split(": ")[2].split(", ")[0]), parseInt(payload.split(": ")[2].split(", ")[1]));
+				}
+				
+				//updates client score
+				else if (payload.split(": ")[1] == "Player " + id1 + " Score")
+				{
+					p1score = parseInt(payload.split(": ")[2]);
+					document.getElementById("p1score").innerHTML = "Player " + id1 + " Score: " + p1score;
+				}
+				
+				else if (payload.split(": ")[1] == "Player "+ id2 +" Score")
+				{
+					p2score = parseInt(payload.split(": ")[2]);
+					document.getElementById("p2score").innerHTML = "Player " + id2 + " Score: " + p2score;
+				}
+				
+				//update client wins
+				else if (payload.split(": ")[1] == "Player "+ id1 +" Wins")
+				{
+					p1wins = parseInt(payload.split(": ")[2]);
+					document.getElementById("p1wins").innerHTML = "Player "+ id1 +" Wins: " + p1wins;
+				}
+				
+				else if (payload.split(": ")[1] == "Player "+ id2 +" Wins")
+				{
+					p2wins = parseInt(payload.split(": ")[2]);
+					document.getElementById("p2wins").innerHTML = "Player "+ id2 +" Wins: " + p2wins;
+				}
+				
+				//update ties
+				else if (payload.split(": ")[1] == "Ties")
+				{
+					ties = parseInt(payload.split(": ")[2]);
+					document.getElementById("ties").innerHTML = "Ties: " + ties;
+				}
+				
+				//reset the game when round is started
+				else if (payload.split(": ")[1] == "Reset")
+				{
+					running = true;
+					init();
+					loop();
+				}
+				
+				//print everything else
+				else
+				{
+					log( payload );
+				}
+				
+			});
+
+			//connect to server
+			Server.connect();
+        }
+
+	</script>
+  </head>	
+  
+  <body>
+	<div id='body'>
+		<center>
+        IP: <input type='text' id='ip' name='ip'>
+        Port: <input type='text' id='port' name='port'>
+		ID: <input type='text' id='id' name='id'>
+		<textarea id='log' name='log' readonly='readonly'></textarea><br/>
+		<button type="button" id='cntBtn' onclick="connect();">Connect</button>	
+		<button type="button" id='startBtn' onclick="start();">Start Round</button>	
+		</center>
+		
+		<!-- prints scores to top of game -->
+		<table style="width:70%">
+		<tr>
+			<td id="p1score"></td>
+			<td id="p2score"></td>
+			<td id="p1wins"></td>
+			<td id="p2wins"></td>
+			<td id="ties"></td>
+		  </tr>
+		</table>
+	</div>
+  </body>
+</html>

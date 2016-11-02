@@ -22,8 +22,6 @@ body
 }
 
 #top_menu{
-	position: fixed;
-	width: 98%;
 	text-align: right;
 	padding: 10px;
 	background: black;

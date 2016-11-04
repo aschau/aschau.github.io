@@ -13,7 +13,7 @@ body
 	background: url(../img/GameBackground3.png) no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
-	margin: 0 0 20%;
+	margin: 0 0 100px;
 }
 
 #intro_section p{
@@ -64,9 +64,8 @@ footer{
 	color: white;
 	font: 100% Tahoma;
 	text-align: center;
-	padding: 5px;
 	background-color: black;
-	border: 2px solid white;
+	border-top: 2px solid white;
 }
 
 @media only screen and (max-width: 530px) {

@@ -19,17 +19,17 @@ body
 	margin: 0 0 100px;
 }
 .aboutHeader{
-	color: black;
+	color: white;
 	text-align: left;
 }
 
 #howHere{
-	color: black;
+	color: white;
 	width: 95%;
 }
 
 #whereNow{
-	color: black;
+	color: white;
 	width: 95%;
 	margin-bottom: 20%;
 }
@@ -50,10 +50,50 @@ body
 	text-align: left;
 }
 
-#socialColorBar{
-	background: url(../img/textBox2.png);
+#resumeSection h1
+{
+	color: white;
+	text-align: center;
+	display: block;
+	font-size: 250%;
 	padding: 0;
+	background: url(../img/textBox2.png);
+	background-attachment: cover;
+}
+
+#resume{
+	width: 50%;
+	display: block;
 	margin-left: 20%;
+	padding-bottom: 5%;
+	padding-right: 5%;
+	padding-left: 5%;
+}
+
+#socialColorBar{
+	padding-bottom: 15%;
+	margin-left: 20%;
+}
+
+#contactMe
+{
+	background: url(../img/textBox2.png);
+	background-attachment: cover;
+	display: block;
+	text-align: center;
+	font-weight: bold;
+}
+
+#contactMe img{
+	padding-top: 5%;
+	width: 30%;
+	height: 30%;
+}
+
+#contactMe p{
+	color: white;
+	font-size: 200%;
+	padding-bottom: 5%;
 }
 
 .socialLink{
@@ -65,6 +105,9 @@ body
 	margin: 0;
 }
 
+.game {
+	color: white;
+}
 .game h1{
 	text-align: center;
 	font-size: 250%;
@@ -252,6 +295,10 @@ footer{
 		width: 20%;
 		height: 20%;
 		transform: translate(0, -15%);
+	}
+	
+	.aboutPortion{
+		font-size: 170%;
 	}
 
 }

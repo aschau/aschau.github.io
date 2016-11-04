@@ -13,7 +13,7 @@ body
 	background: url(../img/GameBackground3.png) no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
-	margin: 0;
+	margin: 0 0 20%;
 }
 
 #intro_section p{

@@ -3,8 +3,16 @@
 	font-family: Tahoma;
 }
 
+html{
+	position: relative;
+	min-height: 100%;
+}
+
 body
 {
+	background: url(../img/GameBackground3.png) no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
 	margin: 0;
 }
 
@@ -15,55 +23,105 @@ body
 
 #intro_content
 {
-	background: url(../img/GameBackground3.png) no-repeat;
-	background-attachment: fixed;
-	background-size: cover; 
 	text-align: center;
 }
 
 #top_menu{
 	text-align: right;
-	padding: 10px;
+	padding: 1%;
 	background: black;
 	border-bottom: 2px solid white;
 	color: white;
-	font: bold 100% Tahoma;
+	font: bold 40% Tahoma;
 }
 
-#top_menu li:first-child{
-	float: left;
+#top_menu li{
 	list-style: none;
-	padding: 5px;
-	display: inline-block;
 }
 
-#top_menu li:not(:first-child){
-	padding: 5px;
-	display: inline-block;
+#home_button{
+	list-style: none;
+	float: left;
+	padding-top: 1%;
 }
 
 #intro_content{
-	padding-top: 20%;
+	padding-top: 10%;
 	padding-bottom: 10%;
 	width: 100%;
-	height: 100%;
 }
 
+#inner_menu li{
+	display: inline-block;
+	padding-right: 3%;
+}
+
+
 footer{
+	position: absolute;
+	bottom: 0;
+	width: 100%;
 	color: white;
 	font: 100% Tahoma;
 	text-align: center;
-	padding: 20px;
+	padding: 5px;
 	background-color: black;
-	border-top: 2px solid white;
+	border: 2px solid white;
 }
 
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 530px) {
 
 	#intro_section p{
-		font-size: 150%;
+		font-size: 175%;
 		color: white;
+	}
+	
+	#intro_content{
+		padding-top: 20%;
+		padding-bottom: 10%;
+		width: 100%;
+		height: 100%;
+	}
+	
+	#home_button{
+		padding-top: 1%;
+	}
+
+	#top_menu li{
 	}
 }
 
+@media only screen and (max-width: 390px)
+{
+	#intro_section p{
+		font-size: 175%;
+		color: white;
+	}
+	
+	#intro_content{
+		padding-top: 20%;
+		padding-bottom: 10%;
+		width: 100%;
+		height: 100%;
+	}
+	
+	#top_menu {
+		text-align: center;
+	}
+	
+	#home_button{
+		float: none;
+	}
+	
+	#top_menu img{
+		display: inline-block;
+		list-style: none;
+		width: 10%;
+	}
+	
+}
+
+@media only screen and (min-width: 1200px)
+{
+	
 }

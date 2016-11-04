@@ -47,12 +47,22 @@ body
 	background-attachment: cover;
 	float: left;
 	padding: 2%;
-	text-align: center;
+	text-align: left;
 }
 
-.game
-{
+#socialColorBar{
+	background: url(../img/textBox2.png);
+	padding: 0;
+	margin-left: 20%;
+}
 
+.socialLink{
+
+	width: 10%;
+	height: 10%;
+	padding: 3%;
+	float: left;
+	margin: 0;
 }
 
 .game h1{
@@ -222,6 +232,11 @@ footer{
 	
 	#home_button{
 		float: none;
+	}
+	
+	#inner_menu li:not(:first-child){
+		display: inline-block;
+		padding-left: 4%;
 	}
 	
 	.game h1{

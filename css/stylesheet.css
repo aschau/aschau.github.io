@@ -50,6 +50,58 @@ body
 	text-align: center;
 }
 
+.game
+{
+
+}
+
+.game h1{
+	text-align: center;
+	font-size: 250%;
+	background: url(../img/textBox2.png);
+	background-attachment: cover;
+}
+
+.game li{
+	list-style: none;
+	padding-left: 5%;
+}
+
+.game ul{
+	background: url(../img/textBox2.png);
+	background-attachment: cover;
+	padding-bottom: 2%;
+	display: inline-table;
+	padding: 1%;
+}
+
+#awardsTitle{
+	text-decoration: underline;
+}
+
+.videoContainer {
+	position:relative;
+	padding-bottom:56.25%;
+	padding-top:30px;
+	height:0;
+	overflow:hidden;
+	margin-left: 10%;
+	max-width: 75%;
+	max-height: 45%;
+}
+
+.videoContainer iframe{
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+}
+.teamTitle
+{
+	text-decoration: underline;
+}
+
 #intro_section
 {
 	color: white;
@@ -97,7 +149,6 @@ body
 	padding: 5%;
 }
 
-
 footer{
 	position: absolute;
 	bottom: 0;
@@ -107,6 +158,22 @@ footer{
 	text-align: center;
 	background-color: black;
 	border-top: 2px solid white;
+}
+
+@media only screen and (max-width: 732px)
+{		
+	.game ul{
+		width: 100%;
+		padding-bottom: 3%;
+		padding-top: 3%;
+		padding-left: 0;
+		padding-right: 0;
+	}
+	
+	.extraList
+	{
+		display:none;
+	}
 }
 
 @media only screen and (max-width: 590px) {
@@ -127,6 +194,7 @@ footer{
 	#whereNow{
 		margin-bottom: 30%;
 	}
+
 
 }
 

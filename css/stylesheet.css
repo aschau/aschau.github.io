@@ -108,6 +108,23 @@ body
 .game {
 	color: white;
 }
+
+.game ul:first-of-type{
+	margin-left: 10%;
+}
+
+.game img{
+	width: 30%;
+	height: 30%;
+	padding: 1%;
+	display: inline-block;
+}
+
+.game img:first-of-type{
+	margin-left: 20%;
+	
+}
+
 .game h1{
 	text-align: center;
 	font-size: 250%;
@@ -118,6 +135,7 @@ body
 .game li{
 	list-style: none;
 	padding-left: 5%;
+	padding-right: 5%;
 }
 
 .game ul{
@@ -126,10 +144,7 @@ body
 	padding-bottom: 2%;
 	display: inline-table;
 	padding: 1%;
-}
-
-#awardsTitle{
-	text-decoration: underline;
+	max-width: 30%;
 }
 
 .videoContainer {
@@ -150,7 +165,7 @@ body
 	width:100%;
 	height:100%;
 }
-.teamTitle
+.subTitle
 {
 	text-decoration: underline;
 }
@@ -226,6 +241,12 @@ footer{
 	.extraList
 	{
 		display:none;
+	}
+	
+	.game ul{
+		display: block;
+		max-width: 80%;
+		margin-left: 10%;
 	}
 }
 

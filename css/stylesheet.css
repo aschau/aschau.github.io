@@ -50,6 +50,11 @@ body
 	text-align: left;
 }
 
+#scuminvaders img{
+	border: solid 1em gray;
+	padding: 0;
+}
+
 #resumeSection h1
 {
 	color: white;
@@ -105,6 +110,15 @@ body
 	margin: 0;
 }
 
+.button{
+	display: block;
+	background: black;
+	color: white;
+	text-align: center;
+	margin-top: 20%;
+	padding: 10%;
+}
+
 .game {
 	color: white;
 }
@@ -145,6 +159,10 @@ body
 	display: inline-table;
 	padding: 1%;
 	max-width: 30%;
+}
+
+.links{
+	min-width: 10%;
 }
 
 .videoContainer {
@@ -247,6 +265,13 @@ footer{
 		display: block;
 		max-width: 80%;
 		margin-left: 10%;
+	}
+	
+	.button{
+		margin-left: 20%;
+		padding: 5%;
+		width: 50%;
+		margin-top: 5%;
 	}
 }
 

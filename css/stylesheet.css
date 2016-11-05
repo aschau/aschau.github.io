@@ -107,7 +107,7 @@ body
 
 #contactMe p{
 	color: white;
-	font-size: 200%;
+	font-size: 180%;
 	padding-bottom: 5%;
 }
 
@@ -285,7 +285,7 @@ footer{
 	}
 	
 	#contactMe p{
-		font-size: 170%;
+		font-size: 150%;
 	}
 }
 

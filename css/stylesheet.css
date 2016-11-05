@@ -97,6 +97,7 @@ body
 	display: block;
 	text-align: center;
 	font-weight: bold;
+	max-width: 100%;
 }
 
 #contactMe img{

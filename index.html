@@ -6,6 +6,8 @@
 	<meta name="author" content="Andrew Steven Chau">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
+	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+	<script type="text/javascript" src="js/changeBackground.js"></script>
 </head>
 
 <body>
@@ -13,13 +15,15 @@
 	
 		<nav id = "top_menu">
 				
-				<ul id = "inner_menu">
-					<li><p id = "home_button"><a href="index.html">Andrew Steven Chau | Portfolio</a></p></li>
-					<li><a href="aboutMe.html"><p>About Me</p></a></li>
-					<li><a href="projects.html"><p>Projects</p></a></li>
-					<li><a href="contact.html"><p>Contact</p></a></li>
-				</ul>
+			<ul id = "inner_menu">
+				<li><p id = "home_button"><a href="index.html">Andrew Steven Chau | Portfolio</a></p></li>
+				<li><a href="aboutMe.html"><p>About Me</p></a></li>
+				<li><a href="projects.html"><p>Projects</p></a></li>
+				<li><a href="contact.html"><p>Contact</p></a></li>
+			</ul>
 		</nav>	
+		
+		<img id = "eject" onclick="changeBackground(this);" src="img/exit.png" value="default"></img>
 		
 		<section id="intro_content">
 			<p>Hello, my name is</p>

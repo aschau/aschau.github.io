@@ -260,11 +260,13 @@ footer{
 @media only screen and (max-width: 732px)
 {		
 	.game ul{
-		width: 100%;
 		padding-bottom: 3%;
 		padding-top: 3%;
 		padding-left: 0;
 		padding-right: 0;
+		display: block;
+		max-width: 80%;
+		margin-left: 10%;
 	}
 	
 	.extraList
@@ -272,9 +274,7 @@ footer{
 		display:none;
 	}
 	
-	.game ul{
-		display: block;
-		max-width: 80%;
+	#scuminvaders img:first-of-type{
 		margin-left: 10%;
 	}
 	

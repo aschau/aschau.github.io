@@ -1,6 +1,12 @@
 *{
 	padding: 0;
-	font-family: Tahoma;
+	font-family: spaceFont;
+}
+
+@font-face
+{
+	font-family: spaceFont;
+	src: url(../fonts/Xolonium-Regular.ttf);
 }
 
 html{
@@ -53,7 +59,7 @@ body
 }
 
 .aboutPortion{
-	background: url(../img/textBox2.png);
+	background: url(../img/textArea.png);
 	background-attachment: cover;
 	float: left;
 	padding: 2%;
@@ -65,14 +71,14 @@ body
 	padding: 0;
 }
 
-#resumeSection h1
+#resumeSection h1, summary
 {
 	color: white;
 	text-align: center;
 	display: block;
 	font-size: 250%;
 	padding: 0;
-	background: url(../img/textBox2.png);
+	background: url(../img/textArea.png);
 	background-attachment: cover;
 }
 
@@ -92,7 +98,7 @@ body
 
 #contactMe
 {
-	background: url(../img/textBox2.png);
+	background: url(../img/textArea.png);
 	background-attachment: cover;
 	display: block;
 	text-align: center;
@@ -153,7 +159,7 @@ body
 .game h1{
 	text-align: center;
 	font-size: 250%;
-	background: url(../img/textBox2.png);
+	background: url(../img/textArea.png);
 	background-attachment: cover;
 }
 
@@ -164,7 +170,7 @@ body
 }
 
 .game ul{
-	background: url(../img/textBox2.png);
+	background: url(../img/textArea.png);
 	background-attachment: cover;
 	padding-bottom: 2%;
 	display: inline-table;
@@ -215,7 +221,7 @@ body
 	padding: 1%;
 	background: black;
 	color: white;
-	font: bold 100% Tahoma;
+	font: bold 100% spaceFont;
 	border-bottom: 2px solid white;
 }
 
@@ -241,7 +247,7 @@ body
 
 #artist_credit{
 	margin-top: 2%;
-	font: bold 70% Tahoma;
+	font: bold 70% spaceFont;
 	text-align: right;
 	padding: 5%;
 }
@@ -251,7 +257,7 @@ footer{
 	bottom: 0;
 	width: 100%;
 	color: white;
-	font: 100% Tahoma;
+	font: 100% spaceFont;
 	text-align: center;
 	background-color: black;
 	border-top: 2px solid white;

@@ -153,8 +153,13 @@ body
 }
 
 .game img:first-of-type{
-	margin-left: 20%;
-	
+	margin-left: 20%;	
+}
+
+.game summary
+{
+	text-align: left;
+	padding-left: 20%;
 }
 
 .game h1{
@@ -178,6 +183,7 @@ body
 	padding: 1%;
 	max-width: 25%;
 	min-width: 20%;
+	
 }
 
 .links{
@@ -299,6 +305,10 @@ footer{
 	.game h1, summary{
 		font-size: 180%;
 	}
+	
+	.game summary{
+		padding-left: 15%;
+	}
 	.game ul{
 		padding-bottom: 3%;
 		padding-top: 3%;
@@ -345,7 +355,6 @@ footer{
 }
 
 @media only screen and (max-width: 590px) {
-
 	#intro_content{
 		padding-top: 20%;
 		padding-bottom: 10%;
@@ -366,6 +375,11 @@ footer{
 	.game h1, summary{
 		font-size: 175%;
 	}
+	
+	.game summary{
+		padding-left: 5%;
+	}
+	
 
 	#eject
 	{
@@ -379,6 +393,7 @@ footer{
 	.game h1, summary{
 		font-size: 150%;
 	}
+
 	
 	#eject
 	{
@@ -414,6 +429,11 @@ footer{
 		font-size: 125%;
 	}
 	
+	.game summary{
+		padding-left: 5%;
+	}
+	
+	
 	#contactMe p{
 		font-size: 90%;
 	}
@@ -424,7 +444,15 @@ footer{
 	}
 }
 
-@media only screen and (min-width: 1020px)
+@media only screen and (max-width: 850px)
+{
+	.game summary 
+	{
+		font-size: 175%;
+	}
+}
+
+@media only screen and (max-width: 1020px)
 {
 	.aboutProfile
 	{
@@ -436,4 +464,10 @@ footer{
 	.aboutPortion{
 		font-size: 170%;
 	}
+	
+	.game summary 
+	{
+		padding-left: 10%;
+	}
+	
 }

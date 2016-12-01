@@ -26,10 +26,11 @@ body
 }
 
 #eject {
-    height: 10%;
-    width: 10%;
-	margin-left: auto;
-	margin-right: auto;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+    width: 6%;
 	display: block;
 }
 
@@ -265,6 +266,9 @@ footer{
 
 @media only screen and (max-width: 732px)
 {		
+	.game h1, summary{
+		font-size: 180%;
+	}
 	.game ul{
 		padding-bottom: 3%;
 		padding-top: 3%;
@@ -294,6 +298,11 @@ footer{
 	#contactMe p{
 		font-size: 150%;
 	}
+	
+	#eject
+	{
+		width: 10%;
+	}
 }
 
 @media only screen and (max-width: 590px) {
@@ -314,14 +323,27 @@ footer{
 	#whereNow{
 		margin-bottom: 30%;
 	}
+	
+	.game h1, summary{
+		font-size: 175%;
+	}
 
+	#eject
+	{
+		width: 12%;
+	}
 
 }
 
 @media only screen and (max-width: 450px)
 {
-	.game h1{
-		font-size: 200%;
+	.game h1, summary{
+		font-size: 150%;
+	}
+	
+	#eject
+	{
+		width: 15%;
 	}
 }
 
@@ -349,12 +371,17 @@ footer{
 		padding-left: 4%;
 	}
 	
-	.game h1{
-		font-size: 150%;
+	.game h1, summary{
+		font-size: 125%;
 	}
 	
 	#contactMe p{
 		font-size: 90%;
+	}
+	
+	#eject
+	{
+		width: 15%;
 	}
 }
 
@@ -370,5 +397,4 @@ footer{
 	.aboutPortion{
 		font-size: 170%;
 	}
-
 }

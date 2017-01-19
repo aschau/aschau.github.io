@@ -1,6 +1,7 @@
 *{
 	padding: 0;
 	font-family: spaceFont;
+	color: white;
 }
 
 @font-face
@@ -137,6 +138,35 @@ body
 	padding: 10%;
 }
 
+#projects
+{
+	text-align: center;
+}
+
+#thumbnails
+{
+	overflow: auto;
+	margin-left: 10%;
+}
+
+#thumbnails section
+{
+	float: left;
+	width: 30%;
+	display: inline-block;
+}
+
+#projects h1
+{
+	color: white;
+	text-align: center;
+	background: url(../img/textArea.png);
+}
+
+#thumbnails img
+{
+	width: 100%;
+}
 .game {
 	color: white;
 }

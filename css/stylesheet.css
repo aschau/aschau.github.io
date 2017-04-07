@@ -20,7 +20,7 @@ a {
 }
 body
 {
-	background: url(../img/GameBackground3.png) no-repeat;
+	background: url(../img/GameBackground3.jpg) no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
 	margin: 0 0 100px;
@@ -165,7 +165,7 @@ body
 
 #thumbnails img
 {
-	width: 100%;
+	width: 80%;
 }
 .game {
 	color: white;

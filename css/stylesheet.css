@@ -61,7 +61,7 @@ body
 }
 
 .aboutPortion{
-	background: url(../img/textArea.png);
+	background: url(../img/textArea.jpg);
 	background-attachment: cover;
 	float: left;
 	padding: 2%;
@@ -80,7 +80,7 @@ body
 	display: block;
 	font-size: 250%;
 	padding: 0;
-	background: url(../img/textArea.png);
+	background: url(../img/textArea.jpg);
 	background-attachment: cover;
 }
 
@@ -100,7 +100,7 @@ body
 
 #contactMe
 {
-	background: url(../img/textArea.png);
+	background: url(../img/textArea.jpg);
 	background-attachment: cover;
 	display: block;
 	text-align: center;
@@ -160,7 +160,7 @@ body
 {
 	color: white;
 	text-align: center;
-	background: url(../img/textArea.png);
+	background: url(../img/textArea.jpg);
 }
 
 #thumbnails img
@@ -195,7 +195,7 @@ body
 .game h1{
 	text-align: center;
 	font-size: 250%;
-	background: url(../img/textArea.png) repeat;
+	background: url(../img/textArea.jpg) repeat;
 	background-attachment: cover;
 }
 
@@ -206,7 +206,7 @@ body
 }
 
 .game ul{
-	background: url(../img/textArea.png) repeat;
+	background: url(../img/textArea.jpg) repeat;
 	background-attachment: cover;
 	padding-bottom: 2%;
 	display: inline-table;

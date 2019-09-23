@@ -1,56 +1,95 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html lang="en">
-<head>
-    <title>Andrew Chau | Portfolio</title>
+  <head>
+    <!-- Required meta tags -->
     <meta charset="utf-8">
-	<meta name="author" content="Andrew Steven Chau">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
-	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
-	<script type="text/javascript" src="js/autoScroll.js"></script>
-	<script>
-	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	  ga('create', 'UA-86944184-1', 'auto');
-	  ga('send', 'pageview');
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-	</script>
-</head>
+    <title>Andrew Chau | Portfolio</title>
 
-<body>
+    <nav class="navbar sticky-top navbar-expand-sm navbar-dark" style="background-color: #000000;">
+        <!-- Navbar content -->
+        <a class="navbar-brand link" href="index.html">Andrew Chau | Portfolio</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-content">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="navbar-collapse collapse" id="header-content">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                  <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="aboutMe.html">About</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="projects.html">Work</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="projects.html">Personal</a>
+                </li>
+            </ul>
+          </div>
+      </nav>
+  </head>
 
-	<div id="intro_section">
-	
-		<nav id = "top_menu">
-				
-			<ul id = "inner_menu">
-				<li><p id = "home_button"><a href="index.html">Andrew Steven Chau | Portfolio</a></p></li>
-				<li><a href="aboutMe.html"><p>About Me</p></a></li>
-				<li><a href="projects.html"><p>Projects</p></a></li>
-				<li><a href="contact.html"><p>Contact</p></a></li>
-			</ul>
-		</nav>	
-				
-		<section id="intro_content">
-			<p>Hello, my name is</p>
-			<p><a href="aboutMe.html"><b>Andrew Steven Chau</b></a>.</p>
-			<br></br>
-			<p>Leader.</p>
-			<p>Designer.</p>
-			<p>Programmer.</p>
+  <body style="background-image: url(img/personal-projects/GameBackground3.jpg); background-attachment: fixed;">
+    <div style="background: transparent; color: white;" class="jumbotron my-auto">
+      <h1 class="display-4">What's up, my main?</h1>
+      <p class="lead">My name is <b>Andrew Steven Chau</b> and welcome to my portfolio website.</p>
+      <hr class="my-4" style="border-color: white;">
+      <p>The website is still under construction, but feel free to snoop around!</p>
+    </div>
 
-		</section>
-		
-		<p id="artist_credit">Artist: Elaine Chieng, ScumInvaders</p>
-	</div>
-	<img id = "eject" src="img/up with text.jpg" value="default"></img>
+    <div class="card-deck mx-auto mb-5" style="width: 800px">
+      <div class="card text-white bg-dark">
+        <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active" data-interval="5000">
+              <img src="img/work-projects/nbaARMain.jpg" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item" data-interval="5000">
+              <img src="img/work-projects/nbaARMain.jpg" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item" data-interval="5000">
+              <img src="img/work-projects/nbaARMain.jpg" class="d-block w-100" alt="...">
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Work Projects</h5>
+          <p class="card-text">Check out the cool projects I've had the opportunity to work on throughout my career.</p>
+          <a href="#" class="btn btn-primary stretched-link">Go somewhere</a>
+        </div>
+      </div>
+      <div class="card text-white bg-dark">
+        <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active" data-interval="5000">
+              <img src="img/personal-projects/dormDash.jpg" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item" data-interval="5000">
+              <img src="img/personal-projects/dormDash.jpg" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item" data-interval="5000">
+              <img src="img/personal-projects/dormDash.jpg" class="d-block w-100" alt="...">
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Personal Projects</h5>
+          <p class="card-text">Check out how wonderful (and terrible) my personal endeavors have gone since the beginning of my college years.</p>
+          <a href="#" class="btn btn-primary stretched-link">Go somewhere</a>
+        </div>
+      </div>
+    </div>
 
-	<footer>
-		<p> &copy Andrew Steven Chau. 2016.</p>
-		<p>All rights reserved.</p>
-	</footer>
-</body>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  </body>
 </html>

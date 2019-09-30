@@ -21,7 +21,7 @@
 
     </script>
 
-    <nav class="navbar sticky-top navbar-expand-sm navbar-dark" style="background-color: #000000;">
+    <nav class="navbar fixed-top navbar-expand-sm navbar-dark" style="background-color: #000000;">
         <!-- Navbar content -->
         <a class="navbar-brand link" href="index.html">Andrew Chau | Portfolio</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-content">
@@ -46,139 +46,178 @@
       </nav>
   </head>
 
-  <body style="background-image: url(img/personal-projects/GameBackground2.jpg); background-attachment: fixed; background-size: cover; background-color: black;">
-    <div style="background: transparent; color: white;" class="jumbotron my-auto">
-      <h1 class="display-4"><a href="https://www.triggerglobal.com" style="color: white;">Trigger Global Inc.</a></h1>
-      <hr class="my-4" style="border-color: white;">
+  <body style="padding-top: 3rem; background-image: url(img/personal-projects/GameBackground2.jpg); background-attachment: fixed; background-size: cover; background-color: black;">
+
+    <div class="row">
+      <div class="col-4">
+        <div class="list-group sticky-top my-4" style="top: 56px" id="list-tab" role="tablist">
+          <a class="list-group-item list-group-item-dark list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Trigger Global Inc.</a>
+          <a class="list-group-item list-group-item-dark list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Super Toy Box</a>
+        </div>
+      </div>
+      <div class="col-8">
+        <div class="tab-content" id="nav-tabContent">
+          <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+            <div class="card-deck mr-4 my-4">
+              <div class="card text-white bg-dark">
+                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/work-projects/nhlARSplash.jpg" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item" data-interval="5000">
+                      <img src="img/work-projects/nhlARHome.jpg" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item" data-interval="5000">
+                      <img src="img/work-projects/nhlARExample.jpg" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item" data-interval="5000">
+                      <img src="img/work-projects/nhlARPlayerSelected.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">NHL AR</h5>
+                  <ul>
+                    <li><b>Description:</b> Prototype Live AR Rink made with Unity 3D</li>
+                    <li><b>Role:</b> Main Developer</li>
+                    <li><b>Date:</b> November 2018 - January 2019</li>
+                  </ul>
+                  <a href="projects/work/nhlAR/nhlAR.html" class="btn btn-primary stretched-link">Go to Page</a>
+                </div>
+              </div>
+              <div class="card text-white bg-dark">
+                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/work-projects/nbaARMain.jpg" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item" data-interval="5000">
+                      <img src="img/work-projects/nbaARTiles.jpg" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item" data-interval="5000">
+                      <img src="img/work-projects/nbaARExample.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">NBA AR</h5>
+                  <p class="card-text">
+                    <ul>
+                      <li><b>Description:</b> Mobile AR Game and Portal experience made with Unity 3D</li>
+                      <li><b>Role:</b> Main Developer</li>
+                      <li><b>Date:</b> March 2018 - September 2019</li>
+                    </ul>
+                  </p>
+                  <a href="projects/work/nbaAR/nbaAR.html" class="btn btn-primary stretched-link">Go to Page</a>
+                </div>
+              </div>
+              <div class="card text-white bg-dark">
+                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/work-projects/lenovoMirageARMain.jpg" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item" data-interval="5000">
+                      <img src="img/work-projects/lenovoMirageARExample.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">Lenovo Mirage AR Games</h5>
+                  <p class="card-text">
+                    <ul>
+                      <li><b>Description:</b>  AR applications developed for the Lenovo Mirage headset with Unity 3D</li>
+                      <li><b>Role:</b> Main Developer/Support</li>
+                      <li><b>Date:</b> October 2018</li>
+                    </ul>
+                  </p>
+                  <a href="projects/work/lenovoMirageAR/lenovoMirageAR.html" class="btn btn-primary stretched-link">Go to Page</a>
+                </div>
+              </div>
+            </div>
+            <div class="card-deck mr-4 my-4">
+              <div class="card text-white bg-dark">
+                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">Spider-Man: Far From Home AR</h5>
+                  <p>More coming soon!</p>
+                  <a href="https://www.triggerglobal.com/work/spider-man-far-from-home-app" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
+                </div>
+              </div>
+              <div class="card text-white bg-dark">
+                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">Celebrity Edge Access Tour</h5>
+                  <p>More coming soon!</p>
+                  <a href="https://www.triggerglobal.com/work/royal-caribbean-celebrity-edge-access-tour-app" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
+                </div>
+              </div>
+              <div class="card text-white bg-dark">
+                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">Moviebill</h5>
+                  <p>More coming soon!</p>
+                  <a href="https://www.triggerglobal.com/work/Moviebill" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+            <div class="card-deck mr-4 my-4">
+              <div class="card text-white bg-dark">
+                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">Subaru Wheelstand</h5>
+                  <p class="card-text">Under Construction</p>
+                  <a href="http://supertoybox.co/works/subaru2/" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
+                </div>
+              </div>
+              <div class="card text-white bg-dark">
+                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">VR Factory</h5>
+                  <p class="card-text">Under Construction</p>
+                  <a href="http://www.vrfactory.co/" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="card-deck mx-5 mb-5">
-      <div class="card text-white bg-dark">
-        <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/work-projects/nhlARSplash.jpg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item" data-interval="5000">
-              <img src="img/work-projects/nhlARHome.jpg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item" data-interval="5000">
-              <img src="img/work-projects/nhlARExample.jpg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item" data-interval="5000">
-              <img src="img/work-projects/nhlARPlayerSelected.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">NHL AR</h5>
-          <ul>
-            <li><b>Description:</b> Prototype Live AR Rink made with Unity 3D</li>
-            <li><b>Role:</b> Main Developer</li>
-            <li><b>Date:</b> November 2018 - January 2019</li>
-          </ul>
-          <a href="projects/work/nhlAR/nhlAR.html" class="btn btn-primary stretched-link">Go to Page</a>
-        </div>
-      </div>
-      <div class="card text-white bg-dark">
-        <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/work-projects/nbaARMain.jpg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item" data-interval="5000">
-              <img src="img/work-projects/nbaARTiles.jpg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item" data-interval="5000">
-              <img src="img/work-projects/nbaARExample.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">NBA AR</h5>
-          <p class="card-text">
-            <ul>
-              <li><b>Description:</b> Mobile AR Game and Portal experience made with Unity 3D</li>
-              <li><b>Role:</b> Main Developer</li>
-              <li><b>Date:</b> March 2018 - September 2019</li>
-            </ul>
-          </p>
-          <a href="projects/work/nbaAR/nbaAR.html" class="btn btn-primary stretched-link">Go to Page</a>
-        </div>
-      </div>
-      <div class="card text-white bg-dark">
-        <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/work-projects/lenovoMirageARMain.jpg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item" data-interval="5000">
-              <img src="img/work-projects/lenovoMirageARExample.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Lenovo Mirage AR Games</h5>
-          <p class="card-text">
-            <ul>
-              <li><b>Description:</b>  AR applications developed for the Lenovo Mirage headset with Unity 3D</li>
-              <li><b>Role:</b> Main Developer/Support</li>
-              <li><b>Date:</b>October 2018</li>
-            </ul>
-          </p>
-          <a href="projects/work/lenovoMirageAR/lenovoMirageAR.html" class="btn btn-primary stretched-link">Go to Page</a>
-        </div>
-      </div>
-      <div class="card text-white bg-dark">
-        <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Under Construction</h5>
-          <p>More coming soon!</p>
-        </div>
-      </div>
-    </div>
-
-    <div style="background: transparent; color: white;" class="jumbotron my-auto">
-      <h1 class="display-4"><a target="_blank" href="http://supertoybox.co/" style="color: white;">Super Toy Box</a></h1>
-      <hr class="my-4" style="border-color: white;">
-    </div>
-
-    <div class="card-deck mx-5 mb-5">
-      <div class="card text-white bg-dark">
-        <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Subaru Wheelstand</h5>
-          <p class="card-text">Under Construction</p>
-          <a href="workprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
-        </div>
-      </div>
-      <div class="card text-white bg-dark">
-        <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">VR Factory</h5>
-          <p class="card-text">Under Construction</p>
-          <a href="workprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
-        </div>
-      </div>
-    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

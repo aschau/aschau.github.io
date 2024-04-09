@@ -36,151 +36,204 @@
   </head>
 
   <body style="padding-top: 3rem; background-image: url(img/personal-projects/GameBackground2.jpg); background-attachment: fixed; background-size: cover; background-color: black;">
-    <div style="background: transparent; color: white;" class="jumbotron my-auto">
-      <h1 class="display-4">Under construction.</h1>
-    </div>
+    <div class="row">
+      <div class="col-4">
+        <div class="list-group sticky-top my-4" style="top: 56px" id="list-tab" role="tablist">
+          <a class="list-group-item list-group-item-dark list-group-item-action active" id="FriendCastleList" data-toggle="list" href="#FriendCastle" role="tab" aria-controls="FriendCastleControls">
+            FriendCastle
+            <hr class="my-2" style="border-color: grey;">
+            <i>Current</i>
+          </a>
+          <a class="list-group-item list-group-item-dark list-group-item-action" id="WaxHeartList" data-toggle="list" href="#WaxHeart" role="tab" aria-controls="WaxHeartControls">
+            WaxHeart
+            <hr class="my-2" style="border-color: grey;">
+            <i>Current</i>
+          </a>
+          <a class="list-group-item list-group-item-dark list-group-item-action" id="CollegeList" data-toggle="list" href="#College" role="tab" aria-controls="CollegeControls">
+            The College Years
+            <hr class="my-2" style="border-color: grey;">
+            <i>2013 - 2017</i>
+          </a>
+        </div>
+      </div>
+      <div class="col-8">
+        <div class="tab-content" id="nav-tabContent">
+          <div class="tab-pane fade show active" id="FriendCastle" role="tabpanel" aria-labelledby="FriendCastleList">
+            <div class="container my-4">
+              <div class="card text-white bg-dark">
+                <div class="card-body">
+                  <h5 class="card-title">FriendCastle</h5>
+                  <img class="card-img-top w-50" style="display: block;margin-left: auto; margin-right: auto;" src="img/personal-projects/friendCastleGreen.png" alt="Waxheart Splash Image">
+                  <p class="card-text">
+                    Currently brewing!
+                  </p>
+                  <a href="https://friendcastle.org/home" target="_blank" class="btn btn-primary stretched-link">Check out the website!</a>
+                </div>
+              </div>
+            </div>
+          </div>
 
-    <div class="card-deck mx-5 mb-5">
-      <div class="card text-white bg-dark mb-4">
-        <div id="monoCarousel" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/personal-projects/Card Push Example.gif" class="d-block w-100" alt="...">
+          <div class="tab-pane fade" id="WaxHeart" role="tabpanel" aria-labelledby="WaxHeartList">
+            <div class="container my-4">
+              <div class="card text-white bg-dark">
+                <div class="card-body">
+                  <h5 class="card-title">Waxheart</h5>
+                  <img class="card-img-top w-50" style="display: block;margin-left: auto; margin-right: auto;" src="img/personal-projects/waxheartSplash.jpg" alt="Waxheart Splash Image">
+                  <p class="card-text">
+                    Currently brewing!
+                  </p>
+                  <a href="https://waxheart.info/" target="_blank" class="btn btn-primary stretched-link">Check out the game!</a>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="card-body">
-            <h5 class="card-title">Monochrome Memories</h5>
-            <p class="card-text">Under construction.</p>
-            <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
-          </div>
-        </div>
-      </div>
-      <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
-      <div class="card text-white bg-dark mb-4">
-        <div id="dormDashCarousel" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/personal-projects/dormDashGame.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Microscums</h5>
-            <p class="card-text">Under construction.</p>
-            <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
-          </div>
-        </div>
-      </div>
-      <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
-      <div class="card text-white bg-dark mb-4">
-        <div id="scuminvadersCarousel" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/personal-projects/scuminvaders.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Scuminvaders</h5>
-            <p class="card-text">Under construction.</p>
-            <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="card-deck mx-5 mb-5">
-      <div class="card text-white bg-dark mb-4">
-        <div id="lifeofpyCarousel" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/personal-projects/lifeofpymenu.jpg" class="d-block w-100" alt="...">
+          <div class="tab-pane fade" id="College" role="tabpanel" aria-labelledby="CollegeList">
+            <div class="card-deck mx-5 mb-5">
+              <div class="card text-white bg-dark mb-4">
+                <div id="monoCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/personal-projects/Card Push Example.gif" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">Monochrome Memories</h5>
+                    <p class="card-text">Under construction.</p>
+                    <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
+                  </div>
+                </div>
+              </div>
+              <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
+              <div class="card text-white bg-dark mb-4">
+                <div id="dormDashCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/personal-projects/dormDashGame.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">Microscums</h5>
+                    <p class="card-text">Under construction.</p>
+                    <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
+                  </div>
+                </div>
+              </div>
+              <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
+              <div class="card text-white bg-dark mb-4">
+                <div id="scuminvadersCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/personal-projects/scuminvaders.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">Scuminvaders</h5>
+                    <p class="card-text">Under construction.</p>
+                    <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Life of Py</h5>
-            <p class="card-text">Under construction.</p>
-            <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
-          </div>
-        </div>
-      </div>
-      <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
-      <div class="card text-white bg-dark mb-4">
-        <div id="scallywagsCarousel" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/personal-projects/scallywags.jpg" class="d-block w-100" alt="...">
+
+            <div class="card-deck mx-5 mb-5">
+              <div class="card text-white bg-dark mb-4">
+                <div id="lifeofpyCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/personal-projects/lifeofpymenu.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">Life of Py</h5>
+                    <p class="card-text">Under construction.</p>
+                    <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
+                  </div>
+                </div>
+              </div>
+              <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
+              <div class="card text-white bg-dark mb-4">
+                <div id="scallywagsCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/personal-projects/scallywags.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">Scallywags</h5>
+                    <p class="card-text">Under construction.</p>
+                    <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
+                  </div>
+                </div>
+              </div>
+              <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
+              <div class="card text-white bg-dark mb-4">
+                <div id="dateCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/personal-projects/Date or Die Title.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">Date or Die</h5>
+                    <p class="card-text">Under construction.</p>
+                    <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Scallywags</h5>
-            <p class="card-text">Under construction.</p>
-            <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
-          </div>
-        </div>
-      </div>
-      <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
-      <div class="card text-white bg-dark mb-4">
-        <div id="dateCarousel" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/personal-projects/Date or Die Title.jpg" class="d-block w-100" alt="...">
+
+            <div class="card-deck mx-5 mb-5">
+              <div class="card text-white bg-dark mb-4">
+                <div id="spookyCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/personal-projects/spookyspoils.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">Spooky Spoils</h5>
+                    <p class="card-text">Under construction.</p>
+                    <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
+                  </div>
+                </div>
+              </div>
+              <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
+              <div class="card text-white bg-dark mb-4">
+                <div id="goingHomeCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/personal-projects/goinghome.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">Going Home</h5>
+                    <p class="card-text">Under construction.</p>
+                    <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
+                  </div>
+                </div>
+              </div>
+              <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
+              <div class="card text-white bg-dark mb-4">
+                <div id="left2DieCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item active" data-interval="5000">
+                      <img src="img/personal-projects/Left To Die.jpg" class="d-block w-100" alt="...">
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">Left 2 Die</h5>
+                    <p class="card-text">Under construction.</p>
+                    <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Date or Die</h5>
-            <p class="card-text">Under construction.</p>
-            <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
           </div>
         </div>
       </div>
     </div>
     
-    <div class="card-deck mx-5 mb-5">
-      <div class="card text-white bg-dark mb-4">
-        <div id="spookyCarousel" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/personal-projects/spookyspoils.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Spooky Spoils</h5>
-            <p class="card-text">Under construction.</p>
-            <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
-          </div>
-        </div>
-      </div>
-      <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
-      <div class="card text-white bg-dark mb-4">
-        <div id="goingHomeCarousel" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/personal-projects/goinghome.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Going Home</h5>
-            <p class="card-text">Under construction.</p>
-            <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
-          </div>
-        </div>
-      </div>
-      <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
-      <div class="card text-white bg-dark mb-4">
-        <div id="left2DieCarousel" class="carousel slide carousel-fade" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active" data-interval="5000">
-              <img src="img/personal-projects/Left To Die.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Left 2 Die</h5>
-            <p class="card-text">Under construction.</p>
-            <a href="personalprojects.html" class="btn btn-primary stretched-link">Go to Page</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

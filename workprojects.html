@@ -10,17 +10,6 @@
 
     <title>Andrew Chau | Portfolio</title>
 
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-86944184-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
-
     <nav class="navbar fixed-top navbar-expand-sm navbar-dark" style="background-color: #000000;">
         <!-- Navbar content -->
         <a class="navbar-brand link" href="index.html">Andrew Chau | Portfolio</a>
@@ -51,12 +40,17 @@
     <div class="row">
       <div class="col-4">
         <div class="list-group sticky-top my-4" style="top: 56px" id="list-tab" role="tablist">
-          <a class="list-group-item list-group-item-dark list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">
+          <a class="list-group-item list-group-item-dark list-group-item-action active" id="MobilitywareList" data-toggle="list" href="#Mobilityware" role="tab" aria-controls="MobilitywareControls">
+            Mobilityware (4 Years+)
+            <hr class="my-2" style="border-color: grey;">
+            <i>Mar 2020 - Current</i>
+          </a>
+          <a class="list-group-item list-group-item-dark list-group-item-action" id="TriggerList" data-toggle="list" href="#Trigger" role="tab" aria-controls="TriggerControls">
             Trigger Global Inc. (1 Year, 10 Months)
             <hr class="my-2" style="border-color: grey;">
             <i>January 2018 - October 2019</i>
           </a>
-          <a class="list-group-item list-group-item-dark list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">
+          <a class="list-group-item list-group-item-dark list-group-item-action" id="SuperToyBoxList" data-toggle="list" href="#SuperToyBox" role="tab" aria-controls="SuperToyBoxControls">
             Super Toy Box (1 Year)
             <hr class="my-2" style="border-color: grey;">
             <i>December 2016 - December 2017</i>
@@ -65,25 +59,60 @@
       </div>
       <div class="col-8">
         <div class="tab-content" id="nav-tabContent">
-          <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+          <div class="tab-pane fade show active" id="Mobilityware" role="tabpanel" aria-labelledby="MobilitywareList">
+            <div class="container my-4">
+              <div class="card text-white bg-dark">
+                <div class="card-body">
+                  <h5 class="card-title">What I'm Currently Doing</h5>
+                  <p class="card-text">
+                    Currently a <b>Software Engineer II</b> on the <b>Spark Studio - Yellow Team</b>!
+                    <br>We support every project on the Spark Studio side and maintain critical internal and third-party SDKs.
+                    <br>I personally have worked on and been a part of several initiatives related to privacy - CCPA, GDPR, Google CMP, and the like!
+                    <br>
+                    <br>Formally part of several other "color" teams which focused on features and new releases - such as Bubble Shooter Pop!
+                    <br>Have gone through the full release cycle for new games as well as lead critical features through to fruition!
+                  </p>
+                  <a href="https://www.mobilityware.com/" target="_blank" class="btn btn-primary stretched-link">Check out the company website!</a>
+                </div>
+              </div>
+              <div class="row equal">
+                <div class="col-sm-6">
+                  <div class="card bg-dark text-white">
+                    <div class="card-img-overlay">
+                      <a href="https://apps.apple.com/cg/developer/mobilityware/id284117362" target="_blank"><img src="img/work-projects/MobilityWare/Mobilityware_Apple.png" class="img-fluid rounded" alt="Image of Mobilityware Apple Store" style="display: block;margin-left: auto;margin-right: auto;"></a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="card bg-dark text-white">
+                    <div class="card-img-overlay">
+                      <a href="https://play.google.com/store/apps/dev?id=7125885284350687141" target="_blank"><img src="img/work-projects/MobilityWare/Mobilityware_Google.png" class="img-fluid rounded" alt="Image of Mobilityware Google Store" style="display: block;margin-left: auto;margin-right: auto;"></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="Trigger" role="tabpanel" aria-labelledby="TriggerList">
             <div class="card-deck mr-2 my-4">
               <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
               <div class="card text-white bg-dark mb-4">
-                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                <div id="starviewCarousel" class="carousel slide carousel-fade" data-ride="carousel">
                   <div class="carousel-inner">
                     <div class="carousel-item active" data-interval="5000">
-                      <img src="img/work-projects/starviewYardlineStat.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/starviewYardlineStat.jpg" class="d-block w-100" alt="...">
                     </div>
                     <div class="carousel-item" data-interval="5000">
-                      <img src="img/work-projects/starviewFootballTransition.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/starviewFootballTransition.jpg" class="d-block w-100" alt="...">
                     </div>
                     <div class="carousel-item" data-interval="5000">
-                      <img src="img/work-projects/starviewGenericStat.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/starviewGenericStat.jpg" class="d-block w-100" alt="...">
                     </div>
                   </div>
                 </div>
                 <div class="card-body">
-                  <h5 class="card-title">Starview</h5>
+                  <h5 class="card-title">NFL AR - Starview</h5>
                   <ul>
                     <li><b>Description:</b> Live AR Stats for the Dallas Cowboys made with Unity 3D</li>
                     <li><b>Role:</b> Main Developer</li>
@@ -94,19 +123,19 @@
               </div>
               <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
               <div class="card text-white bg-dark mb-4">
-                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                <div id="nhlCarousel" class="carousel slide carousel-fade" data-ride="carousel">
                   <div class="carousel-inner">
                     <div class="carousel-item active" data-interval="5000">
-                      <img src="img/work-projects/nhlARSplash.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/nhlARSplash.jpg" class="d-block w-100" alt="...">
                     </div>
                     <div class="carousel-item" data-interval="5000">
-                      <img src="img/work-projects/nhlARHome.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/nhlARHome.jpg" class="d-block w-100" alt="...">
                     </div>
                     <div class="carousel-item" data-interval="5000">
-                      <img src="img/work-projects/nhlARExample.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/nhlARExample.jpg" class="d-block w-100" alt="...">
                     </div>
                     <div class="carousel-item" data-interval="5000">
-                      <img src="img/work-projects/nhlARPlayerSelected.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" class="d-block w-100" alt="...">
                     </div>
                   </div>
                 </div>
@@ -122,16 +151,16 @@
               </div>
               <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
               <div class="card text-white bg-dark mb-4">
-                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                <div id="nbaCarousel" class="carousel slide carousel-fade" data-ride="carousel">
                   <div class="carousel-inner">
                     <div class="carousel-item active" data-interval="5000">
-                      <img src="img/work-projects/nbaARMain.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/nbaARMain.jpg" class="d-block w-100" alt="...">
                     </div>
                     <div class="carousel-item" data-interval="5000">
-                      <img src="img/work-projects/nbaARTiles.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/nbaARTiles.jpg" class="d-block w-100" alt="...">
                     </div>
                     <div class="carousel-item" data-interval="5000">
-                      <img src="img/work-projects/nbaARExample.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/nbaARExample.jpg" class="d-block w-100" alt="...">
                     </div>
                   </div>
                 </div>
@@ -151,13 +180,13 @@
             <div class="card-deck mr-2 my-4">
               <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
               <div class="card text-white bg-dark mb-4">
-                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                <div id="lenovoMirageCarousel" class="carousel slide carousel-fade" data-ride="carousel">
                   <div class="carousel-inner">
                     <div class="carousel-item active" data-interval="5000">
-                      <img src="img/work-projects/lenovoMirageARMain.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/lenovoMirageARMain.jpg" class="d-block w-100" alt="...">
                     </div>
                     <div class="carousel-item" data-interval="5000">
-                      <img src="img/work-projects/lenovoMirageARExample.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/lenovoMirageARExample.jpg" class="d-block w-100" alt="...">
                     </div>
                   </div>
                 </div>
@@ -165,7 +194,7 @@
                   <h5 class="card-title">Lenovo Mirage AR Games</h5>
                   <p class="card-text">
                     <ul>
-                      <li><b>Description:</b>  AR applications developed for the Lenovo Mirage headset with Unity 3D</li>
+                      <li><b>Description:</b> AR applications developed for the Lenovo Mirage headset with Unity 3D</li>
                       <li><b>Role:</b> Main Developer/Support</li>
                       <li><b>Date:</b> October 2018</li>
                     </ul>
@@ -175,58 +204,54 @@
               </div>
               <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
               <div class="card text-white bg-dark mb-4">
-                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                <div id="gmStarWarsCarousel" class="carousel slide carousel-fade" data-ride="carousel">
                   <div class="carousel-inner">
                     <div class="carousel-item active" data-interval="5000">
-                      <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/generalmills-starwar_main_01.jpeg" class="d-block w-100" alt="...">
                     </div>
                   </div>
                 </div>
                 <div class="card-body">
-                  <h5 class="card-title">Spider-Man: Far From Home AR</h5>
-                  <p>More coming soon!</p>
-                  <a href="https://www.triggerglobal.com/work/spider-man-far-from-home-app" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
+                  <h5 class="card-title">General Mills - Star Wars AR</h5>
+                  <p class="card-text">
+                    <ul>
+                      <li><b>Description:</b> Worked through several iterations of AR placement flow and post-processing effects to make sure we got that "Star Wars" feeling.</li>
+                      <li><b>Role:</b> Developer</li>
+                      <li><b>Date:</b> 2019</li>
+                    </ul>
+                  </p>
+                  <a href="https://www.triggerxr.com/work/general-mills-do-good-for-the-galaxy-ar" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
                 </div>
               </div>
               <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
               <div class="card text-white bg-dark mb-4">
-                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                <div id="moviebillCarousel" class="carousel slide carousel-fade" data-ride="carousel">
                   <div class="carousel-inner">
                     <div class="carousel-item active" data-interval="5000">
-                      <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
-                    </div>
-                  </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title">Celebrity Edge Access Tour</h5>
-                  <p>More coming soon!</p>
-                  <a href="https://www.triggerglobal.com/work/royal-caribbean-celebrity-edge-access-tour-app" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
-                </div>
-              </div>
-            </div>
-            <div class="row mr-2 my-4">
-              <div class="card text-white bg-dark ml-3 mb-4" style="width: 24.5rem;">
-                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
-                  <div class="carousel-inner">
-                    <div class="carousel-item active" data-interval="5000">
-                      <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
+                      <img src="img/work-projects/Trigger/moviebill_feature_main_v02.jpg" class="d-block w-100" alt="...">
                     </div>
                   </div>
                 </div>
                 <div class="card-body">
                   <h5 class="card-title">Moviebill</h5>
-                  <p>More coming soon!</p>
-                  <a href="https://www.triggerglobal.com/work/Moviebill" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
+                  <p class="card-text">
+                    <ul>
+                      <li><b>Description:</b> Supported the team with features such as the asset downloading and management as well as feature release and bug fixes.</li>
+                      <li><b>Role:</b> Developer</li>
+                      <li><b>Date:</b> 2018</li>
+                    </ul>
+                  </p>
+                  <a href="https://www.triggerxr.com/work/moviebill" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+          <div class="tab-pane fade" id="SuperToyBox" role="tabpanel" aria-labelledby="SuperToyBoxList">
             <div class="card-deck mr-2 my-4">
               <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
               <div class="card text-white bg-dark mb-4">
-                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                <div id="subaruWheelstandCarousel" class="carousel slide carousel-fade" data-ride="carousel">
                   <div class="carousel-inner">
                     <div class="carousel-item active" data-interval="5000">
                       <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
@@ -236,12 +261,12 @@
                 <div class="card-body">
                   <h5 class="card-title">Subaru Wheelstand</h5>
                   <p class="card-text">Under Construction</p>
-                  <a href="http://supertoybox.co/works/subaru2/" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
+                  <a href="https://www.offekt.com/supertoybox.html" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
                 </div>
               </div>
               <div class="w-100 d-none d-sm-block d-xl-none"><!-- wrap every 3 on md--></div>
               <div class="card text-white bg-dark mb-4">
-                <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-ride="carousel">
+                <div id="vrFactoryCarousel" class="carousel slide carousel-fade" data-ride="carousel">
                   <div class="carousel-inner">
                     <div class="carousel-item active" data-interval="5000">
                       <img src="img/underconstruction.jpg" class="d-block w-100" alt="...">
@@ -251,7 +276,7 @@
                 <div class="card-body">
                   <h5 class="card-title">VR Factory</h5>
                   <p class="card-text">Under Construction</p>
-                  <a href="http://www.vrfactory.co/" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
+                  <a href="https://www.offekt.com/supertoybox.html" target="_blank" class="btn btn-primary stretched-link">Go to Page</a>
                 </div>
               </div>
             </div>

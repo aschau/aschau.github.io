@@ -25,7 +25,7 @@
   }).join("\n                ");
 
   var navbarHtml =
-    '<nav class="navbar fixed-top navbar-expand-sm navbar-dark" style="background-color: #000000;">' +
+    '<nav class="navbar fixed-top navbar-expand-sm navbar-dark">' +
     '  <a class="navbar-brand link" href="index.html">Andrew Chau | Portfolio</a>' +
     '  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-content">' +
     '    <span class="navbar-toggler-icon"></span>' +
@@ -43,8 +43,17 @@
   }
 
   // Load common footer scripts (jQuery slim, Popper.js, Bootstrap JS).
-  // Call this at the end of <body> to load them in order.
+  // Also injects the footer. Call this at the end of <body>.
   window.loadCommonScripts = function (callback) {
+    // Inject footer (placeholder exists by this point)
+    var footerPlaceholder = document.getElementById("footer-placeholder");
+    if (footerPlaceholder) {
+      footerPlaceholder.innerHTML =
+        '<footer class="site-footer">' +
+        '  <p>&copy; ' + new Date().getFullYear() + ' Andrew Steven Chau. All rights reserved.</p>' +
+        '</footer>';
+    }
+
     var scripts = [
       {
         src: "https://code.jquery.com/jquery-3.3.1.slim.min.js",

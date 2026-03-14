@@ -13,37 +13,38 @@
 
   </head>
 
-  <body style="padding-top: 3rem; background-image: url(img/personal-projects/GameBackground2.jpg); background-attachment: fixed; background-size: cover; background-color: black;">
+  <body class="page-body">
     <div id="navbar-placeholder"></div>
     <script src="js/components.js"></script>
+    <div class="container-fluid content-wrapper">
     <div class="row">
-      <div class="col-4">
-        <div class="list-group sticky-top my-4" style="top: 56px" id="list-tab" role="tablist">
+      <div class="col-12 col-md-4">
+        <div class="list-group sticky-top my-4 sidebar-sticky" id="list-tab" role="tablist">
           <a class="list-group-item list-group-item-dark list-group-item-action active" id="FriendCastleList" data-toggle="list" href="#FriendCastle" role="tab" aria-controls="FriendCastleControls">
             FriendCastle
-            <hr class="my-2" style="border-color: grey;">
+            <hr class="my-2 hr-grey">
             <i>Current</i>
           </a>
           <a class="list-group-item list-group-item-dark list-group-item-action" id="WaxHeartList" data-toggle="list" href="#WaxHeart" role="tab" aria-controls="WaxHeartControls">
             WaxHeart
-            <hr class="my-2" style="border-color: grey;">
+            <hr class="my-2 hr-grey">
             <i>Current</i>
           </a>
           <a class="list-group-item list-group-item-dark list-group-item-action" id="CollegeList" data-toggle="list" href="#College" role="tab" aria-controls="CollegeControls">
             The College Years
-            <hr class="my-2" style="border-color: grey;">
+            <hr class="my-2 hr-grey">
             <i>2013 - 2017</i>
           </a>
         </div>
       </div>
-      <div class="col-8">
+      <div class="col-12 col-md-8">
         <div class="tab-content" id="nav-tabContent">
           <div class="tab-pane fade show active" id="FriendCastle" role="tabpanel" aria-labelledby="FriendCastleList">
             <div class="container my-4">
               <div class="card text-white bg-dark">
                 <div class="card-body">
                   <h5 class="card-title">FriendCastle</h5>
-                  <img class="card-img-top w-50" style="display: block;margin-left: auto; margin-right: auto;" src="img/personal-projects/friendCastleRainbow.png" alt="FriendCastle Splash Image">
+                  <img class="card-img-top w-50 img-center" src="img/personal-projects/friendCastleRainbow.png" alt="FriendCastle Splash Image">
                   <p class="card-text">
                     Currently brewing!
                   </p>
@@ -58,7 +59,7 @@
               <div class="card text-white bg-dark">
                 <div class="card-body">
                   <h5 class="card-title">Waxheart</h5>
-                  <img class="card-img-top w-50" style="display: block;margin-left: auto; margin-right: auto;" src="img/personal-projects/waxheartSplash.jpg" alt="Waxheart Splash Image">
+                  <img class="card-img-top w-50 img-center" src="img/personal-projects/waxheartSplash.jpg" alt="Waxheart Splash Image">
                   <p class="card-text">
                     Currently brewing!
                   </p>
@@ -87,6 +88,11 @@
                       <br>
                       <li><b>Role:</b>
                         <br>&nbsp;&nbsp;&nbsp;&nbsp; Engineer
+                      </li>
+                      <br>
+                      <li><b>Awards:</b>
+                        <br>&nbsp;&nbsp;&nbsp;&nbsp; Award for Creativity — IEEE GameSig, May 2016
+                        <br>&nbsp;&nbsp;&nbsp;&nbsp; Best Game Design — VGDC at UCI, April 2016
                       </li>
                     </p>
                     <a href="https://youtu.be/mqumUz5ktdY" target="_blank" class="btn btn-primary stretched-link">Watch Video</a>
@@ -135,6 +141,10 @@
                       <br>
                       <li><b>Role:</b>
                         <br>&nbsp;&nbsp;&nbsp;&nbsp; Engineer, Designer
+                      </li>
+                      <br>
+                      <li><b>Awards:</b>
+                        <br>&nbsp;&nbsp;&nbsp;&nbsp; 2nd Place — VGDC at UCI, January 2015
                       </li>
                     </p>
                     <a href="https://youtu.be/Pw06Zx9Awik" target="_blank" class="btn btn-primary stretched-link">Watch Video</a>
@@ -298,7 +308,9 @@
         </div>
       </div>
     </div>
-    
+    </div>
+
+    <div id="footer-placeholder"></div>
     <script>loadCommonScripts();</script>
   </body>
 </html>

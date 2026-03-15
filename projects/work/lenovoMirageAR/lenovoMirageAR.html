@@ -1,73 +1,54 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="../../../css/stylesheet.css">
     <title>Andrew Chau | Portfolio</title>
-
-    <nav class="navbar fixed-top navbar-expand-sm navbar-dark" style="background-color: #000000;">
-        <!-- Navbar content -->
-        <a class="navbar-brand link" href="../../../index.html">Andrew Chau | Portfolio</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-content">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="navbar-collapse collapse" id="header-content">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                  <a class="nav-link" href="../../../index.html">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="../../../aboutMe.html">About</a>
-                </li>
-                <li class="nav-item active">
-                  <a class="nav-link" href="../../../workprojects.html">Work <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="../../../personalprojects.html">Personal</a>
-                </li>
-            </ul>
-          </div>
-      </nav>
   </head>
 
-  <body style="padding-top: 3rem; background-image: url(../../../img/personal-projects/GameBackground2.jpg); background-attachment: fixed; background-size: cover; background-color: black;">
-    <div style="background: transparent; color: white;" class="jumbotron my-auto">
-      <h1 class="display-4">Lenovo Mirage AR</h1>
-      <p class="lead">Two of the first games I worked on at <a class="link" target="_blank"style="font-weight: bold; color:white;" href="https://www.triggerxr.com/work/lenovo-mirage-ar-experiences">Trigger Global</a>. Made in Unity 3D.</p>
-      <hr class="my-4" style="border-color: white;">
-      <p>I was the main developer for Shark Week AR with support from one developer. I worked on Break AR as support in implementing a new game mechanic and balancing some of the physics.</p>
-      <p>
-        As the main developer for Shark Week, I handled the app structure and implemented that majority of the user interface. I also helped design and create the mechanics for the feeding activity game.
-        The player would become a shark looking for food by using its senses to find prey. The game would end once the user ran out of calories by not being able to catch any prey.
-        Shark Week was localized into both English and Chinese as it was made specifically for the Chinese market.
-      </p>
-      <p>
-        Break AR was a 3D version of brick pong created in AR space.
-        As support for Break AR, I implemented a new block power up in which the ball could pierce through all the following blocks it encountered until it was bounced again by the paddle.
-        I also assisted in adjusting the physics of the ball slightly to avoid issues with the ball getting stuck in specific areas of the box.
-      </p>
+  <body class="page-body">
+    <div id="navbar-placeholder"></div>
+    <script src="../../../js/components.js"></script>
 
-      <h1 class="display-4">Snapshots</h1>
-      <hr class="my-4" style="border-color: white;">
+    <div class="container my-4">
+      <div class="card text-white bg-dark">
+        <div class="card-body">
+          <h1 class="card-title display-4">Lenovo Mirage AR</h1>
+          <p class="lead lead-white">Two of the first games I worked on at <a class="link-white" target="_blank" href="https://www.triggerxr.com/work/lenovo-mirage-ar-experiences"><b>Trigger Global</b></a>. Made in Unity 3D.</p>
+          <hr class="my-4 hr-white">
+          <p class="card-text">I was the main developer for Shark Week AR with support from one developer. I worked on Break AR as support in implementing a new game mechanic and balancing some of the physics.</p>
+          <p class="card-text">
+            As the main developer for Shark Week, I handled the app structure and implemented the majority of the user interface. I also helped design and create the mechanics for the feeding activity game.
+            The player would become a shark looking for food by using its senses to find prey. The game would end once the user ran out of calories by not being able to catch any prey.
+            Shark Week was localized into both English and Chinese as it was made specifically for the Chinese market.
+          </p>
+          <p class="card-text">
+            Break AR was a 3D version of brick pong created in AR space.
+            As support for Break AR, I implemented a new block power up in which the ball could pierce through all the following blocks it encountered until it was bounced again by the paddle.
+            I also assisted in adjusting the physics of the ball slightly to avoid issues with the ball getting stuck in specific areas of the box.
+          </p>
+        </div>
+      </div>
+    </div>
 
-      <div class="container mx-auto mb-4">
-        <div class="row justify-content-center">
+    <div class="container my-4">
+      <div class="card text-white bg-dark">
+        <div class="card-body">
+          <h5 class="card-title">Snapshots</h5>
+          <div class="row">
             <div class="col-md">
               <div id="sharkweekCarousel" class="carousel slide carousel-fade" data-ride="carousel">
                 <div class="carousel-inner">
                   <div class="carousel-item active" data-interval="3000">
-                    <img src="sharkWeekHome.jpg" class="d-block w-100" alt="...">
+                    <img src="sharkWeekHome.jpg" class="d-block w-100" alt="Shark Week Home">
                   </div>
                   <div class="carousel-item" data-interval="3000">
-                    <img src="sharkWeekLifeSize.jpg" class="d-block w-100" alt="...">
+                    <img src="sharkWeekLifeSize.jpg" class="d-block w-100" alt="Shark Week Life Size">
                   </div>
                   <div class="carousel-item" data-interval="3000">
-                    <img src="sharkWeekFeedingActivity.jpg" class="d-block w-100" alt="...">
+                    <img src="sharkWeekFeedingActivity.jpg" class="d-block w-100" alt="Shark Week Feeding Activity">
                   </div>
                 </div>
                 <a class="carousel-control-prev" href="#sharkweekCarousel" role="button" data-slide="prev">
@@ -84,13 +65,13 @@
               <div id="breakARCarousel" class="carousel slide carousel-fade" data-ride="carousel">
                 <div class="carousel-inner">
                   <div class="carousel-item active" data-interval="3000">
-                    <img src="breakARHome.jpg" class="d-block w-100" alt="...">
+                    <img src="breakARHome.jpg" class="d-block w-100" alt="Break AR Home">
                   </div>
                   <div class="carousel-item" data-interval="3000">
-                    <img src="breakARInstructions.jpg" class="d-block w-100" alt="...">
+                    <img src="breakARInstructions.jpg" class="d-block w-100" alt="Break AR Instructions">
                   </div>
                   <div class="carousel-item" data-interval="3000">
-                    <img src="breakARGame.jpg" class="d-block w-100" alt="...">
+                    <img src="breakARGame.jpg" class="d-block w-100" alt="Break AR Game">
                   </div>
                 </div>
                 <a class="carousel-control-prev" href="#breakARCarousel" role="button" data-slide="prev">
@@ -103,27 +84,27 @@
                 </a>
               </div>
             </div>
-        </div>
-      </div>
-
-      <h1 class="display-4">Videos</h1>
-      <hr class="my-4" style="border-color: white;">
-
-      <div class="container mx-auto mb-4">
-        <div class="row justify-content-center">
-            <div class="col-md">
-              <div class="embed-responsive embed-responsive-16by9" style="height: 30rem">
-                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/DhdP-jgq3sc?si=rJTwy1NJjvGtUGLz" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <div class="container my-4">
+      <div class="card text-white bg-dark">
+        <div class="card-body">
+          <h5 class="card-title">Videos</h5>
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="embed-responsive embed-responsive-16by9 mb-3">
+                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/DhdP-jgq3sc?si=rJTwy1NJjvGtUGLz" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script>loadCommonScripts();</script>
   </body>
 </html>

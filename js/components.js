@@ -3,6 +3,12 @@
 // then include this script. It auto-detects the current page for the active state.
 
 (function () {
+  // Detect base path from this script's src so links work from any directory depth
+  var scripts = document.getElementsByTagName("script");
+  var thisScript = scripts[scripts.length - 1];
+  var scriptSrc = thisScript.getAttribute("src") || "";
+  var basePath = scriptSrc.replace(/js\/components\.js$/, "");
+
   var navItems = [
     { href: "index.html", label: "Home" },
     { href: "aboutMe.html", label: "About" },
@@ -19,14 +25,14 @@
     var srOnly = isActive ? ' <span class="sr-only">(current)</span>' : "";
     return (
       '<li class="nav-item' + activeClass + '">' +
-      '<a class="nav-link" href="' + item.href + '">' + item.label + srOnly + "</a>" +
+      '<a class="nav-link" href="' + basePath + item.href + '">' + item.label + srOnly + "</a>" +
       "</li>"
     );
   }).join("\n                ");
 
   var navbarHtml =
     '<nav class="navbar fixed-top navbar-expand-sm navbar-dark">' +
-    '  <a class="navbar-brand link" href="index.html">Andrew Chau | Portfolio</a>' +
+    '  <a class="navbar-brand link" href="' + basePath + 'index.html">Andrew Chau | Portfolio</a>' +
     '  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-content">' +
     '    <span class="navbar-toggler-icon"></span>' +
     "  </button>" +
@@ -83,5 +89,10 @@
     }
 
     loadNext(0);
+
+    // Load gamification features
+    var gamScript = document.createElement("script");
+    gamScript.src = basePath + "js/gamification.js";
+    document.body.appendChild(gamScript);
   };
 })();

@@ -1,77 +1,61 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="../../../css/stylesheet.css">
     <title>Andrew Chau | Portfolio</title>
-
-    <nav class="navbar fixed-top navbar-expand-sm navbar-dark" style="background-color: #000000;">
-        <!-- Navbar content -->
-        <a class="navbar-brand link" href="../../../index.html">Andrew Chau | Portfolio</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-content">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="navbar-collapse collapse" id="header-content">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                  <a class="nav-link" href="../../../index.html">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="../../../aboutMe.html">About</a>
-                </li>
-                <li class="nav-item active">
-                  <a class="nav-link" href="../../../workprojects.html">Work <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="../../../personalprojects.html">Personal</a>
-                </li>
-            </ul>
-          </div>
-      </nav>
   </head>
 
-  <body style="padding-top: 3rem; background-image: url(../../../img/personal-projects/GameBackground2.jpg); background-attachment: fixed; background-size: cover; background-color: black;">
-    <div style="background: transparent; color: white;" class="jumbotron my-auto">
-      <h1 class="display-4">NHL AR</h1>
-      <p class="lead">My favorite project at <a class="link" target="_blank"style="font-weight: bold; color:white;" href="https://www.triggerxr.com/work/nhl-ar-tabletop-rink-ces-2019-pilot">Trigger Global</a>. Made in Unity 3D.</p>
-      <hr class="my-4" style="border-color: white;">
-      <p>I was the main developer for this application with some support from two developers on implementing some of the user interface.</p>
-      <p>
-        This project was intended as a prototype to showcase a data company named JOGMO which create tracking technology for sports companies to help manage live player statistical data.
-        It was also partnered with Intel to showcase their MEC server system in the rink.
-      </p>
-      <p>I created and maintained the base architecture for the application as well as managed all the necessary API calls and protocols necessary to receive the live data for a game.</p>
-      <p>All of the visual stats you can see in my Live Data Example video below are from an originally live game, including player movement, speeds, and play by plays.
-        I'm also seen showcasing the application in a video in this tweet by NHL from timestamps 0:04 - 0:08 and 0:48 - 0:53.</p>
+  <body class="page-body">
+    <div id="navbar-placeholder"></div>
+    <script src="../../../js/components.js"></script>
 
-      <h1 class="display-4">Videos</h1>
-      <hr class="my-4" style="border-color: white;">
-
-      <div class="container mx-auto mb-4">
-        <div class="row justify-content-center">
-            <div class="col-md">
-              <div class="embed-responsive embed-responsive-16by10" style="height: 29rem">
-                <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Player and puck tracking is here! <a href="https://twitter.com/hashtag/HiTechHockey?src=hash&amp;ref_src=twsrc%5Etfw">#HiTechHockey</a> <br><br>Get to see this <a href="https://twitter.com/SAP?ref_src=twsrc%5Etfw">@SAP</a> technology live during tomorrow night&#39;s <a href="https://twitter.com/Honda?ref_src=twsrc%5Etfw">@Honda</a> <a href="https://twitter.com/hashtag/NHLAllStar?src=hash&amp;ref_src=twsrc%5Etfw">#NHLAllStar</a> Game at 8:00p ET on <a href="https://twitter.com/nbc?ref_src=twsrc%5Etfw">@nbc</a>, <a href="https://twitter.com/CBC?ref_src=twsrc%5Etfw">@CBC</a>, <a href="https://twitter.com/Sportsnet?ref_src=twsrc%5Etfw">@Sportsnet</a> &amp; <a href="https://twitter.com/TVASports?ref_src=twsrc%5Etfw">@TVASports</a>! <a href="https://t.co/uPD8vSSYBM">pic.twitter.com/uPD8vSSYBM</a></p>&mdash; NHL (@NHL) <a href="https://twitter.com/NHL/status/1088906171333922816?ref_src=twsrc%5Etfw">January 25, 2019</a></blockquote>
-                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-              </div>
-            </div>
-            <div class="col-md">
-              <div class="embed-responsive embed-responsive-16by9" style="height: 29rem">
-                <iframe class="embed-responsive-item" src="https://youtube.com/embed/3R9uLoTY9qQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-            </div>
+    <div class="container my-4">
+      <div class="card text-white bg-dark">
+        <div class="card-body">
+          <h1 class="card-title display-4">NHL AR</h1>
+          <p class="lead lead-white">My favorite project at <a class="link-white" target="_blank" href="https://www.triggerxr.com/work/nhl-ar-tabletop-rink-ces-2019-pilot"><b>Trigger Global</b></a>. Made in Unity 3D.</p>
+          <hr class="my-4 hr-white">
+          <p class="card-text">I was the main developer for this application with some support from two developers on implementing some of the user interface.</p>
+          <p class="card-text">
+            This project was intended as a prototype to showcase a data company named JOGMO which create tracking technology for sports companies to help manage live player statistical data.
+            It was also partnered with Intel to showcase their MEC server system in the rink.
+          </p>
+          <p class="card-text">I created and maintained the base architecture for the application as well as managed all the necessary API calls and protocols necessary to receive the live data for a game.</p>
+          <p class="card-text">All of the visual stats you can see in my Live Data Example video below are from an originally live game, including player movement, speeds, and play by plays.
+            I'm also seen showcasing the application in a video in this tweet by NHL from timestamps 0:04 - 0:08 and 0:48 - 0:53.</p>
         </div>
       </div>
+    </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <div class="container my-4">
+      <div class="card text-white bg-dark">
+        <div class="card-body">
+          <h5 class="card-title">Video</h5>
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="embed-responsive embed-responsive-16by9 mb-3">
+                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/3R9uLoTY9qQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container my-4">
+      <div class="card text-white bg-dark">
+        <div class="card-body">
+          <h5 class="card-title">Featured In</h5>
+          <blockquote class="twitter-tweet" data-theme="dark"><p lang="en" dir="ltr">Player and puck tracking is here! <a href="https://twitter.com/hashtag/HiTechHockey?src=hash&amp;ref_src=twsrc%5Etfw">#HiTechHockey</a> <br><br>Get to see this <a href="https://twitter.com/SAP?ref_src=twsrc%5Etfw">@SAP</a> technology live during tomorrow night&#39;s <a href="https://twitter.com/Honda?ref_src=twsrc%5Etfw">@Honda</a> <a href="https://twitter.com/hashtag/NHLAllStar?src=hash&amp;ref_src=twsrc%5Etfw">#NHLAllStar</a> Game at 8:00p ET on <a href="https://twitter.com/nbc?ref_src=twsrc%5Etfw">@nbc</a>, <a href="https://twitter.com/CBC?ref_src=twsrc%5Etfw">@CBC</a>, <a href="https://twitter.com/Sportsnet?ref_src=twsrc%5Etfw">@Sportsnet</a> &amp; <a href="https://twitter.com/TVASports?ref_src=twsrc%5Etfw">@TVASports</a>! <a href="https://t.co/uPD8vSSYBM">pic.twitter.com/uPD8vSSYBM</a></p>&mdash; NHL (@NHL) <a href="https://twitter.com/NHL/status/1088906171333922816?ref_src=twsrc%5Etfw">January 25, 2019</a></blockquote>
+          <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        </div>
+      </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script>loadCommonScripts();</script>
   </body>
 </html>

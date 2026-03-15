@@ -19,6 +19,91 @@
   var path = window.location.pathname;
   var currentPage = path.substring(path.lastIndexOf("/") + 1) || "index.html";
 
+  // === Click burst effect ===
+  document.addEventListener("click", function (e) {
+    // Skip if clicking interactive elements
+    if (e.target.closest("a, button, input, select, textarea, .list-group-item, .nav-link, .carousel, #achievement-toggle, #achievement-panel")) return;
+
+    var burst = document.createElement("div");
+    burst.className = "click-burst";
+    burst.style.left = e.clientX + "px";
+    burst.style.top = e.clientY + "px";
+
+    var count = 8;
+    for (var i = 0; i < count; i++) {
+      var angle = (i / count) * Math.PI * 2;
+      var dist = 20 + Math.random() * 15;
+      var p = document.createElement("div");
+      p.className = "click-burst-particle";
+      p.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+      p.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+      burst.appendChild(p);
+    }
+
+    document.body.appendChild(burst);
+    setTimeout(function () {
+      if (burst.parentNode) burst.parentNode.removeChild(burst);
+    }, 600);
+  });
+
+  // === Loading screen (once per session) ===
+  var loadingShown = false;
+  try { loadingShown = sessionStorage.getItem("loading_shown") === "true"; } catch (e) {}
+
+  if (!loadingShown) {
+    var tips = [
+      "Shipped 30+ mobile titles at MobilityWare",
+      "Compiling shaders...",
+      "First game was built in Python at UCI",
+      "Rolling for initiative...",
+      "Worked on Hearthstone at Blizzard",
+      "Loading AR experiences...",
+      "Former QA tester on Persona 5 Royal",
+      "Spawning starfield particles...",
+      "Built a Discord bot that talks to Jenkins",
+      "Optimizing draw calls..."
+    ];
+
+    var overlay = document.createElement("div");
+    overlay.id = "loading-screen";
+    overlay.innerHTML =
+      '<div class="loading-content">' +
+        '<h1 class="loading-title">Andrew Chau</h1>' +
+        '<div class="loading-bar-track">' +
+          '<div class="loading-bar-fill" id="loading-bar-fill"></div>' +
+        '</div>' +
+        '<p class="loading-tip" id="loading-tip">' + tips[0] + '</p>' +
+      '</div>';
+    document.body.insertBefore(overlay, document.body.firstChild);
+
+    // Cycle tips
+    var tipIndex = 0;
+    var tipEl = document.getElementById("loading-tip");
+    var tipInterval = setInterval(function () {
+      tipIndex = (tipIndex + 1) % tips.length;
+      tipEl.style.opacity = "0";
+      setTimeout(function () {
+        tipEl.textContent = tips[tipIndex];
+        tipEl.style.opacity = "1";
+      }, 200);
+    }, 800);
+
+    // Animate progress bar
+    var fill = document.getElementById("loading-bar-fill");
+    setTimeout(function () { fill.style.width = "100%"; }, 50);
+
+    // Fade out after bar fills
+    setTimeout(function () {
+      clearInterval(tipInterval);
+      overlay.classList.add("loading-fade-out");
+      setTimeout(function () {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      }, 600);
+      try { sessionStorage.setItem("loading_shown", "true"); } catch (e) {}
+    }, 2800);
+  }
+
+  // === Navbar ===
   var navLinksHtml = navItems.map(function (item) {
     var isActive = currentPage === item.href;
     var activeClass = isActive ? " active" : "";

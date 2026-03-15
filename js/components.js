@@ -19,6 +19,23 @@
   var path = window.location.pathname;
   var currentPage = path.substring(path.lastIndexOf("/") + 1) || "index.html";
 
+  // === Game-inspired floating particles ===
+  (function () {
+    var shapes = ["card-shape", "diamond-shape", "grid-dot", "cross-shape", "card-shape", "diamond-shape", "grid-dot"];
+    var container = document.createElement("div");
+    container.className = "game-particles";
+    document.body.appendChild(container);
+
+    for (var i = 0; i < 90; i++) {
+      var p = document.createElement("div");
+      p.className = "game-particle " + shapes[i % shapes.length];
+      p.style.left = (Math.random() * 100) + "%";
+      p.style.animationDuration = (25 + Math.random() * 40) + "s";
+      p.style.animationDelay = -(Math.random() * 60) + "s";
+      container.appendChild(p);
+    }
+  })();
+
   // === Click burst effect ===
   document.addEventListener("click", function (e) {
     // Skip if clicking interactive elements
@@ -142,6 +159,7 @@
       footerPlaceholder.innerHTML =
         '<footer class="site-footer">' +
         '  <p>&copy; ' + new Date().getFullYear() + ' Andrew Steven Chau. All rights reserved.</p>' +
+        '  <p style="font-size:0.7rem;opacity:0.5;">Character sprite by LPC contributors via <a href="https://opengameart.org/content/lpc-character-bases" style="color:#8b9aff;">OpenGameArt.org</a>, licensed under CC-BY-SA 3.0 / OGA-BY 3.0</p>' +
         '</footer>';
     }
 

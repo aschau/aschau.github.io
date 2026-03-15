@@ -31,68 +31,9 @@ body
 	min-height: 100vh;
 }
 
-/* Subtle floating starfield particles */
-.page-body::before,
-.page-body::after {
-	content: '';
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	pointer-events: none;
-	z-index: 0;
-}
-
-.page-body::before {
-	background-image:
-		radial-gradient(1.5px 1.5px at 10% 15%, rgba(255,255,255,0.7), transparent),
-		radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.55), transparent),
-		radial-gradient(1.5px 1.5px at 40% 70%, rgba(255,255,255,0.6), transparent),
-		radial-gradient(1px 1px at 55% 20%, rgba(255,255,255,0.5), transparent),
-		radial-gradient(2px 2px at 70% 55%, rgba(255,255,255,0.7), transparent),
-		radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.55), transparent),
-		radial-gradient(1.5px 1.5px at 15% 85%, rgba(255,255,255,0.45), transparent),
-		radial-gradient(1px 1px at 60% 45%, rgba(255,255,255,0.6), transparent),
-		radial-gradient(2px 2px at 90% 10%, rgba(255,255,255,0.5), transparent),
-		radial-gradient(1px 1px at 35% 50%, rgba(255,255,255,0.5), transparent),
-		radial-gradient(2px 2px at 5% 60%, rgba(180,200,255,0.6), transparent),
-		radial-gradient(2px 2px at 75% 30%, rgba(180,200,255,0.5), transparent),
-		radial-gradient(1.5px 1.5px at 50% 90%, rgba(255,255,255,0.55), transparent),
-		radial-gradient(1px 1px at 20% 5%, rgba(255,255,255,0.6), transparent),
-		radial-gradient(1.5px 1.5px at 80% 95%, rgba(180,200,255,0.45), transparent),
-		radial-gradient(1px 1px at 45% 30%, rgba(255,255,255,0.5), transparent),
-		radial-gradient(2px 2px at 30% 60%, rgba(180,200,255,0.55), transparent),
-		radial-gradient(1px 1px at 65% 10%, rgba(255,255,255,0.6), transparent);
-	background-size: 300px 300px;
-	animation: drift 90s linear infinite;
-}
-
-.page-body::after {
-	background-image:
-		radial-gradient(1.5px 1.5px at 12% 40%, rgba(255,255,255,0.6), transparent),
-		radial-gradient(1px 1px at 30% 10%, rgba(255,255,255,0.5), transparent),
-		radial-gradient(2px 2px at 48% 65%, rgba(180,200,255,0.55), transparent),
-		radial-gradient(1.5px 1.5px at 65% 85%, rgba(255,255,255,0.45), transparent),
-		radial-gradient(1px 1px at 82% 25%, rgba(255,255,255,0.6), transparent),
-		radial-gradient(1.5px 1.5px at 95% 55%, rgba(255,255,255,0.5), transparent),
-		radial-gradient(2px 2px at 22% 75%, rgba(180,200,255,0.5), transparent),
-		radial-gradient(1px 1px at 58% 5%, rgba(255,255,255,0.55), transparent),
-		radial-gradient(1.5px 1.5px at 40% 90%, rgba(255,255,255,0.5), transparent),
-		radial-gradient(1px 1px at 75% 50%, rgba(180,200,255,0.45), transparent),
-		radial-gradient(2px 2px at 8% 20%, rgba(255,255,255,0.6), transparent),
-		radial-gradient(1px 1px at 88% 70%, rgba(255,255,255,0.5), transparent);
-	background-size: 400px 400px;
-	animation: drift 120s linear infinite reverse;
-}
-
-@keyframes drift {
-	from { transform: translateY(0); }
-	to { transform: translateY(-300px); }
-}
 
 /* Ensure page content sits above the particle layers */
-.page-body > *:not(#navbar-placeholder):not(script):not(#exploration-progress):not(#achievement-toast-container):not(#achievement-toggle):not(#achievement-panel):not(.click-burst):not(#loading-screen) {
+.page-body > *:not(#navbar-placeholder):not(script):not(#exploration-progress):not(#achievement-toast-container):not(#achievement-toggle):not(#achievement-panel):not(.click-burst):not(#loading-screen):not(.game-particles) {
 	position: relative;
 	z-index: 1;
 }
@@ -319,24 +260,40 @@ body
 	#exploration-progress {
 		z-index: 1020 !important;
 	}
-	/* Achievement button behind navbar dropdown */
-	#achievement-toggle, #achievement-panel {
+	/* Achievement — bottom right on mobile */
+	#achievement-toggle {
 		z-index: 1020 !important;
+		top: auto !important;
+		bottom: 20px !important;
+	}
+	#achievement-panel {
+		z-index: 1020 !important;
+		top: auto !important;
+		bottom: 74px !important;
+	}
+	#achievement-toast-container {
+		top: auto !important;
+		bottom: 80px !important;
+		flex-direction: column !important;
 	}
 
-	/* Skills: category label on its own line, badges wrap naturally */
+	/* Skills: single centered column */
+	.skill-row {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		margin-bottom: 0.5rem;
+	}
 	.skill-category {
-		min-width: 100%;
+		min-width: auto;
+		font-size: 0.8rem;
 		margin-bottom: 0.2rem;
-		font-size: 0.85rem;
 	}
 	.skill-badge {
-		padding: 0.3rem 0.7rem;
-		font-size: 0.78rem;
-		margin: 0.2rem;
-	}
-	.skill-row {
-		margin-bottom: 0.6rem;
+		padding: 0.25rem 0.55rem;
+		font-size: 0.72rem;
+		margin: 0.15rem;
 	}
 
 	/* Sidebar items */
@@ -410,7 +367,8 @@ body
 #achievement-toggle,
 #achievement-panel,
 .click-burst,
-#loading-screen {
+#loading-screen,
+.game-particles {
 	flex: none;
 }
 
@@ -625,6 +583,85 @@ body
 	cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%238b9aff' stroke-width='1.5' opacity='0.8'/%3E%3Cline x1='12' y1='4' x2='12' y2='8' stroke='%238b9aff' stroke-width='1.5'/%3E%3Cline x1='12' y1='16' x2='12' y2='20' stroke='%238b9aff' stroke-width='1.5'/%3E%3Cline x1='4' y1='12' x2='8' y2='12' stroke='%238b9aff' stroke-width='1.5'/%3E%3Cline x1='16' y1='12' x2='20' y2='12' stroke='%238b9aff' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%238b9aff'/%3E%3C/svg%3E") 12 12, crosshair;
 }
 
+/* === Game-inspired floating particles === */
+.game-particles {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 0;
+	overflow: hidden;
+}
+.game-particle {
+	position: absolute;
+	opacity: 0.4;
+	animation: particleFloat linear infinite;
+}
+.game-particle:nth-child(odd) {
+	opacity: 0.25;
+}
+/* Card shape — nod to Hearthstone/Solitaire */
+.game-particle.card-shape {
+	width: 12px;
+	height: 17px;
+	border: 1.5px solid rgba(180,200,255,0.6);
+	border-radius: 2px;
+}
+/* Diamond/gem shape */
+.game-particle.diamond-shape {
+	width: 10px;
+	height: 10px;
+	border: 1.5px solid rgba(140,120,255,0.6);
+	transform: rotate(45deg);
+}
+/* AR grid dot */
+.game-particle.grid-dot {
+	width: 3px;
+	height: 3px;
+	background: rgba(0,200,220,0.5);
+	border-radius: 50%;
+}
+/* Controller/gamepad shape — small cross */
+.game-particle.cross-shape {
+	width: 10px;
+	height: 10px;
+	position: absolute;
+}
+.game-particle.cross-shape::before,
+.game-particle.cross-shape::after {
+	content: '';
+	position: absolute;
+	background: rgba(180,200,255,0.5);
+	border-radius: 1px;
+}
+.game-particle.cross-shape::before {
+	width: 100%;
+	height: 2px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+.game-particle.cross-shape::after {
+	width: 2px;
+	height: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+@keyframes particleFloat {
+	0% {
+		transform: translateY(105vh) rotate(0deg);
+		opacity: 0;
+	}
+	5% { opacity: 0.35; }
+	95% { opacity: 0.35; }
+	100% {
+		transform: translateY(-5vh) rotate(360deg);
+		opacity: 0;
+	}
+}
+
 /* === Click burst effect === */
 .click-burst {
 	position: fixed;
@@ -706,6 +743,52 @@ body
 	padding: 1rem 0 0;
 	width: 100%;
 }
+/* Pixel character walking along timeline */
+.timeline-character {
+	position: absolute;
+	width: 64px;
+	height: 64px;
+	background: url('../img/character-spritesheet.png') 0 -704px;
+	background-size: 832px 3456px;
+	image-rendering: pixelated;
+	animation: spriteWalk 0.6s steps(9) infinite;
+	top: -8px;
+	z-index: 3;
+	pointer-events: none;
+}
+@keyframes spriteWalk {
+	from { background-position-x: 0; }
+	to { background-position-x: -576px; }
+}
+.timeline-character.idle {
+	background-position: 0 -640px;
+	animation: none;
+}
+
+/* Sprite on about me page */
+.about-sprite {
+	width: 64px;
+	height: 64px;
+	background: url('../img/character-spritesheet.png') 0 -640px;
+	background-size: 832px 3456px;
+	image-rendering: pixelated;
+	animation: spriteWalk 0.6s steps(9) infinite;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 0.5rem;
+}
+
+/* 404 page sprite */
+.sprite-404 {
+	width: 128px;
+	height: 128px;
+	background: url('../img/character-spritesheet.png') 0 -1280px;
+	background-size: 1664px 6912px;
+	image-rendering: pixelated;
+	margin: 2rem auto;
+	display: block;
+}
+
 .timeline-heading {
 	text-align: center;
 	text-transform: uppercase;
@@ -725,11 +808,16 @@ body
 .timeline::before {
 	content: '';
 	position: absolute;
-	top: 34px;
+	top: calc(1.5rem + 16px);
 	left: 1.5rem;
 	right: 1.5rem;
 	height: 2px;
 	background: linear-gradient(90deg, rgba(100,120,255,0.1), rgba(100,120,255,0.4), rgba(100,120,255,0.1));
+	z-index: 0;
+}
+.timeline-info {
+	position: relative;
+	z-index: 1;
 }
 .timeline-entry {
 	display: flex;
@@ -742,29 +830,28 @@ body
 	flex-shrink: 0;
 }
 .timeline-node {
-	width: 22px;
-	height: 22px;
+	width: 36px;
+	height: 36px;
 	border-radius: 50%;
-	background: rgba(100,120,255,0.3);
-	border: 2px solid rgba(100,120,255,0.6);
+	background: color-mix(in srgb, var(--node-color, #8b9aff) 40%, #0a0a2e);
+	border: 2px solid var(--node-color, #8b9aff);
 	position: relative;
 	z-index: 2;
 	transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.55rem;
+	font-weight: 700;
+	color: var(--node-color, #8b9aff);
+	letter-spacing: 0.02em;
 }
 .timeline-entry:hover .timeline-node,
 .timeline-entry.active .timeline-node {
-	transform: scale(1.4);
-	background: rgba(100,120,255,0.7);
-	box-shadow: 0 0 16px rgba(100,120,255,0.5);
-}
-.timeline-entry.current .timeline-node {
-	background: rgba(100,200,120,0.5);
-	border-color: rgba(100,200,120,0.8);
-}
-.timeline-entry.current:hover .timeline-node,
-.timeline-entry.current.active .timeline-node {
-	background: rgba(100,200,120,0.7);
-	box-shadow: 0 0 16px rgba(100,200,120,0.5);
+	transform: scale(1.3);
+	background: color-mix(in srgb, var(--node-color, #8b9aff) 50%, transparent);
+	box-shadow: 0 0 18px color-mix(in srgb, var(--node-color, #8b9aff) 50%, transparent);
+	color: white;
 }
 .timeline-date {
 	font-size: 0.8rem;
@@ -779,6 +866,11 @@ body
 	margin-top: 4px;
 	text-align: center;
 	white-space: nowrap;
+	transition: color 0.3s ease;
+}
+.timeline-entry:hover .timeline-company,
+.timeline-entry.active .timeline-company {
+	color: var(--node-color, white);
 }
 .timeline-role {
 	font-size: 0.8rem;
@@ -873,7 +965,7 @@ body
 	to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* Mobile: vertical timeline */
+/* Mobile: vertical centered timeline */
 @media (max-width: 767px) {
 	.timeline-container {
 		overflow-x: visible;
@@ -881,40 +973,42 @@ body
 	}
 	.timeline {
 		flex-direction: column;
-		align-items: flex-start;
+		align-items: center;
 		min-width: auto;
-		padding: 0 0 0 2rem;
+		padding: 1rem 0 2rem;
 	}
 	.timeline::before {
-		top: 0;
-		bottom: 0;
-		left: 2rem;
+		top: 1rem;
+		bottom: 2rem;
+		left: 50%;
 		right: auto;
 		width: 2px;
 		height: auto;
+		transform: translateX(-1px);
 		background: linear-gradient(180deg, rgba(100,120,255,0.1), rgba(100,120,255,0.4), rgba(100,120,255,0.1));
 	}
 	.timeline-entry {
-		flex-direction: row;
+		flex-direction: column;
 		align-items: center;
+		text-align: center;
 		min-width: auto;
 		margin-bottom: 1.5rem;
-		gap: 12px;
 	}
 	.timeline-node {
 		flex-shrink: 0;
 	}
 	.timeline-info {
-		text-align: left;
+		text-align: center;
 	}
 	.timeline-company {
-		text-align: left;
+		text-align: center;
 	}
 	.timeline-detail {
 		position: static;
 		transform: none;
 		margin-top: 8px;
-		width: 100%;
+		width: 280px;
+		max-width: 90vw;
 	}
 	.timeline-entry.active .timeline-detail {
 		animation: none;

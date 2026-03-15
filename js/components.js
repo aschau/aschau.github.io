@@ -69,17 +69,42 @@
 
   if (!loadingShown) {
     var tips = [
-      "Shipped 30+ mobile titles at MobilityWare",
-      "Compiling shaders...",
-      "First game was built in Python at UCI",
-      "Rolling for initiative...",
-      "Worked on Hearthstone at Blizzard",
-      "Loading AR experiences...",
-      "Former QA tester on Persona 5 Royal",
-      "Spawning starfield particles...",
-      "Built a Discord bot that talks to Jenkins",
-      "Optimizing draw calls..."
+      "Augmenting your reality...",
+      "Shuffling the deck...",
+      "Deploying to the field...",
+      "Dealing a fresh hand...",
+      "Scanning the environment...",
+      "Patching things up...",
+      "Calibrating the looking glass...",
+      "Building from the ground up...",
+      "Stitching worlds together...",
+      "Reading the room...",
+      "Polishing the final build...",
+      "Warming up the engine...",
+      "Syncing realities...",
+      "Flipping through the archives...",
+      "Spawning into the world...",
+      "Placing the last piece...",
+      "Bridging dimensions...",
+      "Rendering a new perspective...",
+      "Running the pipeline...",
+      "Anchoring to the real world...",
+      "Opening the tavern doors...",
+      "Drawing from the top...",
+      "Tracking every surface...",
+      "Compiling the scene...",
+      "Checking every edge case...",
+      "Overlaying the impossible...",
+      "Shipping to the store...",
+      "Setting up courtside...",
+      "Stacking the deck in your favor...",
+      "Reproducing on all devices..."
     ];
+    // Shuffle tips so each load feels different
+    for (var i = tips.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = tips[i]; tips[i] = tips[j]; tips[j] = tmp;
+    }
 
     var overlay = document.createElement("div");
     overlay.id = "loading-screen";

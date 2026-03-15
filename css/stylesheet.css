@@ -97,6 +97,17 @@ body
 	z-index: 1;
 }
 
+/* Keep bullet points inside card boundaries */
+.card-body ul {
+	padding-left: 1.2rem;
+	margin-left: 0;
+}
+.card-body li, .card-text li {
+	padding-left: 0.2rem;
+	margin-left: 1rem;
+	list-style-position: inside;
+}
+
 /* Constrain single cards that shouldn't stretch full width */
 .card-narrow {
 	max-width: 33.5rem;
@@ -154,6 +165,8 @@ body
 	-webkit-backdrop-filter: blur(12px);
 	border: 1px solid rgba(255,255,255,0.1);
 	border-radius: 12px;
+	overflow: hidden;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Glassmorphism sidebar list items */
@@ -163,6 +176,7 @@ body
 	-webkit-backdrop-filter: blur(12px);
 	border-color: rgba(255,255,255,0.1);
 	color: #ccc;
+	transition: transform 0.2s ease, background 0.2s ease;
 }
 .page-body .list-group-item-dark.active {
 	background: rgba(255,255,255,0.12) !important;
@@ -198,4 +212,188 @@ body
 }
 .site-footer a:hover {
 	color: white;
+}
+
+/* Consistent carousel image sizing */
+.carousel-inner {
+	background: rgba(0,0,0,0.3);
+}
+.carousel-item {
+	aspect-ratio: 16 / 9;
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0,0,0,0.3);
+}
+.carousel-item:not(.active) {
+	display: none !important;
+}
+.carousel-inner img {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+}
+
+/* Card hover effect */
+.page-body .card.bg-dark:hover,
+.page-body .card.text-white.bg-dark:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 8px 32px rgba(100, 120, 255, 0.15);
+}
+
+/* Hero section */
+.hero-section {
+	text-align: center;
+	padding: 4rem 1rem 2rem;
+	background: transparent;
+	color: white;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.hero-name {
+	font-size: 3.5rem;
+	font-weight: 700;
+	margin-bottom: 0.5rem;
+	color: white;
+}
+
+.hero-typing {
+	font-size: 1.5rem;
+	color: rgba(180, 200, 255, 0.9);
+	min-height: 2.5rem;
+}
+
+.hero-cursor {
+	display: inline;
+	animation: blink 1s step-end infinite;
+}
+
+.hero-tagline {
+	font-size: 1.1rem;
+	color: rgba(255, 255, 255, 0.6);
+	margin-top: 1rem;
+}
+
+@keyframes blink {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0; }
+}
+
+@media (max-width: 767px) {
+	/* Hero */
+	.hero-name {
+		font-size: 2.5rem;
+	}
+	.hero-typing {
+		font-size: 1.1rem;
+	}
+
+	/* Global mobile text sizing */
+	.jumbotron-transparent .display-4 {
+		font-size: 1.6rem;
+	}
+	.jumbotron-transparent .lead {
+		font-size: 0.95rem;
+	}
+	.card-title {
+		font-size: 1.1rem;
+	}
+	.card-text {
+		font-size: 0.9rem;
+	}
+
+	/* Tighter spacing on mobile */
+	.container, .container-fluid {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+	.card-body {
+		padding: 0.85rem;
+	}
+	.card-deck {
+		margin-left: -0.5rem !important;
+		margin-right: -0.5rem !important;
+	}
+
+	/* Skills: category label on its own line, badges wrap naturally */
+	.skill-category {
+		min-width: 100%;
+		margin-bottom: 0.2rem;
+		font-size: 0.85rem;
+	}
+	.skill-badge {
+		padding: 0.3rem 0.7rem;
+		font-size: 0.78rem;
+		margin: 0.2rem;
+	}
+	.skill-row {
+		margin-bottom: 0.6rem;
+	}
+
+	/* Sidebar items */
+	.list-group-item {
+		padding: 0.6rem 0.85rem;
+		font-size: 0.9rem;
+	}
+}
+
+/* Skill badge styles */
+.skill-badge {
+	display: inline-block;
+	padding: 0.4rem 0.9rem;
+	margin: 0.3rem;
+	border-radius: 20px;
+	background: rgba(100, 120, 255, 0.15);
+	color: rgba(200, 210, 255, 0.9);
+	border: 1px solid rgba(100, 120, 255, 0.25);
+	font-size: 0.85rem;
+}
+.skill-badge:hover {
+	background: rgba(100, 120, 255, 0.3);
+	color: white;
+}
+
+.skill-category {
+	color: rgba(180, 200, 255, 0.8);
+	font-weight: 600;
+	font-size: 0.9rem;
+	min-width: 140px;
+}
+
+.skill-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	margin-bottom: 0.5rem;
+}
+
+/* Social link icons */
+.social-links {
+	display: flex;
+	justify-content: center;
+	gap: 1.5rem;
+}
+
+.social-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	background: rgba(255,255,255,0.08);
+	border: 1px solid rgba(255,255,255,0.15);
+	color: rgba(200,210,255,0.9);
+	font-size: 1.4rem;
+	transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.social-icon:hover {
+	background: rgba(100,120,255,0.25);
+	color: white;
+	transform: translateY(-3px);
+	text-decoration: none;
 }

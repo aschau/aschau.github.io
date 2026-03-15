@@ -16,10 +16,44 @@
   <body class="page-body">
     <div id="navbar-placeholder"></div>
     <script src="js/components.js"></script>
-    <div class="jumbotron jumbotron-transparent my-auto">
-      <h1 class="display-4">What's up, my main?</h1>
-      <p class="lead">My name is <a href="aboutMe.html" class="link-white"><b>Andrew Steven Chau</b></a> and welcome to my portfolio website.</p>
+    <div class="hero-section my-auto">
+      <h1 class="hero-name"><a href="aboutMe.html" class="link-white">Andrew Chau</a></h1>
+      <div class="hero-typing">
+        <span id="typing-text"></span><span class="hero-cursor">|</span>
+      </div>
+      <p class="hero-tagline">From QA to shipping AR experiences to maintaining some of the best card games on the app stores.</p>
       <hr class="my-4 hr-white">
+      <script>
+        (function() {
+          var roles = ["Senior Software Engineer", "AR/XR Developer", "Game Developer", "Indie Developer"];
+          var el = document.getElementById("typing-text");
+          var roleIndex = 0, charIndex = 0, deleting = false;
+          function tick() {
+            var current = roles[roleIndex];
+            if (!deleting) {
+              el.textContent = current.substring(0, charIndex + 1);
+              charIndex++;
+              if (charIndex === current.length) {
+                deleting = true;
+                setTimeout(tick, 1800);
+                return;
+              }
+              setTimeout(tick, 80);
+            } else {
+              el.textContent = current.substring(0, charIndex - 1);
+              charIndex--;
+              if (charIndex === 0) {
+                deleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+                setTimeout(tick, 400);
+                return;
+              }
+              setTimeout(tick, 40);
+            }
+          }
+          tick();
+        })();
+      </script>
     </div>
 
     <div class="card-deck mx-5 mb-5">
@@ -30,7 +64,7 @@
               <img src="img/work-projects/Trigger/nbaARTiles.jpg" class="d-block w-100" alt="...">
             </div>
             <div class="carousel-item" data-interval="3000">
-              <img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" class="d-block w-75 img-center" alt="...">
+              <img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" class="d-block w-100" alt="...">
             </div>
             <div class="carousel-item" data-interval="3000">
               <img src="img/work-projects/Trigger/generalmills-starwar_main_01.jpeg" class="d-block w-100" alt="...">
@@ -53,10 +87,10 @@
         <div id="carouselPersonal" class="carousel slide carousel-fade" data-ride="carousel">
           <div class="carousel-inner">
             <div class="carousel-item active" data-interval="3000">
-              <img src="img/personal-projects/spookyspoils.jpg" class="d-block w-75 img-center" alt="...">
+              <img src="img/personal-projects/spookyspoils.jpg" class="d-block w-100" alt="...">
             </div>
             <div class="carousel-item" data-interval="3000">
-              <img src="img/personal-projects/friendCastleGreen.png" class="d-block w-50 img-center" alt="...">
+              <img src="img/personal-projects/friendCastleRainbow.png" class="d-block w-100" alt="...">
             </div>
             <div class="carousel-item" data-interval="3000">
               <img src="img/personal-projects/gnomeHunt.png" class="d-block w-100" alt="...">

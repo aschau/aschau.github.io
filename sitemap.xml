@@ -32,4 +32,8 @@
     <loc>https://aschau.github.io/projects/work/lenovoMirageAR/lenovoMirageAR.html</loc>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://aschau.github.io/projects/personal/portfolio.html</loc>
+    <priority>0.6</priority>
+  </url>
 </urlset>

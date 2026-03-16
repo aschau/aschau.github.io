@@ -109,6 +109,55 @@ body
 	max-width: 33.5rem;
 }
 
+/* Portfolio evolution vertical line */
+.portfolio-evolution {
+	position: relative;
+	padding: 1rem 1rem 1rem 2.5rem;
+}
+
+.portfolio-evolution::before {
+	content: '';
+	position: absolute;
+	left: 1.25rem;
+	top: 2.5rem;
+	bottom: 2.5rem;
+	width: 2px;
+	background: linear-gradient(to bottom, var(--color-primary), var(--color-primary-light), var(--color-primary));
+	opacity: 0.4;
+}
+
+.portfolio-evolution-item {
+	position: relative;
+	margin-bottom: 1.5rem;
+}
+
+.portfolio-evolution-item:last-child {
+	margin-bottom: 0;
+}
+
+.portfolio-evolution-item::before {
+	content: '';
+	position: absolute;
+	left: -1.75rem;
+	top: 1.5rem;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--color-primary);
+	border: 2px solid var(--color-primary-light);
+	box-shadow: 0 0 8px rgba(var(--color-primary-rgb), 0.5);
+}
+
+.portfolio-evolution-year {
+	display: inline-block;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--color-primary-light);
+	letter-spacing: 0.05em;
+	margin-bottom: 0.5rem;
+	text-transform: uppercase;
+}
+
 /* Center images horizontally */
 .img-center {
 	display: block;

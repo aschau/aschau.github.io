@@ -314,7 +314,7 @@ body
 
 	/* Progress bar behind navbar dropdown on mobile */
 	#exploration-progress {
-		z-index: var(--z-nav) !important;
+		z-index: calc(var(--z-nav) - 1) !important;
 	}
 	/* Achievement — bottom right on mobile */
 	#achievement-toggle {

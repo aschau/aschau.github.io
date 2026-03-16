@@ -220,6 +220,17 @@
 
     var expandedSet = {};
 
+    // Pre-seed with auto-expanded entry (Blizzard on desktop, UCI on mobile)
+    var timeline = document.getElementById("career-timeline");
+    if (timeline) {
+      var entries = timeline.querySelectorAll(".timeline-entry");
+      entries.forEach(function (entry, idx) {
+        if (entry.classList.contains("active")) {
+          expandedSet[idx] = true;
+        }
+      });
+    }
+
     document.addEventListener("click", function (e) {
       var entry = e.target.closest(".timeline-entry");
       if (!entry) return;

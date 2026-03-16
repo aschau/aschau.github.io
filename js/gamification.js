@@ -5,11 +5,14 @@
   var STORAGE_PAGES = "portfolio_pages_visited";
 
   var ACHIEVEMENTS = {
-    explorer:     { title: "Explorer",      desc: "Visited all 4 pages",              icon: "\uD83E\uDDED" },
-    curious:      { title: "Curious",       desc: "Clicked an external link",         icon: "\uD83D\uDD0D" },
-    "night-owl":  { title: "Night Owl",     desc: "Visited after 10 PM",              icon: "\uD83C\uDF19" },
-    "speed-reader": { title: "Speed Reader", desc: "Scrolled to the bottom in under 5s", icon: "\u26A1" },
-    "deep-diver":   { title: "Deep Diver",   desc: "Visited a project detail page",     icon: "\uD83E\uDD3F" }
+    explorer:     { title: "Explorer",      desc: "Visited all 4 pages",              hint: "Visit every main page...",              icon: "\uD83E\uDDED" },
+    curious:      { title: "Curious",       desc: "Clicked an external link",         hint: "Follow a link to the outside...",       icon: "\uD83D\uDD0D" },
+    "night-owl":  { title: "Night Owl",     desc: "Visited after 10 PM",              hint: "Come back when the moon is out...",     icon: "\uD83C\uDF19" },
+    "speed-reader": { title: "Speed Reader", desc: "Scrolled to the bottom in under 10s", hint: "Reach the bottom before time runs out...", icon: "\u26A1" },
+    "deep-diver":   { title: "Deep Diver",   desc: "Visited a project detail page",     hint: "Go deeper into a project...",           icon: "\uD83E\uDD3F" },
+    "timeline-historian": { title: "Timeline Historian", desc: "Expanded all timeline entries", hint: "Explore every chapter of the journey...", icon: "\uD83D\uDCDC" },
+    "skill-scout":  { title: "Skill Scout",  desc: "Visited the About page",           hint: "Learn more about who I am...",          icon: "\uD83C\uDFAF" },
+    "social-butterfly": { title: "Social Butterfly", desc: "Clicked a social profile link", hint: "Connect on social media...",           icon: "\uD83E\uDD8B" }
   };
 
   // === Storage Helpers ===
@@ -135,6 +138,11 @@
     if (mainCount >= 4) {
       unlockAchievement("explorer");
     }
+
+    // Skill Scout — visited aboutMe.html
+    if (page === "aboutMe.html") {
+      unlockAchievement("skill-scout");
+    }
   }
 
   // === Achievement Triggers ===
@@ -155,7 +163,7 @@
     function onScroll() {
       if (unlocked) return;
       var atBottom = (window.innerHeight + window.pageYOffset) >= (document.body.offsetHeight - 100);
-      if (atBottom && (Date.now() - startTime) < 5000) {
+      if (atBottom && (Date.now() - startTime) < 10000) {
         unlocked = true;
         unlockAchievement("speed-reader");
         window.removeEventListener("scroll", onScroll);
@@ -164,12 +172,12 @@
 
     window.addEventListener("scroll", onScroll);
 
-    // Clean up listener after 5 seconds if not triggered
+    // Clean up listener after threshold if not triggered
     setTimeout(function () {
       if (!unlocked) {
         window.removeEventListener("scroll", onScroll);
       }
-    }, 5000);
+    }, 10000);
   }
 
   function checkDeepDiver() {
@@ -191,6 +199,42 @@
       var link = e.target.closest('a[target="_blank"]');
       if (link) {
         unlockAchievement("curious");
+      }
+    });
+  }
+
+  function initSocialButterfly() {
+    document.addEventListener("click", function (e) {
+      var link = e.target.closest('.social-icon, a.social-link');
+      if (link) {
+        unlockAchievement("social-butterfly");
+      }
+    });
+  }
+
+  function initTimelineHistorian() {
+    // Only run on the home page
+    var path = window.location.pathname;
+    var page = path.substring(path.lastIndexOf("/") + 1) || "index.html";
+    if (page !== "index.html") return;
+
+    var expandedSet = {};
+
+    document.addEventListener("click", function (e) {
+      var entry = e.target.closest(".timeline-entry");
+      if (!entry) return;
+
+      var timeline = document.getElementById("career-timeline");
+      if (!timeline) return;
+
+      var entries = timeline.querySelectorAll(".timeline-entry");
+      var idx = Array.prototype.indexOf.call(entries, entry);
+      if (idx !== -1) {
+        expandedSet[idx] = true;
+      }
+
+      if (Object.keys(expandedSet).length >= entries.length) {
+        unlockAchievement("timeline-historian");
       }
     });
   }
@@ -260,7 +304,7 @@
           '<span class="achievement-icon">' + ach.icon + '</span>' +
           '<div>' +
             '<div class="achievement-title">' + ach.title + '</div>' +
-            '<div class="achievement-desc">' + (isUnlocked ? ach.desc : "???") + '</div>' +
+            '<div class="achievement-desc">' + (isUnlocked ? ach.desc : ach.hint) + '</div>' +
           '</div>' +
         '</div>';
     }
@@ -288,5 +332,7 @@
   checkNightOwl();
   initSpeedReader();
   initCuriousClick();
+  initSocialButterfly();
+  initTimelineHistorian();
   checkDeepDiver();
 })();

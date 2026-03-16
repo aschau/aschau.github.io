@@ -1,59 +1,55 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html lang="en">
-<head>
-    <title>Andrew Chau | Portfolio</title>
+  <head>
     <meta charset="utf-8">
-	<meta name="author" content="Andrew Steven Chau">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
-	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
-	<script type="text/javascript" src="js/autoScroll.js"></script>
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../css/stylesheet.css">
+    <title>Andrew Chau | Portfolio</title>
+  </head>
 
-<body>
-	<nav id = "top_menu">
-			
-			<ul id = "inner_menu">
-				<li><p id = "home_button"><a href="index.html">Andrew Steven Chau | Portfolio</a></p></li>
-				<li><a href="aboutMe.html"><p>About Me</p></a></li>
-				<li><a href="projects.html"><p>Projects</p></a></li>
-				<li><a href="contact.html"><p>Contact</p></a></li>
-			</ul>
-	</nav>	
+  <body class="page-body">
+    <div id="navbar-placeholder"></div>
+    <script src="../../js/components.js"></script>
 
-	<section class = "game">
-		<div>
-			<h1>Monochrome Memories (Current)</h1>
-			<img src="img/Card Push Example.gif"></img>
-			<img src="img/Card Jump Example.gif"></img>
-			<ul>
-				<li class = "subTitle">Team Roster:</li>
-				<li>Andrew Steven Chau - Project Manager/Lead Programmer</li>
-				<li>Elaine Chieng - Artist/Designer</li>
-				<li>Tiffany Lam - Designer/Programmer</li>
-				<li>Jessica Lim - Sound</li>
-			</ul>
-			
-			<ul>
-				<li class= "subTitle">Description:</li>
-				<li>Current project for my senior capstone course at the University of California, Irvine.</li>
-				<li><br></br>A puzzle platformer game that incoporates cards to interact with objects in the environment.</li>
-			</ul>	
-			
-			<ul class = "links">
-				<li class = "subTitle">Links:</li>
-				<a target="_blank" href="https://trello.com/b/XThrih3o/monochrome-memories-working-title"><li class="button">Trello</li></a>
-				<li class="extraList"><br></br></li>
-			</ul>
-		</div>
-	</section>
-	<img id = "eject" src="img/up with text.jpg" value="default"></img>
-	
-	<footer>
-		<p> &copy Andrew Steven Chau. 2016.</p>
-		<p>All rights reserved.</p>
-	</footer>
-</body>
+    <div class="container my-4">
+      <div class="card text-white bg-dark">
+        <div class="card-body">
+          <h1 class="card-title display-4">Monochrome Memories</h1>
+          <p class="lead lead-white">Senior Capstone Project</p>
+          <hr class="my-4 hr-white">
+          <div class="row mb-3">
+            <div class="col-md-6 my-2">
+              <img src="../../img/personal-projects/Card Push Example.gif" class="img-fluid rounded" alt="Card Push Example">
+            </div>
+            <div class="col-md-6 my-2">
+              <img src="../../img/personal-projects/Card Jump Example.gif" class="img-fluid rounded" alt="Card Jump Example">
+            </div>
+          </div>
+          <h5 class="card-title">Team Roster</h5>
+          <ul class="text-white">
+            <li>Andrew Steven Chau - Project Manager/Lead Programmer</li>
+            <li>Elaine Chieng - Artist/Designer</li>
+            <li>Tiffany Lam - Designer/Programmer</li>
+            <li>Jessica Lim - Sound</li>
+          </ul>
+          <h5 class="card-title mt-4">Description</h5>
+          <p class="card-text">Senior capstone project at the University of California, Irvine.</p>
+          <p class="card-text">A puzzle platformer game that incorporates cards to interact with objects in the environment.</p>
+        </div>
+      </div>
+    </div>
 
+    <div class="container my-4">
+      <div class="card text-white bg-dark">
+        <div class="card-body">
+          <h5 class="card-title">Links</h5>
+          <a class="btn btn-outline-light mr-2 mb-2" target="_blank" rel="noopener noreferrer" href="https://trello.com/b/XThrih3o/monochrome-memories-working-title">Trello</a>
+        </div>
+      </div>
+    </div>
 
+    <div id="footer-placeholder"></div>
+    <script>loadCommonScripts();</script>
+  </body>
 </html>

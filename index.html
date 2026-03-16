@@ -9,7 +9,22 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="css/stylesheet.css">
 
-    <title>Andrew Chau | Portfolio</title>
+    <title>Andrew Chau | Senior Software Engineer & Game Developer</title>
+    <meta name="description" content="Portfolio of Andrew Chau — Senior Software Engineer at Blizzard (Hearthstone), AR/XR developer, and indie game studio co-founder. From QA to shipping AR experiences to maintaining some of the best card games on the app stores.">
+    <link rel="canonical" href="https://aschau.github.io/">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Andrew Chau | Senior Software Engineer & Game Developer">
+    <meta property="og:description" content="Senior Software Engineer at Blizzard (Hearthstone), AR/XR developer, and indie game studio co-founder.">
+    <meta property="og:url" content="https://aschau.github.io/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://aschau.github.io/img/about-me/me.JPG">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Andrew Chau | Senior Software Engineer & Game Developer">
+    <meta name="twitter:description" content="Senior Software Engineer at Blizzard (Hearthstone), AR/XR developer, and indie game studio co-founder.">
+    <meta name="twitter:image" content="https://aschau.github.io/img/about-me/me.JPG">
 
   </head>
 
@@ -179,8 +194,19 @@
           return window.innerWidth <= 767;
         }
 
+        // No jacket for early career (UCI through Trigger, indices 0-3)
+        function updateJacket(entry) {
+          var idx = Array.prototype.indexOf.call(entries, entry);
+          if (idx < 4) {
+            character.classList.add('no-jacket');
+          } else {
+            character.classList.remove('no-jacket');
+          }
+        }
+
         function moveCharTo(entry) {
           if (!character) return;
+          updateJacket(entry);
           var node = entry.querySelector('.timeline-node');
           var timeline = document.getElementById('career-timeline');
           var timelineRect = timeline.getBoundingClientRect();
@@ -234,21 +260,39 @@
 
         // Auto-expand and position character
         var startEntry = isMobile() ? entries[0] : entries[7];
+        function positionCharAtStart() {
+          if (!startEntry) return;
+          var node = startEntry.querySelector('.timeline-node');
+          var timeline = document.getElementById('career-timeline');
+          var timelineRect = timeline.getBoundingClientRect();
+          var nodeRect = node.getBoundingClientRect();
+          if (isMobile()) {
+            character.style.top = (nodeRect.top - timelineRect.top + nodeRect.height / 2 - 32) + 'px';
+          } else {
+            character.style.left = (nodeRect.left - timelineRect.left + nodeRect.width / 2 - 32) + 'px';
+          }
+          character.classList.add('idle');
+        }
         if (startEntry) {
           startEntry.classList.add('active');
           buildDetail(startEntry);
-          setTimeout(function() {
-            var node = startEntry.querySelector('.timeline-node');
-            var timeline = document.getElementById('career-timeline');
-            var timelineRect = timeline.getBoundingClientRect();
-            var nodeRect = node.getBoundingClientRect();
-            if (isMobile()) {
-              character.style.top = (nodeRect.top - timelineRect.top + nodeRect.height / 2 - 32) + 'px';
-            } else {
-              character.style.left = (nodeRect.left - timelineRect.left + nodeRect.width / 2 - 32) + 'px';
-            }
-            character.classList.add('idle');
-          }, 50);
+          updateJacket(startEntry);
+          // Wait for full layout (fonts, CSS, images) before positioning
+          if (document.readyState === 'complete') {
+            positionCharAtStart();
+          } else {
+            window.addEventListener('load', positionCharAtStart);
+          }
+          // Reposition after loading screen fades (it can cause layout shifts)
+          var loadingEl = document.getElementById('loading-screen');
+          if (loadingEl) {
+            new MutationObserver(function(mutations, obs) {
+              if (!document.getElementById('loading-screen')) {
+                obs.disconnect();
+                positionCharAtStart();
+              }
+            }).observe(loadingEl.parentNode, { childList: true });
+          }
         }
       })();
     </script>

@@ -36,4 +36,8 @@
     <loc>https://aschau.github.io/projects/personal/portfolio.html</loc>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://aschau.github.io/games/beamlab/</loc>
+    <priority>0.7</priority>
+  </url>
 </urlset>

@@ -2,7 +2,7 @@
 // Beamlab — Share Results
 // ============================================
 
-function generateShareText(puzzleNumber, piecesUsed, par, streak, gotGem, totalGems) {
+function generateShareText(puzzleNumber, piecesUsed, par, streak, gotGem, totalGems, username) {
     var diff = piecesUsed - par;
     var scoreLabel;
     if (diff < 0) scoreLabel = 'Under Par!';
@@ -11,8 +11,15 @@ function generateShareText(puzzleNumber, piecesUsed, par, streak, gotGem, totalG
     else if (diff === 2) scoreLabel = 'Double Bogey';
     else scoreLabel = '+' + diff;
 
+    var header;
+    if (username) {
+        header = username + "'s Beamlab #" + puzzleNumber + ' \uD83D\uDD35' + (gotGem ? ' \uD83D\uDC8E' : '');
+    } else {
+        header = 'Beamlab #' + puzzleNumber + ' \uD83D\uDD35' + (gotGem ? ' \uD83D\uDC8E' : '');
+    }
+
     var lines = [
-        'Beamlab #' + puzzleNumber + ' \uD83D\uDD35' + (gotGem ? ' \uD83D\uDC8E' : ''),
+        header,
         scoreLabel + ' (' + piecesUsed + ' pieces)',
     ];
 

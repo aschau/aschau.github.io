@@ -7,8 +7,9 @@ Usage: python generate.py [count]
 Outputs to generated_puzzles.json
 """
 
-import json, random, sys, time
+import json, random, sys, time, hashlib
 from pathlib import Path
+from validate import solve as validate_solve, solve_with_gem
 
 GRID = 6
 FWD = {'right': 'up', 'left': 'down', 'up': 'right', 'down': 'left'}
@@ -73,65 +74,6 @@ def hits_all(grid, source, targets):
 def make_empty_grid():
     return [[None] * GRID for _ in range(GRID)]
 
-
-def find_minimum(grid, source, targets, walls, max_pieces=7):
-    """Find minimum pieces needed to solve (backtracking solver)."""
-    # Build candidate cells (beam path + neighbors + target approach)
-    base_grid = [[None] * GRID for _ in range(GRID)]
-    for w in walls:
-        base_grid[w['r']][w['c']] = 'wall'
-
-    _, beam_cells = simulate(base_grid, source)
-    expanded = set(beam_cells)
-    for r, c in beam_cells:
-        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            nr, nc = r + dr, c + dc
-            if 0 <= nr < GRID and 0 <= nc < GRID and base_grid[nr][nc] is None:
-                expanded.add((nr, nc))
-    for t in targets:
-        tr, tc, td = get_entry(t)
-        r, c = tr, tc
-        for _ in range(GRID):
-            if 0 <= r < GRID and 0 <= c < GRID and base_grid[r][c] is None:
-                expanded.add((r, c))
-                for dr2, dc2 in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                    nr, nc = r + dr2, c + dc2
-                    if 0 <= nr < GRID and 0 <= nc < GRID and base_grid[nr][nc] is None:
-                        expanded.add((nr, nc))
-            else:
-                break
-            r += DR[td]
-            c += DC[td]
-
-    candidates = sorted(expanded)
-    types = ['fwd', 'bck']
-
-    # Check if already solved
-    if hits_all(base_grid, source, targets):
-        return 0
-
-    for num in range(1, max_pieces + 1):
-        if _bt(base_grid, source, targets, candidates, types, 0, num):
-            return num
-    return -1
-
-
-def _bt(grid, source, targets, cells, types, start, left):
-    if left == 0:
-        return hits_all(grid, source, targets)
-    if len(cells) - start < left:
-        return False
-    for i in range(start, len(cells) - left + 1):
-        r, c = cells[i]
-        if grid[r][c] is not None:
-            continue
-        for t in types:
-            grid[r][c] = t
-            if _bt(grid, source, targets, cells, types, i + 1, left - 1):
-                grid[r][c] = None
-                return True
-            grid[r][c] = None
-    return False
 
 
 def generate_mirror_puzzle(difficulty='medium'):
@@ -269,36 +211,38 @@ def generate_mirror_puzzle(difficulty='medium'):
         if not hits_all(clean_grid, source, targets):
             continue  # walls blocked the solution
 
-        # Find actual minimum
-        min_pieces = find_minimum(make_empty_grid(), source, targets,
-                                  walls, max_pieces=len(mirror_cells) + 2)
+        # Build a temporary puzzle dict for the validator
+        inv_temp = {'fwd': len(mirror_cells) + 2, 'bck': len(mirror_cells) + 2}
+        temp_puzzle = {
+            'source': source, 'targets': targets, 'walls': walls,
+            'par': 99, 'inventory': inv_temp
+        }
+
+        # Use validator's solver for consistency
+        min_pieces = validate_solve(temp_puzzle)
 
         if min_pieces <= 0 or min_pieces > 6:
             continue
 
-        # Enforce minimum complexity
         if min_pieces < cfg['min_required']:
             continue
 
         par = min_pieces + 1
-        # Inventory: par + 1 extra of each type
         inv = {'fwd': par, 'bck': par}
 
-        # Place gem on a cell adjacent to the beam path but not on it
-        # This forces players to reroute slightly to collect it
         gem = place_gem(beam_path, occupied, walls)
 
         puzzle = {
-            'source': source,
-            'targets': targets,
-            'walls': walls,
-            'par': par,
-            'inventory': inv,
-            'difficulty': difficulty,
+            'source': source, 'targets': targets, 'walls': walls,
+            'par': par, 'inventory': inv, 'difficulty': difficulty,
             '_min': min_pieces
         }
         if gem:
             puzzle['gem'] = gem
+            # Verify gem is reachable within par + 2
+            gem_min = solve_with_gem(puzzle, par + 2)
+            if gem_min == -1:
+                del puzzle['gem']  # gem unreachable, remove it
 
         return puzzle
 
@@ -420,9 +364,13 @@ def generate_splitter_puzzle(difficulty='hard'):
         if not hits_all(clean_grid, source, targets):
             continue
 
-        # Find minimum (include split type in solver)
-        min_pieces = find_minimum_with_splits(clean_grid, source, targets, walls,
-                                               max_pieces=len(mirror_cells) + 2)
+        inv_temp = {'fwd': len(mirror_cells) + 2, 'bck': len(mirror_cells) + 2, 'split': 2}
+        temp_puzzle = {
+            'source': source, 'targets': targets, 'walls': walls,
+            'par': 99, 'inventory': inv_temp
+        }
+
+        min_pieces = validate_solve(temp_puzzle)
         if min_pieces <= 0 or min_pieces > 7:
             continue
 
@@ -435,59 +383,29 @@ def generate_splitter_puzzle(difficulty='hard'):
         gem = place_gem(beam_path, occupied, walls)
 
         puzzle = {
-            'source': source,
-            'targets': targets,
-            'walls': walls,
-            'par': par,
-            'inventory': inv,
-            'difficulty': difficulty,
+            'source': source, 'targets': targets, 'walls': walls,
+            'par': par, 'inventory': inv, 'difficulty': difficulty,
             '_min': min_pieces
         }
         if gem:
             puzzle['gem'] = gem
+            gem_min = solve_with_gem(puzzle, par + 2)
+            if gem_min == -1:
+                del puzzle['gem']
         return puzzle
 
     return None
 
 
-def find_minimum_with_splits(grid, source, targets, walls, max_pieces=7):
-    """Solver that includes split type."""
-    base_grid = [[None] * GRID for _ in range(GRID)]
-    for w in walls:
-        base_grid[w['r']][w['c']] = 'wall'
 
-    _, beam_cells = simulate(base_grid, source)
-    expanded = set(beam_cells)
-    for r, c in beam_cells:
-        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            nr, nc = r + dr, c + dc
-            if 0 <= nr < GRID and 0 <= nc < GRID and base_grid[nr][nc] is None:
-                expanded.add((nr, nc))
-    for t in targets:
-        tr, tc, td = get_entry(t)
-        r, c = tr, tc
-        for _ in range(GRID):
-            if 0 <= r < GRID and 0 <= c < GRID and base_grid[r][c] is None:
-                expanded.add((r, c))
-                for dr2, dc2 in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                    nr, nc = r + dr2, c + dc2
-                    if 0 <= nr < GRID and 0 <= nc < GRID and base_grid[nr][nc] is None:
-                        expanded.add((nr, nc))
-            else:
-                break
-            r += DR[td]
-            c += DC[td]
-
-    candidates = sorted(expanded)
-    types = ['fwd', 'bck', 'split']
-
-    if hits_all(base_grid, source, targets):
-        return 0
-
-    for num in range(1, max_pieces + 1):
-        if _bt(base_grid, source, targets, candidates, types, 0, num):
-            return num
-    return -1
+def puzzle_hash(puzzle):
+    """Generate a short hash ID for a puzzle based on its structure."""
+    key = json.dumps({
+        'source': puzzle['source'],
+        'targets': puzzle['targets'],
+        'walls': sorted([f"{w['r']},{w['c']}" for w in puzzle['walls']])
+    }, sort_keys=True)
+    return hashlib.sha256(key.encode()).hexdigest()[:8]
 
 
 def main():
@@ -500,10 +418,14 @@ def main():
     print('---')
 
     puzzles = []
+    seen_hashes = set()
     difficulties = ['expert']
+    max_attempts = count * 3  # allow retries for duplicates/failures
+    attempts = 0
 
     t0 = time.time()
-    for i in range(count):
+    while len(puzzles) < count and attempts < max_attempts:
+        attempts += 1
         diff = random.choice(difficulties)
         t1 = time.time()
 
@@ -517,13 +439,23 @@ def main():
 
         if puzzle:
             min_p = puzzle.pop('_min')
+            h = puzzle_hash(puzzle)
+
+            if h in seen_hashes:
+                print(f'  Attempt {attempts}: DUPLICATE (hash={h}), skipping [{elapsed:.2f}s]')
+                continue
+
+            seen_hashes.add(h)
+            puzzle['id'] = h
             puzzles.append(puzzle)
             targets = len(puzzle['targets'])
             splits = puzzle['inventory'].get('split', 0)
-            print(f'  Puzzle {i+1}: {diff}, par={puzzle["par"]}, min={min_p}, '
-                  f'targets={targets}, splits={splits}, walls={len(puzzle["walls"])} [{elapsed:.2f}s]')
+            has_gem = 'gem' in puzzle
+            print(f'  Puzzle {len(puzzles)}: par={puzzle["par"]}, min={min_p}, '
+                  f'targets={targets}, splits={splits}, walls={len(puzzle["walls"])}, '
+                  f'gem={has_gem}, id={h} [{elapsed:.2f}s]')
         else:
-            print(f'  Puzzle {i+1}: FAILED to generate ({diff}) [{elapsed:.2f}s]')
+            print(f'  Attempt {attempts}: FAILED ({diff}) [{elapsed:.2f}s]')
         sys.stdout.flush()
 
     total = time.time() - t0

@@ -48,6 +48,7 @@
             <div class="header-top">
                 <h1 class="game-title">Beamlab</h1>
                 <div class="header-buttons">
+                    <button class="icon-btn" id="username-btn" aria-label="Set display name">&#9998;</button>
                     <button class="icon-btn" id="theme-btn" aria-label="Toggle theme">&#9790;</button>
                     <button class="icon-btn" id="help-btn" aria-label="How to play">?</button>
                 </div>
@@ -190,6 +191,14 @@
                     <p class="win-puzzle" id="win-puzzle">Beamlab #1</p>
                     <p class="win-score" id="win-score">Par (3 pieces)</p>
                     <p class="win-streak" id="win-streak"></p>
+                    <div class="username-prompt" id="username-prompt" hidden>
+                        <p class="username-prompt-text">Add a name to your results?</p>
+                        <div class="username-inline">
+                            <input type="text" class="username-input" id="username-input" placeholder="Display name" maxlength="20" autocomplete="off">
+                            <button class="action-btn primary" id="username-save">Save</button>
+                        </div>
+                        <button class="username-skip-link" id="username-skip">skip</button>
+                    </div>
                     <div class="share-preview" id="share-preview"></div>
                     <div class="share-buttons">
                         <button class="action-btn primary share-result-btn" id="win-share-btn">Share</button>

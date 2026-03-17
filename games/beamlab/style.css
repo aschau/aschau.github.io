@@ -712,6 +712,75 @@ body {
     padding: 16px 24px 24px;
 }
 
+.username-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 1rem;
+    font-family: inherit;
+    margin-top: 8px;
+    box-sizing: border-box;
+}
+
+.username-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent-subtle);
+}
+
+.username-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    justify-content: flex-end;
+}
+
+.username-prompt {
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.username-prompt-text {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 8px;
+}
+
+.username-inline {
+    display: flex;
+    gap: 8px;
+}
+
+.username-inline .username-input {
+    flex: 1;
+    margin-top: 0;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+}
+
+.username-inline .action-btn {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+}
+
+.username-skip-link {
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+    margin-top: 6px;
+    text-decoration: underline;
+    font-family: inherit;
+}
+
+.username-skip-link:hover {
+    color: var(--color-text);
+}
+
 .help-rules {
     margin-top: 16px;
     display: flex;

@@ -6,7 +6,7 @@
 (function () {
     'use strict';
 
-    const SAVE_VERSION = 9; // bump this when puzzle format changes to clear stale data
+    const SAVE_VERSION = 10; // bump this when puzzle format changes to clear stale data
     const GRID_SIZE = 6;
     const SVG_SIZE = 600; // viewBox
     const CELL_SVG = SVG_SIZE / GRID_SIZE; // 100
@@ -552,13 +552,23 @@
         // Share text uses best score and gem-ever status
         var sharePreview = document.getElementById('share-preview');
         if (sharePreview && typeof generateShareText === 'function') {
-            sharePreview.textContent = generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems);
+            sharePreview.textContent = generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems, getUsername());
         }
 
         // Hide Share button if Web Share API not available
         var winShareBtn2 = document.getElementById('win-share-btn');
         if (winShareBtn2 && !navigator.share) {
             winShareBtn2.style.display = 'none';
+        }
+
+        // Show username prompt if no username set and first time solving ever
+        var usernamePrompt = document.getElementById('username-prompt');
+        if (usernamePrompt) {
+            if (!getUsername() && stats.solved <= 1) {
+                usernamePrompt.hidden = false;
+            } else {
+                usernamePrompt.hidden = true;
+            }
         }
 
         winModal.hidden = false;
@@ -651,6 +661,9 @@
         if (themeBtn) {
             themeBtn.addEventListener('click', toggleTheme);
         }
+
+        // Username modal
+        setupUsernameModal();
     }
 
     // =============================================
@@ -691,6 +704,69 @@
             html.classList.add('light-theme');
             localStorage.setItem('beamlab_theme', 'light');
             if (themeBtn) themeBtn.textContent = '\u2600'; // sun
+        }
+    }
+
+    // =============================================
+    // Username Modal
+    // =============================================
+
+    function setupUsernameModal() {
+        var input = document.getElementById('username-input');
+        var saveBtn = document.getElementById('username-save');
+        var skipBtn = document.getElementById('username-skip');
+        var openBtn = document.getElementById('username-btn');
+        var prompt = document.getElementById('username-prompt');
+        if (!input) return;
+
+        function saveUsername() {
+            var name = input.value.trim();
+            if (name) {
+                localStorage.setItem('beamlab_username', name);
+            } else {
+                localStorage.removeItem('beamlab_username');
+            }
+            if (prompt) prompt.hidden = true;
+            // Refresh share preview
+            refreshSharePreview();
+        }
+
+        function skipUsername() {
+            if (prompt) prompt.hidden = true;
+        }
+
+        // Header button opens a browser prompt (simple)
+        if (openBtn) {
+            openBtn.addEventListener('click', function () {
+                var current = getUsername();
+                var name = window.prompt('Display name (shown in share results):', current);
+                if (name !== null) {
+                    name = name.trim();
+                    if (name) {
+                        localStorage.setItem('beamlab_username', name);
+                    } else {
+                        localStorage.removeItem('beamlab_username');
+                    }
+                    refreshSharePreview();
+                }
+            });
+        }
+
+        // Inline prompt in win modal
+        if (saveBtn) saveBtn.addEventListener('click', saveUsername);
+        if (skipBtn) skipBtn.addEventListener('click', skipUsername);
+        if (input) input.addEventListener('keydown', function (e) { if (e.key === 'Enter') saveUsername(); });
+    }
+
+    function refreshSharePreview() {
+        var sharePreview = document.getElementById('share-preview');
+        if (sharePreview && typeof generateShareText === 'function' && solved) {
+            var data = loadData();
+            var todayData = data.today || {};
+            var bestScore = todayData.bestScore || countPiecesUsed();
+            var everGotGem = todayData.gemEverCollected || gemCollected;
+            var stats = loadStats();
+            sharePreview.textContent = generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems, getUsername());
         }
     }
 
@@ -1014,6 +1090,10 @@
     // Share
     // =============================================
 
+    function getUsername() {
+        return localStorage.getItem('beamlab_username') || '';
+    }
+
     function getShareText() {
         if (typeof generateShareText !== 'function') return '';
         var data = loadData();
@@ -1021,7 +1101,7 @@
         var bestScore = todayData.bestScore || countPiecesUsed();
         var everGotGem = todayData.gemEverCollected || gemCollected;
         var stats = loadStats();
-        return generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems);
+        return generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems, getUsername());
     }
 
     function copyResults() {

@@ -16,7 +16,7 @@ Open any `.html` file in a browser to preview. No build or install step is requi
 - **Project detail pages**: Two sets, both modernized with shared components, `page-body` class, and `stylesheet.css`:
   - `projects/work/` — per-project pages in subdirectories (e.g., `projects/work/nbaAR/nbaAR.html`). Reference `components.js` via `../../../js/components.js` and CSS via `../../../css/stylesheet.css`.
   - `projects/personal/` — flat directory of personal project pages (e.g., `projects/personal/spookyspoils.html`, `projects/personal/dateordie.html`). Reference `components.js` via `../../js/components.js` and CSS via `../../css/stylesheet.css`. Images use `../../img/personal-projects/` paths.
-- **Shared components** (`js/components.js`): Dynamically injects the navbar and footer into all pages. Auto-detects the base path from its own `src` attribute so nav links work from any directory depth. Also handles: loading screen (once per session via `sessionStorage`), click burst particle effect, game-inspired floating particles, and loading `gamification.js`. Footer includes LPC sprite attribution. To update nav links or footer, edit this file only.
+- **Shared components** (`js/components.js`): Dynamically injects the navbar and footer into all pages. Auto-detects the base path from its own `src` attribute so nav links work from any directory depth. Also handles: loading screen (once per session via `sessionStorage`), click burst particle effect, game-inspired floating particles, and loading `gamification.js`. Footer includes LPC sprite attribution. To update nav links or footer, edit this file only. The navbar supports dropdown menus (used for the Games nav item) — dropdown items have `{ label, dropdown: [{ href, label, desc }] }` format in the `navItems` array.
 - **Gamification** (`js/gamification.js`): Achievement system with toast notifications, exploration progress bar, and page visit tracking. Achievements persist in `localStorage`. Locked achievements show hint text instead of "???". Loaded dynamically by `components.js`.
 - **Styling**: Bootstrap 4.3.1 via CDN + custom overrides in `css/stylesheet.css`. Uses the custom font "Xolonium" loaded from `fonts/`. Font Awesome 5.15.4 via CDN is loaded on `aboutMe.html` for social icons.
 - **Design system**: Dark theme with glassmorphism — semi-transparent cards/navbar/footer/sidebar with `backdrop-filter: blur()`. Background is a dark navy-to-black CSS gradient. Game-inspired floating particles (card shapes, diamonds, AR grid dots, D-pad crosses) replace the old starfield — spawned by JS in `components.js` (90 particles). Cards have hover effects (lift + blue glow). Custom SVG reticle cursor site-wide with click burst particle effect. All custom classes are in `css/stylesheet.css`. Design tokens (colors, opacities, transitions, blur values, gradients, focus styles) are centralized as CSS custom properties in `:root`.
@@ -56,10 +56,10 @@ All z-index values are managed through CSS custom properties in `:root` to preve
 | `--z-timeline-char` | 3 | Walking sprite character |
 | `--z-timeline-detail` | 10 | Timeline detail popups |
 | `--z-nav` | 1030 | Navbar (Bootstrap default) |
-| `--z-progress` | 1031 | Exploration progress bar |
+| `--z-progress` | 1020 | Exploration progress bar |
 | `--z-toast` | 1040 | Achievement toast notifications |
-| `--z-toggle` | 1041 | Achievement toggle button |
-| `--z-panel` | 1041 | Achievement panel |
+| `--z-toggle` | 1025 | Achievement toggle button |
+| `--z-panel` | 1025 | Achievement panel |
 | `--z-burst` | 1050 | Click burst particles |
 | `--z-loading` | 1060 | Loading screen overlay |
 
@@ -92,7 +92,7 @@ On mobile, gamification elements (`#exploration-progress`, `#achievement-toggle`
 ## Gamification Features
 
 - **Progress bar**: Thin gradient bar below navbar tracking pages visited (5 milestones: 4 main pages + a project detail page). Expands on hover to show "X% Explored" label.
-- **Achievements** (8 total, persisted in `localStorage`):
+- **Achievements** (9 total, persisted in `localStorage`):
   - Explorer — visited all 4 main pages
   - Curious — clicked an external link
   - Night Owl — visited after 10 PM (before 5 AM)
@@ -101,8 +101,9 @@ On mobile, gamification elements (`#exploration-progress`, `#achievement-toggle`
   - Timeline Historian — expanded all 8 timeline entries on the home page
   - Skill Scout — visited the About page
   - Social Butterfly — clicked a social profile link
+  - Player One — clicked a game link in the Games dropdown
 - **Achievement hints**: Locked achievements display a contextual hint (e.g., "Come back when the moon is out...") instead of "???".
-- **Trophy button**: Fixed top-right below navbar, shows badge count. Click to open achievement panel with clear progress option.
+- **Trophy button**: Fixed top-right below navbar (z-index below navbar so Games dropdown renders above it), shows badge count. Click to open achievement panel with clear progress option.
 - **Click burst**: Particle burst effect when clicking empty space (skips interactive elements).
 - **Game particles**: 90 floating shapes (cards, diamonds, AR dots, D-pad crosses) replacing the old CSS starfield.
 
@@ -135,6 +136,47 @@ On mobile, gamification elements (`#exploration-progress`, `#achievement-toggle`
 - **404**: Has `<meta name="robots" content="noindex">` to prevent indexing.
 - **External links**: All `target="_blank"` links include `rel="noopener noreferrer"` for security.
 - **OG image**: All pages use `img/about-me/me.JPG` as the social share image.
+
+## Games (`games/`)
+
+Standalone web games accessible via the "Games" dropdown in the portfolio navbar. Each game is self-contained — it does **not** use the portfolio's `components.js`, navbar, footer, or `stylesheet.css`. Games open in a new tab from the portfolio.
+
+### Beamlab (`games/beamlab/`)
+
+A daily laser puzzle game. Place mirrors (`/` `\`) and beam splitters (`X`) on a 6x6 grid to guide a laser beam from the source to all targets.
+
+- **Files**: `index.html`, `style.css`, `game.js` (core engine), `puzzles.js` (inline puzzle data + daily selection), `puzzles.json` (same data for validator), `share.js` (clipboard sharing), `generate.py` (puzzle generator), `validate.py` (puzzle validator)
+- **Puzzle data**: Stored inline in `puzzles.js` (works on `file://`). Also saved as `puzzles.json` for the Python validator. Both are auto-generated by `generate.py`. Do not edit `puzzles.js` manually.
+- **Piece types**: `fwd` (/ mirror: right↔up, left↔down), `bck` (\ mirror: right↔down, left↔up), `split` (splitter: reflects like / AND lets beam continue straight, creating two beams)
+- **Gem collectible**: Optional bonus per puzzle. A gem (`💎`) is placed on a cell adjacent to the beam path. Routing the beam through it collects the gem. Gems accumulate in `totalGems` stat. Players can reset and replay to collect the gem without losing streak/stats. First solve of the day records streak; best score and gem are updated on every solve.
+- **Scoring**: Par system (golf-style) — `par = minimum_solution + 1` so players can always beat par by at least 1. Best score across resets is saved.
+- **Daily puzzle**: Selected by date offset from `LAUNCH_EPOCH` in `puzzles.js`. Puzzle number = days since epoch + 1.
+- **Persistence**: `localStorage` key `beamlab_data` stores today's board state (including `bestScore` and `gemEverCollected`), stats, streaks, and score distribution. `SAVE_VERSION` constant in `game.js` — bump it when puzzle format changes (preserves stats/streaks/gems, clears today's board).
+- **Theme**: Dark glassmorphism default (shares DNA with portfolio), light mode override. Manual toggle via sun/moon button, saved in `localStorage` key `beamlab_theme`. Falls back to OS `prefers-color-scheme`.
+- **Fonts**: Xolonium for title (loaded from `../../fonts/`), Inter (Google Fonts) for body.
+- **Share**: Score-only clipboard text (spoiler-free, no grid). Shows best score + gem status. Web Share API for native share sheet, clipboard fallback for copy. Share preview shown in win modal.
+- **Stats display**: Streak and gem count shown as pills between header and board.
+- **First-time UX**: Quick controls overlay on first visit (tap to place, double-tap to remove). Full "How to Play" available via `?` button.
+- **Accessibility**: Walls have crosshatch pattern (not just color), target hit uses checkmark + "HIT" text + green color (3 redundant signals), ARIA live region for announcements, focus outlines on all interactive elements.
+- **Puzzle generation**: `generate.py` (Python 3) generates verified puzzles. Places mirrors randomly, traces beam, derives source/targets, adds walls on direct paths (blocking), verifies with backtracking solver, places gem adjacent to beam path. Run: `python generate.py [count] [seed]`. Outputs both `puzzles.json` and `puzzles.js`.
+- **Puzzle validation**: `validate.py` (Python 3) checks all puzzles for solvability, correct par values, and gem reachability. Outputs to `validation_results.txt`. Run: `python validate.py`.
+- **Ko-fi**: Donation link in footer points to `https://ko-fi.com/andrewchau`.
+- **License**: CC BY-NC 4.0 (matches repo LICENSE file). Copyright notice in footer.
+
+### Planned Games
+
+- **Bug Fix** (`games/bugfix/`) — Baba Is You meets coding. Rearrange code tokens on a grid to make a program compile. Daily puzzle format.
+- **Chicken Crossing** (`games/chicken/`) — Chicken crossing the road game. Details TBD.
+
+### Adding a new game
+
+1. Create `games/<game-name>/` with its own `index.html`, CSS, and JS (self-contained).
+2. Add an entry to the `navItems` dropdown in `js/components.js`:
+   ```js
+   { href: "games/<game-name>/index.html", label: "Game Name", desc: "Short description" }
+   ```
+3. Game pages open in new tabs (`target="_blank"`) from the portfolio.
+4. Add to `sitemap.xml` for SEO.
 
 ## Conventions
 

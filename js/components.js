@@ -13,7 +13,10 @@
     { href: "index.html", label: "Home" },
     { href: "aboutMe.html", label: "About" },
     { href: "workprojects.html", label: "Work" },
-    { href: "personalprojects.html", label: "Personal" }
+    { href: "personalprojects.html", label: "Personal" },
+    { label: "Games", dropdown: [
+      { href: "games/beamlab/index.html", label: "Beamlab", desc: "Daily laser puzzle" }
+    ]}
   ];
 
   var path = window.location.pathname;
@@ -147,6 +150,22 @@
 
   // === Navbar ===
   var navLinksHtml = navItems.map(function (item) {
+    if (item.dropdown) {
+      var isAnyActive = item.dropdown.some(function (d) {
+        return window.location.pathname.indexOf(d.href.replace('index.html', '')) !== -1;
+      });
+      var dropdownItems = item.dropdown.map(function (d) {
+        return '<a class="dropdown-item" href="' + basePath + d.href + '" target="_blank" rel="noopener noreferrer">' +
+          d.label + '<small class="text-muted ml-2">' + d.desc + '</small></a>';
+      }).join('');
+      return (
+        '<li class="nav-item dropdown' + (isAnyActive ? ' active' : '') + '">' +
+        '<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+        item.label + '</a>' +
+        '<div class="dropdown-menu dropdown-menu-right">' + dropdownItems + '</div>' +
+        '</li>'
+      );
+    }
     var isActive = currentPage === item.href;
     var activeClass = isActive ? " active" : "";
     var srOnly = isActive ? ' <span class="sr-only">(current)</span>' : "";

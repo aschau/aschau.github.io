@@ -12,7 +12,8 @@
     "deep-diver":   { title: "Deep Diver",   desc: "Visited a project detail page",     hint: "Go deeper into a project...",           icon: "\uD83E\uDD3F" },
     "timeline-historian": { title: "Timeline Historian", desc: "Expanded all timeline entries", hint: "Explore every chapter of the journey...", icon: "\uD83D\uDCDC" },
     "skill-scout":  { title: "Skill Scout",  desc: "Visited the About page",           hint: "Learn more about who I am...",          icon: "\uD83C\uDFAF" },
-    "social-butterfly": { title: "Social Butterfly", desc: "Clicked a social profile link", hint: "Connect on social media...",           icon: "\uD83E\uDD8B" }
+    "social-butterfly": { title: "Social Butterfly", desc: "Clicked a social profile link", hint: "Connect on social media...",           icon: "\uD83E\uDD8B" },
+    "player-one":       { title: "Player One",      desc: "Launched a web game",             hint: "Ready Player One...",                   icon: "\uD83C\uDFAE" }
   };
 
   // === Storage Helpers ===
@@ -212,6 +213,15 @@
     });
   }
 
+  function initPlayerOne() {
+    document.addEventListener("click", function (e) {
+      var link = e.target.closest('.dropdown-item[href*="games/"]');
+      if (link) {
+        unlockAchievement("player-one");
+      }
+    });
+  }
+
   function initTimelineHistorian() {
     // Only run on the home page
     var path = window.location.pathname;
@@ -346,4 +356,5 @@
   initSocialButterfly();
   initTimelineHistorian();
   checkDeepDiver();
+  initPlayerOne();
 })();

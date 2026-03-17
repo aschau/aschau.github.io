@@ -1,0 +1,14 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Claude Code
+.claude/settings.local.json
+
+# Dev artifacts
+games/*/generated_puzzles.json
+games/*/validation_results.txt
+*.pyc
+__pycache__/

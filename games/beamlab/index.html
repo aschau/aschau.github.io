@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beamlab — Daily Laser Puzzle Game</title>
+    <meta name="description" content="Beamlab is a free daily laser puzzle game. Place mirrors and splitters to redirect the beam to all targets. A new puzzle every day — share your score with friends.">
+    <meta name="keywords" content="beamlab, daily puzzle, laser puzzle, laser beam game, mirror puzzle, beam puzzle, laser grid game, free puzzle game, daily game, wordle-like, lazer puzzle">
+    <meta property="og:title" content="Beamlab — Daily Laser Puzzle Game">
+    <meta property="og:description" content="Place mirrors and splitters to redirect the laser beam to all targets. A new puzzle every day.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aschau.github.io/games/beamlab/">
+    <meta property="og:site_name" content="Beamlab">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Beamlab — Daily Laser Puzzle Game">
+    <meta name="twitter:description" content="Place mirrors and splitters to redirect the laser beam to all targets. A new puzzle every day.">
+    <link rel="canonical" href="https://aschau.github.io/games/beamlab/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Beamlab",
+        "description": "A free daily laser puzzle game. Place mirrors and splitters to redirect the beam to all targets.",
+        "url": "https://aschau.github.io/games/beamlab/",
+        "applicationCategory": "Game",
+        "genre": "Puzzle",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Andrew Chau",
+            "url": "https://aschau.github.io"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <div class="header-top">
+                <h1 class="game-title">Beamlab</h1>
+                <div class="header-buttons">
+                    <button class="icon-btn" id="theme-btn" aria-label="Toggle theme">&#9790;</button>
+                    <button class="icon-btn" id="help-btn" aria-label="How to play">?</button>
+                </div>
+            </div>
+            <div class="header-sub">
+                <span id="puzzle-number">Puzzle #1</span>
+                <span class="header-dot">&middot;</span>
+                <span id="puzzle-date"></span>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <div class="stats-bar">
+                <span class="stat-item" id="stat-streak" title="Current streak">🔥 <span id="streak-count">0</span></span>
+                <span class="stat-item" id="stat-gems" title="Gems collected">💎 <span id="gems-count">0</span></span>
+            </div>
+            <div class="board-wrapper">
+                <div class="board-area" id="board-area">
+                    <div class="edge-indicators top" id="edge-top"></div>
+                    <div class="edge-indicators right" id="edge-right"></div>
+                    <div class="edge-indicators bottom" id="edge-bottom"></div>
+                    <div class="edge-indicators left" id="edge-left"></div>
+                    <div class="grid-container" id="grid-container"></div>
+                    <svg class="laser-overlay" id="laser-svg" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet"></svg>
+                </div>
+            </div>
+
+            <div class="inventory-bar" id="inventory-bar">
+                <span class="inventory-label">Pieces:</span>
+                <button class="inventory-item" id="inv-fwd" data-type="fwd">
+                    <span class="mirror-icon">/</span>
+                    <span class="inventory-count" id="inv-fwd-count">0</span>
+                </button>
+                <button class="inventory-item" id="inv-bck" data-type="bck">
+                    <span class="mirror-icon">\</span>
+                    <span class="inventory-count" id="inv-bck-count">0</span>
+                </button>
+                <span id="inv-split-section">
+                    <button class="inventory-item splitter-btn" id="inv-split" data-type="split">
+                        <span class="mirror-icon">X</span>
+                        <span class="inventory-count" id="inv-split-count">0</span>
+                    </button>
+                </span>
+            </div>
+
+            <div class="par-display" id="par-display">
+                Par: <span id="par-value">3</span> pieces
+                <span class="mirrors-used"> &middot; Used: <span id="mirrors-used">0</span></span>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" id="undo-btn" disabled>Undo</button>
+                <button class="action-btn" id="reset-btn">Reset</button>
+                <button class="action-btn primary" id="share-btn" disabled>Share</button>
+            </div>
+        </main>
+
+        <footer class="game-footer">
+            <div class="footer-links">
+                <a href="https://aschau.github.io" target="_blank" rel="noopener noreferrer">Made by Andrew Chau</a>
+                <span class="footer-dot">&middot;</span>
+                <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee ☕</a>
+            </div>
+            <div class="footer-copyright">&copy; 2026 Andrew Chau. Licensed under CC BY-NC 4.0.</div>
+        </footer>
+
+        <!-- Quick Controls (first visit only) -->
+        <div class="modal-overlay" id="controls-modal" hidden>
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Controls</h2>
+                    <button class="modal-close" id="controls-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="help-rules">
+                        <div class="help-rule">
+                            <span class="help-icon">&#9755;</span>
+                            <span><strong>Tap</strong> to place. <strong>Tap again</strong> to cycle type.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&times;</span>
+                            <span><strong>Double-tap</strong> or <strong>right-click</strong> to remove.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full How to Play Modal (via ? button) -->
+        <div class="modal-overlay" id="help-modal" hidden>
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>How to Play</h2>
+                    <button class="modal-close" id="help-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Route the <strong class="laser-text">laser beam</strong> from the source to all targets by placing mirrors on the grid.</p>
+                    <div class="help-rules">
+                        <div class="help-rule">
+                            <span class="help-icon">&#9656;</span>
+                            <span>The <strong>arrow</strong> is the laser source. <strong>Circles</strong> are targets — hit them all to win.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">/</span>
+                            <span><strong>Mirrors</strong> ( / and \ ) reflect the beam 90 degrees.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">X</span>
+                            <span><strong>Splitters</strong> split the beam — one path reflects, the other continues straight through.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#9632;</span>
+                            <span><strong>Dark squares</strong> are walls — the laser stops when it hits one.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#9755;</span>
+                            <span><strong>Tap</strong> to place a piece. <strong>Tap again</strong> to cycle its type. <strong>Double-tap</strong> or <strong>right-click</strong> to remove.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#9733;</span>
+                            <span>Fewer pieces = better score. Beat <strong>par</strong> for bragging rights.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#x1F48E;</span>
+                            <span>Route the beam through the <strong>gem</strong> for a bonus collectible.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion Modal -->
+        <div class="modal-overlay" id="win-modal" hidden>
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 id="win-title">Solved!</h2>
+                    <button class="modal-close" id="win-close">&times;</button>
+                </div>
+                <div class="modal-body win-body">
+                    <p class="win-puzzle" id="win-puzzle">Beamlab #1</p>
+                    <p class="win-score" id="win-score">Par (3 pieces)</p>
+                    <p class="win-streak" id="win-streak"></p>
+                    <div class="share-preview" id="share-preview"></div>
+                    <div class="share-buttons">
+                        <button class="action-btn primary share-result-btn" id="win-share-btn">Share</button>
+                        <button class="action-btn share-result-btn" id="win-copy-btn">Copy</button>
+                    </div>
+                    <p class="share-copied" id="share-copied" hidden>Copied to clipboard!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sr-only" id="game-announcer" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="puzzles.js"></script>
+    <script src="game.js"></script>
+    <script src="share.js"></script>
+</body>
+</html>

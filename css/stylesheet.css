@@ -45,10 +45,10 @@
 	--z-timeline-char: 3;
 	--z-timeline-detail: 10;
 	--z-nav: 1030;
-	--z-progress: 1031;
+	--z-progress: 1020;
 	--z-toast: 1040;
-	--z-toggle: 1041;
-	--z-panel: 1041;
+	--z-toggle: 1025;
+	--z-panel: 1025;
 	--z-burst: 1050;
 	--z-loading: 1060;
 }
@@ -242,6 +242,37 @@ body
 	border-bottom: 1px solid var(--glass-border-light);
 }
 
+.navbar .dropdown-menu {
+	background: rgba(10, 10, 30, 0.95);
+	backdrop-filter: blur(var(--glass-blur-strong));
+	-webkit-backdrop-filter: blur(var(--glass-blur-strong));
+	border: 1px solid var(--glass-border-light);
+	border-radius: 8px;
+	padding: 0.25rem 0;
+	min-width: 200px;
+	z-index: var(--z-burst);
+}
+
+.navbar .dropdown-item {
+	color: var(--color-text-soft);
+	padding: 0.5rem 1rem;
+	display: flex;
+	align-items: baseline;
+	gap: 0.5rem;
+	transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.navbar .dropdown-item:hover,
+.navbar .dropdown-item:focus {
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+}
+
+.navbar .dropdown-item small {
+	opacity: 0.5;
+	font-size: 0.75rem;
+}
+
 /* Footer */
 .site-footer {
 	background: rgba(255,255,255,0.04);
@@ -370,11 +401,13 @@ body
 		z-index: var(--z-nav) !important;
 		top: auto !important;
 		bottom: 20px !important;
+		right: 20px !important;
 	}
 	#achievement-panel {
 		z-index: var(--z-nav) !important;
 		top: auto !important;
 		bottom: 74px !important;
+		right: 20px !important;
 	}
 	#achievement-toast-container {
 		top: auto !important;

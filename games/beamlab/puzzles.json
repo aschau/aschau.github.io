@@ -1,0 +1,895 @@
+[
+  {
+    "source": {
+      "edge": "top",
+      "pos": 3
+    },
+    "targets": [
+      {
+        "edge": "left",
+        "pos": 2
+      }
+    ],
+    "walls": [
+      {
+        "r": 2,
+        "c": 5
+      },
+      {
+        "r": 2,
+        "c": 4
+      },
+      {
+        "r": 2,
+        "c": 1
+      },
+      {
+        "r": 2,
+        "c": 2
+      },
+      {
+        "r": 1,
+        "c": 4
+      }
+    ],
+    "par": 4,
+    "inventory": {
+      "fwd": 4,
+      "bck": 4
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 0,
+      "c": 4
+    }
+  },
+  {
+    "source": {
+      "edge": "left",
+      "pos": 1
+    },
+    "targets": [
+      {
+        "edge": "bottom",
+        "pos": 3
+      }
+    ],
+    "walls": [
+      {
+        "r": 1,
+        "c": 4
+      },
+      {
+        "r": 1,
+        "c": 5
+      },
+      {
+        "r": 3,
+        "c": 3
+      },
+      {
+        "r": 0,
+        "c": 3
+      }
+    ],
+    "par": 4,
+    "inventory": {
+      "fwd": 4,
+      "bck": 4
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 4,
+      "c": 4
+    }
+  },
+  {
+    "source": {
+      "edge": "right",
+      "pos": 5
+    },
+    "targets": [
+      {
+        "edge": "top",
+        "pos": 0
+      }
+    ],
+    "walls": [
+      {
+        "r": 5,
+        "c": 2
+      },
+      {
+        "r": 5,
+        "c": 1
+      },
+      {
+        "r": 5,
+        "c": 0
+      },
+      {
+        "r": 5,
+        "c": 3
+      },
+      {
+        "r": 3,
+        "c": 4
+      }
+    ],
+    "par": 4,
+    "inventory": {
+      "fwd": 4,
+      "bck": 4
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 1,
+      "c": 1
+    }
+  },
+  {
+    "source": {
+      "edge": "right",
+      "pos": 3
+    },
+    "targets": [
+      {
+        "edge": "bottom",
+        "pos": 0
+      },
+      {
+        "edge": "top",
+        "pos": 2
+      }
+    ],
+    "walls": [
+      {
+        "r": 0,
+        "c": 1
+      },
+      {
+        "r": 0,
+        "c": 3
+      },
+      {
+        "r": 2,
+        "c": 4
+      },
+      {
+        "r": 5,
+        "c": 5
+      },
+      {
+        "r": 1,
+        "c": 0
+      }
+    ],
+    "par": 5,
+    "inventory": {
+      "fwd": 5,
+      "bck": 5,
+      "split": 2
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 4,
+      "c": 1
+    }
+  },
+  {
+    "source": {
+      "edge": "top",
+      "pos": 3
+    },
+    "targets": [
+      {
+        "edge": "left",
+        "pos": 2
+      },
+      {
+        "edge": "right",
+        "pos": 1
+      }
+    ],
+    "walls": [
+      {
+        "r": 0,
+        "c": 5
+      },
+      {
+        "r": 4,
+        "c": 4
+      },
+      {
+        "r": 4,
+        "c": 0
+      },
+      {
+        "r": 5,
+        "c": 5
+      }
+    ],
+    "par": 5,
+    "inventory": {
+      "fwd": 5,
+      "bck": 5,
+      "split": 2
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 4,
+      "c": 2
+    }
+  },
+  {
+    "source": {
+      "edge": "top",
+      "pos": 5
+    },
+    "targets": [
+      {
+        "edge": "right",
+        "pos": 0
+      },
+      {
+        "edge": "right",
+        "pos": 4
+      }
+    ],
+    "walls": [
+      {
+        "r": 4,
+        "c": 0
+      },
+      {
+        "r": 3,
+        "c": 4
+      },
+      {
+        "r": 4,
+        "c": 3
+      },
+      {
+        "r": 2,
+        "c": 4
+      }
+    ],
+    "par": 5,
+    "inventory": {
+      "fwd": 5,
+      "bck": 5,
+      "split": 2
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 2,
+      "c": 1
+    }
+  },
+  {
+    "source": {
+      "edge": "bottom",
+      "pos": 1
+    },
+    "targets": [
+      {
+        "edge": "bottom",
+        "pos": 2
+      },
+      {
+        "edge": "top",
+        "pos": 4
+      }
+    ],
+    "walls": [
+      {
+        "r": 3,
+        "c": 5
+      },
+      {
+        "r": 2,
+        "c": 5
+      },
+      {
+        "r": 1,
+        "c": 0
+      },
+      {
+        "r": 1,
+        "c": 2
+      }
+    ],
+    "par": 5,
+    "inventory": {
+      "fwd": 5,
+      "bck": 5,
+      "split": 2
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 0,
+      "c": 3
+    }
+  },
+  {
+    "source": {
+      "edge": "top",
+      "pos": 0
+    },
+    "targets": [
+      {
+        "edge": "right",
+        "pos": 4
+      }
+    ],
+    "walls": [
+      {
+        "r": 4,
+        "c": 1
+      },
+      {
+        "r": 5,
+        "c": 5
+      },
+      {
+        "r": 5,
+        "c": 4
+      },
+      {
+        "r": 3,
+        "c": 4
+      }
+    ],
+    "par": 4,
+    "inventory": {
+      "fwd": 4,
+      "bck": 4
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 0,
+      "c": 1
+    }
+  },
+  {
+    "source": {
+      "edge": "left",
+      "pos": 4
+    },
+    "targets": [
+      {
+        "edge": "left",
+        "pos": 1
+      },
+      {
+        "edge": "left",
+        "pos": 0
+      }
+    ],
+    "walls": [
+      {
+        "r": 5,
+        "c": 1
+      },
+      {
+        "r": 0,
+        "c": 5
+      },
+      {
+        "r": 1,
+        "c": 4
+      },
+      {
+        "r": 3,
+        "c": 5
+      }
+    ],
+    "par": 5,
+    "inventory": {
+      "fwd": 5,
+      "bck": 5,
+      "split": 2
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 5,
+      "c": 3
+    }
+  },
+  {
+    "source": {
+      "edge": "bottom",
+      "pos": 3
+    },
+    "targets": [
+      {
+        "edge": "left",
+        "pos": 5
+      },
+      {
+        "edge": "right",
+        "pos": 4
+      }
+    ],
+    "walls": [
+      {
+        "r": 0,
+        "c": 2
+      },
+      {
+        "r": 0,
+        "c": 0
+      },
+      {
+        "r": 0,
+        "c": 4
+      },
+      {
+        "r": 1,
+        "c": 5
+      },
+      {
+        "r": 0,
+        "c": 5
+      }
+    ],
+    "par": 5,
+    "inventory": {
+      "fwd": 5,
+      "bck": 5,
+      "split": 2
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 4,
+      "c": 1
+    }
+  },
+  {
+    "source": {
+      "edge": "right",
+      "pos": 1
+    },
+    "targets": [
+      {
+        "edge": "left",
+        "pos": 4
+      },
+      {
+        "edge": "right",
+        "pos": 2
+      }
+    ],
+    "walls": [
+      {
+        "r": 3,
+        "c": 1
+      },
+      {
+        "r": 4,
+        "c": 5
+      },
+      {
+        "r": 0,
+        "c": 0
+      },
+      {
+        "r": 5,
+        "c": 3
+      }
+    ],
+    "par": 5,
+    "inventory": {
+      "fwd": 5,
+      "bck": 5,
+      "split": 2
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 3,
+      "c": 2
+    }
+  },
+  {
+    "source": {
+      "edge": "bottom",
+      "pos": 2
+    },
+    "targets": [
+      {
+        "edge": "left",
+        "pos": 0
+      }
+    ],
+    "walls": [
+      {
+        "r": 2,
+        "c": 2
+      },
+      {
+        "r": 4,
+        "c": 2
+      },
+      {
+        "r": 1,
+        "c": 2
+      },
+      {
+        "r": 3,
+        "c": 2
+      }
+    ],
+    "par": 4,
+    "inventory": {
+      "fwd": 4,
+      "bck": 4
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 4,
+      "c": 4
+    }
+  },
+  {
+    "source": {
+      "edge": "right",
+      "pos": 2
+    },
+    "targets": [
+      {
+        "edge": "top",
+        "pos": 1
+      }
+    ],
+    "walls": [
+      {
+        "r": 2,
+        "c": 0
+      },
+      {
+        "r": 5,
+        "c": 1
+      },
+      {
+        "r": 4,
+        "c": 1
+      },
+      {
+        "r": 2,
+        "c": 2
+      },
+      {
+        "r": 3,
+        "c": 5
+      },
+      {
+        "r": 1,
+        "c": 4
+      }
+    ],
+    "par": 4,
+    "inventory": {
+      "fwd": 4,
+      "bck": 4
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 3,
+      "c": 0
+    }
+  },
+  {
+    "source": {
+      "edge": "left",
+      "pos": 0
+    },
+    "targets": [
+      {
+        "edge": "bottom",
+        "pos": 1
+      }
+    ],
+    "walls": [
+      {
+        "r": 3,
+        "c": 1
+      },
+      {
+        "r": 2,
+        "c": 1
+      },
+      {
+        "r": 0,
+        "c": 5
+      },
+      {
+        "r": 1,
+        "c": 1
+      },
+      {
+        "r": 1,
+        "c": 5
+      }
+    ],
+    "par": 4,
+    "inventory": {
+      "fwd": 4,
+      "bck": 4
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 5,
+      "c": 2
+    }
+  },
+  {
+    "source": {
+      "edge": "left",
+      "pos": 3
+    },
+    "targets": [
+      {
+        "edge": "top",
+        "pos": 3
+      },
+      {
+        "edge": "bottom",
+        "pos": 2
+      }
+    ],
+    "walls": [
+      {
+        "r": 0,
+        "c": 0
+      },
+      {
+        "r": 4,
+        "c": 3
+      },
+      {
+        "r": 1,
+        "c": 1
+      },
+      {
+        "r": 4,
+        "c": 1
+      },
+      {
+        "r": 0,
+        "c": 1
+      },
+      {
+        "r": 5,
+        "c": 5
+      }
+    ],
+    "par": 5,
+    "inventory": {
+      "fwd": 5,
+      "bck": 5,
+      "split": 2
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 1,
+      "c": 5
+    }
+  },
+  {
+    "source": {
+      "edge": "bottom",
+      "pos": 5
+    },
+    "targets": [
+      {
+        "edge": "left",
+        "pos": 2
+      }
+    ],
+    "walls": [
+      {
+        "r": 2,
+        "c": 1
+      },
+      {
+        "r": 2,
+        "c": 2
+      },
+      {
+        "r": 1,
+        "c": 2
+      },
+      {
+        "r": 1,
+        "c": 4
+      },
+      {
+        "r": 1,
+        "c": 1
+      },
+      {
+        "r": 1,
+        "c": 3
+      }
+    ],
+    "par": 4,
+    "inventory": {
+      "fwd": 4,
+      "bck": 4
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 3,
+      "c": 0
+    }
+  },
+  {
+    "source": {
+      "edge": "left",
+      "pos": 4
+    },
+    "targets": [
+      {
+        "edge": "left",
+        "pos": 2
+      },
+      {
+        "edge": "right",
+        "pos": 0
+      }
+    ],
+    "walls": [
+      {
+        "r": 2,
+        "c": 4
+      },
+      {
+        "r": 3,
+        "c": 5
+      },
+      {
+        "r": 5,
+        "c": 5
+      }
+    ],
+    "par": 5,
+    "inventory": {
+      "fwd": 5,
+      "bck": 5,
+      "split": 2
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 3,
+      "c": 1
+    }
+  },
+  {
+    "source": {
+      "edge": "left",
+      "pos": 1
+    },
+    "targets": [
+      {
+        "edge": "bottom",
+        "pos": 0
+      }
+    ],
+    "walls": [
+      {
+        "r": 0,
+        "c": 0
+      },
+      {
+        "r": 2,
+        "c": 0
+      },
+      {
+        "r": 1,
+        "c": 5
+      },
+      {
+        "r": 4,
+        "c": 4
+      }
+    ],
+    "par": 4,
+    "inventory": {
+      "fwd": 4,
+      "bck": 4
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 4,
+      "c": 3
+    }
+  },
+  {
+    "source": {
+      "edge": "left",
+      "pos": 0
+    },
+    "targets": [
+      {
+        "edge": "bottom",
+        "pos": 0
+      }
+    ],
+    "walls": [
+      {
+        "r": 0,
+        "c": 4
+      },
+      {
+        "r": 4,
+        "c": 0
+      },
+      {
+        "r": 0,
+        "c": 5
+      },
+      {
+        "r": 1,
+        "c": 0
+      }
+    ],
+    "par": 4,
+    "inventory": {
+      "fwd": 4,
+      "bck": 4
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 4,
+      "c": 4
+    }
+  },
+  {
+    "source": {
+      "edge": "right",
+      "pos": 5
+    },
+    "targets": [
+      {
+        "edge": "top",
+        "pos": 3
+      }
+    ],
+    "walls": [
+      {
+        "r": 4,
+        "c": 3
+      },
+      {
+        "r": 5,
+        "c": 1
+      },
+      {
+        "r": 5,
+        "c": 0
+      },
+      {
+        "r": 0,
+        "c": 4
+      },
+      {
+        "r": 2,
+        "c": 1
+      },
+      {
+        "r": 2,
+        "c": 4
+      }
+    ],
+    "par": 4,
+    "inventory": {
+      "fwd": 4,
+      "bck": 4
+    },
+    "difficulty": "expert",
+    "gem": {
+      "r": 4,
+      "c": 4
+    }
+  }
+]

@@ -6,7 +6,7 @@
 (function () {
     'use strict';
 
-    const SAVE_VERSION = 10; // bump this when puzzle format changes to clear stale data
+    const SAVE_VERSION = 11; // bump this when puzzle format changes to clear stale data
     const GRID_SIZE = 6;
     const SVG_SIZE = 600; // viewBox
     const CELL_SVG = SVG_SIZE / GRID_SIZE; // 100

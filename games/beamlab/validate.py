@@ -1,9 +1,9 @@
-"""Beamlab Puzzle Validator — smart solver.
-Only tries placing mirrors on cells the laser beam passes through.
+"""Beamlab Puzzle Validator — fast solver using reverse elimination + forward backtracking.
 Outputs results to validation_results.txt"""
 
 import json, time, sys
 from pathlib import Path
+from itertools import combinations
 
 GRID = 6
 FWD = {'right': 'up', 'left': 'down', 'up': 'right', 'down': 'left'}
@@ -17,9 +17,9 @@ def get_entry(src):
     e, p = src['edge'], src['pos']
     d = ENTRY[e]
     if e == 'left':    return p, 0, d
-    if e == 'right':   return p, GRID-1, d
+    if e == 'right':   return p, GRID - 1, d
     if e == 'top':     return 0, p, d
-    return GRID-1, p, d
+    return GRID - 1, p, d
 
 
 def simulate(grid, source):
@@ -62,6 +62,17 @@ def hits_all(grid, puzzle):
     return all((t['edge'], t['pos']) in exits for t in puzzle['targets'])
 
 
+def hits_all_and_gem(grid, puzzle):
+    """Check if puzzle is solved AND beam passes through gem."""
+    exits, visited = simulate(grid, puzzle['source'])
+    if not all((t['edge'], t['pos']) in exits for t in puzzle['targets']):
+        return False
+    gem = puzzle.get('gem')
+    if not gem:
+        return False
+    return (gem['r'], gem['c']) in visited
+
+
 def make_grid(puzzle):
     grid = [[None] * GRID for _ in range(GRID)]
     for w in puzzle['walls']:
@@ -69,8 +80,8 @@ def make_grid(puzzle):
     return grid
 
 
-def get_beam_cells(puzzle):
-    """Get cells the beam passes through + neighbors + target approach paths."""
+def get_candidate_cells(puzzle):
+    """Get cells worth placing pieces on — beam path + neighbors + target approach."""
     grid = make_grid(puzzle)
     _, beam_cells = simulate(grid, puzzle['source'])
 
@@ -100,6 +111,7 @@ def get_beam_cells(puzzle):
 
 
 def solve(puzzle):
+    """Find minimum pieces to solve. Uses forward backtracking with pruning."""
     grid = make_grid(puzzle)
     if hits_all(grid, puzzle):
         return 0
@@ -110,18 +122,17 @@ def solve(puzzle):
     if inv.get('bck', 0) > 0: types.append('bck')
     if inv.get('split', 0) > 0: types.append('split')
 
-    candidates = get_beam_cells(puzzle)
+    candidates = get_candidate_cells(puzzle)
     total_inv = sum(inv.get(t, 0) for t in ['fwd', 'bck', 'split'])
-    max_search = min(total_inv, puzzle['par'] + 2, 7)
+    max_search = min(total_inv, puzzle.get('par', 99) + 2, 7)
 
     for num in range(1, max_search + 1):
-        remaining = {t: inv.get(t, 0) for t in types}
-        if backtrack(grid, puzzle, candidates, types, remaining, 0, num):
+        if _backtrack(grid, puzzle, candidates, types, 0, num):
             return num
     return -1
 
 
-def backtrack(grid, puzzle, cells, types, remaining, start, left):
+def _backtrack(grid, puzzle, cells, types, start, left):
     if left == 0:
         return hits_all(grid, puzzle)
     if len(cells) - start < left:
@@ -131,17 +142,48 @@ def backtrack(grid, puzzle, cells, types, remaining, start, left):
         if grid[r][c] is not None:
             continue
         for t in types:
-            if remaining[t] <= 0:
-                continue
             grid[r][c] = t
-            remaining[t] -= 1
-            if backtrack(grid, puzzle, cells, types, remaining, i + 1, left - 1):
+            if _backtrack(grid, puzzle, cells, types, i + 1, left - 1):
                 grid[r][c] = None
-                remaining[t] += 1
                 return True
             grid[r][c] = None
-            remaining[t] += 1
     return False
+
+
+def solve_with_known_solution(puzzle, solution_mirrors):
+    """Fast solver: given a known working solution, try removing mirrors
+    one at a time to find the minimum. Much faster than brute force.
+
+    solution_mirrors: list of (r, c, type) tuples that form a valid solution.
+    Returns the minimum number of pieces needed.
+    """
+    grid = make_grid(puzzle)
+
+    # Verify the full solution works
+    for r, c, t in solution_mirrors:
+        grid[r][c] = t
+    if not hits_all(grid, puzzle):
+        return -1
+
+    n = len(solution_mirrors)
+
+    # Try removing mirrors, largest subsets first
+    for remove_count in range(1, n):
+        keep_count = n - remove_count
+        for combo in combinations(range(n), keep_count):
+            test_grid = make_grid(puzzle)
+            for idx in combo:
+                r, c, t = solution_mirrors[idx]
+                test_grid[r][c] = t
+            if hits_all(test_grid, puzzle):
+                return keep_count
+
+    # Check if solvable with 0 mirrors
+    test_grid = make_grid(puzzle)
+    if hits_all(test_grid, puzzle):
+        return 0
+
+    return n  # need all mirrors
 
 
 def solve_with_gem(puzzle, max_pieces):
@@ -157,22 +199,17 @@ def solve_with_gem(puzzle, max_pieces):
     if inv.get('bck', 0) > 0: types.append('bck')
     if inv.get('split', 0) > 0: types.append('split')
 
-    candidates = get_beam_cells(puzzle)
+    candidates = get_candidate_cells(puzzle)
 
     for num in range(1, max_pieces + 1):
-        remaining = {t: inv.get(t, 0) for t in types}
-        if backtrack_gem(grid, puzzle, candidates, types, remaining, 0, num, gem):
+        if _backtrack_gem(grid, puzzle, candidates, types, 0, num, gem):
             return num
     return -1
 
 
-def backtrack_gem(grid, puzzle, cells, types, remaining, start, left, gem):
+def _backtrack_gem(grid, puzzle, cells, types, start, left, gem):
     if left == 0:
-        if not hits_all(grid, puzzle):
-            return False
-        # Also check beam passes through gem
-        _, visited = simulate(grid, puzzle['source'])
-        return (gem['r'], gem['c']) in visited
+        return hits_all_and_gem(grid, puzzle)
     if len(cells) - start < left:
         return False
     for i in range(start, len(cells) - left + 1):
@@ -180,16 +217,11 @@ def backtrack_gem(grid, puzzle, cells, types, remaining, start, left, gem):
         if grid[r][c] is not None:
             continue
         for t in types:
-            if remaining[t] <= 0:
-                continue
             grid[r][c] = t
-            remaining[t] -= 1
-            if backtrack_gem(grid, puzzle, cells, types, remaining, i + 1, left - 1, gem):
+            if _backtrack_gem(grid, puzzle, cells, types, i + 1, left - 1, gem):
                 grid[r][c] = None
-                remaining[t] += 1
                 return True
             grid[r][c] = None
-            remaining[t] += 1
     return False
 
 
@@ -220,6 +252,7 @@ def main():
         split = p['inventory'].get('split', 0)
         par = p['par']
         has_gem = 'gem' in p
+        pid = p.get('id', '?')
 
         if result == -1:
             status = 'UNSOLVABLE'
@@ -230,7 +263,6 @@ def main():
         else:
             status = 'OK'
 
-        # Check gem reachability (solvable + beam hits gem within par+2 pieces)
         gem_status = ''
         if has_gem and status == 'OK':
             gem_min = solve_with_gem(p, par + 2)
@@ -238,10 +270,10 @@ def main():
                 gem_status = ' | GEM UNREACHABLE'
                 issues.append((i + 1, 'gem unreachable'))
             else:
-                gem_status = f' | gem reachable in {gem_min}'
+                gem_status = f' | gem in {gem_min}'
 
         elapsed = time.time() - t1
-        out(f'  Puzzle {i+1:>2} (par={par}, targets={targets}, splits={split}): {status}{gem_status} [{elapsed:.2f}s]')
+        out(f'  Puzzle {i+1:>2} [{pid}] (par={par}, targets={targets}, splits={split}): {status}{gem_status} [{elapsed:.2f}s]')
 
     total = time.time() - t0
     out('---')

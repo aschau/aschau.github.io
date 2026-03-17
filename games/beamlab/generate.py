@@ -9,7 +9,7 @@ Outputs to generated_puzzles.json
 
 import json, random, sys, time, hashlib
 from pathlib import Path
-from validate import solve as validate_solve, solve_with_gem
+from validate import solve as validate_solve, solve_with_gem, solve_with_known_solution
 
 GRID = 6
 FWD = {'right': 'up', 'left': 'down', 'up': 'right', 'down': 'left'}
@@ -211,15 +211,12 @@ def generate_mirror_puzzle(difficulty='medium'):
         if not hits_all(clean_grid, source, targets):
             continue  # walls blocked the solution
 
-        # Build a temporary puzzle dict for the validator
-        inv_temp = {'fwd': len(mirror_cells) + 2, 'bck': len(mirror_cells) + 2}
+        # Fast solve: use known solution mirrors and try removing them
         temp_puzzle = {
             'source': source, 'targets': targets, 'walls': walls,
-            'par': 99, 'inventory': inv_temp
+            'par': 99, 'inventory': {'fwd': 99, 'bck': 99}
         }
-
-        # Use validator's solver for consistency
-        min_pieces = validate_solve(temp_puzzle)
+        min_pieces = solve_with_known_solution(temp_puzzle, mirror_cells)
 
         if min_pieces <= 0 or min_pieces > 6:
             continue
@@ -364,13 +361,11 @@ def generate_splitter_puzzle(difficulty='hard'):
         if not hits_all(clean_grid, source, targets):
             continue
 
-        inv_temp = {'fwd': len(mirror_cells) + 2, 'bck': len(mirror_cells) + 2, 'split': 2}
         temp_puzzle = {
             'source': source, 'targets': targets, 'walls': walls,
-            'par': 99, 'inventory': inv_temp
+            'par': 99, 'inventory': {'fwd': 99, 'bck': 99, 'split': 99}
         }
-
-        min_pieces = validate_solve(temp_puzzle)
+        min_pieces = solve_with_known_solution(temp_puzzle, mirror_cells)
         if min_pieces <= 0 or min_pieces > 7:
             continue
 

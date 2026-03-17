@@ -5,7 +5,7 @@
 *.swo
 
 # Claude Code
-.claude/settings.local.json
+.claude/
 
 # Dev artifacts
 games/*/generated_puzzles.json

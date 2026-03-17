@@ -735,27 +735,45 @@
             if (prompt) prompt.hidden = true;
         }
 
-        // Header button opens a browser prompt (simple)
-        if (openBtn) {
-            openBtn.addEventListener('click', function () {
-                var current = getUsername();
-                var name = window.prompt('Display name (shown in share results):', current);
-                if (name !== null) {
-                    name = name.trim();
-                    if (name) {
-                        localStorage.setItem('beamlab_username', name);
-                    } else {
-                        localStorage.removeItem('beamlab_username');
-                    }
-                    refreshSharePreview();
-                }
-            });
-        }
-
         // Inline prompt in win modal
         if (saveBtn) saveBtn.addEventListener('click', saveUsername);
         if (skipBtn) skipBtn.addEventListener('click', skipUsername);
         if (input) input.addEventListener('keydown', function (e) { if (e.key === 'Enter') saveUsername(); });
+
+        // Standalone modal (header button)
+        var modal = document.getElementById('username-modal');
+        var modalInput = document.getElementById('username-modal-input');
+        var modalSave = document.getElementById('username-modal-save');
+        var modalSkip = document.getElementById('username-modal-skip');
+        var modalClose = document.getElementById('username-modal-close');
+
+        function openModal() {
+            if (modalInput) modalInput.value = getUsername();
+            if (modal) modal.hidden = false;
+            if (modalInput) modalInput.focus();
+        }
+
+        function closeModal() {
+            if (modal) modal.hidden = true;
+        }
+
+        function saveModalUsername() {
+            var name = modalInput ? modalInput.value.trim() : '';
+            if (name) {
+                localStorage.setItem('beamlab_username', name);
+            } else {
+                localStorage.removeItem('beamlab_username');
+            }
+            closeModal();
+            refreshSharePreview();
+        }
+
+        if (openBtn) openBtn.addEventListener('click', openModal);
+        if (modalSave) modalSave.addEventListener('click', saveModalUsername);
+        if (modalSkip) modalSkip.addEventListener('click', closeModal);
+        if (modalClose) modalClose.addEventListener('click', closeModal);
+        if (modal) modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+        if (modalInput) modalInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') saveModalUsername(); });
     }
 
     function refreshSharePreview() {

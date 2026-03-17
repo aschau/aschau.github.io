@@ -180,6 +180,24 @@
             </div>
         </div>
 
+        <!-- Username Modal -->
+        <div class="modal-overlay" id="username-modal" hidden>
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Display Name</h2>
+                    <button class="modal-close" id="username-modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Set a name for your share results (optional).</p>
+                    <input type="text" class="username-input" id="username-modal-input" placeholder="Enter display name" maxlength="20" autocomplete="off">
+                    <div class="username-actions">
+                        <button class="action-btn" id="username-modal-skip">Skip</button>
+                        <button class="action-btn primary" id="username-modal-save">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Completion Modal -->
         <div class="modal-overlay" id="win-modal" hidden>
             <div class="modal">

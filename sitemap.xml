@@ -40,4 +40,12 @@
     <loc>https://aschau.github.io/games/beamlab/</loc>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://aschau.github.io/games/parsed/</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://aschau.github.io/tools/snaplayout/</loc>
+    <priority>0.7</priority>
+  </url>
 </urlset>

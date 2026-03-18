@@ -15,7 +15,11 @@
     { href: "workprojects.html", label: "Work" },
     { href: "personalprojects.html", label: "Personal" },
     { label: "Games", dropdown: [
-      { href: "games/beamlab/index.html", label: "Beamlab", desc: "Daily laser puzzle" }
+      { href: "games/beamlab/index.html", label: "Beamlab", desc: "Daily laser puzzle" },
+      { href: "games/parsed/index.html", label: "Parsed", desc: "Daily code puzzle" }
+    ]},
+    { label: "Tools", dropdown: [
+      { href: "tools/snaplayout/index.html", label: "SnapLayout", desc: "Room layout planner" }
     ]}
   ];
 

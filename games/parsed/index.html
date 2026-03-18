@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parsed — Daily Code Puzzle Game</title>
+    <meta name="description" content="Parsed is a free daily code puzzle game. Swap scrambled tokens to fix the buggy code and make it compile. A new puzzle every day.">
+    <meta name="keywords" content="parsed, daily puzzle, code puzzle, programming game, coding puzzle, daily game, wordle-like, code game">
+    <meta property="og:title" content="Parsed — Daily Code Puzzle Game">
+    <meta property="og:description" content="Swap scrambled tokens to fix buggy code. A new puzzle every day.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aschau.github.io/games/parsed/">
+    <meta property="og:site_name" content="Parsed">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Parsed — Daily Code Puzzle Game">
+    <meta name="twitter:description" content="Swap scrambled tokens to fix buggy code. A new puzzle every day.">
+    <link rel="canonical" href="https://aschau.github.io/games/parsed/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Parsed",
+        "description": "A free daily code puzzle game. Swap scrambled tokens to fix buggy code and make it compile.",
+        "url": "https://aschau.github.io/games/parsed/",
+        "applicationCategory": "Game",
+        "genre": "Puzzle",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Andrew Chau",
+            "url": "https://aschau.github.io"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <div class="header-top">
+                <h1 class="game-title">Parsed</h1>
+                <div class="header-buttons">
+                    <button class="icon-btn" id="username-btn" aria-label="Set display name">&#9998;</button>
+                    <button class="icon-btn" id="theme-btn" aria-label="Toggle theme">&#9790;</button>
+                    <button class="icon-btn" id="help-btn" aria-label="How to play">?</button>
+                </div>
+            </div>
+            <div class="header-sub">
+                <span id="puzzle-number">Puzzle #1</span>
+                <span class="header-dot">&middot;</span>
+                <span id="puzzle-date"></span>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <div class="stats-bar">
+                <span class="stat-item" id="stat-streak" title="Current streak">&#128293; <span id="streak-count">0</span></span>
+                <span class="stat-item" id="stat-solved" title="Puzzles solved">&#9989; <span id="solved-count">0</span></span>
+            </div>
+
+            <div class="goal-panel" id="goal-panel">
+                <span class="goal-label">Goal:</span>
+                <span class="goal-text" id="goal-text">Fix the code</span>
+            </div>
+
+            <div class="code-grid" id="code-grid">
+                <!-- Lines of code tokens rendered by JS -->
+            </div>
+
+            <div class="console-panel" id="console-panel">
+                <div class="console-header">
+                    <span class="console-prompt">&gt;</span>
+                    <span class="console-title" id="console-title">Compiling...</span>
+                </div>
+                <div class="console-output" id="console-output">
+                    <!-- Error/success messages rendered by JS -->
+                </div>
+            </div>
+
+            <div class="par-display" id="par-display">
+                Par: <span id="par-value">3</span> swaps
+                <span class="swaps-used"> &middot; Swaps: <span id="swaps-used">0</span></span>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" id="undo-btn" disabled>Undo</button>
+                <button class="action-btn" id="reset-btn">Reset</button>
+                <button class="action-btn primary" id="share-btn" disabled>Share</button>
+            </div>
+        </main>
+
+        <footer class="game-footer">
+            <div class="footer-links">
+                <a href="https://aschau.github.io" target="_blank" rel="noopener noreferrer">Made by Andrew Chau</a>
+                <span class="footer-dot">&middot;</span>
+                <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee &#9749;</a>
+            </div>
+            <div class="footer-copyright">&copy; 2026 Andrew Chau. All rights reserved.</div>
+        </footer>
+
+        <!-- Quick Controls (first visit only) -->
+        <div class="modal-overlay" id="controls-modal" hidden>
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Controls</h2>
+                    <button class="modal-close" id="controls-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="help-rules">
+                        <div class="help-rule">
+                            <span class="help-icon">&#9755;</span>
+                            <span><strong>Tap</strong> a movable token to select it.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#8644;</span>
+                            <span><strong>Tap another</strong> movable token to swap them.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#9724;</span>
+                            <span><strong>Dim tokens</strong> are fixed and can't be moved.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full How to Play Modal -->
+        <div class="modal-overlay" id="help-modal" hidden>
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>How to Play</h2>
+                    <button class="modal-close" id="help-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>The code is <strong class="accent-text">buggy</strong> — some tokens are in the wrong place. Swap them to fix it!</p>
+                    <div class="help-rules">
+                        <div class="help-rule">
+                            <span class="help-icon">&#128027;</span>
+                            <span>Read the <strong>goal</strong> to understand what the code should do.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#9755;</span>
+                            <span><strong>Tap</strong> a bright token to select it, then tap another to <strong>swap</strong>.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#128274;</span>
+                            <span><strong>Dim tokens</strong> are locked in place — only bright tokens can move.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#128187;</span>
+                            <span>The <strong>console</strong> shows errors in real-time. Fix them all to compile!</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#11088;</span>
+                            <span>Fewer swaps = better score. Beat <strong>par</strong> for bragging rights.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#128064;</span>
+                            <span>Watch the code <strong>execute</strong> when you solve it!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Username Modal -->
+        <div class="modal-overlay" id="username-modal" hidden>
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Display Name</h2>
+                    <button class="modal-close" id="username-modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Set a name for your share results (optional).</p>
+                    <input type="text" class="username-input" id="username-modal-input" placeholder="Enter display name" maxlength="20" autocomplete="off">
+                    <div class="username-actions">
+                        <button class="action-btn" id="username-modal-skip">Skip</button>
+                        <button class="action-btn primary" id="username-modal-save">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Win Modal -->
+        <div class="modal-overlay" id="win-modal" hidden>
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 id="win-title">Build Successful!</h2>
+                    <button class="modal-close" id="win-close">&times;</button>
+                </div>
+                <div class="modal-body win-body">
+                    <p class="win-puzzle" id="win-puzzle">Parsed #1</p>
+                    <p class="win-score" id="win-score">Par (3 swaps)</p>
+                    <p class="win-result" id="win-result"></p>
+                    <p class="win-streak" id="win-streak"></p>
+                    <div class="username-prompt" id="username-prompt" hidden>
+                        <p class="username-prompt-text">Add a name to your results?</p>
+                        <div class="username-inline">
+                            <input type="text" class="username-input" id="username-input" placeholder="Display name" maxlength="20" autocomplete="off">
+                            <button class="action-btn primary" id="username-save">Save</button>
+                        </div>
+                        <button class="username-skip-link" id="username-skip">skip</button>
+                    </div>
+                    <div class="share-preview" id="share-preview"></div>
+                    <div class="share-buttons">
+                        <button class="action-btn primary share-result-btn" id="win-share-btn">Share</button>
+                        <button class="action-btn share-result-btn" id="win-copy-btn">Copy</button>
+                    </div>
+                    <p class="share-copied" id="share-copied" hidden>Copied to clipboard!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Execution Animation Overlay -->
+        <div class="modal-overlay" id="exec-modal" hidden>
+            <div class="modal exec-modal-wide">
+                <div class="modal-header">
+                    <h2>Running...</h2>
+                    <button class="action-btn" id="exec-skip">Skip</button>
+                </div>
+                <div class="modal-body exec-body">
+                    <div class="exec-code" id="exec-code"></div>
+                    <div class="exec-vars" id="exec-vars">
+                        <div class="exec-vars-title">Variables</div>
+                        <div class="exec-vars-list" id="exec-vars-list"></div>
+                    </div>
+                    <div class="exec-output" id="exec-output"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sr-only" id="game-announcer" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="puzzles.js"></script>
+    <script src="game.js"></script>
+    <script src="share.js"></script>
+</body>
+</html>

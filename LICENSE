@@ -1,16 +1,15 @@
+Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
+
 Copyright (c) 2026 Andrew Chau
 
-This repository contains multiple projects with different licenses:
+This work is licensed under the Creative Commons Attribution-NonCommercial 4.0
+International License. To view a copy of this license, visit
+https://creativecommons.org/licenses/by-nc/4.0/
 
-Portfolio Website (root, css/, js/, img/, projects/)
-  Licensed under CC BY-NC 4.0
-  https://creativecommons.org/licenses/by-nc/4.0/
+You are free to:
+- Share — copy and redistribute the material in any medium or format
+- Adapt — remix, transform, and build upon the material
 
-Games (games/)
-  Each game has its own LICENSE file. See individual game directories.
-  - games/beamlab/ — CC BY-NC 4.0
-  - games/parsed/ — All Rights Reserved
-
-Tools (tools/)
-  Each tool has its own LICENSE file. See individual tool directories.
-  - tools/snaplayout/ — All Rights Reserved
+Under the following terms:
+- Attribution — You must give appropriate credit
+- NonCommercial — You may not use the material for commercial purposes

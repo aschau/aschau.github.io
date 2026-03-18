@@ -186,6 +186,45 @@ A daily laser puzzle game. Place mirrors (`/` `\`) and beam splitters (`X`) on a
 3. Game pages open in new tabs (`target="_blank"`) from the portfolio.
 4. Add to `sitemap.xml` for SEO.
 
+## Tools (`tools/`)
+
+Standalone web tools accessible via the "Tools" dropdown in the portfolio navbar. Like games, each tool is self-contained — it does **not** use the portfolio's `components.js`, navbar, footer, or `stylesheet.css`. Tools open in a new tab from the portfolio.
+
+### SnapLayout (`tools/snaplayout/`)
+
+A free, mobile-friendly room layout planner. Import a floorplan image or draw rooms from scratch, set scale, and drag furniture with real dimensions.
+
+- **Files**: `index.html`, `style.css`, `app.js` (core engine), `furniture.js` (furniture library data)
+- **Tech**: Fabric.js (CDN) for canvas object manipulation (drag, rotate, resize, select, serialize, export)
+- **Structure category**: Room shapes (Living Room, Bedroom, Kitchen, Bathroom, Dining, Office, Closet, Hallway, Custom), doors (36", 48", 72"), and windows (24", 36", 60"). Rooms render with wall-colored borders and auto-sort behind furniture. Doors include a quarter-circle swing arc. Windows show parallel lines.
+- **Furniture library** (`furniture.js`): 6 categories (Structure, Living Room, Bedroom, Dining, Kitchen, Bathroom). All dimensions in inches internally. Items have optional `shape: 'circle'` and `style: 'room'|'door'|'window'` properties.
+- **Measurements**: Internal unit is inches. Display supports feet, inches, cm, meters via unit selector. Each furniture piece shows its label and dimensions on-canvas with outlined text (dark fill + white stroke via `paintFirst: 'stroke'`). Dimensions update when unit changes or piece is resized.
+- **Image import**: 4 methods — file upload, drag & drop, clipboard paste, URL input. URL import tries `crossOrigin='anonymous'`, falls back to friendly error. Images resized to max 2000px before storing.
+- **Scale calibration**: Scale tool lets user draw a line between two known points, then enter the real distance. Calculates `pixelsPerInch` ratio for all measurements.
+- **Wall drawing**: Wall tool places points on click, draws lines between them. Double-click or closing to start point finishes the wall. Walls snap to grid and are non-selectable after placement.
+- **Z-ordering**: Rooms always sort behind furniture (grid → floorplan image → rooms → furniture/doors/windows).
+- **Resize behavior**: When a furniture group is scaled, `object:modified` detects `scaleX`/`scaleY` change and rebuilds the group at the new size with crisp text and updated dimensions.
+- **Persistence**: Auto-saves to `localStorage` key `snaplayout_data` (debounced 1s). Version-aware loading via `SAVE_VERSION`. Saves canvas JSON, pixelsPerInch, unit, snap/grid state, zoom/pan.
+- **Export**: PNG at 2x resolution via `canvas.toDataURL()`. Hides grid and selection handles before export.
+- **Undo/redo**: Canvas state stack (capped at 50). `Ctrl+Z` / `Ctrl+Y` keyboard shortcuts.
+- **Theme**: Dark glassmorphism default, light mode override. `localStorage` key `snaplayout_theme`. Canvas background color updates to match theme.
+- **Example layout**: First-time visitors see a bedroom layout (room, queen bed, nightstands, dresser, door) to demonstrate features. Can be cleared.
+- **Keyboard shortcuts**: V (select), H (pan), W (wall), R (scale), G (grid), S (snap), Delete, Ctrl+Z/Y, Ctrl+D (duplicate), arrows (nudge), Escape.
+- **Fonts**: Xolonium for title (loaded from `../../fonts/`), Inter (Google Fonts) for body.
+- **Ko-fi**: Donation link in footer points to `https://ko-fi.com/andrewchau`.
+- **License**: All Rights Reserved (not CC BY-NC 4.0). Copyright notice in footer.
+
+### Adding a new tool
+
+1. Create `tools/<tool-name>/` with its own `index.html`, CSS, and JS (self-contained).
+2. Add an entry to the "Tools" `navItems` dropdown in `js/components.js`:
+   ```js
+   { href: "tools/<tool-name>/index.html", label: "Tool Name", desc: "Short description" }
+   ```
+3. Tool pages open in new tabs (`target="_blank"`) from the portfolio.
+4. Add to `sitemap.xml` for SEO.
+5. Add a per-tool `LICENSE` file.
+
 ## Conventions
 
 - No inline `style=` attributes on the main pages — use CSS classes in `stylesheet.css` instead. Exception: `--node-color` CSS variables on timeline entries.

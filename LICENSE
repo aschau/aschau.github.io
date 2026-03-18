@@ -10,3 +10,7 @@ Games (games/)
   Each game has its own LICENSE file. See individual game directories.
   - games/beamlab/ — CC BY-NC 4.0
   - games/parsed/ — All Rights Reserved
+
+Tools (tools/)
+  Each tool has its own LICENSE file. See individual tool directories.
+  - tools/snaplayout/ — All Rights Reserved

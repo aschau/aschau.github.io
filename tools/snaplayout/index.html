@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SnapLayout — Room Layout Planner</title>
+    <meta name="description" content="Free mobile-friendly room layout planner. Import a floorplan, set scale, drag and drop furniture with real dimensions. No sign-up required.">
+    <meta name="keywords" content="room planner, floor plan, furniture layout, room layout tool, free room planner">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://aschau.github.io/tools/snaplayout/">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="SnapLayout — Room Layout Planner">
+    <meta property="og:description" content="Free mobile-friendly room layout planner. Import a floorplan, drag and drop furniture with real dimensions.">
+    <meta property="og:url" content="https://aschau.github.io/tools/snaplayout/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://aschau.github.io/img/about-me/me.JPG">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="SnapLayout — Room Layout Planner">
+    <meta name="twitter:description" content="Free mobile-friendly room layout planner. Import a floorplan, drag and drop furniture with real dimensions.">
+    <meta name="twitter:image" content="https://aschau.github.io/img/about-me/me.JPG">
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "SnapLayout",
+        "description": "Free mobile-friendly room layout planner. Import a floorplan, set scale, drag and drop furniture with real dimensions.",
+        "url": "https://aschau.github.io/tools/snaplayout/",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Any",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "author": { "@type": "Person", "name": "Andrew Chau", "url": "https://aschau.github.io" }
+    }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Fabric.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js" defer></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-top">
+                <h1 class="app-title">SnapLayout</h1>
+                <div class="header-buttons">
+                    <button id="import-btn" class="icon-btn" aria-label="Import floorplan" title="Import floorplan">&#x1F4C2;</button>
+                    <button id="export-btn" class="icon-btn" aria-label="Export as image" title="Export as PNG">&#x1F4E5;</button>
+                    <select id="unit-select" class="unit-select" aria-label="Measurement unit">
+                        <option value="ft">ft</option>
+                        <option value="in">in</option>
+                        <option value="cm">cm</option>
+                        <option value="m">m</option>
+                    </select>
+                    <button id="theme-btn" class="icon-btn" aria-label="Toggle theme" title="Toggle theme">&#x1F319;</button>
+                    <button id="help-btn" class="icon-btn" aria-label="How to use" title="How to use">?</button>
+                </div>
+            </div>
+            <div class="header-sub">
+                <span id="dimensions-display">Set scale to see measurements</span>
+                <span class="header-dot" id="area-dot" hidden>&middot;</span>
+                <span id="area-display"></span>
+            </div>
+        </header>
+
+        <!-- Main -->
+        <main class="app-main">
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="tool-group tools-primary">
+                    <button class="tool-btn active" data-tool="select" aria-label="Select tool" title="Select (V)">&#x1F5D5;</button>
+                    <button class="tool-btn" data-tool="pan" aria-label="Pan tool" title="Pan (H)">&#x270B;</button>
+                    <button class="tool-btn" data-tool="wall" aria-label="Draw walls" title="Draw walls (W)">&#x1F9F1;</button>
+                    <button class="tool-btn" data-tool="scale" aria-label="Set scale" title="Set scale (R)">&#x1F4CF;</button>
+                </div>
+                <div class="tool-separator"></div>
+                <div class="tool-group tools-actions">
+                    <button id="undo-btn" class="tool-btn" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>&#x21A9;</button>
+                    <button id="redo-btn" class="tool-btn" aria-label="Redo" title="Redo (Ctrl+Y)" disabled>&#x21AA;</button>
+                    <button id="snap-btn" class="tool-btn active" aria-label="Toggle snap" title="Snap to grid (S)">&#x1F9F2;</button>
+                    <button id="grid-btn" class="tool-btn active" aria-label="Toggle grid" title="Show grid (G)">&#x26F6;</button>
+                    <button id="clear-btn" class="tool-btn" aria-label="Clear canvas" title="Clear all">&#x1F5D1;</button>
+                </div>
+            </div>
+
+            <!-- Canvas -->
+            <div class="canvas-wrapper" id="canvas-wrapper">
+                <canvas id="layout-canvas"></canvas>
+                <!-- Drop zone overlay (shown when no content) -->
+                <div class="drop-zone" id="drop-zone">
+                    <div class="drop-zone-content">
+                        <div class="drop-zone-icon">&#x1F4C2;</div>
+                        <p>Drop a floorplan image here</p>
+                        <p class="drop-zone-hint">or use the import button above</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Furniture Bar -->
+            <div class="furniture-bar" id="furniture-bar">
+                <div class="furniture-tabs" id="furniture-tabs"></div>
+                <div class="furniture-items" id="furniture-items"></div>
+            </div>
+        </main>
+
+        <!-- Properties Panel -->
+        <div class="properties-panel" id="properties-panel" hidden>
+            <div class="properties-header">
+                <h3 id="prop-title">Properties</h3>
+                <button id="prop-close" class="icon-btn" aria-label="Close properties">&times;</button>
+            </div>
+            <div class="properties-body">
+                <div class="prop-row">
+                    <label for="prop-width">W:</label>
+                    <input type="number" id="prop-width" step="0.1" min="0">
+                    <span class="prop-unit" id="prop-width-unit">ft</span>
+                </div>
+                <div class="prop-row">
+                    <label for="prop-height">H:</label>
+                    <input type="number" id="prop-height" step="0.1" min="0">
+                    <span class="prop-unit" id="prop-height-unit">ft</span>
+                </div>
+                <div class="prop-row">
+                    <label for="prop-rotation">Angle:</label>
+                    <input type="number" id="prop-rotation" step="15" min="0" max="360">
+                    <span class="prop-unit">&deg;</span>
+                </div>
+                <div class="prop-row">
+                    <label for="prop-label">Label:</label>
+                    <input type="text" id="prop-label" maxlength="30">
+                </div>
+                <div class="prop-actions">
+                    <button id="prop-duplicate" class="action-btn">Duplicate</button>
+                    <button id="prop-delete" class="action-btn action-btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <span>Made by <a href="https://aschau.github.io" target="_blank" rel="noopener noreferrer">Andrew Chau</a></span>
+            <span class="footer-dot">&middot;</span>
+            <span>&copy; 2026 All rights reserved</span>
+            <span class="footer-dot">&middot;</span>
+            <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">&#x2615; Support</a>
+        </footer>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal-overlay" id="import-modal" hidden>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Import Floorplan</h2>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="import-drop-zone" id="import-drop-zone">
+                    <div class="drop-zone-icon">&#x1F4C1;</div>
+                    <p>Drag & drop an image here</p>
+                    <p class="drop-zone-hint">or</p>
+                    <label class="action-btn import-file-label">
+                        Choose File
+                        <input type="file" id="import-file" accept="image/*" hidden>
+                    </label>
+                </div>
+                <div class="import-divider"><span>or paste an image URL</span></div>
+                <div class="import-url-row">
+                    <input type="url" id="import-url" placeholder="https://example.com/floorplan.jpg" class="import-url-input">
+                    <button id="import-url-btn" class="action-btn">Load</button>
+                </div>
+                <p class="import-hint">You can also paste an image from clipboard (Ctrl+V / Cmd+V) anywhere on the page.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scale Modal -->
+    <div class="modal-overlay" id="scale-modal" hidden>
+        <div class="modal-content modal-narrow">
+            <div class="modal-header">
+                <h2>Set Scale</h2>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>How long is the line you just drew?</p>
+                <div class="scale-input-row">
+                    <input type="number" id="scale-distance" step="0.1" min="0.1" placeholder="e.g. 3" class="scale-input" autofocus>
+                    <select id="scale-unit" class="unit-select">
+                        <option value="ft">feet</option>
+                        <option value="in">inches</option>
+                        <option value="cm">cm</option>
+                        <option value="m">meters</option>
+                    </select>
+                </div>
+                <button id="scale-confirm" class="action-btn action-btn-primary">Set Scale</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="export-modal" hidden>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Export Layout</h2>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-preview" id="export-preview"></div>
+                <div class="export-row">
+                    <input type="text" id="export-filename" value="snaplayout-export" class="export-filename-input">
+                    <span class="export-ext">.png</span>
+                </div>
+                <button id="export-confirm" class="action-btn action-btn-primary">Download PNG</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="help-modal" hidden>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>How to Use</h2>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body help-body">
+                <div class="help-step">
+                    <span class="help-num">1</span>
+                    <div>
+                        <strong>Import or Draw</strong>
+                        <p>Import a floorplan image or use the wall tool to draw your room.</p>
+                    </div>
+                </div>
+                <div class="help-step">
+                    <span class="help-num">2</span>
+                    <div>
+                        <strong>Set Scale</strong>
+                        <p>Use the ruler tool to draw a line across a known distance, then enter the real measurement.</p>
+                    </div>
+                </div>
+                <div class="help-step">
+                    <span class="help-num">3</span>
+                    <div>
+                        <strong>Add Furniture</strong>
+                        <p>Tap items from the bottom bar to place them. Drag to move, use handles to rotate and resize.</p>
+                    </div>
+                </div>
+                <div class="help-step">
+                    <span class="help-num">4</span>
+                    <div>
+                        <strong>Navigate</strong>
+                        <p>Scroll to zoom, click &amp; drag with the pan tool (or middle mouse) to move around.</p>
+                    </div>
+                </div>
+                <div class="help-shortcuts">
+                    <h3>Keyboard Shortcuts</h3>
+                    <div class="shortcut-grid">
+                        <kbd>V</kbd><span>Select tool</span>
+                        <kbd>H</kbd><span>Pan tool</span>
+                        <kbd>W</kbd><span>Wall tool</span>
+                        <kbd>R</kbd><span>Scale tool</span>
+                        <kbd>G</kbd><span>Toggle grid</span>
+                        <kbd>S</kbd><span>Toggle snap</span>
+                        <kbd>Del</kbd><span>Delete selected</span>
+                        <kbd>Ctrl+Z</kbd><span>Undo</span>
+                        <kbd>Ctrl+Y</kbd><span>Redo</span>
+                        <kbd>Ctrl+D</kbd><span>Duplicate</span>
+                        <kbd>Esc</kbd><span>Deselect / close</span>
+                        <kbd>Arrows</kbd><span>Nudge selected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Intro Modal (first visit) -->
+    <div class="modal-overlay" id="intro-modal" hidden>
+        <div class="modal-content modal-narrow">
+            <div class="modal-header">
+                <h2>Welcome to SnapLayout</h2>
+            </div>
+            <div class="modal-body">
+                <p>A free room layout planner. No sign-up needed.</p>
+                <div class="help-step">
+                    <span class="help-num">&#x1F4C2;</span>
+                    <p>Import a floorplan image or draw walls</p>
+                </div>
+                <div class="help-step">
+                    <span class="help-num">&#x1F4CF;</span>
+                    <p>Set a scale for accurate measurements</p>
+                </div>
+                <div class="help-step">
+                    <span class="help-num">&#x1F6CB;</span>
+                    <p>Drag and drop furniture from the bar below</p>
+                </div>
+                <div class="help-step">
+                    <span class="help-num">&#x1F4F1;</span>
+                    <p>Pinch to zoom, two fingers to pan</p>
+                </div>
+                <button id="intro-dismiss" class="action-btn action-btn-primary">Get Started</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Clear Modal -->
+    <div class="modal-overlay" id="confirm-modal" hidden>
+        <div class="modal-content modal-narrow">
+            <div class="modal-header">
+                <h2>Clear Canvas</h2>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Clear everything? This cannot be undone.</p>
+                <div class="confirm-actions">
+                    <button id="confirm-cancel" class="action-btn">Cancel</button>
+                    <button id="confirm-clear" class="action-btn action-btn-danger">Clear All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ARIA live region -->
+    <div class="sr-only" id="app-announcer" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="furniture.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

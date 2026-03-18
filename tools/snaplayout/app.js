@@ -311,13 +311,25 @@
     let isPanning = false;
     let panStartX, panStartY;
 
+    // Extract clientX/clientY from mouse or touch event
+    function getEventXY(e) {
+        if (e.touches && e.touches.length > 0) {
+            return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+        if (e.changedTouches && e.changedTouches.length > 0) {
+            return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+        }
+        return { x: e.clientX, y: e.clientY };
+    }
+
     function onMouseDown(opt) {
         const e = opt.e;
+        const pos = getEventXY(e);
 
         if (currentTool === 'pan' || e.button === 1) {
             isPanning = true;
-            panStartX = e.clientX;
-            panStartY = e.clientY;
+            panStartX = pos.x;
+            panStartY = pos.y;
             canvas.selection = false;
             canvas.setCursor('grabbing');
             return;
@@ -338,10 +350,11 @@
         const e = opt.e;
 
         if (isPanning) {
-            const dx = e.clientX - panStartX;
-            const dy = e.clientY - panStartY;
-            panStartX = e.clientX;
-            panStartY = e.clientY;
+            const pos = getEventXY(e);
+            const dx = pos.x - panStartX;
+            const dy = pos.y - panStartY;
+            panStartX = pos.x;
+            panStartY = pos.y;
             canvas.relativePan(new fabric.Point(dx, dy));
             drawGrid();
             return;
@@ -371,27 +384,30 @@
     function initTouchHandlers() {
         let lastDist = 0;
         let lastCenter = null;
-        let touching = 0;
+        let isPinching = false;
 
         canvasWrapper.addEventListener('touchstart', function (e) {
-            touching = e.touches.length;
-            if (touching === 2) {
+            if (e.touches.length === 2) {
                 e.preventDefault();
+                isPinching = true;
                 lastDist = getTouchDist(e.touches);
                 lastCenter = getTouchCenter(e.touches);
+                // Cancel any in-progress object drag
+                canvas.discardActiveObject();
                 canvas.selection = false;
+                canvas.requestRenderAll();
             }
         }, { passive: false });
 
         canvasWrapper.addEventListener('touchmove', function (e) {
-            if (touching === 2 && e.touches.length === 2) {
+            if (isPinching && e.touches.length === 2) {
                 e.preventDefault();
                 const dist = getTouchDist(e.touches);
                 const center = getTouchCenter(e.touches);
 
-                // Zoom
-                const scale = dist / lastDist;
-                let zoom = canvas.getZoom() * scale;
+                // Zoom — clamp scale factor to avoid wild jumps
+                const scaleFactor = Math.max(0.9, Math.min(1.1, dist / lastDist));
+                let zoom = canvas.getZoom() * scaleFactor;
                 zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
                 canvas.zoomToPoint(center, zoom);
 
@@ -407,8 +423,8 @@
         }, { passive: false });
 
         canvasWrapper.addEventListener('touchend', function (e) {
-            touching = e.touches.length;
-            if (touching < 2) {
+            if (isPinching && e.touches.length < 2) {
+                isPinching = false;
                 canvas.selection = currentTool === 'select';
                 scheduleSave();
             }
@@ -768,11 +784,11 @@
             }));
         }
 
-        // Label text
+        // Label text — enforce readable minimums
         const fontSize = style === 'room'
-            ? Math.max(10, Math.min(18, Math.min(w, h) * 0.12))
-            : Math.max(8, Math.min(14, Math.min(w, h) * 0.3));
-        const dimFontSize = Math.max(6, fontSize * 0.75);
+            ? Math.max(12, Math.min(20, Math.min(w, h) * 0.12))
+            : Math.max(10, Math.min(16, Math.min(w, h) * 0.35));
+        const dimFontSize = Math.max(9, fontSize * 0.75);
 
         objects.push(new fabric.Text(item.label, {
             fontSize: fontSize,
@@ -1312,12 +1328,51 @@
             }
         });
 
+        // Calculate bounding box of all visible objects
+        const objects = canvas.getObjects().filter(o => o.visible);
+        if (objects.length === 0) {
+            hidden.forEach(obj => { obj.visible = true; });
+            if (wasGridVisible) drawGrid();
+            canvas.requestRenderAll();
+            return;
+        }
+
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        objects.forEach(obj => {
+            const bound = obj.getBoundingRect(true);
+            minX = Math.min(minX, bound.left);
+            minY = Math.min(minY, bound.top);
+            maxX = Math.max(maxX, bound.left + bound.width);
+            maxY = Math.max(maxY, bound.top + bound.height);
+        });
+
+        // Add padding around content
+        const pad = 40;
+        minX -= pad;
+        minY -= pad;
+        maxX += pad;
+        maxY += pad;
+
+        // Save current viewport and temporarily reset to fit all content
+        const origVpt = canvas.viewportTransform.slice();
+        const origWidth = canvas.getWidth();
+        const origHeight = canvas.getHeight();
+
+        const contentW = maxX - minX;
+        const contentH = maxY - minY;
+
+        canvas.viewportTransform = [1, 0, 0, 1, -minX, -minY];
+        canvas.setDimensions({ width: contentW, height: contentH });
         canvas.requestRenderAll();
 
         const dataURL = canvas.toDataURL({
             format: 'png',
             multiplier: 2
         });
+
+        // Restore original viewport
+        canvas.viewportTransform = origVpt;
+        canvas.setDimensions({ width: origWidth, height: origHeight });
 
         // Restore
         hidden.forEach(obj => { obj.visible = true; });

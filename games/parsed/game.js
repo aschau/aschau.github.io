@@ -15,6 +15,7 @@
     var currentTokens = [];   // flat array: [{t, y, f, line, col, solutionIndex}]
     var movableTokens = [];   // subset of currentTokens where f===0
     var solutionOrder = [];   // the correct text values for each movable slot
+    var solutionVars = null;  // expected final variable state from correct arrangement
     var selectedIndex = null; // index into movableTokens of currently selected token
     var swapCount = 0;
     var moveHistory = [];     // [{a, b}] indices into movableTokens
@@ -77,6 +78,27 @@
         solutionOrder = [];
         for (var i = 0; i < movableTokens.length; i++) {
             solutionOrder.push(movableTokens[i].t);
+        }
+
+        // Run the solution to capture expected final variable state
+        var solLines = [];
+        for (var sl = 0; sl < puzzle.lines.length; sl++) {
+            var solLine = [];
+            for (var sc = 0; sc < puzzle.lines[sl].length; sc++) {
+                solLine.push(puzzle.lines[sl][sc].t);
+            }
+            solLines.push(solLine);
+        }
+        try {
+            var solInterp = new PseudoInterpreter(solLines);
+            solInterp.execute();
+            solutionVars = {};
+            var solKeys = Object.keys(solInterp.vars);
+            for (var sk = 0; sk < solKeys.length; sk++) {
+                solutionVars[solKeys[sk]] = solInterp.vars[solKeys[sk]];
+            }
+        } catch (e) {
+            solutionVars = null;
         }
 
         // Scramble movable tokens
@@ -298,6 +320,21 @@
                 errLine.textContent = result.errors[i];
                 consoleOutput.appendChild(errLine);
             }
+        } else if (result.type === 'logic') {
+            consoleTitle.textContent = 'LOGIC ERROR';
+            consoleTitle.className = 'console-title error';
+
+            var outLine = document.createElement('div');
+            outLine.className = 'console-line success';
+            outLine.textContent = '> Output: ' + result.output;
+            consoleOutput.appendChild(outLine);
+
+            for (var i = 0; i < result.errors.length; i++) {
+                var errLine = document.createElement('div');
+                errLine.className = 'console-line error';
+                errLine.textContent = result.errors[i];
+                consoleOutput.appendChild(errLine);
+            }
         } else {
             consoleTitle.textContent = 'WRONG OUTPUT';
             consoleTitle.className = 'console-title error';
@@ -310,7 +347,7 @@
             }
         }
 
-        announce(result.success ? 'Build successful' : (result.type === 'compile' ? 'Syntax error' : 'Wrong output'));
+        announce(result.success ? 'Build successful' : (result.type === 'compile' ? 'Syntax error' : (result.type === 'logic' ? 'Logic error' : 'Wrong output')));
         return result.success;
     }
 
@@ -346,7 +383,32 @@
             if (typeof output === 'boolean') outputStr = output ? 'true' : 'false';
 
             if (outputStr === puzzle.output) {
-                return { success: true, output: outputStr };
+                // Output matches — verify the logic is correct by comparing
+                // final variable states against the solution. This allows
+                // equivalent expressions (a+b == b+a) but catches cheats
+                // like bypassing loops or misassigning variables.
+                var logicValid = true;
+                if (solutionVars) {
+                    var playerVars = interp.vars;
+                    var solKeys = Object.keys(solutionVars);
+                    var playerKeys = Object.keys(playerVars);
+                    if (solKeys.length !== playerKeys.length) {
+                        logicValid = false;
+                    } else {
+                        for (var vi = 0; vi < solKeys.length; vi++) {
+                            var vk = solKeys[vi];
+                            if (!playerVars.hasOwnProperty(vk) || playerVars[vk] !== solutionVars[vk]) {
+                                logicValid = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (logicValid) {
+                    return { success: true, output: outputStr };
+                } else {
+                    return { success: false, type: 'logic', output: outputStr, errors: ['> output is correct, but the logic doesn\'t match the prompt'] };
+                }
             } else {
                 return { success: false, type: 'output', errors: ['> returned ' + outputStr + ', expected ' + puzzle.output] };
             }

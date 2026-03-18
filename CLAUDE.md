@@ -175,6 +175,29 @@ A daily laser puzzle game. Place mirrors (`/` `\`) and beam splitters (`X`) on a
 - **Ko-fi**: Donation link in footer points to `https://ko-fi.com/andrewchau`.
 - **License**: CC BY-NC 4.0 (matches repo LICENSE file). Copyright notice in footer.
 
+### Parsed (`games/parsed/`)
+
+A daily code puzzle game. Swap scrambled code tokens to fix buggy programs and make them produce the correct output.
+
+- **Files**: `index.html`, `style.css`, `game.js` (core engine), `puzzles.js` (inline puzzle data + daily selection), `share.js` (clipboard sharing), `generate.py` (puzzle generator), `verify_puzzles.py` (puzzle validator)
+- **Puzzle data**: 30 themed puzzles stored inline in `puzzles.js`. Each puzzle has a 2D `lines` array of tokens, a `goal` (prompt text), expected `output`, `par`, `difficulty`, and `id`. Do not edit `puzzles.js` manually.
+- **Token format**: Each token is `{t, y, f}` — `t` is text, `y` is category (`kw`=keyword, `id`=identifier, `op`=operator, `lit`=literal, `pn`=punctuation), `f` is fixed flag (1=immovable, 0=swappable). Players can only swap tokens where `f===0`.
+- **Validation**: Three-stage validation in `tryRunCode()`:
+  1. **Structural** (`validateStructure`): checks syntax (declarations, conditions, assignments)
+  2. **Execution** (`PseudoInterpreter`): runs the code and captures output + final variable states
+  3. **Logic**: compares final variable values against the solution. This allows equivalent expressions (`a+b` == `b+a`) but catches cheats like bypassing loops or misassigning variables. Shows "LOGIC ERROR" if output is correct but variable states don't match.
+- **Interpreter**: `PseudoInterpreter` class — left-to-right evaluation (no operator precedence), integer division with floor, max 200 steps / 50 loop iterations. Tracks `vars` (variable state) and `output` (return value).
+- **Scrambling**: Seeded Fisher-Yates shuffle (deterministic per puzzle `id`). Only movable tokens are shuffled. `solutionOrder` stores correct arrangement; `solutionVars` stores expected final variable state.
+- **Daily puzzle**: Selected by date offset from `LAUNCH_EPOCH` in `puzzles.js`. Cycles through 30 puzzles.
+- **Scoring**: Par system (golf-style). Best score across resets is saved.
+- **Persistence**: `localStorage` key `parsed_data` stores today's board state, stats, streaks. `SAVE_VERSION` constant — bump when format changes.
+- **Execution animation**: On win, replays code execution step-by-step (400ms per step) with line highlighting and variable state panel.
+- **Theme**: Dark glassmorphism default, light mode override. Manual toggle saved in `localStorage` key `parsed_theme`.
+- **Fonts**: Xolonium for title (loaded from `../../fonts/`), Inter (Google Fonts) for body.
+- **Share**: Narrative share text with score label, swap count, and streak. Web Share API with clipboard fallback.
+- **Ko-fi**: Donation link in footer points to `https://ko-fi.com/andrewchau`.
+- **License**: CC BY-NC 4.0 (matches repo LICENSE file). Copyright notice in footer.
+
 ### Planned Games
 
 - **Bug Fix** (`games/bugfix/`) — Baba Is You meets coding. Rearrange code tokens on a grid to make a program compile. Daily puzzle format.

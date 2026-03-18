@@ -277,48 +277,185 @@
     // =============================================
 
     function updateConsole() {
-        var errors = getErrors();
+        var result = tryRunCode();
         consoleOutput.innerHTML = '';
 
-        if (errors.length === 0) {
+        if (result.success) {
             consoleTitle.textContent = 'BUILD SUCCESSFUL \u2713';
             consoleTitle.className = 'console-title success';
 
             var successLine = document.createElement('div');
             successLine.className = 'console-line success';
-            successLine.textContent = '> Output: ' + (puzzle.output || '');
+            successLine.textContent = '> Output: ' + result.output;
             consoleOutput.appendChild(successLine);
-        } else {
-            consoleTitle.textContent = 'Compiling...';
+        } else if (result.type === 'compile') {
+            consoleTitle.textContent = 'SyntaxError';
             consoleTitle.className = 'console-title error';
 
-            for (var i = 0; i < errors.length; i++) {
+            for (var i = 0; i < result.errors.length; i++) {
                 var errLine = document.createElement('div');
                 errLine.className = 'console-line error';
-                errLine.textContent = errors[i];
+                errLine.textContent = result.errors[i];
                 consoleOutput.appendChild(errLine);
             }
+        } else {
+            consoleTitle.textContent = 'WRONG OUTPUT';
+            consoleTitle.className = 'console-title error';
 
-            var countLine = document.createElement('div');
-            countLine.className = 'console-line info error-count';
-            countLine.textContent = errors.length + ' error' + (errors.length !== 1 ? 's' : '') + ' remaining';
-            consoleOutput.appendChild(countLine);
+            for (var i = 0; i < result.errors.length; i++) {
+                var errLine = document.createElement('div');
+                errLine.className = 'console-line error';
+                errLine.textContent = result.errors[i];
+                consoleOutput.appendChild(errLine);
+            }
         }
 
-        announce(errors.length === 0 ? 'Build successful' : errors.length + ' errors remaining');
+        announce(result.success ? 'Build successful' : (result.type === 'compile' ? 'Syntax error' : 'Wrong output'));
+        return result.success;
     }
 
-    function getErrors() {
+    function tryRunCode() {
+        // Build code lines from current token arrangement
+        var codeLines = [];
+        var tokenIdx = 0;
+        for (var l = 0; l < puzzle.lines.length; l++) {
+            var tokens = [];
+            for (var c = 0; c < puzzle.lines[l].length; c++) {
+                tokens.push(currentTokens[tokenIdx].t);
+                tokenIdx++;
+            }
+            codeLines.push(tokens);
+        }
+
+        // Structural validation — check each line compiles
+        var compileErrors = validateStructure(codeLines);
+        if (compileErrors.length > 0) {
+            return { success: false, type: 'compile', errors: compileErrors };
+        }
+
+        try {
+            var interp = new PseudoInterpreter(codeLines);
+            interp.execute();
+            var output = interp.output;
+
+            if (output === null || output === undefined) {
+                return { success: false, type: 'compile', errors: ['error: program produced no output'] };
+            }
+
+            var outputStr = String(output);
+            if (typeof output === 'boolean') outputStr = output ? 'true' : 'false';
+
+            if (outputStr === puzzle.output) {
+                return { success: true, output: outputStr };
+            } else {
+                return { success: false, type: 'output', errors: ['> returned ' + outputStr + ', expected ' + puzzle.output] };
+            }
+        } catch (e) {
+            return { success: false, type: 'compile', errors: ['error: unexpected token arrangement'] };
+        }
+    }
+
+
+    function validateStructure(codeLines) {
         var errors = [];
-        for (var i = 0; i < movableTokens.length; i++) {
-            if (movableTokens[i].t !== solutionOrder[i]) {
-                var lineNum = movableTokens[i].line + 1;
-                var expected = solutionOrder[i];
-                var got = movableTokens[i].t;
-                errors.push('Line ' + lineNum + ': Expected \u201c' + expected + '\u201d, got \u201c' + got + '\u201d');
+        for (var i = 0; i < codeLines.length; i++) {
+            var line = codeLines[i];
+            var ln = i + 1;
+            if (!line || line.length === 0) continue;
+
+            var first = line[0];
+
+            // Skip brace-only lines
+            if (line.length === 1 && (first === '{' || first === '}')) continue;
+            // } else { pattern
+            if (first === '}' && line.length >= 3 && line[1] === 'else') continue;
+            if (first === '}') continue;
+
+            if (first === 'let') {
+                // let <id> = <expr>
+                if (line.length < 4) {
+                    errors.push('line ' + ln + ': incomplete declaration');
+                } else if (line[2] !== '=') {
+                    errors.push('line ' + ln + ': expected \'=\' after \'' + line[1] + '\', got \'' + line[2] + '\'');
+                } else if (isKeyword(line[1])) {
+                    errors.push('line ' + ln + ': \'' + line[1] + '\' is a keyword, not a variable name');
+                } else if (isOperator(line[1])) {
+                    errors.push('line ' + ln + ': unexpected operator \'' + line[1] + '\' in declaration');
+                }
+                // Check expression tokens after =
+                var exprErr = validateExpr(line.slice(3), ln);
+                if (exprErr) errors.push(exprErr);
+            } else if (first === 'while' || first === 'if') {
+                // while/if <expr> <op> <expr> {
+                var lastTok = line[line.length - 1];
+                if (lastTok !== '{') {
+                    errors.push('line ' + ln + ': expected \'{\' at end of ' + first + ' statement');
+                }
+                if (line.length < 5) {
+                    errors.push('line ' + ln + ': incomplete ' + first + ' condition');
+                } else {
+                    // Check condition has a comparison operator
+                    var hasComp = false;
+                    for (var j = 1; j < line.length - 1; j++) {
+                        if (isComparison(line[j])) hasComp = true;
+                    }
+                    if (!hasComp) {
+                        errors.push('line ' + ln + ': missing comparison operator in ' + first + ' condition');
+                    }
+                }
+            } else if (first === 'return') {
+                if (line.length < 2) {
+                    errors.push('line ' + ln + ': return with no value');
+                }
+            } else {
+                // Assignment: <id> = <expr>
+                if (line.length < 3) {
+                    errors.push('line ' + ln + ': incomplete statement');
+                } else if (line[1] !== '=') {
+                    errors.push('line ' + ln + ': expected \'=\' after \'' + first + '\', got \'' + line[1] + '\'');
+                } else if (isKeyword(first)) {
+                    errors.push('line ' + ln + ': unexpected keyword \'' + first + '\'');
+                } else if (isOperator(first)) {
+                    errors.push('line ' + ln + ': unexpected operator \'' + first + '\' at start of line');
+                }
             }
         }
         return errors;
+    }
+
+    function validateExpr(tokens, lineNum) {
+        // Check for obvious issues: two operators in a row, operator at start/end
+        var filtered = tokens.filter(function (t) { return t !== '{' && t !== '}'; });
+        if (filtered.length === 0) return null;
+        if (isArithOp(filtered[0])) {
+            return 'line ' + lineNum + ': unexpected operator \'' + filtered[0] + '\' at start of expression';
+        }
+        if (filtered.length > 1 && isArithOp(filtered[filtered.length - 1])) {
+            return 'line ' + lineNum + ': unexpected operator \'' + filtered[filtered.length - 1] + '\' at end of expression';
+        }
+        for (var i = 0; i < filtered.length - 1; i++) {
+            if (isArithOp(filtered[i]) && isArithOp(filtered[i + 1])) {
+                return 'line ' + lineNum + ': unexpected operator \'' + filtered[i + 1] + '\' after \'' + filtered[i] + '\'';
+            }
+        }
+        return null;
+    }
+
+    function isKeyword(t) {
+        return t === 'let' || t === 'while' || t === 'if' || t === 'else' || t === 'return';
+    }
+
+    function isOperator(t) {
+        return t === '+' || t === '-' || t === '*' || t === '/' || t === '=' ||
+               t === '>' || t === '<' || t === '>=' || t === '<=' || t === '==' || t === '!=';
+    }
+
+    function isArithOp(t) {
+        return t === '+' || t === '-' || t === '*' || t === '/';
+    }
+
+    function isComparison(t) {
+        return t === '>' || t === '<' || t === '>=' || t === '<=' || t === '==' || t === '!=';
     }
 
     function announce(msg) {
@@ -333,11 +470,37 @@
         codeGrid.addEventListener('click', handleTokenClick);
         undoBtn.addEventListener('click', handleUndo);
         resetBtn.addEventListener('click', handleReset);
-        shareBtn.addEventListener('click', webShareResults);
+        shareBtn.addEventListener('click', function () { showWinModal(); });
 
         helpBtn.addEventListener('click', function () { helpModal.hidden = false; });
         helpClose.addEventListener('click', function () { helpModal.hidden = true; });
         helpModal.addEventListener('click', function (e) { if (e.target === helpModal) helpModal.hidden = true; });
+
+        // Clear all stats & progress (inline confirm, no browser modal)
+        var clearBtn = document.getElementById('clear-stats-btn');
+        if (clearBtn) {
+            var clearPending = false;
+            var clearTimer = null;
+            clearBtn.addEventListener('click', function () {
+                if (!clearPending) {
+                    clearPending = true;
+                    clearBtn.textContent = 'Are you sure? Tap again to confirm';
+                    clearBtn.classList.add('confirm');
+                    clearTimer = setTimeout(function () {
+                        clearPending = false;
+                        clearBtn.textContent = 'Clear all stats & progress';
+                        clearBtn.classList.remove('confirm');
+                    }, 3000);
+                } else {
+                    clearTimeout(clearTimer);
+                    localStorage.removeItem(getStorageKey());
+                    localStorage.removeItem('parsed_username');
+                    localStorage.removeItem('parsed_seen_controls');
+                    localStorage.removeItem('parsed_username_prompted');
+                    location.reload();
+                }
+            });
+        }
 
         winClose.addEventListener('click', function () { winModal.hidden = true; });
         winModal.addEventListener('click', function (e) { if (e.target === winModal) winModal.hidden = true; });
@@ -395,10 +558,10 @@
             performSwap(selectedIndex, mi);
             selectedIndex = null;
             updateTokenDisplay();
-            updateConsole();
+            var isCorrect = updateConsole();
             updateUI();
             saveState();
-            checkWin();
+            if (isCorrect) checkWin();
         }
     }
 
@@ -484,8 +647,8 @@
     // =============================================
 
     function checkWin() {
-        var errors = getErrors();
-        if (errors.length > 0) return;
+        var result = tryRunCode();
+        if (!result.success) return;
 
         solved = true;
         var isFirstSolve = !everSolved;
@@ -496,11 +659,12 @@
             bestScore = swapCount;
         }
 
+        saveState();
+
         if (isFirstSolve) {
             updateStats(swapCount);
         }
 
-        saveState();
         updateStatsDisplay();
 
         // Run execution animation, then show win modal
@@ -510,7 +674,7 @@
     }
 
     function showWinModal() {
-        var displayScore = bestScore || swapCount;
+        var displayScore = swapCount;
         var diff = displayScore - puzzle.par;
         var scoreLabel;
         if (diff < 0) scoreLabel = 'Under Par!';
@@ -563,25 +727,27 @@
         execSkipped = false;
         execModal.hidden = false;
 
-        // Build the code text from current (solved) tokens
-        var codeLines = [];
+        // Build the code from current (solved) tokens
+        var codeTokenLines = [];
+        var codeDisplayLines = [];
+        var tokenIdx = 0;
         for (var l = 0; l < puzzle.lines.length; l++) {
-            var parts = [];
+            var tokens = [];
             for (var c = 0; c < puzzle.lines[l].length; c++) {
-                // Find the token for this position
-                var tok = findToken(l, c);
-                parts.push(tok ? tok.t : '');
+                tokens.push(currentTokens[tokenIdx].t);
+                tokenIdx++;
             }
-            codeLines.push(parts.join(' '));
+            codeTokenLines.push(tokens);
+            codeDisplayLines.push(tokens.join(' '));
         }
 
         // Render code in exec modal
         execCode.innerHTML = '';
-        for (var i = 0; i < codeLines.length; i++) {
+        for (var i = 0; i < codeDisplayLines.length; i++) {
             var lineEl = document.createElement('div');
             lineEl.className = 'exec-line';
             lineEl.id = 'exec-line-' + i;
-            lineEl.textContent = codeLines[i];
+            lineEl.textContent = codeDisplayLines[i];
             execCode.appendChild(lineEl);
         }
 
@@ -589,7 +755,7 @@
         execOutput.textContent = '';
 
         // Interpret and animate
-        var interpreter = new PseudoInterpreter(puzzle.lines, movableTokens, solutionOrder);
+        var interpreter = new PseudoInterpreter(codeTokenLines);
         var steps = interpreter.execute();
 
         animateSteps(steps, 0, callback);
@@ -681,27 +847,11 @@
     // Simple Pseudocode Interpreter
     // =============================================
 
-    function PseudoInterpreter(lines, movTokens, solOrder) {
-        this.lines = lines;
+    function PseudoInterpreter(codeLines) {
+        this.codeLines = codeLines;
         this.steps = [];
         this.vars = {};
         this.output = null;
-
-        // Build the correct code from solution
-        this.codeLines = [];
-        var mIdx = 0;
-        for (var l = 0; l < lines.length; l++) {
-            var tokens = [];
-            for (var c = 0; c < lines[l].length; c++) {
-                if (lines[l][c].f) {
-                    tokens.push(lines[l][c].t);
-                } else {
-                    tokens.push(solOrder[mIdx]);
-                    mIdx++;
-                }
-            }
-            this.codeLines.push(tokens);
-        }
     }
 
     PseudoInterpreter.prototype.execute = function () {
@@ -1149,11 +1299,8 @@
 
     function getShareText() {
         if (typeof generateShareText !== 'function') return '';
-        var data = loadData();
-        var todayData = data.today || {};
-        var score = todayData.bestScore || swapCount;
         var stats = loadStats();
-        return generateShareText(puzzleNumber, score, puzzle.shareResult || '', stats.currentStreak, getUsername());
+        return generateShareText(puzzleNumber, swapCount, puzzle.shareResult || '', stats.currentStreak, getUsername());
     }
 
     function copyResults() {

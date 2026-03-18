@@ -388,11 +388,18 @@ def find_gem_candidates(beam_path, occupied, walls_set):
 # =============================================
 
 def generate_puzzle(difficulty='expert', use_splitter=False):
-    """Generate a puzzle: walls first, path determines target."""
+    """Generate a puzzle: walls first, path determines target.
+
+    Difficulty controls:
+    - mirror_range: total mirrors in the intended path (some become fixed)
+    - wall_range: how many walls (fewer = harder, more wrong options)
+    - fixed_range: how many mirrors to pre-place (adds complexity)
+    - min_required: minimum PLAYER-placed pieces (after accounting for fixed)
+    """
     cfg = {
-        'medium': {'mirror_range': (2, 4), 'wall_range': (3, 5), 'min_required': 2},
-        'hard':   {'mirror_range': (3, 5), 'wall_range': (3, 6), 'min_required': 3},
-        'expert': {'mirror_range': (3, 5), 'wall_range': (3, 6), 'min_required': 3},
+        'medium': {'mirror_range': (3, 4), 'wall_range': (3, 5), 'fixed_range': (0, 0), 'min_required': 3},
+        'hard':   {'mirror_range': (4, 6), 'wall_range': (2, 4), 'fixed_range': (1, 1), 'min_required': 4},
+        'expert': {'mirror_range': (5, 7), 'wall_range': (1, 3), 'fixed_range': (1, 2), 'min_required': 4},
     }[difficulty]
 
     for attempt in range(300):
@@ -404,9 +411,12 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
 
         # 2. Place walls (maze-like, respecting entry)
         num_walls = random.randint(*cfg['wall_range'])
-        wall_list = place_walls_structured(num_walls, entry_r, entry_c, entry_d)
-        if wall_list is None:
-            continue
+        if num_walls == 0:
+            wall_list = []
+        else:
+            wall_list = place_walls_structured(num_walls, entry_r, entry_c, entry_d)
+            if wall_list is None:
+                continue
         walls_set = set(wall_list)
         walls = [{'r': r, 'c': c} for r, c in wall_list]
 
@@ -421,7 +431,6 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
                 continue
             path_cells, mirrors, exit_list = result
             targets = [{'edge': e, 'pos': p} for e, p in exit_list]
-            # Don't allow target on same edge+pos as source
             if any(t['edge'] == src_edge and t['pos'] == src_pos for t in targets):
                 continue
         else:
@@ -433,7 +442,6 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
             if not result:
                 continue
             path_cells, mirrors, exit_edge, exit_pos = result
-            # Don't allow target on same edge+pos as source
             if exit_edge == src_edge and exit_pos == src_pos:
                 continue
             targets = [{'edge': exit_edge, 'pos': exit_pos}]
@@ -447,9 +455,20 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
         if not hits_all(grid, source, targets):
             continue
 
-        # 5. Build puzzle and verify minimum with FULL solver
-        #    (solve_with_known_solution only checks subsets of intended mirrors,
-        #     but the real solver may find completely different solutions)
+        # 5. Select fixed pieces (pre-placed mirrors from the solution)
+        #    Prefer mirrors early in the path so the beam hits them first
+        num_fixed = random.randint(*cfg['fixed_range'])
+        fixed = []
+        if num_fixed > 0 and len(mirrors) > num_fixed + 1:
+            # Pick from the first half of the path (beam hits them early)
+            early_mirrors = mirrors[:len(mirrors) // 2 + 1]
+            pick_count = min(num_fixed, len(early_mirrors))
+            fixed_indices = random.sample(range(len(early_mirrors)), pick_count)
+            fixed = [{'r': early_mirrors[i][0], 'c': early_mirrors[i][1],
+                       'type': early_mirrors[i][2]} for i in fixed_indices]
+
+        # 6. Build puzzle and verify minimum ADDITIONAL pieces with full solver
+        #    Fixed pieces are already on the grid (handled by make_grid via 'fixed')
         has_split = any(t == 'split' for _, _, t in mirrors)
         inv_temp = {'fwd': 8, 'bck': 8}
         if has_split:
@@ -458,13 +477,14 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
             'source': source,
             'targets': targets,
             'walls': walls,
-            'par': 7,
+            'fixed': fixed,
+            'par': 8,
             'inventory': inv_temp,
             'difficulty': difficulty,
         }
 
         min_pieces = validate_solve(puzzle)
-        if min_pieces < 0 or min_pieces < cfg['min_required'] or min_pieces > 6:
+        if min_pieces < 0 or min_pieces < cfg['min_required'] or min_pieces > 7:
             continue
 
         par = min_pieces + 1
@@ -475,27 +495,26 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
         puzzle['inventory'] = inv
         puzzle['_min'] = min_pieces
 
-        # 6. Place gem — required, must be optional (reachable but not on main path)
-        #    Try multiple gem candidates before giving up on this puzzle
+        # 7. Place gem — required, must be optional (reachable but not on main path)
         occupied = {(r, c) for r, c, _ in mirrors}
         gem_candidates = find_gem_candidates(path_cells, occupied, walls_set)
         random.shuffle(gem_candidates)
 
         placed_gem = False
-        for gem_r, gem_c in gem_candidates[:8]:  # try up to 8 positions
+        for gem_r, gem_c in gem_candidates[:8]:
             puzzle['gem'] = {'r': gem_r, 'c': gem_c}
             gem_min = solve_with_gem(puzzle, par + 1)
             if gem_min == -1:
-                continue  # unreachable
+                continue
             if gem_min <= min_pieces:
-                continue  # on main path, not optional
+                continue
             placed_gem = True
             break
 
         if not placed_gem:
             if 'gem' in puzzle:
                 del puzzle['gem']
-            continue  # no valid gem found, retry whole puzzle
+            continue
 
         return puzzle
 
@@ -523,7 +542,7 @@ def main():
 
     puzzles = []
     seen_hashes = set()
-    max_attempts = count * 3
+    max_attempts = count * 5
     attempts = 0
 
     t0 = time.time()
@@ -531,9 +550,18 @@ def main():
         attempts += 1
         t1 = time.time()
 
-        # 50% mirror-only, 50% splitter
-        use_splitter = random.random() < 0.5
-        puzzle = generate_puzzle('expert', use_splitter=use_splitter)
+        # Difficulty mix: 20% medium, 50% hard, 30% expert
+        roll = random.random()
+        if roll < 0.2:
+            diff = 'medium'
+        elif roll < 0.7:
+            diff = 'hard'
+        else:
+            diff = 'expert'
+
+        # 40% splitter puzzles
+        use_splitter = random.random() < 0.4
+        puzzle = generate_puzzle(diff, use_splitter=use_splitter)
 
         elapsed = time.time() - t1
 
@@ -552,8 +580,10 @@ def main():
             splits = puzzle['inventory'].get('split', 0)
             has_gem = 'gem' in puzzle
             nwalls = len(puzzle['walls'])
-            print(f'  Puzzle {len(puzzles)}: par={puzzle["par"]}, min={min_p}, '
-                  f'targets={targets}, splits={splits}, walls={nwalls}, '
+            nfixed = len(puzzle.get('fixed', []))
+            pdiff = puzzle.get('difficulty', '?')
+            print(f'  Puzzle {len(puzzles)}: {pdiff} par={puzzle["par"]}, min={min_p}, '
+                  f'targets={targets}, splits={splits}, walls={nwalls}, fixed={nfixed}, '
                   f'gem={has_gem}, id={h} [{elapsed:.2f}s]')
         else:
             ptype = 'splitter' if use_splitter else 'mirror'

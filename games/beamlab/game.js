@@ -43,6 +43,7 @@
     let solved = false;
     let moveHistory = [];
     let puzzleNumber = 0;
+    let fixedCells = new Set();  // cells with pre-placed mirrors (can't be moved)
     let selectedMirrorType = 'fwd';
 
     // --- DOM refs ---
@@ -99,6 +100,15 @@
 
         for (const wall of puzzle.walls) {
             grid[wall.r][wall.c] = 'wall';
+        }
+
+        // Place fixed (pre-placed) mirrors — part of the puzzle, can't be moved
+        fixedCells = new Set();
+        if (puzzle.fixed) {
+            for (const f of puzzle.fixed) {
+                grid[f.r][f.c] = f.type;
+                fixedCells.add(f.r + ',' + f.c);
+            }
         }
 
         inventory = { fwd: 0, bck: 0, split: 0, ...puzzle.inventory };
@@ -158,6 +168,9 @@
                     cell.classList.add('wall');
                 } else if (isPiece(grid[r][c])) {
                     addPieceVisual(cell, grid[r][c]);
+                    if (fixedCells.has(r + ',' + c)) {
+                        cell.classList.add('fixed');
+                    }
                 }
 
                 // Add gem indicator if this cell has one
@@ -218,13 +231,14 @@
 
         const existing = cell.querySelector('.mirror-line');
         if (existing) existing.remove();
-        cell.classList.remove('wall', 'splitter');
+        cell.classList.remove('wall', 'splitter', 'fixed');
 
         if (grid[r][c] === 'wall') {
             cell.classList.add('wall');
         } else if (isPiece(grid[r][c])) {
             addPieceVisual(cell, grid[r][c]);
             if (grid[r][c] === 'split') cell.classList.add('splitter');
+            if (fixedCells.has(r + ',' + c)) cell.classList.add('fixed');
         }
     }
 
@@ -552,7 +566,7 @@
         // Share text uses best score and gem-ever status
         var sharePreview = document.getElementById('share-preview');
         if (sharePreview && typeof generateShareText === 'function') {
-            sharePreview.textContent = generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems, getUsername());
+            sharePreview.textContent = generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems, getUsername(), getPuzzleInfo());
         }
 
         // Hide Share button if Web Share API not available
@@ -587,7 +601,7 @@
         let count = 0;
         for (let r = 0; r < GRID_SIZE; r++) {
             for (let c = 0; c < GRID_SIZE; c++) {
-                if (isPiece(grid[r][c])) count++;
+                if (isPiece(grid[r][c]) && !fixedCells.has(r + ',' + c)) count++;
             }
         }
         return count;
@@ -784,7 +798,7 @@
             var bestScore = todayData.bestScore || countPiecesUsed();
             var everGotGem = todayData.gemEverCollected || gemCollected;
             var stats = loadStats();
-            sharePreview.textContent = generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems, getUsername());
+            sharePreview.textContent = generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems, getUsername(), getPuzzleInfo());
         }
     }
 
@@ -797,6 +811,7 @@
         const c = parseInt(cell.dataset.c);
 
         if (grid[r][c] === 'wall') return;
+        if (fixedCells.has(r + ',' + c)) return;  // can't modify fixed pieces
 
         if (isPiece(grid[r][c])) {
             rotatePiece(r, c);
@@ -810,7 +825,9 @@
         if (solved) return;
         const cell = e.target.closest('.cell');
         if (!cell) return;
-        removePiece(parseInt(cell.dataset.r), parseInt(cell.dataset.c));
+        var r = parseInt(cell.dataset.r), c = parseInt(cell.dataset.c);
+        if (fixedCells.has(r + ',' + c)) return;  // can't remove fixed pieces
+        removePiece(r, c);
     }
 
     function placePiece(r, c) {
@@ -907,7 +924,7 @@
     function resetBoard() {
         for (let r = 0; r < GRID_SIZE; r++) {
             for (let c = 0; c < GRID_SIZE; c++) {
-                if (isPiece(grid[r][c])) {
+                if (isPiece(grid[r][c]) && !fixedCells.has(r + ',' + c)) {
                     grid[r][c] = null;
                 }
             }
@@ -1112,6 +1129,14 @@
         return localStorage.getItem('beamlab_username') || '';
     }
 
+    function getPuzzleInfo() {
+        return {
+            targets: puzzle.targets ? puzzle.targets.length : 1,
+            fixed: puzzle.fixed ? puzzle.fixed.length : 0,
+            walls: puzzle.walls ? puzzle.walls.length : 0
+        };
+    }
+
     function getShareText() {
         if (typeof generateShareText !== 'function') return '';
         var data = loadData();
@@ -1119,7 +1144,7 @@
         var bestScore = todayData.bestScore || countPiecesUsed();
         var everGotGem = todayData.gemEverCollected || gemCollected;
         var stats = loadStats();
-        return generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems, getUsername());
+        return generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems, getUsername(), getPuzzleInfo());
     }
 
     function copyResults() {

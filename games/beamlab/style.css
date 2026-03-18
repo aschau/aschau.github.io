@@ -317,6 +317,44 @@ body {
     background: rgba(100, 120, 255, 0.03);
 }
 
+/* Fixed (pre-placed) pieces — can't be moved */
+.cell.fixed {
+    cursor: default;
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.cell.fixed .mirror-line line,
+.cell.fixed .mirror-line .split-line {
+    stroke: rgba(255, 200, 100, 0.5);
+    stroke-width: 3.5;
+}
+
+.cell.fixed .mirror-line .split-diamond {
+    fill: rgba(255, 200, 100, 0.5);
+}
+
+.cell.fixed.laser-active .mirror-line line,
+.cell.fixed.laser-active .mirror-line .split-line {
+    stroke: rgba(255, 200, 100, 0.9);
+    filter: drop-shadow(0 0 4px rgba(255, 180, 50, 0.5));
+}
+
+.cell.fixed.laser-active .mirror-line .split-diamond {
+    fill: rgba(255, 200, 100, 0.9);
+}
+
+.cell.fixed::after {
+    content: '\1F512';
+    position: absolute;
+    bottom: 1px;
+    right: 2px;
+    font-size: 0.55em;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 2;
+}
+
 /* Gem collectible */
 .gem-icon {
     position: absolute;
@@ -878,24 +916,89 @@ body {
         --edge-size: 32px;
     }
 
+    .game-header {
+        padding: 12px 0 8px;
+    }
+
+    .header-top {
+        justify-content: flex-start;
+        padding-left: 4px;
+    }
+
+    .header-buttons {
+        position: static;
+        margin-left: auto;
+    }
+
     .game-title {
-        font-size: 1.5rem;
+        font-size: 1.35rem;
+    }
+
+    .header-sub {
+        font-size: 0.8rem;
+        margin-top: 2px;
     }
 
     .game-main {
-        padding: 16px 0;
-        gap: 12px;
+        padding: 8px 0;
+        gap: 8px;
+    }
+
+    .stats-bar {
+        gap: 10px;
+    }
+
+    .stat-item {
+        padding: 2px 10px;
+        font-size: 0.75rem;
+    }
+
+    .game-container {
+        min-height: auto;
+        padding: 0 8px;
+    }
+
+    .game-footer {
+        position: sticky;
+        bottom: 0;
+        background: var(--color-bg);
+        z-index: 10;
+        padding: 8px 0;
+        margin: 0 -8px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .footer-links {
+        font-size: 0.7rem;
+    }
+
+    .footer-copyright {
+        font-size: 0.6rem;
+        margin-top: 2px;
     }
 }
 
 @media (max-width: 360px) {
     :root {
-        --edge-size: 28px;
+        --edge-size: 26px;
+    }
+
+    .game-main {
+        gap: 6px;
     }
 
     .inventory-bar {
-        gap: 8px;
-        padding: 8px 12px;
+        gap: 6px;
+        padding: 6px 10px;
+    }
+
+    .inventory-label {
+        font-size: 0.75rem;
+    }
+
+    .par-display {
+        font-size: 0.8rem;
     }
 
     .action-buttons {
@@ -903,8 +1006,8 @@ body {
     }
 
     .action-btn {
-        padding: 8px 14px;
-        font-size: 0.8rem;
+        padding: 6px 12px;
+        font-size: 0.75rem;
     }
 }
 

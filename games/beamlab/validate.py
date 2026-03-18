@@ -77,6 +77,9 @@ def make_grid(puzzle):
     grid = [[None] * GRID for _ in range(GRID)]
     for w in puzzle['walls']:
         grid[w['r']][w['c']] = 'wall'
+    # Place fixed (pre-placed) pieces — they're part of the puzzle, not player-placed
+    for f in puzzle.get('fixed', []):
+        grid[f['r']][f['c']] = f['type']
     return grid
 
 

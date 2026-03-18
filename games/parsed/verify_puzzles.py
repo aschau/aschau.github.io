@@ -177,19 +177,53 @@ class Interpreter:
 
 
 puzzles = [
-    (['let','key','=','true'], ['let','door','=','false'], ['if','key','==','true','{'], ['door','=','true'], ['}'], ['return','door']),
-    (['let','herbs','=','3'], ['let','water','=','2'], ['let','potion','=','herbs','+','water'], ['return','potion']),
-    (['let','ripeness','=','8'], ['let','ready','=','false'], ['if','ripeness','>','5','{'], ['ready','=','true'], ['}'], ['return','ready']),
-    (['let','fuel','=','100'], ['let','altitude','=','0'], ['while','fuel','>','0','{'], ['altitude','=','altitude','+','10'], ['fuel','=','fuel','-','20'], ['}'], ['return','altitude']),
-    (['let','hunger','=','5'], ['let','snacks','=','0'], ['while','hunger','>','0','{'], ['snacks','=','snacks','+','1'], ['hunger','=','hunger','-','1'], ['}'], ['return','snacks']),
-    (['let','temp','=','35'], ['let','outfit','=','0'], ['if','temp','>','30','{'], ['outfit','=','1'], ['}','else','{'], ['outfit','=','2'], ['}'], ['return','outfit']),
-    (['let','dial_a','=','7'], ['let','dial_b','=','3'], ['let','combo','=','dial_a','*','dial_b'], ['let','unlocked','=','false'], ['if','combo','==','21','{'], ['unlocked','=','true'], ['}'], ['return','unlocked']),
-    (['let','energy','=','1'], ['let','rounds','=','0'], ['while','rounds','<','4','{'], ['energy','=','energy','*','2'], ['rounds','=','rounds','+','1'], ['}'], ['return','energy']),
-    (['let','wood','=','3'], ['let','match','=','true'], ['let','fire','=','false'], ['if','wood','>','0','{'], ['if','match','==','true','{'], ['fire','=','true'], ['}'], ['}'], ['return','fire']),
-    (['let','hp','=','100'], ['let','rooms','=','0'], ['while','hp','>','20','{'], ['hp','=','hp','-','15'], ['rooms','=','rooms','+','1'], ['}'], ['return','rooms']),
+    # 0: Rocket
+    (['let','fuel','=','100'], ['let','altitude','=','0'], ['let','thrust','=','25'],
+     ['while','fuel','>','0','{'], ['altitude','=','altitude','+','thrust'], ['fuel','=','fuel','-','thrust'], ['}'],
+     ['return','altitude']),
+    # 1: Dungeon
+    (['let','hp','=','50'], ['let','armor','=','5'], ['let','damage','=','12'], ['let','rooms','=','0'],
+     ['while','hp','>','0','{'], ['hp','=','hp','-','damage','+','armor'], ['rooms','=','rooms','+','1'], ['}'],
+     ['return','rooms']),
+    # 2: Potion
+    (['let','heat','=','0'], ['let','stirs','=','0'], ['let','potency','=','1'],
+     ['while','stirs','<','5','{'], ['heat','=','heat','+','3'], ['potency','=','potency','*','2'], ['stirs','=','stirs','+','1'], ['}'],
+     ['if','heat','>','10','{'], ['potency','=','potency','+','heat'], ['}'],
+     ['return','potency']),
+    # 3: Shield
+    (['let','charge','=','2'], ['let','boost','=','3'], ['let','rounds','=','0'],
+     ['while','rounds','<','3','{'], ['charge','=','charge','*','boost'], ['boost','=','boost','-','1'], ['rounds','=','rounds','+','1'], ['}'],
+     ['return','charge']),
+    # 4: Treasure
+    (['let','gold','=','40'], ['let','gems','=','7'], ['let','bonus','=','gems','*','5'], ['let','loot','=','0'],
+     ['if','gold','>','20','{'], ['loot','=','gold','+','bonus'], ['}','else','{'], ['loot','=','gems','*','2'], ['}'],
+     ['return','loot']),
+    # 5: Campfire
+    (['let','wood','=','10'], ['let','food','=','6'], ['let','cooked','=','0'],
+     ['while','wood','>','0','{'], ['if','food','>','0','{'], ['cooked','=','cooked','+','1'], ['food','=','food','-','1'], ['}'],
+     ['wood','=','wood','-','2'], ['}'],
+     ['return','cooked']),
+    # 6: Dragon
+    (['let','trust','=','0'], ['let','fear','=','10'], ['let','days','=','0'],
+     ['while','fear','>','trust','{'], ['trust','=','trust','+','3'], ['fear','=','fear','-','1'], ['days','=','days','+','1'], ['}'],
+     ['return','days']),
+    # 7: Space nav
+    (['let','x','=','0'], ['let','y','=','0'], ['let','steps','=','0'],
+     ['while','steps','<','4','{'], ['x','=','x','+','2'], ['y','=','y','+','3'], ['steps','=','steps','+','1'], ['}'],
+     ['let','dist','=','x','+','y'],
+     ['return','dist']),
+    # 8: Encryption
+    (['let','a','=','7'], ['let','b','=','3'],
+     ['let','key','=','a','+','b'], ['let','temp','=','a','*','b'],
+     ['a','=','temp','-','key'], ['b','=','temp','+','key'],
+     ['return','a','+','b']),
+    # 9: Boss fight
+    (['let','boss','=','30'], ['let','hero','=','20'], ['let','turns','=','0'],
+     ['while','boss','>','0','{'], ['boss','=','boss','-','hero'], ['hero','=','hero','-','5'], ['turns','=','turns','+','1'], ['}'],
+     ['return','turns']),
 ]
 
-expected = ['true', '5', 'true', '50', '5', '1', 'true', '16', 'true', '6']
+expected = ['100', '8', '47', '12', '75', '5', '3', '20', '42', '2']
 
 interp = Interpreter()
 all_pass = True

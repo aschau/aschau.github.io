@@ -670,6 +670,31 @@
         helpModal.addEventListener('click', (e) => { if (e.target === helpModal) helpModal.hidden = true; });
         winModal.addEventListener('click', (e) => { if (e.target === winModal) winModal.hidden = true; });
 
+        // Clear all stats & progress (inline confirm, no browser modal)
+        var clearBtn = document.getElementById('clear-stats-btn');
+        if (clearBtn) {
+            var clearPending = false;
+            var clearTimer = null;
+            clearBtn.addEventListener('click', function () {
+                if (!clearPending) {
+                    clearPending = true;
+                    clearBtn.textContent = 'Are you sure? Tap again to confirm';
+                    clearBtn.classList.add('confirm');
+                    clearTimer = setTimeout(function () {
+                        clearPending = false;
+                        clearBtn.textContent = 'Clear all stats & progress';
+                        clearBtn.classList.remove('confirm');
+                    }, 3000);
+                } else {
+                    clearTimeout(clearTimer);
+                    localStorage.removeItem(getStorageKey());
+                    localStorage.removeItem('beamlab_username');
+                    localStorage.removeItem('beamlab_seen_controls');
+                    location.reload();
+                }
+            });
+        }
+
         // Theme toggle
         const themeBtn = document.getElementById('theme-btn');
         if (themeBtn) {

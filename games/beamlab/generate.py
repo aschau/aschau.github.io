@@ -550,14 +550,8 @@ def main():
         attempts += 1
         t1 = time.time()
 
-        # Difficulty mix: 20% medium, 50% hard, 30% expert
-        roll = random.random()
-        if roll < 0.2:
-            diff = 'medium'
-        elif roll < 0.7:
-            diff = 'hard'
-        else:
-            diff = 'expert'
+        # Difficulty mix: 60% hard, 40% expert (no medium)
+        diff = 'hard' if random.random() < 0.6 else 'expert'
 
         # 40% splitter puzzles
         use_splitter = random.random() < 0.4

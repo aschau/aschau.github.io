@@ -840,6 +840,34 @@ body {
     text-align: center;
 }
 
+.help-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--glass-border);
+    text-align: center;
+}
+
+.clear-stats-btn {
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity var(--transition-fast);
+}
+
+.clear-stats-btn:hover {
+    opacity: 1;
+    color: #e74c3c;
+}
+
+.clear-stats-btn.confirm {
+    opacity: 1;
+    color: #e74c3c;
+    font-weight: 600;
+}
+
 /* Win modal */
 
 .win-body {

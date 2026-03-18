@@ -111,7 +111,13 @@ def get_candidate_cells(puzzle):
 
 
 def solve(puzzle):
-    """Find minimum pieces to solve. Uses forward backtracking with pruning."""
+    """Find minimum pieces to solve. Uses beam-aware backtracking.
+
+    Key optimization: at each recursion level, simulate the beam with
+    currently placed pieces and only try candidates that the beam actually
+    passes through. A piece at a cell the beam doesn't reach has no effect.
+    This cuts the branching factor from ~20 candidates to ~5-8 beam cells.
+    """
     grid = make_grid(puzzle)
     if hits_all(grid, puzzle):
         return 0
@@ -123,27 +129,39 @@ def solve(puzzle):
     if inv.get('split', 0) > 0: types.append('split')
 
     candidates = get_candidate_cells(puzzle)
+    target_set = {(t['edge'], t['pos']) for t in puzzle['targets']}
     total_inv = sum(inv.get(t, 0) for t in ['fwd', 'bck', 'split'])
     max_search = min(total_inv, puzzle.get('par', 99) + 2, 7)
 
     for num in range(1, max_search + 1):
-        if _backtrack(grid, puzzle, candidates, types, 0, num):
+        if _backtrack(grid, puzzle, candidates, types, 0, num, target_set):
             return num
     return -1
 
 
-def _backtrack(grid, puzzle, cells, types, start, left):
+def _backtrack(grid, puzzle, cells, types, start, left, target_set):
     if left == 0:
         return hits_all(grid, puzzle)
     if len(cells) - start < left:
         return False
+
+    # Simulate beam with current pieces — only cells on the beam path matter
+    exits, beam_cells = simulate(grid, puzzle['source'])
+
+    # Early solve: if all targets already hit, no more pieces needed
+    if target_set <= exits:
+        return True
+
     for i in range(start, len(cells) - left + 1):
         r, c = cells[i]
         if grid[r][c] is not None:
             continue
+        # Only try cells the beam actually passes through
+        if (r, c) not in beam_cells:
+            continue
         for t in types:
             grid[r][c] = t
-            if _backtrack(grid, puzzle, cells, types, i + 1, left - 1):
+            if _backtrack(grid, puzzle, cells, types, i + 1, left - 1, target_set):
                 grid[r][c] = None
                 return True
             grid[r][c] = None
@@ -200,29 +218,139 @@ def solve_with_gem(puzzle, max_pieces):
     if inv.get('split', 0) > 0: types.append('split')
 
     candidates = get_candidate_cells(puzzle)
+    target_set = {(t['edge'], t['pos']) for t in puzzle['targets']}
 
     for num in range(1, max_pieces + 1):
-        if _backtrack_gem(grid, puzzle, candidates, types, 0, num, gem):
+        if _backtrack_gem(grid, puzzle, candidates, types, 0, num, gem, target_set):
             return num
     return -1
 
 
-def _backtrack_gem(grid, puzzle, cells, types, start, left, gem):
+def _backtrack_gem(grid, puzzle, cells, types, start, left, gem, target_set):
     if left == 0:
         return hits_all_and_gem(grid, puzzle)
     if len(cells) - start < left:
         return False
+
+    # Beam-path pruning: only try cells the beam currently passes through
+    exits, beam_cells = simulate(grid, puzzle['source'])
+
+    # Early solve: all targets hit AND gem collected
+    if target_set <= exits and (gem['r'], gem['c']) in beam_cells:
+        return True
+
+    for i in range(start, len(cells) - left + 1):
+        r, c = cells[i]
+        if grid[r][c] is not None:
+            continue
+        if (r, c) not in beam_cells:
+            continue
+        for t in types:
+            grid[r][c] = t
+            if _backtrack_gem(grid, puzzle, cells, types, i + 1, left - 1, gem, target_set):
+                grid[r][c] = None
+                return True
+            grid[r][c] = None
+    return False
+
+
+def solve_returning_solution(puzzle, max_search=None):
+    """Find minimum pieces to solve and return the actual placements.
+
+    Returns list of (r, c, type) tuples, or None if unsolvable.
+    """
+    grid = make_grid(puzzle)
+    if hits_all(grid, puzzle):
+        return []
+
+    inv = puzzle['inventory']
+    types = []
+    if inv.get('fwd', 0) > 0: types.append('fwd')
+    if inv.get('bck', 0) > 0: types.append('bck')
+    if inv.get('split', 0) > 0: types.append('split')
+
+    candidates = get_candidate_cells(puzzle)
+    if max_search is None:
+        total_inv = sum(inv.get(t, 0) for t in ['fwd', 'bck', 'split'])
+        max_search = min(total_inv, puzzle.get('par', 99) + 2, 7)
+
+    for num in range(1, max_search + 1):
+        result = _backtrack_one(grid, puzzle, candidates, types, 0, num, [])
+        if result is not None:
+            return result
+    return None
+
+
+def _backtrack_one(grid, puzzle, cells, types, start, left, current):
+    """Backtrack to find one solution, returning piece placements."""
+    if left == 0:
+        if hits_all(grid, puzzle):
+            return list(current)
+        return None
+    if len(cells) - start < left:
+        return None
     for i in range(start, len(cells) - left + 1):
         r, c = cells[i]
         if grid[r][c] is not None:
             continue
         for t in types:
             grid[r][c] = t
-            if _backtrack_gem(grid, puzzle, cells, types, i + 1, left - 1, gem):
+            current.append((r, c, t))
+            result = _backtrack_one(grid, puzzle, cells, types, i + 1, left - 1, current)
+            if result is not None:
                 grid[r][c] = None
-                return True
+                current.pop()
+                return result
+            current.pop()
             grid[r][c] = None
-    return False
+    return None
+
+
+def find_all_min_solutions(puzzle, num_pieces, max_solutions=20, time_limit=5.0):
+    """Find up to max_solutions solutions using exactly num_pieces pieces.
+
+    Used by BFS wall placement to identify which cells are used by
+    shortcut solutions, so we can block the most impactful ones.
+    Stops early if time_limit (seconds) is exceeded.
+    """
+    grid = make_grid(puzzle)
+    inv = puzzle['inventory']
+    types = []
+    if inv.get('fwd', 0) > 0: types.append('fwd')
+    if inv.get('bck', 0) > 0: types.append('bck')
+    if inv.get('split', 0) > 0: types.append('split')
+
+    candidates = get_candidate_cells(puzzle)
+    solutions = []
+    deadline = time.time() + time_limit
+    _find_all(grid, puzzle, candidates, types, 0, num_pieces, [], solutions, max_solutions, deadline)
+    return solutions
+
+
+def _find_all(grid, puzzle, cells, types, start, left, current, solutions, max_solutions, deadline):
+    """Collect all solutions at a given piece count with beam-path pruning."""
+    if len(solutions) >= max_solutions or time.time() > deadline:
+        return
+    if left == 0:
+        if hits_all(grid, puzzle):
+            solutions.append(list(current))
+        return
+    if len(cells) - start < left:
+        return
+    # Beam-path pruning
+    _, beam_cells = simulate(grid, puzzle['source'])
+    for i in range(start, len(cells) - left + 1):
+        r, c = cells[i]
+        if grid[r][c] is not None:
+            continue
+        if (r, c) not in beam_cells:
+            continue
+        for t in types:
+            grid[r][c] = t
+            current.append((r, c, t))
+            _find_all(grid, puzzle, cells, types, i + 1, left - 1, current, solutions, max_solutions, deadline)
+            current.pop()
+            grid[r][c] = None
 
 
 def main():
@@ -257,20 +385,30 @@ def main():
         if result == -1:
             status = 'UNSOLVABLE'
             issues.append((i + 1, 'unsolvable'))
-        elif result != par:
-            status = f'PAR MISMATCH (solves in {result}, par={par})'
-            issues.append((i + 1, f'par should be {result}'))
+        elif result + 1 != par:
+            # par should be min + 1 (golf-style: player can always beat par)
+            status = f'PAR MISMATCH (min={result}, par={par}, expected par={result + 1})'
+            issues.append((i + 1, f'par should be {result + 1}'))
         else:
             status = 'OK'
 
         gem_status = ''
-        if has_gem and status == 'OK':
+        if not has_gem:
+            gem_status = ' | NO GEM'
+            issues.append((i + 1, 'missing gem'))
+        elif status == 'OK':
+            # Verify gem is reachable (solvable while collecting gem)
             gem_min = solve_with_gem(p, par + 2)
             if gem_min == -1:
                 gem_status = ' | GEM UNREACHABLE'
                 issues.append((i + 1, 'gem unreachable'))
             else:
                 gem_status = f' | gem in {gem_min}'
+                # Verify puzzle is also solvable WITHOUT going through gem
+                # (gem should be optional — a bonus detour)
+                if gem_min == result:
+                    gem_status += ' (on main path — not optional)'
+                    issues.append((i + 1, 'gem is on main path, not optional'))
 
         elapsed = time.time() - t1
         out(f'  Puzzle {i+1:>2} [{pid}] (par={par}, targets={targets}, splits={split}): {status}{gem_status} [{elapsed:.2f}s]')

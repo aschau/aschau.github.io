@@ -507,7 +507,7 @@
             const used = countPiecesUsed();
 
             var data = loadData();
-            var alreadySolvedToday = data.today && data.today.date === getTodayKey() && data.today.solved;
+            var alreadySolvedToday = data.today && data.today.date === getTodayKey() && data.today.everSolved;
 
             // First solve of the day: record streak + initial stats
             if (!alreadySolvedToday) {
@@ -1002,6 +1002,7 @@
             date: getTodayKey(),
             puzzleNumber: puzzleNumber,
             solved: solved,
+            everSolved: prevToday.everSolved || solved,
             mirrors: pieces,
             score: solved ? countPiecesUsed() : null,
             bestScore: prevToday.bestScore || null,
@@ -1076,7 +1077,6 @@
 
         stats.played++;
         stats.solved++;
-        if (gemCollected) stats.totalGems = (stats.totalGems || 0) + 1;
 
         const today = getTodayKey();
         const yesterday = getYesterdayKey();

@@ -1,15 +1,24 @@
-"""Beamlab Puzzle Generator
-Generates valid, verified puzzles by placing a solution first,
-then deriving the puzzle from it.
+"""Beamlab Puzzle Generator — Walls-First with Path-Determined Targets
 
-Usage: python generate.py [count]
-  count: number of puzzles to generate (default: 1)
-Outputs to generated_puzzles.json
+Generation order:
+1. Place structured walls (maze-like patterns with corridors)
+2. Pick source edge
+3. Build beam path through open cells (recursive backtracking)
+4. Target = wherever the beam exits the grid
+5. Remove mirrors — those become the player's puzzle to solve
+6. Place gem adjacent to beam path
+7. Verify with solver
+
+This eliminates expensive solution-space analysis: walls constrain the grid
+from the start, so the path builder is fast and shortcuts are naturally blocked.
+
+Usage: python generate.py [count] [seed]
 """
 
 import json, random, sys, time, hashlib
 from pathlib import Path
-from validate import solve as validate_solve, solve_with_gem, solve_with_known_solution
+from validate import (solve as validate_solve, solve_with_gem,
+                      solve_with_known_solution)
 
 GRID = 6
 FWD = {'right': 'up', 'left': 'down', 'up': 'right', 'down': 'left'}
@@ -19,6 +28,17 @@ DC = {'up': 0, 'down': 0, 'left': -1, 'right': 1}
 ENTRY = {'left': 'right', 'right': 'left', 'top': 'down', 'bottom': 'up'}
 EDGES = ['left', 'right', 'top', 'bottom']
 OPPOSITE = {'left': 'right', 'right': 'left', 'top': 'bottom', 'bottom': 'top'}
+
+TURN_MIRROR = {
+    ('right', 'up'): 'fwd', ('right', 'down'): 'bck',
+    ('left', 'up'): 'bck',  ('left', 'down'): 'fwd',
+    ('up', 'right'): 'fwd', ('up', 'left'): 'bck',
+    ('down', 'right'): 'bck', ('down', 'left'): 'fwd',
+}
+PERPENDICULAR = {
+    'right': ['up', 'down'], 'left': ['up', 'down'],
+    'up': ['left', 'right'], 'down': ['left', 'right'],
+}
 
 
 def get_entry(src):
@@ -75,180 +95,282 @@ def make_empty_grid():
     return [[None] * GRID for _ in range(GRID)]
 
 
+def get_exit_info(r, c):
+    """Map an out-of-bounds position to (edge, pos)."""
+    if r < 0:    return ('top', c)
+    if r >= GRID: return ('bottom', c)
+    if c < 0:    return ('left', r)
+    if c >= GRID: return ('right', r)
+    return None
 
-def generate_mirror_puzzle(difficulty='medium'):
-    """Generate a single-target mirror-only puzzle by placing a solution first.
 
-    Strategy:
-    1. Pick a random source edge+position
-    2. Place 2-5 mirrors randomly on the grid
-    3. Trace the beam to see where it exits
-    4. If it exits the grid (not back through source), that exit = target
-    5. Add some random walls that don't block the solution path
-    6. Verify with solver and set par = min + 1
+# =============================================
+# Wall Placement (Maze-like patterns)
+# =============================================
+
+def place_walls_structured(num_walls, entry_r, entry_c, entry_d):
+    """Place walls that create interesting corridors without blocking the entry.
+
+    Strategies mixed together:
+    - Corridor walls: pairs/triples in a line to create channels
+    - Barrier walls: block direct paths to force detours
+    - Scattered walls: individual cells to narrow options
     """
-    diff_config = {
-        'medium':  {'mirrors': (3, 5), 'walls': (3, 5), 'min_required': 3},
-        'hard':    {'mirrors': (4, 5), 'walls': (4, 6), 'min_required': 3},
-        'expert':  {'mirrors': (4, 6), 'walls': (4, 6), 'min_required': 3},
-    }
-    cfg = diff_config[difficulty]
-    mirror_range = cfg['mirrors']
-    wall_range = cfg['walls']
+    walls = set()
+    # Entry line cells — don't wall these (beam must enter)
+    entry_line = set()
+    r, c = entry_r, entry_c
+    for _ in range(2):  # protect first 2 cells of entry
+        if 0 <= r < GRID and 0 <= c < GRID:
+            entry_line.add((r, c))
+        r += DR[entry_d]
+        c += DC[entry_d]
 
-    for attempt in range(1000):
-        grid = make_empty_grid()
+    all_cells = [(r, c) for r in range(GRID) for c in range(GRID)
+                 if (r, c) not in entry_line]
 
-        # Pick source
-        src_edge = random.choice(EDGES)
-        src_pos = random.randint(0, GRID - 1)
-        source = {'edge': src_edge, 'pos': src_pos}
+    strategies = ['corridor', 'barrier', 'scatter']
 
-        # Place mirrors
-        num_mirrors = random.randint(*mirror_range)
-        mirror_cells = []
-        occupied = set()
+    for _ in range(num_walls * 3):  # extra iterations to hit target
+        if len(walls) >= num_walls:
+            break
 
-        for _ in range(num_mirrors):
-            for _try in range(50):
-                r, c = random.randint(0, GRID - 1), random.randint(0, GRID - 1)
-                if (r, c) not in occupied:
-                    mtype = random.choice(['fwd', 'bck'])
-                    grid[r][c] = mtype
-                    occupied.add((r, c))
-                    mirror_cells.append((r, c, mtype))
-                    break
+        strategy = random.choice(strategies)
 
-        # Trace beam
-        exits, beam_path = simulate(grid, source)
+        if strategy == 'corridor':
+            # Place 2-3 walls in a line (horizontal or vertical)
+            hor = random.choice([True, False])
+            if hor:
+                row = random.randint(0, GRID - 1)
+                start = random.randint(0, GRID - 2)
+                length = random.randint(2, min(3, GRID - start))
+                cells = [(row, start + i) for i in range(length)]
+            else:
+                col = random.randint(0, GRID - 1)
+                start = random.randint(0, GRID - 2)
+                length = random.randint(2, min(3, GRID - start))
+                cells = [(start + i, col) for i in range(length)]
+            for rc in cells:
+                if rc not in entry_line and rc not in walls and len(walls) < num_walls:
+                    walls.add(rc)
 
-        if not exits:
+        elif strategy == 'barrier':
+            # Single wall on the direct entry path (forces a detour)
+            r, c = entry_r, entry_c
+            steps = random.randint(2, GRID - 1)
+            for _ in range(steps):
+                r += DR[entry_d]
+                c += DC[entry_d]
+            if 0 <= r < GRID and 0 <= c < GRID and (r, c) not in entry_line and (r, c) not in walls:
+                walls.add((r, c))
+
+        else:  # scatter
+            candidates = [rc for rc in all_cells if rc not in walls]
+            if candidates:
+                walls.add(random.choice(candidates))
+
+    # Verify connectivity — make sure at least 70% of non-wall cells are reachable
+    # from the entry via flood fill (no isolated pockets)
+    wall_list = list(walls)
+    grid_check = make_empty_grid()
+    for wr, wc in wall_list:
+        grid_check[wr][wc] = 'wall'
+
+    reachable = set()
+    flood = [(entry_r, entry_c)]
+    while flood:
+        fr, fc = flood.pop()
+        if (fr, fc) in reachable:
             continue
+        if not (0 <= fr < GRID and 0 <= fc < GRID):
+            continue
+        if grid_check[fr][fc] == 'wall':
+            continue
+        reachable.add((fr, fc))
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            flood.append((fr + dr, fc + dc))
 
-        # Check beam uses enough of the grid (spans at least 4 of 6 rows and cols)
-        if beam_path:
-            rows = {r for r, c in beam_path}
-            cols = {c for r, c in beam_path}
-            if len(rows) < 4 or len(cols) < 4:
+    open_cells = GRID * GRID - len(walls)
+    if len(reachable) < open_cells * 0.7:
+        return None  # walls create too many isolated pockets
+
+    return wall_list
+
+
+# =============================================
+# Path Building (through wall-constrained grid)
+# =============================================
+
+def _build_path(r, c, d, walls_set, mirrors_left, visited, mirrors, min_coverage=4):
+    """Build a beam path through a wall-constrained grid.
+
+    The beam walks straight until hitting a wall or grid edge,
+    then we place a mirror to turn. Target = wherever the beam
+    eventually exits the grid.
+
+    Returns (path_cells, mirrors, exit_edge, exit_pos) or None.
+    """
+    # Trace straight line (stop at wall, edge, or visited cell)
+    line = []
+    cr, cc = r, c
+    while 0 <= cr < GRID and 0 <= cc < GRID:
+        if (cr, cc) in walls_set or (cr, cc) in visited:
+            break
+        line.append((cr, cc))
+        cr += DR[d]
+        cc += DC[d]
+
+    if not line:
+        return None
+
+    # Coverage pruning: check if we can still reach min_coverage rows and cols
+    all_cells = visited | set(line)
+    current_rows = len({r for r, c in all_cells})
+    current_cols = len({c for r, c in all_cells})
+    if current_rows + mirrors_left < min_coverage or current_cols + mirrors_left < min_coverage:
+        return None
+
+    # No mirrors left — beam exits from end of line
+    if mirrors_left == 0:
+        last_r, last_c = line[-1]
+        exit_r, exit_c = last_r + DR[d], last_c + DC[d]
+        # Must exit grid (not hit a wall inside grid)
+        if not (0 <= exit_r < GRID and 0 <= exit_c < GRID):
+            info = get_exit_info(exit_r, exit_c)
+            if info:
+                rows = {r for r, c in all_cells}
+                cols = {c for r, c in all_cells}
+                if len(rows) >= min_coverage and len(cols) >= min_coverage:
+                    return (set(line), list(mirrors), info[0], info[1])
+        return None
+
+    # Place a mirror at each position — prefer LONGER segments first
+    indices = list(range(len(line) - 1, -1, -1))
+    # Add some randomness so we don't always pick the longest
+    if random.random() < 0.3:
+        random.shuffle(indices)
+
+    for idx in indices:
+        mr, mc = line[idx]
+        segment = set(line[:idx + 1])
+        new_visited = visited | segment
+
+        turns = list(PERPENDICULAR[d])
+        random.shuffle(turns)
+
+        for new_d in turns:
+            nr, nc = mr + DR[new_d], mc + DC[new_d]
+            if not (0 <= nr < GRID and 0 <= nc < GRID):
+                continue
+            if (nr, nc) in new_visited or (nr, nc) in walls_set:
                 continue
 
-        # Pick a valid target (not the source edge+pos)
-        valid_targets = [(e, p) for e, p in exits if not (e == src_edge and p == src_pos)]
-        if not valid_targets:
-            continue
-
-        # Prefer targets on opposite or perpendicular edges for longer paths
-        opposite_targets = [(e, p) for e, p in valid_targets if e == OPPOSITE[src_edge]]
-        perp_targets = [(e, p) for e, p in valid_targets if e != src_edge and e != OPPOSITE[src_edge]]
-        if opposite_targets:
-            target_edge, target_pos = random.choice(opposite_targets)
-        elif perp_targets:
-            target_edge, target_pos = random.choice(perp_targets)
-        else:
-            target_edge, target_pos = random.choice(valid_targets)
-
-        targets = [{'edge': target_edge, 'pos': target_pos}]
-
-        # Clear mirrors from grid, add walls
-        for r, c, _ in mirror_cells:
-            grid[r][c] = None
-
-        # Place walls: mix of blocking walls (on direct source-target line)
-        # and strategic walls (adjacent to beam path to constrain options)
-        walls = []
-        num_walls = random.randint(*wall_range)
-
-        # Find direct line cells (where beam would go without mirrors)
-        sr, sc, sd = get_entry(source)
-        direct_line = set()
-        r, c = sr, sc
-        for _ in range(GRID):
-            if 0 <= r < GRID and 0 <= c < GRID:
-                direct_line.add((r, c))
-                r += DR[sd]
-                c += DC[sd]
-
-        # Also trace from target inward
-        tr, tc, td = get_entry(targets[0])
-        r, c = tr, tc
-        for _ in range(GRID):
-            if 0 <= r < GRID and 0 <= c < GRID:
-                direct_line.add((r, c))
-                r += DR[td]
-                c += DC[td]
-
-        # Place some walls on direct lines (blocking) and some near beam path (strategic)
-        blocking_candidates = [(r, c) for r, c in direct_line
-                               if (r, c) not in occupied and (r, c) not in beam_path]
-        nearby_candidates = []
-        for br, bc in beam_path:
-            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                nr, nc = br + dr, bc + dc
-                if (0 <= nr < GRID and 0 <= nc < GRID and
-                    (nr, nc) not in occupied and (nr, nc) not in beam_path and
-                    (nr, nc) not in direct_line):
-                    nearby_candidates.append((nr, nc))
-
-        random.shuffle(blocking_candidates)
-        random.shuffle(nearby_candidates)
-        all_wall_candidates = blocking_candidates + nearby_candidates
-
-        for wc in all_wall_candidates[:num_walls]:
-            r, c = wc
-            if (r, c) not in occupied:
-                grid[r][c] = 'wall'
-                walls.append({'r': r, 'c': c})
-                occupied.add((r, c))
-
-        # Clear grid for verification
-        clean_grid = make_empty_grid()
-        for w in walls:
-            clean_grid[w['r']][w['c']] = 'wall'
-
-        # Verify: place solution mirrors and check
-        for r, c, mtype in mirror_cells:
-            clean_grid[r][c] = mtype
-        if not hits_all(clean_grid, source, targets):
-            continue  # walls blocked the solution
-
-        # Fast solve: use known solution mirrors and try removing them
-        temp_puzzle = {
-            'source': source, 'targets': targets, 'walls': walls,
-            'par': 99, 'inventory': {'fwd': 99, 'bck': 99}
-        }
-        min_pieces = solve_with_known_solution(temp_puzzle, mirror_cells)
-
-        if min_pieces <= 0 or min_pieces > 6:
-            continue
-
-        if min_pieces < cfg['min_required']:
-            continue
-
-        par = min_pieces + 1
-        inv = {'fwd': par, 'bck': par}
-
-        gem = place_gem(beam_path, occupied, walls)
-
-        puzzle = {
-            'source': source, 'targets': targets, 'walls': walls,
-            'par': par, 'inventory': inv, 'difficulty': difficulty,
-            '_min': min_pieces
-        }
-        if gem:
-            puzzle['gem'] = gem
-            # Verify gem is reachable within par + 2
-            gem_min = solve_with_gem(puzzle, par + 2)
-            if gem_min == -1:
-                del puzzle['gem']  # gem unreachable, remove it
-
-        return puzzle
+            mtype = TURN_MIRROR[(d, new_d)]
+            result = _build_path(
+                nr, nc, new_d, walls_set,
+                mirrors_left - 1, new_visited,
+                mirrors + [(mr, mc, mtype)],
+                min_coverage
+            )
+            if result:
+                sub_cells, sub_mirrors, exit_edge, exit_pos = result
+                return (segment | sub_cells, sub_mirrors, exit_edge, exit_pos)
 
     return None
 
 
-def place_gem(beam_path, occupied, walls):
-    """Place a gem adjacent to the beam path but not on it or on walls."""
-    wall_set = {(w['r'], w['c']) for w in walls}
+def _build_splitter_path(r, c, d, walls_set, branch_mirrors, visited, min_coverage=4):
+    """Build a path with one splitter creating two branches.
+
+    Places the splitter on the initial straight line, then builds
+    two sub-paths (reflected + straight-through). Each branch's
+    exit becomes a target.
+
+    Returns (path_cells, mirrors, [(exit_edge, exit_pos), ...]) or None.
+    """
+    # Straight line from entry
+    beam_line = []
+    cr, cc = r, c
+    while 0 <= cr < GRID and 0 <= cc < GRID:
+        if (cr, cc) in walls_set or (cr, cc) in visited:
+            break
+        beam_line.append((cr, cc))
+        cr += DR[d]
+        cc += DC[d]
+
+    if len(beam_line) < 2:
+        return None
+
+    positions = list(range(len(beam_line)))
+    random.shuffle(positions)
+
+    for si in positions[:5]:
+        sr, sc = beam_line[si]
+        ref_d = FWD[d]
+        pre = set(beam_line[:si + 1])
+        remaining_straight = set(beam_line[si + 1:])
+
+        for total in range(branch_mirrors + 1):
+            for ref_n in range(total + 1):
+                str_n = total - ref_n
+
+                # Reflected branch
+                rr, rc = sr + DR[ref_d], sc + DC[ref_d]
+                if not (0 <= rr < GRID and 0 <= rc < GRID) or (rr, rc) in walls_set:
+                    continue
+
+                ref_visited = pre | remaining_straight
+                ref = _build_path(rr, rc, ref_d, walls_set, ref_n, ref_visited, [], 3)
+                if not ref:
+                    continue
+                ref_cells, ref_mirrors, ref_exit_edge, ref_exit_pos = ref
+
+                # Straight branch
+                sr2, sc2 = sr + DR[d], sc + DC[d]
+                if not (0 <= sr2 < GRID and 0 <= sc2 < GRID):
+                    # Exits immediately
+                    info = get_exit_info(sr2, sc2)
+                    if info and str_n == 0:
+                        all_path = pre | ref_cells
+                        all_mirrors = [(sr, sc, 'split')] + ref_mirrors
+                        rows = {r for r, c in all_path}
+                        cols = {c for r, c in all_path}
+                        if len(rows) >= min_coverage and len(cols) >= min_coverage:
+                            exits = [(ref_exit_edge, ref_exit_pos), info]
+                            return (all_path, all_mirrors, exits)
+                    continue
+
+                if (sr2, sc2) in walls_set:
+                    continue
+
+                str_visited = pre | ref_cells
+                strt = _build_path(sr2, sc2, d, walls_set, str_n, str_visited, [], 3)
+                if not strt:
+                    continue
+                str_cells, str_mirrors, str_exit_edge, str_exit_pos = strt
+
+                # Check exits are different
+                if ref_exit_edge == str_exit_edge and ref_exit_pos == str_exit_pos:
+                    continue
+
+                all_path = pre | ref_cells | str_cells
+                all_mirrors = [(sr, sc, 'split')] + ref_mirrors + str_mirrors
+
+                rows = {r for r, c in all_path}
+                cols = {c for r, c in all_path}
+                if len(rows) >= min_coverage and len(cols) >= min_coverage:
+                    exits = [(ref_exit_edge, ref_exit_pos), (str_exit_edge, str_exit_pos)]
+                    return (all_path, all_mirrors, exits)
+
+    return None
+
+
+# =============================================
+# Gem Placement
+# =============================================
+
+def find_gem_candidates(beam_path, occupied, walls_set):
+    """Find all cells adjacent to the beam path that could hold a gem."""
     candidates = set()
     for r, c in beam_path:
         for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
@@ -256,141 +378,128 @@ def place_gem(beam_path, occupied, walls):
             if (0 <= nr < GRID and 0 <= nc < GRID and
                 (nr, nc) not in beam_path and
                 (nr, nc) not in occupied and
-                (nr, nc) not in wall_set):
+                (nr, nc) not in walls_set):
                 candidates.add((nr, nc))
-    if not candidates:
-        return None
-    r, c = random.choice(sorted(candidates))
-    return {'r': r, 'c': c}
+    return sorted(candidates)
 
 
-def generate_splitter_puzzle(difficulty='hard'):
-    """Generate a multi-target puzzle requiring splitters."""
-    diff_config = {
-        'hard':   {'mirrors': (2, 4), 'walls': (2, 4), 'min_required': 3},
-        'expert': {'mirrors': (3, 5), 'walls': (3, 6), 'min_required': 4},
-    }
-    cfg = diff_config[difficulty]
+# =============================================
+# Main Generator
+# =============================================
 
-    for attempt in range(1000):
-        grid = make_empty_grid()
+def generate_puzzle(difficulty='expert', use_splitter=False):
+    """Generate a puzzle: walls first, path determines target."""
+    cfg = {
+        'medium': {'mirror_range': (2, 4), 'wall_range': (3, 5), 'min_required': 2},
+        'hard':   {'mirror_range': (3, 5), 'wall_range': (3, 6), 'min_required': 3},
+        'expert': {'mirror_range': (3, 5), 'wall_range': (3, 6), 'min_required': 3},
+    }[difficulty]
 
-        # Pick source
+    for attempt in range(300):
+        # 1. Pick source
         src_edge = random.choice(EDGES)
         src_pos = random.randint(0, GRID - 1)
         source = {'edge': src_edge, 'pos': src_pos}
+        entry_r, entry_c, entry_d = get_entry(source)
 
-        occupied = set()
-
-        # Place a splitter on the beam path
-        # First trace the beam with no pieces to find the path
-        sr, sc, sd = get_entry(source)
-        beam_line = []
-        r, c, d = sr, sc, sd
-        for _ in range(GRID):
-            if 0 <= r < GRID and 0 <= c < GRID:
-                beam_line.append((r, c))
-                r += DR[d]
-                c += DC[d]
-            else:
-                break
-
-        if len(beam_line) < 3:
+        # 2. Place walls (maze-like, respecting entry)
+        num_walls = random.randint(*cfg['wall_range'])
+        wall_list = place_walls_structured(num_walls, entry_r, entry_c, entry_d)
+        if wall_list is None:
             continue
+        walls_set = set(wall_list)
+        walls = [{'r': r, 'c': c} for r, c in wall_list]
 
-        # Place splitter somewhere on the beam line (not first or last)
-        split_idx = random.randint(1, len(beam_line) - 2)
-        split_r, split_c = beam_line[split_idx]
-        grid[split_r][split_c] = 'split'
-        occupied.add((split_r, split_c))
-
-        # Place some mirrors for the reflected beam path
-        num_mirrors = random.randint(*cfg['mirrors'])
-        mirror_cells = [(split_r, split_c, 'split')]
-
-        for _ in range(num_mirrors):
-            for _try in range(50):
-                r, c = random.randint(0, GRID - 1), random.randint(0, GRID - 1)
-                if (r, c) not in occupied:
-                    mtype = random.choice(['fwd', 'bck'])
-                    grid[r][c] = mtype
-                    occupied.add((r, c))
-                    mirror_cells.append((r, c, mtype))
-                    break
-
-        # Trace and find exits
-        exits, beam_path = simulate(grid, source)
-
-        # Check beam spread
-        if beam_path:
-            rows = {r for r, c in beam_path}
-            cols = {c for r, c in beam_path}
-            if len(rows) < GRID * 0.6 or len(cols) < GRID * 0.6:
+        # 3. Build beam path through the constrained grid
+        if use_splitter:
+            branch_mirrors = random.randint(1, 3)
+            result = _build_splitter_path(
+                entry_r, entry_c, entry_d, walls_set,
+                branch_mirrors, set(), min_coverage=4
+            )
+            if not result:
                 continue
+            path_cells, mirrors, exit_list = result
+            targets = [{'edge': e, 'pos': p} for e, p in exit_list]
+            # Don't allow target on same edge+pos as source
+            if any(t['edge'] == src_edge and t['pos'] == src_pos for t in targets):
+                continue
+        else:
+            num_mirrors = random.randint(*cfg['mirror_range'])
+            result = _build_path(
+                entry_r, entry_c, entry_d, walls_set,
+                num_mirrors, set(), [], min_coverage=4
+            )
+            if not result:
+                continue
+            path_cells, mirrors, exit_edge, exit_pos = result
+            # Don't allow target on same edge+pos as source
+            if exit_edge == src_edge and exit_pos == src_pos:
+                continue
+            targets = [{'edge': exit_edge, 'pos': exit_pos}]
 
-        valid_targets = [(e, p) for e, p in exits if not (e == src_edge and p == src_pos)]
-
-        if len(valid_targets) < 2:
+        # 4. Verify intended solution works
+        grid = make_empty_grid()
+        for wr, wc in wall_list:
+            grid[wr][wc] = 'wall'
+        for r, c, t in mirrors:
+            grid[r][c] = t
+        if not hits_all(grid, source, targets):
             continue
 
-        # Pick 2 targets
-        chosen = random.sample(valid_targets, 2)
-        targets = [{'edge': e, 'pos': p} for e, p in chosen]
-
-        # Clear pieces, add walls
-        for r, c, _ in mirror_cells:
-            grid[r][c] = None
-
-        walls = []
-        num_walls = random.randint(*cfg['walls'])
-        for _ in range(num_walls):
-            for _try in range(50):
-                r, c = random.randint(0, GRID - 1), random.randint(0, GRID - 1)
-                if (r, c) not in occupied and (r, c) not in beam_path:
-                    grid[r][c] = 'wall'
-                    walls.append({'r': r, 'c': c})
-                    occupied.add((r, c))
-                    break
-
-        # Verify solution still works with walls
-        clean_grid = make_empty_grid()
-        for w in walls:
-            clean_grid[w['r']][w['c']] = 'wall'
-        for r, c, mtype in mirror_cells:
-            clean_grid[r][c] = mtype
-        if not hits_all(clean_grid, source, targets):
-            continue
-
-        temp_puzzle = {
-            'source': source, 'targets': targets, 'walls': walls,
-            'par': 99, 'inventory': {'fwd': 99, 'bck': 99, 'split': 99}
+        # 5. Build puzzle and verify minimum with FULL solver
+        #    (solve_with_known_solution only checks subsets of intended mirrors,
+        #     but the real solver may find completely different solutions)
+        has_split = any(t == 'split' for _, _, t in mirrors)
+        inv_temp = {'fwd': 8, 'bck': 8}
+        if has_split:
+            inv_temp['split'] = 3
+        puzzle = {
+            'source': source,
+            'targets': targets,
+            'walls': walls,
+            'par': 7,
+            'inventory': inv_temp,
+            'difficulty': difficulty,
         }
-        min_pieces = solve_with_known_solution(temp_puzzle, mirror_cells)
-        if min_pieces <= 0 or min_pieces > 7:
-            continue
 
-        if min_pieces < cfg['min_required']:
+        min_pieces = validate_solve(puzzle)
+        if min_pieces < 0 or min_pieces < cfg['min_required'] or min_pieces > 6:
             continue
 
         par = min_pieces + 1
-        inv = {'fwd': par, 'bck': par, 'split': 2}
+        inv = {'fwd': par, 'bck': par}
+        if has_split:
+            inv['split'] = 2
+        puzzle['par'] = par
+        puzzle['inventory'] = inv
+        puzzle['_min'] = min_pieces
 
-        gem = place_gem(beam_path, occupied, walls)
+        # 6. Place gem — required, must be optional (reachable but not on main path)
+        #    Try multiple gem candidates before giving up on this puzzle
+        occupied = {(r, c) for r, c, _ in mirrors}
+        gem_candidates = find_gem_candidates(path_cells, occupied, walls_set)
+        random.shuffle(gem_candidates)
 
-        puzzle = {
-            'source': source, 'targets': targets, 'walls': walls,
-            'par': par, 'inventory': inv, 'difficulty': difficulty,
-            '_min': min_pieces
-        }
-        if gem:
-            puzzle['gem'] = gem
-            gem_min = solve_with_gem(puzzle, par + 2)
+        placed_gem = False
+        for gem_r, gem_c in gem_candidates[:8]:  # try up to 8 positions
+            puzzle['gem'] = {'r': gem_r, 'c': gem_c}
+            gem_min = solve_with_gem(puzzle, par + 1)
             if gem_min == -1:
+                continue  # unreachable
+            if gem_min <= min_pieces:
+                continue  # on main path, not optional
+            placed_gem = True
+            break
+
+        if not placed_gem:
+            if 'gem' in puzzle:
                 del puzzle['gem']
+            continue  # no valid gem found, retry whole puzzle
+
         return puzzle
 
     return None
-
 
 
 def puzzle_hash(puzzle):
@@ -409,26 +518,22 @@ def main():
     if seed is not None:
         random.seed(seed)
 
-    print(f'Generating {count} puzzle(s)...')
+    print(f'Generating {count} puzzle(s) [walls-first + path-determined targets]...')
     print('---')
 
     puzzles = []
     seen_hashes = set()
-    difficulties = ['expert']
-    max_attempts = count * 3  # allow retries for duplicates/failures
+    max_attempts = count * 3
     attempts = 0
 
     t0 = time.time()
     while len(puzzles) < count and attempts < max_attempts:
         attempts += 1
-        diff = random.choice(difficulties)
         t1 = time.time()
 
         # 50% mirror-only, 50% splitter
-        if random.random() < 0.5:
-            puzzle = generate_mirror_puzzle(diff)
-        else:
-            puzzle = generate_splitter_puzzle(diff)
+        use_splitter = random.random() < 0.5
+        puzzle = generate_puzzle('expert', use_splitter=use_splitter)
 
         elapsed = time.time() - t1
 
@@ -446,11 +551,13 @@ def main():
             targets = len(puzzle['targets'])
             splits = puzzle['inventory'].get('split', 0)
             has_gem = 'gem' in puzzle
+            nwalls = len(puzzle['walls'])
             print(f'  Puzzle {len(puzzles)}: par={puzzle["par"]}, min={min_p}, '
-                  f'targets={targets}, splits={splits}, walls={len(puzzle["walls"])}, '
+                  f'targets={targets}, splits={splits}, walls={nwalls}, '
                   f'gem={has_gem}, id={h} [{elapsed:.2f}s]')
         else:
-            print(f'  Attempt {attempts}: FAILED ({diff}) [{elapsed:.2f}s]')
+            ptype = 'splitter' if use_splitter else 'mirror'
+            print(f'  Attempt {attempts}: FAILED ({ptype}) [{elapsed:.2f}s]')
         sys.stdout.flush()
 
     total = time.time() - t0

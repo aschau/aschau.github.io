@@ -15,13 +15,17 @@ A daily laser puzzle game. Place mirrors (`/` `\`) and beam splitters (`X`) on a
 
 ## Generation
 Run: `python generate.py [count] [seed]`. Outputs `puzzles.json` and `puzzles.js`.
+Run: `python generate.py --patch [seed]`. Keeps valid existing puzzles, replaces only bad ones.
 - Walls-first approach: place walls → pick source → build beam path via backtracking → target = beam exit
 - Solver finds minimum pieces, sets par = min + 1
 - 1-2 mirrors selected as fixed pieces. Gem placed adjacent to beam path (must be optional).
-- Difficulty: 60% hard (4-6 mirrors, 2-4 walls), 40% expert (5-7 mirrors, 1-3 walls).
+- **Fixed piece constraint**: fixed pieces alone must NOT route the beam to any target. Each mirror is individually tested for safety before selection. This prevents trivially easy puzzles where the player only needs 1-2 placements.
+- **More walls = harder puzzles**: walls block shortcut solutions the solver would otherwise find, forcing higher min piece counts. Hard uses 4-7 walls, expert uses 4-6 walls.
+- Difficulty mix: 20% medium (3-4 mirrors, 4-6 walls), 45% hard (4-6 mirrors, 4-7 walls), 35% expert (5-7 mirrors, 4-6 walls).
+- 25% of puzzles use splitters (beam splitter creates two branches, each needing its own target).
 
 ## Validation
-Run: `python validate.py`. Checks solvability, correct par, gem presence/reachability/optionality.
+Run: `python validate.py`. Checks solvability, correct par, gem presence/reachability/optionality, and fixed-piece-hits-target (ensures no fixed piece routes beam to any target alone).
 
 ## Persistence
 `localStorage` key `beamlab_data`: board state, bestScore, gemEverCollected, stats, streaks.

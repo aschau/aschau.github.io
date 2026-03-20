@@ -395,6 +395,21 @@ def main():
         else:
             status = 'OK'
 
+        # Check that fixed pieces alone don't hit any targets
+        fixed_status = ''
+        if p.get('fixed') and status == 'OK':
+            fixed_grid = [[None] * GRID for _ in range(GRID)]
+            for w in p['walls']:
+                fixed_grid[w['r']][w['c']] = 'wall'
+            for f in p['fixed']:
+                fixed_grid[f['r']][f['c']] = f['type']
+            fixed_exits, _ = simulate(fixed_grid, p['source'])
+            target_set_check = {(t['edge'], t['pos']) for t in p['targets']}
+            hits = fixed_exits & target_set_check
+            if hits:
+                fixed_status = f' | FIXED HITS {len(hits)} TARGET(S)'
+                issues.append((i + 1, f'fixed pieces alone hit {len(hits)} target(s) — too easy'))
+
         gem_status = ''
         if not has_gem:
             gem_status = ' | NO GEM'
@@ -414,7 +429,7 @@ def main():
                     issues.append((i + 1, 'gem is on main path, not optional'))
 
         elapsed = time.time() - t1
-        out(f'  Puzzle {i+1:>2} [{pid}] (par={par}, targets={targets}, splits={split}): {status}{gem_status} [{elapsed:.2f}s]')
+        out(f'  Puzzle {i+1:>2} [{pid}] (par={par}, targets={targets}, splits={split}): {status}{fixed_status}{gem_status} [{elapsed:.2f}s]')
 
     total = time.time() - t0
     out('---')

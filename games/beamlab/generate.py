@@ -397,10 +397,13 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
     - min_required: minimum PLAYER-placed pieces (after accounting for fixed)
     """
     cfg = {
-        'medium': {'mirror_range': (3, 4), 'wall_range': (3, 5), 'fixed_range': (0, 0), 'min_required': 3},
-        'hard':   {'mirror_range': (4, 6), 'wall_range': (2, 4), 'fixed_range': (1, 1), 'min_required': 4},
-        'expert': {'mirror_range': (5, 7), 'wall_range': (1, 3), 'fixed_range': (1, 2), 'min_required': 4},
+        'medium': {'mirror_range': (3, 4), 'wall_range': (4, 6), 'fixed_range': (1, 1), 'min_required': 3},
+        'hard':   {'mirror_range': (4, 6), 'wall_range': (4, 7), 'fixed_range': (1, 1), 'min_required': 4},
+        'expert': {'mirror_range': (5, 7), 'wall_range': (4, 6), 'fixed_range': (1, 2), 'min_required': 4},
     }[difficulty]
+
+    _fail_reasons = {'walls': 0, 'path': 0, 'verify': 0, 'fixed': 0,
+                      'min_low': 0, 'min_high': 0, 'gem': 0}
 
     for attempt in range(300):
         # 1. Pick source
@@ -416,6 +419,7 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
         else:
             wall_list = place_walls_structured(num_walls, entry_r, entry_c, entry_d)
             if wall_list is None:
+                _fail_reasons['walls'] += 1
                 continue
         walls_set = set(wall_list)
         walls = [{'r': r, 'c': c} for r, c in wall_list]
@@ -428,10 +432,12 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
                 branch_mirrors, set(), min_coverage=4
             )
             if not result:
+                _fail_reasons['path'] += 1
                 continue
             path_cells, mirrors, exit_list = result
             targets = [{'edge': e, 'pos': p} for e, p in exit_list]
             if any(t['edge'] == src_edge and t['pos'] == src_pos for t in targets):
+                _fail_reasons['path'] += 1
                 continue
         else:
             num_mirrors = random.randint(*cfg['mirror_range'])
@@ -440,9 +446,11 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
                 num_mirrors, set(), [], min_coverage=4
             )
             if not result:
+                _fail_reasons['path'] += 1
                 continue
             path_cells, mirrors, exit_edge, exit_pos = result
             if exit_edge == src_edge and exit_pos == src_pos:
+                _fail_reasons['path'] += 1
                 continue
             targets = [{'edge': exit_edge, 'pos': exit_pos}]
 
@@ -453,19 +461,58 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
         for r, c, t in mirrors:
             grid[r][c] = t
         if not hits_all(grid, source, targets):
+            _fail_reasons['verify'] += 1
             continue
 
         # 5. Select fixed pieces (pre-placed mirrors from the solution)
-        #    Prefer mirrors early in the path so the beam hits them first
+        #    Fixed pieces alone must NOT hit any targets (would make puzzle trivial)
         num_fixed = random.randint(*cfg['fixed_range'])
         fixed = []
         if num_fixed > 0 and len(mirrors) > num_fixed + 1:
-            # Pick from the first half of the path (beam hits them early)
-            early_mirrors = mirrors[:len(mirrors) // 2 + 1]
-            pick_count = min(num_fixed, len(early_mirrors))
-            fixed_indices = random.sample(range(len(early_mirrors)), pick_count)
-            fixed = [{'r': early_mirrors[i][0], 'c': early_mirrors[i][1],
-                       'type': early_mirrors[i][2]} for i in fixed_indices]
+            pick_count = min(num_fixed, len(mirrors) - 1)
+            target_set = {(t['edge'], t['pos']) for t in targets}
+
+            # Pre-filter: find which individual mirrors are safe (don't route
+            # the beam to any target on their own). Only combine safe mirrors.
+            safe_indices = []
+            for mi in range(len(mirrors)):
+                test_grid = make_empty_grid()
+                for wr, wc in wall_list:
+                    test_grid[wr][wc] = 'wall'
+                mr, mc, mt = mirrors[mi]
+                test_grid[mr][mc] = mt
+                exits, _ = simulate(test_grid, source)
+                if not (exits & target_set):
+                    safe_indices.append(mi)
+
+            if len(safe_indices) < pick_count:
+                continue  # not enough safe mirrors to pick from
+
+            # Try random combinations of safe mirrors
+            fixed_ok = False
+            for _ in range(20):
+                chosen = random.sample(safe_indices, pick_count)
+                candidate_fixed = [{'r': mirrors[i][0], 'c': mirrors[i][1],
+                                    'type': mirrors[i][2]} for i in chosen]
+
+                # Verify the combination together doesn't hit targets
+                if pick_count > 1:
+                    test_grid = make_empty_grid()
+                    for wr, wc in wall_list:
+                        test_grid[wr][wc] = 'wall'
+                    for f in candidate_fixed:
+                        test_grid[f['r']][f['c']] = f['type']
+                    exits, _ = simulate(test_grid, source)
+                    if exits & target_set:
+                        continue
+
+                fixed = candidate_fixed
+                fixed_ok = True
+                break
+
+            if not fixed_ok:
+                _fail_reasons['fixed'] += 1
+                continue
 
         # 6. Build puzzle and verify minimum ADDITIONAL pieces with full solver
         #    Fixed pieces are already on the grid (handled by make_grid via 'fixed')
@@ -484,7 +531,11 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
         }
 
         min_pieces = validate_solve(puzzle)
-        if min_pieces < 0 or min_pieces < cfg['min_required'] or min_pieces > 7:
+        if min_pieces < 0 or min_pieces < cfg['min_required']:
+            _fail_reasons['min_low'] += 1
+            continue
+        if min_pieces > 7:
+            _fail_reasons['min_high'] += 1
             continue
 
         par = min_pieces + 1
@@ -514,11 +565,13 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
         if not placed_gem:
             if 'gem' in puzzle:
                 del puzzle['gem']
+            _fail_reasons['gem'] += 1
             continue
 
+        puzzle['_fail_reasons'] = _fail_reasons
         return puzzle
 
-    return None
+    return _fail_reasons
 
 
 def puzzle_hash(puzzle):
@@ -542,7 +595,7 @@ def main():
 
     puzzles = []
     seen_hashes = set()
-    max_attempts = count * 5
+    max_attempts = count * 15
     attempts = 0
 
     t0 = time.time()
@@ -550,16 +603,18 @@ def main():
         attempts += 1
         t1 = time.time()
 
-        # Difficulty mix: 60% hard, 40% expert (no medium)
-        diff = 'hard' if random.random() < 0.6 else 'expert'
+        # Difficulty mix: 20% medium, 45% hard, 35% expert
+        r = random.random()
+        diff = 'medium' if r < 0.2 else ('hard' if r < 0.65 else 'expert')
 
-        # 40% splitter puzzles
-        use_splitter = random.random() < 0.4
+        # 25% splitter puzzles (splitters have lower success rate)
+        use_splitter = random.random() < 0.25
         puzzle = generate_puzzle(diff, use_splitter=use_splitter)
 
         elapsed = time.time() - t1
 
-        if puzzle:
+        if puzzle and isinstance(puzzle, dict) and 'source' in puzzle:
+            fail_reasons = puzzle.pop('_fail_reasons', {})
             min_p = puzzle.pop('_min')
             h = puzzle_hash(puzzle)
 
@@ -581,19 +636,99 @@ def main():
                   f'gem={has_gem}, id={h} [{elapsed:.2f}s]')
         else:
             ptype = 'splitter' if use_splitter else 'mirror'
-            print(f'  Attempt {attempts}: FAILED ({ptype}) [{elapsed:.2f}s]')
+            reasons = puzzle if isinstance(puzzle, dict) else {}
+            reason_str = ', '.join(f'{k}={v}' for k, v in reasons.items() if v > 0) if reasons else 'exhausted'
+            print(f'  Attempt {attempts}: FAILED ({ptype}) [{elapsed:.2f}s] ({reason_str})')
         sys.stdout.flush()
 
     total = time.time() - t0
     print(f'---')
     print(f'Generated {len(puzzles)}/{count} puzzles ({total:.1f}s)')
 
-    # Save JSON (for validator)
+    save_puzzles(puzzles)
+
+
+def fixed_hits_target(puzzle):
+    """Check if fixed pieces alone route the beam to any target."""
+    if not puzzle.get('fixed'):
+        return False
+    grid = [[None] * GRID for _ in range(GRID)]
+    for w in puzzle['walls']:
+        grid[w['r']][w['c']] = 'wall'
+    for f in puzzle['fixed']:
+        grid[f['r']][f['c']] = f['type']
+    exits, _ = simulate(grid, puzzle['source'])
+    target_set = {(t['edge'], t['pos']) for t in puzzle['targets']}
+    return bool(exits & target_set)
+
+
+def patch():
+    """Load existing puzzles, keep good ones, replace bad ones."""
+    seed = int(sys.argv[2]) if len(sys.argv) > 2 else None
+    if seed is not None:
+        random.seed(seed)
+
+    json_path = Path(__file__).parent / 'puzzles.json'
+    existing = json.loads(json_path.read_text())
+    total = len(existing)
+
+    print(f'Patching {total} existing puzzles...')
+    print('---')
+
+    kept = 0
+    replaced = 0
+    puzzles = []
+    seen_hashes = set()
+
+    for i, p in enumerate(existing):
+        h = puzzle_hash(p)
+        if fixed_hits_target(p):
+            # Bad puzzle — needs replacement
+            print(f'  Puzzle {i+1} [{h}]: REPLACING (fixed hits target)')
+            replacement = None
+            for _ in range(50):
+                r = random.random()
+                diff = p.get('difficulty', 'hard')
+                use_splitter = any(f.get('type') == 'split' for f in p.get('fixed', []))
+                candidate = generate_puzzle(diff, use_splitter=use_splitter)
+                if candidate and isinstance(candidate, dict) and 'source' in candidate:
+                    candidate.pop('_fail_reasons', None)
+                    candidate.pop('_min', None)
+                    ch = puzzle_hash(candidate)
+                    if ch not in seen_hashes:
+                        candidate['id'] = ch
+                        replacement = candidate
+                        break
+
+            if replacement:
+                seen_hashes.add(puzzle_hash(replacement))
+                puzzles.append(replacement)
+                replaced += 1
+                rh = replacement['id']
+                print(f'           -> {replacement["difficulty"]} par={replacement["par"]}, id={rh}')
+            else:
+                # Couldn't replace — keep original as fallback
+                seen_hashes.add(h)
+                puzzles.append(p)
+                kept += 1
+                print(f'           -> KEPT (no replacement found)')
+        else:
+            seen_hashes.add(h)
+            puzzles.append(p)
+            kept += 1
+
+    print(f'---')
+    print(f'Kept {kept}, replaced {replaced} of {total} puzzles')
+
+    save_puzzles(puzzles)
+
+
+def save_puzzles(puzzles):
+    """Write puzzles to both JSON and JS files."""
     json_path = Path(__file__).parent / 'puzzles.json'
     json_path.write_text(json.dumps(puzzles, indent=2))
     print(f'Saved JSON to {json_path}')
 
-    # Save JS (for game — inline data, works on file://)
     js_path = Path(__file__).parent / 'puzzles.js'
     compact = json.dumps(puzzles, separators=(',', ':'))
     js_content = f"""// ============================================
@@ -640,4 +775,7 @@ function getTodayDateString() {{
 
 
 if __name__ == '__main__':
-    main()
+    if '--patch' in sys.argv:
+        patch()
+    else:
+        main()

@@ -825,6 +825,19 @@ body {
     flex: 1;
 }
 
+.exec-timeline-track.hidden-dots {
+    display: none;
+}
+
+.exec-step-counter {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 50px;
+    text-align: center;
+}
+
 .exec-step-dot {
     flex: 1;
     height: 6px;

@@ -163,6 +163,8 @@
 
         if (solved) {
             shareBtn.disabled = false;
+            resetBtn.disabled = true;
+            undoBtn.disabled = true;
         }
 
         // Show quick controls for first-time visitors
@@ -550,12 +552,13 @@
                 updateStats(used);
             }
 
-            // Always update best score and gem (improvements from replays)
             updateBestScore(used);
 
             saveState();
             updateStatsDisplay();
             shareBtn.disabled = false;
+            resetBtn.disabled = true;
+            undoBtn.disabled = true;
 
             setTimeout(function () { showWinModal(); }, 600);
         }
@@ -969,6 +972,8 @@
     }
 
     function resetBoard() {
+        var data = loadData();
+        if (data.today && data.today.everSolved) return;
         for (let r = 0; r < GRID_SIZE; r++) {
             for (let c = 0; c < GRID_SIZE; c++) {
                 if (isPiece(grid[r][c]) && !fixedCells.has(r + ',' + c)) {
@@ -1104,7 +1109,7 @@
             }
         }
 
-        solved = !!data.today.solved;
+        solved = !!data.today.solved || !!data.today.everSolved;
         return true;
     }
 

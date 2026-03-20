@@ -158,6 +158,8 @@
 
         if (solved) {
             shareBtn.disabled = false;
+            resetBtn.disabled = true;
+            undoBtn.disabled = true;
         }
 
         // First-visit controls
@@ -835,9 +837,7 @@
     }
 
     function handleReset() {
-        if (solved && !everSolved) {
-            // Don't allow reset before first solve — or do allow it
-        }
+        if (everSolved) return;
 
         // Re-scramble with a seeded shuffle based on puzzle id
         buildTokenArrays();
@@ -1692,6 +1692,7 @@
     function updateUI() {
         swapsUsed.textContent = swapCount;
         undoBtn.disabled = moveHistory.length === 0 || solved;
+        resetBtn.disabled = everSolved;
     }
 
     function updateStatsDisplay() {
@@ -1867,8 +1868,8 @@
 
         swapCount = data.today.swapCount || 0;
         moveHistory = data.today.moveHistory || [];
-        solved = !!data.today.solved;
         everSolved = !!data.today.everSolved;
+        solved = !!data.today.solved || everSolved;
         bestScore = data.today.bestScore || null;
 
         return true;

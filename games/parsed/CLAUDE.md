@@ -36,6 +36,11 @@ Run: `python verify_puzzles.py`. Checks: structural validity, interpreter execut
 - Replay/Continue buttons, tappable lines for explanations after completion
 - Walkthrough button in win modal to re-open animation
 
+## Sharing
+- Share text: `Username's Parsed #N 🟢 / 🏅 ScoreLabel Swaps (swaps/par) / streak / URL`
+- Theme emoji extracted from shareResult (spoiler-free — answer values stripped)
+- Score labels: Genius (-3), Hacker (-2), Optimized (-1), Compiled (0), Verbose (+1), Spaghetti (+2+)
+
 ## Persistence
-`localStorage` key `parsed_data`: board state, stats, streaks. `SAVE_VERSION` = 3 — bump when format changes.
+`localStorage` key `parsed_data`: board state, stats, streaks. `SAVE_VERSION` = 3 — bump when format changes. Board locks after first solve — reset/undo disabled, no replays.
 Theme in `parsed_theme`. Username in `parsed_username`.

@@ -611,47 +611,47 @@ def generate_puzzles():
 
     # --- Chain arithmetic (15) ---
     chain_themes = [
-        ("base", 10, "bonus", 5, "tax", 3, "pay", "+", "-", "\U0001F4B5", "Pay = base + bonus - tax?", "\U0001F4B5 Paycheck: $12"),
-        ("attack", 8, "rage", 3, "block", 4, "hit", "+", "-", "\u2694\uFE0F", "Hit = attack + rage - block?", "\u2694\uFE0F Hit damage: 7"),
-        ("flour", 3, "eggs", 2, "sugar", 4, "batter", "*", "+", "\U0001F370", "Batter = flour * eggs + sugar?", "\U0001F370 Batter: 10 cups"),
-        ("width", 5, "height", 3, "border", 4, "canvas", "+", "*", "\U0001F5BC\uFE0F", "Canvas = (width + height) * border?", "\U0001F5BC\uFE0F Canvas: 32 pixels"),
-        ("speed", 12, "time", 3, "wind", 6, "flight", "*", "+", "\U0001F6EB", "Flight = speed * time + wind?", "\U0001F6EB Flight: 42 miles"),
-        ("coins", 20, "gems", 5, "fee", 3, "loot", "+", "-", "\U0001FA99", "Loot = coins + gems - fee?", "\U0001FA99 Loot: 22 gold"),
-        ("steel", 4, "carbon", 3, "heat", 2, "alloy", "*", "+", "\u2699\uFE0F", "Alloy = steel * carbon + heat?", "\u2699\uFE0F Alloy: 14 units"),
-        ("dots", 8, "lines", 2, "shapes", 3, "art", "+", "*", "\U0001F3A8", "Art = (dots + lines) * shapes?", "\U0001F3A8 Art: 30 shapes"),
-        ("bass", 6, "treble", 4, "reverb", 2, "sound", "+", "*", "\U0001F3B5", "Sound = (bass + treble) * reverb?", "\U0001F3B5 Sound: 20 dB"),
-        ("rain", 15, "sun", 8, "frost", 5, "weather", "-", "+", "\U0001F327\uFE0F", "Weather index = rain - sun + frost?", "\U0001F327\uFE0F Weather: 12"),
-        ("herbs", 3, "spices", 4, "salt", 2, "flavor", "*", "+", "\U0001F9C2", "Flavor = herbs * spices + salt?", "\U0001F9C2 Flavor: 14"),
-        ("level", 10, "xp", 5, "quests", 3, "rank", "+", "-", "\U0001F396\uFE0F", "Rank = level + xp - quests?", "\U0001F396\uFE0F Rank: 12"),
-        ("code", 8, "bugs", 3, "fixes", 2, "quality", "-", "*", "\U0001F41B", "Quality = (code - bugs) * fixes?", "\U0001F41B Quality: 10"),
-        ("fans", 50, "vip", 10, "staff", 5, "venue", "+", "+", "\U0001F3DF\uFE0F", "Venue total = fans + vip + staff?", "\U0001F3DF\uFE0F Venue: 65 people"),
-        ("vowels", 5, "consonants", 3, "words", 2, "poem", "*", "+", "\U0001F4DD", "Poem score = vowels * consonants + words?", "\U0001F4DD Poem: 17"),
+        ("base", 10, "bonus", 5, "tax", 3, "pay", "+", "-", "\U0001F4B5", "You earned a base wage plus a bonus, but tax takes a cut. What's your paycheck?", "\U0001F4B5 Payday!\nBase + bonus - tax = $12"),
+        ("attack", 8, "rage", 3, "block", 4, "hit", "+", "-", "\u2694\uFE0F", "A warrior's attack is boosted by rage, but the enemy blocks. How much damage lands?", "\u2694\uFE0F Critical hit!\n8 + 3 rage - 4 blocked = 7 damage"),
+        ("flour", 3, "eggs", 2, "sugar", 4, "batter", "*", "+", "\U0001F370", "Mix flour and eggs together, then fold in sugar. How many cups of batter?", "\U0001F370 Batter whipped!\nMixed up 10 cups"),
+        ("width", 5, "height", 3, "border", 4, "canvas", "+", "*", "\U0001F5BC\uFE0F", "Combine width and height, then stretch by the border size. How big is the canvas?", "\U0001F5BC\uFE0F Canvas stretched!\n32 pixels wide"),
+        ("speed", 12, "time", 3, "wind", 6, "flight", "*", "+", "\U0001F6EB", "A plane flies at speed for some time, then gets a tailwind boost. Total flight distance?", "\U0001F6EB Landed safely!\n42 miles traveled"),
+        ("coins", 20, "gems", 5, "fee", 3, "loot", "+", "-", "\U0001FA99", "You found coins and gems in a dungeon, but the merchant takes a fee. Net loot?", "\U0001FA99 Loot secured!\n20 coins + 5 gems - 3 fee = 22"),
+        ("steel", 4, "carbon", 3, "heat", 2, "alloy", "*", "+", "\u2699\uFE0F", "Blend steel with carbon, then add heat treatment. What's the alloy strength?", "\u2699\uFE0F Alloy forged!\n14 units of strength"),
+        ("dots", 8, "lines", 2, "shapes", 3, "art", "+", "*", "\U0001F3A8", "Combine dots and lines into a pattern, then repeat it for each shape. How complex is the art?", "\U0001F3A8 Masterpiece!\n30 elements in the artwork"),
+        ("bass", 6, "treble", 4, "reverb", 2, "sound", "+", "*", "\U0001F3B5", "Mix bass and treble together, then apply reverb. What's the sound level?", "\U0001F3B5 Track mixed!\n20 dB of sound"),
+        ("rain", 15, "sun", 8, "frost", 5, "weather", "-", "+", "\U0001F327\uFE0F", "It rained hard, then the sun dried things out, but frost crept back in. What's the weather reading?", "\U0001F327\uFE0F Weather report!\nRain - sun + frost = 12"),
+        ("herbs", 3, "spices", 4, "salt", 2, "flavor", "*", "+", "\U0001F9C2", "Grind herbs with spices, then season with salt. How bold is the flavor?", "\U0001F9C2 Chef's kiss!\n14 flavor points"),
+        ("level", 10, "xp", 5, "quests", 3, "rank", "+", "-", "\U0001F396\uFE0F", "Your level plus bonus XP, minus quests already spent. What's your rank?", "\U0001F396\uFE0F Ranked up!\nRank 12 achieved"),
+        ("code", 8, "bugs", 3, "fixes", 2, "quality", "-", "*", "\U0001F41B", "Start with code, squash the bugs, then multiply by fix rounds. What's the quality score?", "\U0001F41B Bugs squashed!\nQuality score: 10"),
+        ("fans", 50, "vip", 10, "staff", 5, "venue", "+", "+", "\U0001F3DF\uFE0F", "General fans, VIP guests, and staff all fill the venue. How many people total?", "\U0001F3DF\uFE0F Packed house!\n65 people in the venue"),
+        ("vowels", 5, "consonants", 3, "words", 2, "poem", "*", "+", "\U0001F4DD", "Vowels pair with consonants to form syllables, then add extra words. What's the poem score?", "\U0001F4DD Poem written!\nScore: 17"),
     ]
     for v1, n1, v2, n2, v3, n3, vr, o1, o2, emoji, goal, share in chain_themes:
         add(tmpl_chain3(v1, n1, v2, n2, v3, n3, vr, o1, o2, emoji, goal, share, f"parsed_{idx:03d}"))
 
     # --- Multi-step / two-step (20) ---
     multistep_themes = [
-        ("eggs", 6, "milk", 4, "mix", "+", "butter", 3, "batter", "*", "\U0001F95E", "Mix eggs+milk, then multiply by butter?", "\U0001F95E Batter: 30"),
-        ("iron", 15, "coal", 5, "ingot", "+", "hammers", 2, "blade", "*", "\u2694\uFE0F", "Forge ingot (iron+coal), hammer it. Blade?", "\u2694\uFE0F Blade: 40"),
-        ("salt", 8, "pepper", 4, "spice", "*", "water", 3, "broth", "+", "\U0001F372", "Mix spice (salt*pepper), add water. Broth?", "\U0001F372 Broth: 35"),
-        ("red", 10, "green", 6, "yellow", "+", "blue", 2, "paint", "*", "\U0001F3A8", "Mix yellow (red+green), times blue. Paint?", "\U0001F3A8 Paint: 32"),
-        ("atk", 12, "def", 4, "raw", "-", "crit", 3, "dmg", "*", "\U0001F4A5", "Raw = atk-def, then crit multiplier. Damage?", "\U0001F4A5 Damage: 24"),
-        ("wheat", 20, "chaff", 8, "grain", "-", "mills", 3, "flour", "*", "\U0001F33E", "Grain = wheat-chaff, mills grind. Flour?", "\U0001F33E Flour: 36"),
-        ("notes", 8, "rests", 2, "bars", "*", "tempo", 5, "rhythm", "+", "\U0001F3B6", "Bars = notes*rests, add tempo. Rhythm?", "\U0001F3B6 Rhythm: 21"),
-        ("planks", 10, "nails", 5, "frame", "+", "paint", 2, "cabin", "*", "\U0001F3E0", "Frame = planks+nails, paint coats. Cabin?", "\U0001F3E0 Cabin: 30"),
-        ("cores", 4, "threads", 8, "compute", "*", "cache", 2, "speed", "+", "\U0001F4BB", "Compute = cores*threads, add cache. Speed?", "\U0001F4BB Speed: 34"),
-        ("seeds", 15, "rain", 3, "growth", "+", "sun", 2, "harvest", "*", "\U0001F331", "Growth = seeds+rain, sun doubles. Harvest?", "\U0001F331 Harvest: 36"),
-        ("copper", 20, "tin", 4, "bronze", "+", "forge", 3, "weapons", "*", "\U0001F528", "Bronze = copper+tin, forge triples. Weapons?", "\U0001F528 Weapons: 72"),
-        ("flour", 5, "sugar", 3, "dough", "*", "oven", 10, "cake", "+", "\U0001F382", "Dough = flour*sugar, add oven time. Cake?", "\U0001F382 Cake: 25"),
-        ("gravity", 10, "mass", 6, "force", "*", "friction", 12, "motion", "-", "\U0001F30D", "Force = gravity*mass, subtract friction. Motion?", "\U0001F30D Motion: 48"),
-        ("words", 12, "typos", 3, "draft", "-", "edits", 3, "final", "*", "\U0001F4DD", "Draft = words-typos, times edits. Final?", "\U0001F4DD Final: 27"),
-        ("stock", 50, "orders", 15, "shipped", "-", "returns", 5, "net", "-", "\U0001F4E6", "Shipped = stock-orders, minus returns. Net?", "\U0001F4E6 Net: 30"),
-        ("health", 100, "poison", 25, "current", "-", "potion", 10, "final", "+", "\U0001F48A", "Current = health-poison, add potion. Final HP?", "\U0001F48A Final: 85"),
-        ("fans", 40, "exits", 15, "crowd", "-", "arrivals", 10, "total", "+", "\U0001F3C8", "Crowd = fans-exits, plus arrivals. Total?", "\U0001F3C8 Total: 35"),
-        ("oxygen", 50, "leak", 12, "tank", "-", "refill", 8, "reserve", "+", "\U0001F4A8", "Tank = oxygen-leak, add refill. Reserve?", "\U0001F4A8 Reserve: 46"),
-        ("gems", 30, "cuts", 6, "polished", "/", "sets", 4, "rings", "+", "\U0001F48D", "Polished = gems/cuts, add sets. Rings?", "\U0001F48D Rings: 9"),
-        ("logs", 24, "splits", 4, "boards", "/", "nails", 3, "shelves", "+", "\U0001FA9A", "Boards = logs/splits, add nails. Shelves?", "\U0001FA9A Shelves: 9"),
+        ("eggs", 6, "milk", 4, "mix", "+", "butter", 3, "batter", "*", "\U0001F95E", "Whisk eggs and milk together, then fold in butter. How much batter?", "\U0001F95E Pancakes incoming!\n30 cups of batter ready"),
+        ("iron", 15, "coal", 5, "ingot", "+", "hammers", 2, "blade", "*", "\u2694\uFE0F", "Smelt iron with coal into an ingot, then hammer it into shape. Blade quality?", "\u2694\uFE0F Blade forged!\nQuality: 40"),
+        ("salt", 8, "pepper", 4, "spice", "*", "water", 3, "broth", "+", "\U0001F372", "Grind salt and pepper into a spice blend, then dissolve in water. How rich is the broth?", "\U0001F372 Broth simmering!\nRichness: 35"),
+        ("red", 10, "green", 6, "yellow", "+", "blue", 2, "paint", "*", "\U0001F3A8", "Blend red and green to make yellow, then mix with blue. How much paint?", "\U0001F3A8 Colors mixed!\n32 units of paint"),
+        ("atk", 12, "def", 4, "raw", "-", "crit", 3, "dmg", "*", "\U0001F4A5", "Attack power minus enemy defense, then land a critical hit. Total damage?", "\U0001F4A5 Critical strike!\n24 damage dealt"),
+        ("wheat", 20, "chaff", 8, "grain", "-", "mills", 3, "flour", "*", "\U0001F33E", "Separate wheat from chaff, then grind it through the mills. How much flour?", "\U0001F33E Mills grinding!\n36 bags of flour"),
+        ("notes", 8, "rests", 2, "bars", "*", "tempo", 5, "rhythm", "+", "\U0001F3B6", "Arrange notes with rests into bars, then add the tempo. What's the rhythm score?", "\U0001F3B6 Music flows!\nRhythm score: 21"),
+        ("planks", 10, "nails", 5, "frame", "+", "paint", 2, "cabin", "*", "\U0001F3E0", "Nail planks into a frame, then apply coats of paint. How sturdy is the cabin?", "\U0001F3E0 Cabin built!\nSturdiness: 30"),
+        ("cores", 4, "threads", 8, "compute", "*", "cache", 2, "speed", "+", "\U0001F4BB", "Each core runs multiple threads, plus cache speeds things up. Total processing speed?", "\U0001F4BB Benchmark passed!\nSpeed: 34"),
+        ("seeds", 15, "rain", 3, "growth", "+", "sun", 2, "harvest", "*", "\U0001F331", "Seeds sprout with rain, then sunshine multiplies the growth. How big is the harvest?", "\U0001F331 Bumper crop!\nHarvest: 36"),
+        ("copper", 20, "tin", 4, "bronze", "+", "forge", 3, "weapons", "*", "\U0001F528", "Alloy copper with tin into bronze, then forge it into weapons. How many weapons?", "\U0001F528 Arsenal ready!\n72 weapons forged"),
+        ("flour", 5, "sugar", 3, "dough", "*", "oven", 10, "cake", "+", "\U0001F382", "Knead flour with sugar into dough, then add oven time. What's the cake score?", "\U0001F382 Cake baked!\nScore: 25"),
+        ("gravity", 10, "mass", 6, "force", "*", "friction", 12, "motion", "-", "\U0001F30D", "Gravity pulls on the mass creating force, but friction fights back. Net motion?", "\U0001F30D Physics solved!\nNet motion: 48"),
+        ("words", 12, "typos", 3, "draft", "-", "edits", 3, "final", "*", "\U0001F4DD", "Write a draft, remove the typos, then polish with editing rounds. Final word count?", "\U0001F4DD Published!\nFinal: 27 words"),
+        ("stock", 50, "orders", 15, "shipped", "-", "returns", 5, "net", "-", "\U0001F4E6", "Ship out the orders from stock, then subtract returns. What's left in the warehouse?", "\U0001F4E6 Inventory updated!\nNet stock: 30"),
+        ("health", 100, "poison", 25, "current", "-", "potion", 10, "final", "+", "\U0001F48A", "A hero takes poison damage but drinks a healing potion. What's the final HP?", "\U0001F48A Potion worked!\nFinal HP: 85"),
+        ("fans", 40, "exits", 15, "crowd", "-", "arrivals", 10, "total", "+", "\U0001F3C8", "Some fans leave the stadium, but new arrivals show up. How many in the crowd?", "\U0001F3C8 Crowd count!\nTotal: 35 fans"),
+        ("oxygen", 50, "leak", 12, "tank", "-", "refill", 8, "reserve", "+", "\U0001F4A8", "The tank springs a leak, but you manage a partial refill. Oxygen reserve?", "\U0001F4A8 Patched up!\nReserve: 46 units"),
+        ("gems", 30, "cuts", 6, "polished", "/", "sets", 4, "rings", "+", "\U0001F48D", "A jeweler splits gems into equal cuts, then adds them to ring sets. Total rings?", "\U0001F48D Jewelry crafted!\n9 rings made"),
+        ("logs", 24, "splits", 4, "boards", "/", "nails", 3, "shelves", "+", "\U0001FA9A", "Split the logs into boards, then nail on some extras. How many shelves?", "\U0001FA9A Workshop done!\n9 shelves built"),
     ]
     for v1, n1, v2, n2, vi, o1, v3, n3, vr, o2, emoji, goal, share in multistep_themes:
         add(tmpl_multi_step(v1, n1, v2, n2, vi, o1, v3, n3, vr, o2, emoji, goal, share, f"parsed_{idx:03d}"))
@@ -663,65 +663,65 @@ def generate_puzzles():
     # --- Simple if/else comparisons (30) ---
     ifelse_simple = [
         ("strength", 15, "threshold", 10, ">", "result", "strength", "+", 5, "strength", "-", 3,
-         "\U0001F4AA", "Strong enough? Add 5, else subtract 3", "\U0001F4AA Strong: 20"),
+         "\U0001F4AA", "A hero lifts a boulder. If strong enough, they power up. Otherwise they strain. What's their strength?", "\U0001F4AA Powered up!\nStrength: 20"),
         ("temp", 30, "limit", 25, ">", "status", "temp", "-", 5, "temp", "+", 10,
-         "\U0001F321\uFE0F", "Hot? Cool down by 5, else warm up by 10", "\U0001F321\uFE0F Temp: 25"),
+         "\U0001F321\uFE0F", "The lab is overheating! If it's too hot, cool it down. Otherwise, warm it up. Final temp?", "\U0001F321\uFE0F Lab stabilized!\nTemp: 25 degrees"),
         ("score", 80, "passing", 70, ">", "grade", "score", "+", 10, "score", "-", 20,
-         "\U0001F4AF", "Passing? Bonus +10, else penalty -20", "\U0001F4AF Grade: 90"),
+         "\U0001F4AF", "Final exam day! Pass and get bonus points. Fail and lose points. What's the grade?", "\U0001F4AF Passed!\nGrade: 90"),
         ("energy", 40, "cost", 50, "<", "action", "energy", "*", 2, "energy", "+", 10,
-         "\u26A1", "Enough energy? Double it, else add 10", "\u26A1 Energy: 80"),
+         "\u26A1", "The robot checks its battery. Enough juice? Overcharge! Otherwise, trickle charge. Energy level?", "\u26A1 Overcharged!\nEnergy: 80"),
         ("skill", 8, "quest", 5, ">", "reward", "skill", "*", 3, "skill", "+", 2,
-         "\U0001F3AF", "Skilled enough? Triple reward, else small bonus", "\U0001F3AF Reward: 24"),
+         "\U0001F3AF", "A skilled archer enters a tournament. Win big or get a consolation prize. What's the reward?", "\U0001F3AF Bullseye!\nReward: 24"),
         ("rain", 20, "drought", 30, "<", "crop", "rain", "*", 3, "rain", "-", 5,
-         "\U0001F327\uFE0F", "Rainy? Triple crops, else lose 5", "\U0001F327\uFE0F Crops: 60"),
+         "\U0001F327\uFE0F", "The forecast calls for rain. If it's wet enough, crops triple. Otherwise they wither. Harvest?", "\U0001F327\uFE0F Bumper crop!\nHarvest: 60"),
         ("level", 10, "boss", 8, ">", "outcome", "level", "*", 2, "level", "-", 3,
-         "\U0001F47E", "Higher level? Double score, else lose 3", "\U0001F47E Score: 20"),
+         "\U0001F47E", "You encounter the boss! If your level is higher, you deal double damage. Otherwise, you take a hit. Score?", "\U0001F47E Victory!\nScore: 20"),
         ("speed", 50, "limit", 60, "<", "fine", "speed", "+", 0, "speed", "-", 10,
-         "\U0001F6A8", "Under limit? No fine, else penalty", "\U0001F6A8 Fine: 50"),
+         "\U0001F6A8", "A car passes a speed trap. Under the limit? Drive on. Over? Get a ticket. What happens?", "\U0001F6A8 Drive safe!\nResult: 50"),
         ("hunger", 30, "fullness", 20, ">", "eat", "hunger", "-", 10, "hunger", "+", 5,
-         "\U0001F354", "Hungry? Eat (-10), else snack (+5)", "\U0001F354 Hunger: 20"),
+         "\U0001F354", "Lunchtime! If you're still hungry, eat a full meal. If not, just grab a snack. Hunger level?", "\U0001F354 Lunch break!\nHunger: 20"),
         ("gold", 100, "price", 80, ">", "buy", "gold", "-", 80, "gold", "+", 10,
-         "\U0001F4B0", "Can afford? Buy it, else save more", "\U0001F4B0 Gold: 20"),
+         "\U0001F4B0", "You spot a legendary sword in the shop. Can you afford it, or do you save up? Gold remaining?", "\U0001F4B0 Sword purchased!\nGold: 20"),
         ("wind", 25, "calm", 15, ">", "sail", "wind", "*", 2, "wind", "+", 5,
-         "\u26F5", "Windy? Double speed, else slow sailing", "\u26F5 Sail speed: 50"),
+         "\u26F5", "A sailor checks the wind. Strong breeze? Full sails ahead! Calm? Paddle slowly. Speed?", "\u26F5 Full sails!\nSpeed: 50 knots"),
         ("ink", 12, "paper", 20, "<", "print", "ink", "*", 3, "ink", "+", 5,
-         "\U0001F5A8\uFE0F", "Enough ink? Triple output, else add 5", "\U0001F5A8\uFE0F Print: 36"),
+         "\U0001F5A8\uFE0F", "The printer checks ink levels. Plenty left? Print away! Low? Just a test page. Output?", "\U0001F5A8\uFE0F Printed!\nOutput: 36 pages"),
         ("morale", 70, "threshold", 50, ">", "bonus", "morale", "+", 20, "morale", "-", 10,
-         "\U0001F389", "High morale? Bonus +20, else penalty", "\U0001F389 Morale bonus: 90"),
+         "\U0001F389", "The team checks morale. Spirits high? Throw a party! Low? Tough week ahead. Final morale?", "\U0001F389 Party time!\nMorale: 90"),
         ("fuel", 45, "reserve", 30, ">", "range", "fuel", "*", 2, "fuel", "+", 15,
-         "\u26FD", "Full tank? Double range, else short trip", "\u26FD Range: 90"),
+         "\u26FD", "Road trip! Full tank means double the range. Low tank? Just a short drive. How far?", "\u26FD Road trip!\nRange: 90 miles"),
         ("xp", 100, "levelUp", 80, ">", "tier", "xp", "+", 50, "xp", "-", 30,
-         "\u2B06\uFE0F", "Enough XP? Level up bonus, else setback", "\u2B06\uFE0F Tier: 150"),
+         "\u2B06\uFE0F", "The hero checks their XP. Enough to level up? Massive bonus! Short? Setback. New tier?", "\u2B06\uFE0F Level up!\nTier: 150"),
         ("rep", 25, "fame", 30, "<", "status", "rep", "*", 2, "rep", "+", 5,
-         "\u2B50", "Famous? Double rep, else small gain", "\u2B50 Rep: 50"),
+         "\u2B50", "An actor auditions for a big role. Famous enough? Star power doubles! Otherwise, slow build. Status?", "\u2B50 Stardom!\nStatus: 50"),
         ("ammo", 8, "clip", 6, ">", "shots", "ammo", "-", 3, "ammo", "+", 4,
-         "\U0001F52B", "Full clip? Fire 3, else reload +4", "\U0001F52B Ammo: 5"),
+         "\U0001F52B", "The soldier checks the clip. Full? Fire a burst. Empty? Reload first. Ammo left?", "\U0001F52B Shots fired!\nAmmo: 5"),
         ("mana", 60, "cost", 40, ">", "cast", "mana", "-", 40, "mana", "+", 20,
-         "\U0001FA84", "Enough mana? Cast spell, else meditate", "\U0001FA84 Mana: 20"),
+         "\U0001FA84", "The wizard eyes a powerful spell. Enough mana to cast it, or meditate to recharge? Mana left?", "\U0001FA84 Spell cast!\nMana: 20"),
         ("wood", 30, "need", 25, ">", "build", "wood", "-", 25, "wood", "+", 10,
-         "\U0001FA9A", "Enough wood? Build it, else gather more", "\U0001FA9A Wood: 5"),
+         "\U0001FA9A", "Winter is coming! If there's enough wood, build the shelter. Otherwise, gather more. Wood left?", "\U0001FA9A Shelter built!\nWood: 5"),
         ("luck", 7, "odds", 5, ">", "prize", "luck", "*", 3, "luck", "+", 2,
-         "\U0001F340", "Lucky? Triple prize, else small win", "\U0001F340 Prize: 21"),
+         "\U0001F340", "You find a four-leaf clover! Feeling lucky? Go for the jackpot! Otherwise, play it safe. Prize?", "\U0001F340 Jackpot!\nPrize: 21"),
         ("depth", 50, "limit", 40, ">", "dive", "depth", "-", 10, "depth", "+", 20,
-         "\U0001F30A", "Too deep? Surface, else dive deeper", "\U0001F30A Depth: 40"),
+         "\U0001F30A", "A diver checks the depth gauge. Too deep? Time to surface. Safe? Keep exploring. Final depth?", "\U0001F30A Surfaced!\nDepth: 40m"),
         ("power", 90, "load", 80, ">", "output", "power", "-", 30, "power", "+", 10,
-         "\U0001F50C", "Overloaded? Shed 30, else boost 10", "\U0001F50C Output: 60"),
+         "\U0001F50C", "The generator is straining! Overloaded? Shed some load. Under capacity? Boost output. Power?", "\U0001F50C Load balanced!\nOutput: 60"),
         ("seeds", 15, "plots", 10, ">", "crop", "seeds", "-", 10, "seeds", "+", 5,
-         "\U0001F331", "Enough plots? Plant, else save seeds", "\U0001F331 Crop: 5"),
+         "\U0001F331", "Spring planting! Enough garden plots? Plant the seeds. Too few? Save them for later. Seeds left?", "\U0001F331 Planted!\nSeeds left: 5"),
         ("karma", 40, "threshold", 35, ">", "boost", "karma", "+", 15, "karma", "-", 5,
-         "\u2696\uFE0F", "Good karma? Boost +15, else penalty", "\u2696\uFE0F Karma: 55"),
+         "\u2696\uFE0F", "The monk meditates. Is karma high enough for enlightenment? Great boost! If not, a small setback. Karma?", "\u2696\uFE0F Enlightened!\nKarma: 55"),
         ("signal", 8, "noise", 5, ">", "clarity", "signal", "*", 2, "signal", "-", 3,
-         "\U0001F4E1", "Clear signal? Double it, else static", "\U0001F4E1 Clarity: 16"),
+         "\U0001F4E1", "Mission control checks the radio. Clear signal? Amplify it! Static? Lose some clarity. Reception?", "\U0001F4E1 Signal boosted!\nClarity: 16"),
         ("stocks", 120, "target", 100, ">", "trade", "stocks", "-", 50, "stocks", "+", 30,
-         "\U0001F4C8", "Hit target? Sell (-50), else hold (+30)", "\U0001F4C8 Portfolio: 70"),
+         "\U0001F4C8", "The stock hits its target price! Time to sell for profit? Or hold and accumulate? Portfolio value?", "\U0001F4C8 Sold high!\nPortfolio: 70"),
         ("armor", 35, "attack", 20, ">", "block", "armor", "-", 20, "armor", "+", 10,
-         "\U0001F6E1\uFE0F", "Strong armor? Block attack, else reinforce", "\U0001F6E1\uFE0F Armor: 15"),
+         "\U0001F6E1\uFE0F", "The knight braces for impact. Armor strong enough to absorb the blow, or reinforce it? Armor left?", "\U0001F6E1\uFE0F Blow absorbed!\nArmor: 15"),
         ("oxygen", 80, "threshold", 60, ">", "action", "oxygen", "-", 25, "oxygen", "+", 15,
-         "\U0001F4A8", "Enough O2? Sprint (-25), else rest (+15)", "\U0001F4A8 Oxygen: 55"),
+         "\U0001F4A8", "The astronaut checks O2 levels. Enough to sprint to the airlock, or rest and conserve? Oxygen left?", "\U0001F4A8 Made it!\nOxygen: 55"),
         ("focus", 45, "distraction", 30, ">", "output", "focus", "+", 10, "focus", "-", 15,
-         "\U0001F9E0", "Focused? Boost output, else lose focus", "\U0001F9E0 Output: 55"),
+         "\U0001F9E0", "Crunch time at work! Can you stay focused, or do distractions win? Final productivity?", "\U0001F9E0 In the zone!\nOutput: 55"),
         ("trust", 20, "suspicion", 15, ">", "ally", "trust", "+", 10, "trust", "-", 5,
-         "\U0001F91D", "Trusted? Gain ally, else lose trust", "\U0001F91D Trust: 30"),
+         "\U0001F91D", "Two kingdoms negotiate. Is there enough trust for an alliance, or does suspicion win? Trust level?", "\U0001F91D Alliance formed!\nTrust: 30"),
     ]
     for v1, n1, v2, n2, cmp, vr, tv, top, ta, fv, fop, fa, emoji, goal, share in ifelse_simple:
         add(tmpl_if_else_simple(v1, n1, v2, n2, cmp, vr, tv, top, ta, fv, fop, fa,
@@ -730,55 +730,55 @@ def generate_puzzles():
     # --- if/else with calculation (25) ---
     ifelse_calc = [
         ("apples", 8, "oranges", 7, ">", 10, "basket", "total", "+", "*",
-         "\U0001F34E", "Lots of fruit? Add apples, else multiply oranges", "\U0001F34E Basket result"),
+         "\U0001F34E", "Count all the fruit. If it's a big haul, add more apples. Small haul? Squeeze the oranges instead. What's in the basket?", "\U0001F34E Basket packed!\nGreat haul"),
         ("iron", 12, "coal", 6, ">", 15, "alloy", "raw", "+", "-",
-         "\u2699\uFE0F", "Hot forge? Add iron, else subtract coal", "\u2699\uFE0F Alloy forged"),
+         "\u2699\uFE0F", "The blacksmith checks the raw materials. Hot enough forge? Add more iron. Cold? Lose some coal. Alloy quality?", "\u2699\uFE0F Alloy forged!\nQuality result"),
         ("rain", 20, "sun", 10, "<", 25, "crop", "sky", "+", "-",
-         "\U0001F327\uFE0F", "Wet enough? Add rain, else subtract sun", "\U0001F327\uFE0F Crops result"),
+         "\U0001F327\uFE0F", "Check the weather forecast. Wet season? Rain helps the crops. Dry? Sun scorches them. Harvest?", "\U0001F327\uFE0F Season's harvest!\nCrops gathered"),
         ("wolves", 5, "sheep", 15, ">", 15, "herd", "pack", "+", "-",
-         "\U0001F43A", "Big pack? Hunt (+wolves), else lose (-sheep)", "\U0001F43A Herd fate"),
+         "\U0001F43A", "The wolf pack eyes the flock. Big enough pack? They hunt. Too small? Sheep scatter. What happens to the herd?", "\U0001F43A Nature's balance!\nHerd changed"),
         ("bass", 10, "treble", 8, ">", 15, "mix", "audio", "+", "-",
-         "\U0001F3B5", "Loud enough? Add bass, else cut treble", "\U0001F3B5 Mix adjusted"),
+         "\U0001F3B5", "The DJ checks the audio levels. Loud enough? Pump up the bass. Quiet? Dial back the treble. Final mix?", "\U0001F3B5 Track mixed!\nPerfect balance"),
         ("gold", 30, "silver", 20, "<", 40, "vault", "treasure", "+", "-",
-         "\U0001FA99", "Rich haul? Add gold, else subtract silver", "\U0001FA99 Vault value"),
+         "\U0001FA99", "A dragon counts its hoard. Rich enough? Add more gold. Poor haul? Toss some silver out. Vault total?", "\U0001FA99 Hoard counted!\nVault updated"),
         ("fuel", 25, "air", 15, ">", 35, "thrust", "mix", "+", "-",
-         "\U0001F680", "Rich mix? Add fuel, else reduce air", "\U0001F680 Thrust calc"),
+         "\U0001F680", "The engineer checks the fuel-air mixture. Rich enough? Add fuel for thrust. Lean? Reduce airflow. Thrust level?", "\U0001F680 Engine tuned!\nThrust calculated"),
         ("str", 14, "dex", 8, ">", 18, "power", "stat", "+", "-",
-         "\U0001F4AA", "High stats? Add strength, else reduce dex", "\U0001F4AA Power level"),
+         "\U0001F4AA", "The warrior levels up! High enough combined stats? Strength surges. Low? Dexterity takes a hit. Power level?", "\U0001F4AA Level up!\nPower calculated"),
         ("red", 10, "blue", 15, "<", 20, "shade", "palette", "+", "-",
-         "\U0001F3A8", "Cool palette? Add red, else cut blue", "\U0001F3A8 Shade mixed"),
+         "\U0001F3A8", "An artist blends colors. Cool enough palette? Add warm red. Too warm? Cut back the blue. Final shade?", "\U0001F3A8 Color mixed!\nShade created"),
         ("coffee", 6, "tea", 4, ">", 8, "energy", "cups", "+", "-",
-         "\u2615", "Caffeinated? Add coffee, else cut tea", "\u2615 Energy level"),
+         "\u2615", "Morning caffeine check! Had enough cups? Pour more coffee. Not? Skip the tea. Energy level?", "\u2615 Caffeinated!\nEnergy updated"),
         ("code", 20, "tests", 10, ">", 25, "quality", "suite", "+", "-",
-         "\U0001F4BB", "Well tested? Add code, else subtract tests", "\U0001F4BB Quality metric"),
+         "\U0001F4BB", "Code review time! Well-tested codebase? Ship more features. Undertested? Cut failing tests. Quality score?", "\U0001F4BB Code reviewed!\nQuality measured"),
         ("fish", 8, "bait", 12, "<", 15, "catch", "tackle", "+", "-",
-         "\U0001F3A3", "Good tackle? Add fish, else lose bait", "\U0001F3A3 Catch total"),
+         "\U0001F3A3", "The fisher checks tackle quality. Good gear? Catch more fish. Bad day? Lose some bait. Total catch?", "\U0001F3A3 Day on the lake!\nCatch counted"),
         ("wood", 15, "stone", 10, ">", 20, "fort", "materials", "+", "-",
-         "\U0001F3F0", "Strong fort? Add wood, else cut stone", "\U0001F3F0 Fort built"),
+         "\U0001F3F0", "Building a fort! Enough materials? Add more wood. Running low? Cut back the stone. Fort strength?", "\U0001F3F0 Fort built!\nStrength measured"),
         ("solar", 18, "wind", 12, ">", 25, "watts", "power", "+", "-",
-         "\u2600\uFE0F", "Sunny? Add solar, else cut wind", "\u2600\uFE0F Power output"),
+         "\u2600\uFE0F", "The power grid checks output. Generating enough? Add more solar panels. Low? Shut down some turbines. Watts?", "\u2600\uFE0F Grid balanced!\nPower output"),
         ("math", 9, "science", 7, ">", 12, "gpa", "grades", "+", "-",
-         "\U0001F393", "Honor roll? Add math, else subtract science", "\U0001F393 GPA boost"),
+         "\U0001F393", "Report card day! Making the honor roll? Boost math score. Falling short? Science takes a hit. GPA?", "\U0001F393 Report card!\nGPA calculated"),
         ("herbs", 6, "roots", 4, ">", 8, "remedy", "potion", "+", "-",
-         "\U0001F33F", "Strong potion? Add herbs, else subtract roots", "\U0001F33F Remedy brewed"),
+         "\U0001F33F", "The healer brews a remedy. Strong enough ingredients? Add more herbs. Weak batch? Remove some roots. Potency?", "\U0001F33F Remedy brewed!\nPotency measured"),
         ("thunder", 10, "lightning", 15, "<", 20, "storm", "weather", "+", "-",
-         "\u26C8\uFE0F", "Stormy? Add thunder, else cut lightning", "\u26C8\uFE0F Storm power"),
+         "\u26C8\uFE0F", "Storm brewing! Intense enough? Thunder amplifies it. Mild? Lightning dissipates. Storm power?", "\u26C8\uFE0F Storm passed!\nPower measured"),
         ("knights", 12, "squires", 8, ">", 15, "force", "army", "+", "-",
-         "\U0001F3F0", "Big army? Add knights, else reduce squires", "\U0001F3F0 Force size"),
+         "\U0001F3F0", "The general rallies the troops. Large enough army? Recruit more knights. Small force? Send squires home. Army size?", "\U0001F3F0 Army rallied!\nForce counted"),
         ("pixels", 20, "frames", 10, ">", 25, "render", "scene", "+", "-",
-         "\U0001F3AC", "HD? Add pixels, else cut frames", "\U0001F3AC Render quality"),
+         "\U0001F3AC", "Rendering a scene! High enough resolution? Add more pixels. Low? Drop some frames. Render quality?", "\U0001F3AC Scene rendered!\nQuality scored"),
         ("nectar", 7, "pollen", 5, ">", 10, "honey", "flowers", "+", "-",
-         "\U0001F41D", "Sweet harvest? Add nectar, else lose pollen", "\U0001F41D Honey made"),
+         "\U0001F41D", "The bees return to the hive. Good harvest? Add more nectar. Poor day? Lose some pollen. Honey made?", "\U0001F41D Honey harvest!\nSweet results"),
         ("atoms", 15, "bonds", 9, ">", 20, "molecule", "matter", "+", "-",
-         "\u269B\uFE0F", "Stable? Add atoms, else break bonds", "\u269B\uFE0F Molecule formed"),
+         "\u269B\uFE0F", "The chemist checks the compound. Stable enough? Add more atoms. Unstable? Break some bonds. Molecule size?", "\u269B\uFE0F Reaction complete!\nMolecule formed"),
         ("sails", 8, "oars", 6, ">", 10, "speed", "ship", "+", "-",
-         "\u26F5", "Full sails? Add sail power, else reduce oars", "\u26F5 Ship speed"),
+         "\u26F5", "The captain reads the wind. Strong enough? Raise more sails. Calm seas? Stow the oars. Ship speed?", "\u26F5 Anchors aweigh!\nSpeed calculated"),
         ("strings", 6, "frets", 12, "<", 15, "tune", "chord", "+", "-",
-         "\U0001F3B8", "In tune? Add strings, else cut frets", "\U0001F3B8 Chord quality"),
+         "\U0001F3B8", "The guitarist tunes up. Sounds good? Add more strings to the chord. Off-key? Cut some frets. Chord quality?", "\U0001F3B8 In tune!\nChord perfected"),
         ("calcium", 10, "iron", 8, ">", 15, "vitamin", "mineral", "+", "-",
-         "\U0001F48A", "Balanced? Add calcium, else reduce iron", "\U0001F48A Vitamin level"),
+         "\U0001F48A", "The doctor checks mineral levels. Balanced diet? Add calcium boost. Deficient? Reduce iron dose. Vitamin level?", "\U0001F48A Health check!\nVitamins balanced"),
         ("bricks", 20, "mortar", 8, ">", 22, "wall", "build", "+", "-",
-         "\U0001F9F1", "Enough mortar? Add bricks, else subtract", "\U0001F9F1 Wall built"),
+         "\U0001F9F1", "The mason checks supplies. Enough to build? Stack more bricks. Running low? Use less mortar. Wall strength?", "\U0001F9F1 Wall raised!\nStrength measured"),
     ]
     for v1, n1, v2, n2, cmp, cval, vr, vi, top, fop, emoji, goal, share in ifelse_calc:
         add(tmpl_if_else_calc(v1, n1, v2, n2, cmp, cval, vr, vi, top, fop,
@@ -816,26 +816,26 @@ def generate_puzzles():
 
     # --- While accumulate with growth (20) ---
     while_accum = [
-        ("wage", 10, "earned", "income", 5, 4, "\U0001F4B0", "Wage grows by 5 each period. Total after 4?", "\U0001F4B0 Earned: 70"),
-        ("speed", 5, "distance", "odometer", 3, 5, "\U0001F697", "Speed increases by 3. Distance after 5 ticks?", "\U0001F697 Distance: 55"),
-        ("appetite", 2, "eaten", "food", 1, 6, "\U0001F354", "Appetite grows by 1 each meal. Eaten after 6?", "\U0001F354 Eaten: 27"),
-        ("rent", 100, "spent", "housing", 20, 3, "\U0001F3E0", "Rent increases by $20/year. Total after 3 years?", "\U0001F3E0 Housing: 360"),
-        ("gravity", 3, "fallen", "depth", 2, 4, "\U0001F30D", "Gravity pulls harder each second. Depth after 4?", "\U0001F30D Depth: 24"),
-        ("growth", 1, "size", "plant", 2, 5, "\U0001F331", "Plant growth doubles each week. Size after 5?", "\U0001F331 Plant: 25"),
-        ("waves", 4, "erosion", "shore", 3, 4, "\U0001F30A", "Waves grow by 3 each tide. Erosion after 4?", "\U0001F30A Erosion: 34"),
-        ("tempo", 60, "beats", "music", 10, 3, "\U0001F3B6", "Tempo increases by 10 each verse. Beats after 3?", "\U0001F3B6 Beats: 210"),
-        ("rate", 3, "output", "factory", 1, 7, "\U0001F3ED", "Rate grows by 1 per shift. Output after 7?", "\U0001F3ED Output: 42"),
-        ("dose", 5, "absorbed", "medicine", 3, 4, "\U0001F489", "Dose increases by 3 each round. Absorbed after 4?", "\U0001F489 Absorbed: 38"),
-        ("clicks", 2, "views", "traffic", 3, 5, "\U0001F4F1", "Clicks grow by 3 each day. Views after 5?", "\U0001F4F1 Views: 40"),
-        ("stars", 1, "rating", "review", 1, 5, "\u2B50", "Stars increase by 1 each review. Rating after 5?", "\u2B50 Rating: 15"),
-        ("power", 8, "charged", "battery", 4, 3, "\U0001F50B", "Power grows by 4 per cycle. Charged after 3?", "\U0001F50B Charged: 36"),
-        ("rainfall", 5, "collected", "cistern", 2, 6, "\U0001F327\uFE0F", "Rainfall grows by 2. Collected after 6?", "\U0001F327\uFE0F Collected: 60"),
-        ("talent", 3, "fame", "celebrity", 2, 4, "\U0001F31F", "Talent grows by 2 each show. Fame after 4?", "\U0001F31F Fame: 24"),
-        ("seeds", 6, "planted", "garden", 2, 5, "\U0001F33B", "Seeds grow by 2 each day. Planted after 5?", "\U0001F33B Planted: 50"),
-        ("exp", 10, "total", "skill", 5, 4, "\U0001F3AF", "XP grows by 5 each level. Total after 4?", "\U0001F3AF Skill: 70"),
-        ("voltage", 4, "charge", "capacitor", 3, 3, "\u26A1", "Voltage grows by 3 per pulse. Charge after 3?", "\u26A1 Charge: 21"),
-        ("heat", 15, "energy", "reactor", 5, 3, "\u2622\uFE0F", "Heat grows by 5 each cycle. Energy after 3?", "\u2622\uFE0F Energy: 60"),
-        ("likes", 7, "followers", "social", 4, 4, "\U0001F44D", "Likes grow by 4 each post. Followers after 4?", "\U0001F44D Followers: 46"),
+        ("wage", 10, "earned", "income", 5, 4, "\U0001F4B0", "A worker's wage increases by 5 each pay period. How much do they earn after 4 periods?", "\U0001F4B0 Payday!\nEarned: $70"),
+        ("speed", 5, "distance", "odometer", 3, 5, "\U0001F697", "A car accelerates by 3 each tick. How far does it travel in 5 ticks?", "\U0001F697 Road trip!\nDistance: 55"),
+        ("appetite", 2, "eaten", "food", 1, 6, "\U0001F354", "A growing puppy eats more each meal (+1 appetite). How much food after 6 meals?", "\U0001F354 Stuffed!\nEaten: 27"),
+        ("rent", 100, "spent", "housing", 20, 3, "\U0001F3E0", "Rent goes up by $20 each year. How much do you spend on housing over 3 years?", "\U0001F3E0 Lease up!\nHousing: $360"),
+        ("gravity", 3, "fallen", "depth", 2, 4, "\U0001F30D", "A rock falls faster each second as gravity pulls harder. How deep after 4 seconds?", "\U0001F30D Splash!\nDepth: 24"),
+        ("growth", 1, "size", "plant", 2, 5, "\U0001F331", "A plant's growth rate increases by 2 each week. How big after 5 weeks?", "\U0001F331 Thriving!\nSize: 25"),
+        ("waves", 4, "erosion", "shore", 3, 4, "\U0001F30A", "Each tide's waves grow stronger by 3. How much shoreline erodes after 4 tides?", "\U0001F30A Shore changed!\nErosion: 34"),
+        ("tempo", 60, "beats", "music", 10, 3, "\U0001F3B6", "A DJ speeds up the tempo by 10 bpm each verse. Total beats after 3 verses?", "\U0001F3B6 Drop!\nBeats: 210"),
+        ("rate", 3, "output", "factory", 1, 7, "\U0001F3ED", "A factory improves its production rate by 1 each shift. Total output after 7 shifts?", "\U0001F3ED Shift over!\nOutput: 42"),
+        ("dose", 5, "absorbed", "medicine", 3, 4, "\U0001F489", "Each round of treatment increases the dose by 3. How much medicine is absorbed after 4 rounds?", "\U0001F489 Treatment done!\nAbsorbed: 38"),
+        ("clicks", 2, "views", "traffic", 3, 5, "\U0001F4F1", "A viral post gains 3 more clicks each day. Total views after 5 days?", "\U0001F4F1 Trending!\nViews: 40"),
+        ("stars", 1, "rating", "review", 1, 5, "\u2B50", "A restaurant gains 1 extra star each review as word spreads. Total rating after 5 reviews?", "\u2B50 Five-star!\nRating: 15"),
+        ("power", 8, "charged", "battery", 4, 3, "\U0001F50B", "A battery charges faster each cycle (+4 power). Total charge after 3 cycles?", "\U0001F50B Full charge!\nPower: 36"),
+        ("rainfall", 5, "collected", "cistern", 2, 6, "\U0001F327\uFE0F", "Monsoon season! Rainfall increases by 2 each day. How much water fills the cistern after 6 days?", "\U0001F327\uFE0F Cistern full!\nCollected: 60"),
+        ("talent", 3, "fame", "celebrity", 2, 4, "\U0001F31F", "An entertainer's talent grows by 2 with each show. How famous after 4 shows?", "\U0001F31F Star born!\nFame: 24"),
+        ("seeds", 6, "planted", "garden", 2, 5, "\U0001F33B", "A gardener plants more seeds each day (+2). How many planted after 5 days?", "\U0001F33B Garden full!\nPlanted: 50"),
+        ("exp", 10, "total", "skill", 5, 4, "\U0001F3AF", "An adventurer earns more XP each level (+5 per level). Total experience after 4 levels?", "\U0001F3AF Leveled up!\nSkill: 70"),
+        ("voltage", 4, "charge", "capacitor", 3, 3, "\u26A1", "A capacitor builds voltage faster each pulse (+3). How much charge after 3 pulses?", "\u26A1 Charged!\nVoltage: 21"),
+        ("heat", 15, "energy", "reactor", 5, 3, "\u2622\uFE0F", "A reactor's heat output increases by 5 each cycle. Total energy after 3 cycles?", "\u2622\uFE0F Reactor hot!\nEnergy: 60"),
+        ("likes", 7, "followers", "social", 4, 4, "\U0001F44D", "Each post earns 4 more likes than the last as the account grows. Followers after 4 posts?", "\U0001F44D Going viral!\nFollowers: 46"),
     ]
     for v1, n1, vr, vacc, step, limit, emoji, goal, share in while_accum:
         add(tmpl_while_accum(v1, n1, vr, vacc, step, limit, emoji, goal, share, f"parsed_{idx:03d}"))
@@ -1022,25 +1022,25 @@ def generate_puzzles():
     twovar_themes = [
         # (v1, n1, v2, n2, op1, step1, op2, step2, cond_v, cond_op, cond_val, ret_v, emoji, goal, share)
         ("thrust", 0, "fuel", 50, "+", 10, "-", 10, "fuel", ">", "0", "thrust",
-         "\U0001F680", "Burn 10 fuel per tick, gain 10 thrust. Final thrust?", "\U0001F680 Thrust: 50"),
+         "\U0001F680", "A rocket burns fuel to build thrust each tick. How much thrust when the tank is empty?", "\U0001F680 Launched!\nThrust: 50"),
         ("gold", 0, "ore", 36, "+", 6, "-", 6, "ore", ">", "0", "gold",
-         "\u26CF\uFE0F", "Mine 6 ore per shift, smelt 6 gold. Total gold?", "\u26CF\uFE0F Gold: 36"),
+         "\u26CF\uFE0F", "Miners haul ore from the mountain each shift and smelt it into gold. How much gold when the vein runs dry?", "\u26CF\uFE0F Vein tapped!\nGold: 36"),
         ("knowledge", 0, "books", 25, "+", 5, "-", 5, "books", ">", "0", "knowledge",
-         "\U0001F4DA", "Read 5 books per week, learn 5 knowledge. Total?", "\U0001F4DA Knowledge: 25"),
+         "\U0001F4DA", "A scholar reads through the library, gaining knowledge with each book. How much do they learn?", "\U0001F4DA Library finished!\nKnowledge: 25"),
         ("muscle", 0, "protein", 40, "+", 8, "-", 8, "protein", ">", "0", "muscle",
-         "\U0001F4AA", "Use 8 protein to build 8 muscle. Total muscle?", "\U0001F4AA Muscle: 40"),
+         "\U0001F4AA", "An athlete converts protein into muscle each training session. How much muscle when the protein runs out?", "\U0001F4AA Gains!\nMuscle: 40"),
         ("brew", 0, "hops", 30, "+", 6, "-", 6, "hops", ">", "0", "brew",
-         "\U0001F37A", "Use 6 hops per batch, brew 6 beer. Total brew?", "\U0001F37A Brew: 30"),
+         "\U0001F37A", "A brewer uses hops each batch to make beer. How much brew when the hops are gone?", "\U0001F37A Cheers!\nBrew: 30"),
         ("harvest", 0, "seeds", 28, "+", 7, "-", 7, "seeds", ">", "0", "harvest",
-         "\U0001F33D", "Plant 7 seeds per row. Total harvest?", "\U0001F33D Harvest: 28"),
+         "\U0001F33D", "A farmer plants seeds row by row until the bag is empty. What's the total harvest?", "\U0001F33D All planted!\nHarvest: 28"),
         ("output", 0, "input", 48, "+", 12, "-", 12, "input", ">", "0", "output",
-         "\U0001F3ED", "Process 12 input into 12 output per cycle. Total?", "\U0001F3ED Output: 48"),
+         "\U0001F3ED", "A factory processes raw input into finished output each cycle. Total output when input runs out?", "\U0001F3ED Production done!\nOutput: 48"),
         ("signal", 0, "power", 35, "+", 7, "-", 7, "power", ">", "0", "signal",
-         "\U0001F4E1", "Spend 7 power to transmit 7 signal. Total signal?", "\U0001F4E1 Signal: 35"),
+         "\U0001F4E1", "A radio tower spends power to broadcast signal each tick. Total signal when the power dies?", "\U0001F4E1 Broadcast over!\nSignal: 35"),
         ("potion", 0, "herbs", 20, "+", 4, "-", 4, "herbs", ">", "0", "potion",
-         "\U0001F33F", "Use 4 herbs per potion. Total potions?", "\U0001F33F Potions: 20"),
+         "\U0001F33F", "An alchemist brews potions from herbs until the supply is exhausted. How many potions brewed?", "\U0001F33F All brewed!\nPotions: 20"),
         ("xp", 0, "quests", 45, "+", 9, "-", 9, "quests", ">", "0", "xp",
-         "\u2B50", "Complete 9 quests for 9 XP each. Total XP?", "\u2B50 XP: 45"),
+         "\u2B50", "An adventurer completes quests, earning XP for each one. Total XP when the quest board is empty?", "\u2B50 Quest log clear!\nXP: 45"),
     ]
     for v1, n1, v2, n2, o1, s1, o2, s2, cv, co, cval, rv, emoji, goal, share in twovar_themes:
         add(tmpl_while_two_var(v1, n1, v2, n2, o1, s1, o2, s2, cv, co, cval, rv,
@@ -1050,35 +1050,35 @@ def generate_puzzles():
     decay_themes = [
         # (v1, n1, v2, n2, vr, v1_op, v2_op, v2_step, cond_op, cond_val, emoji, goal, share)
         ("total", 0, "boost", 10, "rounds", "+", "-", 2, ">", 0,
-         "\U0001F4A8", "Boost decays by 2 each round. Total accumulated?", "\U0001F4A8 Total: 30"),
+         "\U0001F4A8", "A turbo boost fades by 2 each round. How much speed do you accumulate before it's gone?", "\U0001F4A8 Boost spent!\nTotal: 30"),
         ("height", 0, "jump", 12, "bounces", "+", "-", 3, ">", 0,
-         "\U0001F3C0", "Jump shrinks by 3 each bounce. Total height?", "\U0001F3C0 Height: 30"),
+         "\U0001F3C0", "A basketball bounces lower each time, losing 3 height per bounce. Total height traveled?", "\U0001F3C0 Ball stopped!\nTotal height: 30"),
         ("damage", 0, "power", 8, "attacks", "+", "-", 2, ">", 0,
-         "\u2694\uFE0F", "Power weakens by 2 each attack. Total damage?", "\u2694\uFE0F Damage: 20"),
+         "\u2694\uFE0F", "A warrior tires with each swing, losing 2 power per attack. Total damage dealt before exhaustion?", "\u2694\uFE0F Battle over!\nDamage: 20"),
         ("harvest", 0, "yield", 15, "seasons", "+", "-", 3, ">", 0,
-         "\U0001F33E", "Yield drops by 3 each season. Total harvest?", "\U0001F33E Harvest: 45"),
+         "\U0001F33E", "A farm's yield shrinks by 3 each season as soil depletes. Total harvest across all seasons?", "\U0001F33E Soil spent!\nHarvest: 45"),
         ("score", 0, "combo", 9, "hits", "+", "-", 3, ">", 0,
-         "\U0001F3AE", "Combo drops by 3 each hit. Total score?", "\U0001F3AE Score: 18"),
+         "\U0001F3AE", "A combo multiplier drops by 3 with each hit. Total score before the combo breaks?", "\U0001F3AE Combo broken!\nScore: 18"),
         ("distance", 0, "speed", 20, "laps", "+", "-", 4, ">", 0,
-         "\U0001F3C3", "Speed drops by 4 each lap. Total distance?", "\U0001F3C3 Distance: 60"),
+         "\U0001F3C3", "A runner slows by 4 each lap from fatigue. Total distance before they stop?", "\U0001F3C3 Race done!\nDistance: 60"),
         ("melody", 0, "volume", 14, "notes", "+", "-", 2, ">", 0,
-         "\U0001F3B5", "Volume fades by 2 per note. Total melody?", "\U0001F3B5 Melody: 63"),
+         "\U0001F3B5", "A music box winds down, each note quieter by 2. Total melody played before silence?", "\U0001F3B5 Song ended!\nMelody: 63"),
         ("savings", 0, "income", 10, "months", "+", "-", 2, ">", 0,
-         "\U0001F4B0", "Income decreases by 2 monthly. Total savings?", "\U0001F4B0 Savings: 30"),
+         "\U0001F4B0", "A freelancer's income drops by 2 each month as contracts dry up. Total saved before it hits zero?", "\U0001F4B0 Saved up!\nSavings: 30"),
         ("erosion", 0, "rain", 11, "storms", "+", "-", 2, ">", 1,
-         "\U0001F327\uFE0F", "Rain weakens by 2 each storm (>1). Total erosion?", "\U0001F327\uFE0F Erosion: 40"),
+         "\U0001F327\uFE0F", "Each storm erodes the cliffside, but storms weaken over time. Total erosion before they pass?", "\U0001F327\uFE0F Storms passed!\nErosion: 40"),
         ("heat", 0, "flame", 16, "burns", "+", "-", 4, ">", 0,
-         "\U0001F525", "Flame weakens by 4 each round. Total heat?", "\U0001F525 Heat: 40"),
+         "\U0001F525", "A campfire's flame weakens by 4 each round. Total heat generated before it dies out?", "\U0001F525 Fire out!\nHeat: 40"),
         ("clicks", 0, "interest", 7, "days", "+", "-", 1, ">", 0,
-         "\U0001F5B1\uFE0F", "Interest fades by 1 daily. Total clicks?", "\U0001F5B1\uFE0F Clicks: 28"),
+         "\U0001F5B1\uFE0F", "A viral post loses 1 interest point each day. Total clicks before nobody cares?", "\U0001F5B1\uFE0F Trend over!\nClicks: 28"),
         ("wisdom", 0, "study", 12, "years", "+", "-", 2, ">", 0,
-         "\U0001F9D9", "Study intensity drops by 2 yearly. Total wisdom?", "\U0001F9D9 Wisdom: 42"),
+         "\U0001F9D9", "A sage's study intensity fades by 2 each year as they age. Total wisdom gained?", "\U0001F9D9 Enlightened!\nWisdom: 42"),
         ("pressure", 0, "force", 18, "cycles", "+", "-", 3, ">", 0,
-         "\U0001F4A5", "Force drops by 3 each cycle. Total pressure?", "\U0001F4A5 Pressure: 63"),
+         "\U0001F4A5", "A hydraulic press loses 3 force each cycle. Total pressure applied before it gives out?", "\U0001F4A5 Press spent!\nPressure: 63"),
         ("morale", 0, "speech", 6, "rallies", "+", "-", 1, ">", 0,
-         "\U0001F4E3", "Speech impact drops by 1 per rally. Total morale?", "\U0001F4E3 Morale: 21"),
+         "\U0001F4E3", "A leader's speeches inspire less each rally, losing 1 impact each time. Total morale raised?", "\U0001F4E3 Rally over!\nMorale: 21"),
         ("paint", 0, "brush", 13, "strokes", "+", "-", 3, ">", 1,
-         "\U0001F58C\uFE0F", "Brush thins by 3 each stroke (>1). Total paint?", "\U0001F58C\uFE0F Paint: 40"),
+         "\U0001F58C\uFE0F", "An artist's brush thins by 3 with each stroke. Total paint applied before it's too thin?", "\U0001F58C\uFE0F Canvas done!\nPaint: 40"),
     ]
     for v1, n1, v2, n2, vr, v1o, v2o, v2s, co, cval, emoji, goal, share in decay_themes:
         add(tmpl_while_decay(v1, n1, v2, n2, vr, v1o, v2o, v2s, co, cval,
@@ -1109,7 +1109,7 @@ def generate_puzzles():
         [id_("rounds"), op("="), id_("rounds"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_("charge")],
-    ], "\U0001F6E1\uFE0F Multiply charge by boost each round, but boost decays",
+    ], "\U0001F6E1\uFE0F A shield charges up by multiplying with its boost each round, but the boost decays. Final charge?",
        "\U0001F6E1\uFE0F Shield charged!\n2\u00D73\u00D72\u00D71 = 12\n\u26A1 Power: 12", "medium", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
@@ -1287,7 +1287,7 @@ def generate_puzzles():
         [id_f("months"), op("="), id_f("months"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_("population")],
-    ], "\U0001F3D8\uFE0F Population grows by food supply. Food decreases. Final pop?",
+    ], "\U0001F3D8\uFE0F A village grows as food feeds new settlers, but the food supply shrinks each month. Final population?",
        "\U0001F3D8\uFE0F Village: 10+8+6+4 = 28 people", "medium", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
@@ -1300,7 +1300,7 @@ def generate_puzzles():
         [id_f("steps"), op("="), id_f("steps"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_("voltage")],
-    ], "\u26A1 Voltage rises +3 as resistance drops -4. Final voltage?",
+    ], "\u26A1 An engineer boosts voltage while lowering resistance step by step. What's the final voltage when resistance gets low enough?",
        "\u26A1 Circuit: 5+3+3+3 = 14 volts", "medium", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
@@ -1313,7 +1313,7 @@ def generate_puzzles():
         [id_f("hours"), op("="), id_f("hours"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_("altitude")],
-    ], "\U0001F3D4\uFE0F Climb +15 altitude, use 10 oxygen each hour. Final altitude?",
+    ], "\U0001F3D4\uFE0F A mountaineer climbs higher each hour but burns oxygen. What altitude do they reach before O2 runs low?",
        "\U0001F3D4\uFE0F Summit: 100+15+15+15+15 = 160m", "medium", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
@@ -1326,7 +1326,7 @@ def generate_puzzles():
         [id_f("turns"), op("="), id_f("turns"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("turns")],
-    ], "\u2764\uFE0F Health regens but regen decreases. Turns to reach 60?",
+    ], "\u2764\uFE0F A wounded hero regenerates health, but the healing gets weaker each turn. How many turns to fully heal?",
        "\u2764\uFE0F Healed: 40+5+4+3+2+1+... 5 turns", "medium", f"parsed_{idx:03d}"))
 
     # ============================================
@@ -1338,84 +1338,84 @@ def generate_puzzles():
         # (v1, n1, v2, n2, vr, lcv, lco, lcval, iv, io, ival, ibv, ibo, ibval, v1o, v1s, emoji, goal, share)
         ("energy", 30, "shield", 20, "hits", "energy", ">", 0, "shield", ">", 5,
          "shield", "-", 3, "-", 7,
-         "\u26A1", "Drain 7 energy/hit. If shielded (>5), shield -3. Total hits?",
-         "\u26A1 Shields down! 5 hits"),
+         "\u26A1", "A fighter takes hits that drain energy. While shields hold, they absorb some damage. How many hits before collapse?",
+         "\u26A1 Shields down!\n5 hits taken"),
         ("ammo", 24, "targets", 10, "kills", "ammo", ">", 0, "targets", ">", 3,
          "targets", "-", 2, "-", 4,
-         "\U0001F52B", "Spend 4 ammo/shot. If targets>3, eliminate 2. Kills?",
-         "\U0001F52B Combat: 6 kills"),
+         "\U0001F52B", "A sniper picks off targets, spending ammo each shot. Clustered targets go down faster. How many kills?",
+         "\U0001F52B Mission complete!\n6 targets eliminated"),
         ("mana", 40, "barrier", 15, "casts", "mana", ">", 0, "barrier", ">", 3,
          "barrier", "-", 3, "-", 8,
-         "\U0001FA84", "Spend 8 mana/cast. If barrier>3, weaken by 3. Casts?",
-         "\U0001FA84 Magic: 5 casts"),
+         "\U0001FA84", "A wizard hurls spells, draining mana each cast. While the barrier holds, each spell weakens it. Total casts?",
+         "\U0001FA84 Spellstorm!\n5 spells cast"),
         ("budget", 50, "staff", 10, "months", "budget", ">", 0, "staff", ">", 4,
          "staff", "-", 2, "-", 10,
-         "\U0001F4B8", "Spend $10/month. If staff>4, reduce by 2. Months?",
-         "\U0001F4B8 Budget: 5 months"),
+         "\U0001F4B8", "A startup burns budget monthly. While overstaffed, they downsize. How many months does the money last?",
+         "\U0001F4B8 Runway gone!\n5 months survived"),
         ("patience", 35, "noise", 12, "days", "patience", ">", 0, "noise", ">", 6,
          "noise", "-", 2, "-", 7,
-         "\U0001F624", "Lose 7 patience/day. If noisy (>6), reduce by 2. Days?",
-         "\U0001F624 Snapped: 5 days"),
+         "\U0001F624", "A writer's patience drains daily from noise. Noisy neighbors gradually quiet down. How many days until they snap?",
+         "\U0001F624 Snapped!\n5 days of noise"),
         ("water", 45, "crops", 8, "harvests", "water", ">", 0, "crops", ">", 2,
          "crops", "-", 1, "-", 9,
-         "\U0001F4A7", "Use 9 water/harvest. If crops>2, harvest 1. Total?",
-         "\U0001F4A7 Harvest: 5"),
+         "\U0001F4A7", "A farmer waters crops each harvest, but some crops wilt over time. How many harvests until the well runs dry?",
+         "\U0001F4A7 Well dry!\n5 harvests gathered"),
         ("rope", 28, "knots", 8, "climbs", "rope", ">", 0, "knots", ">", 2,
          "knots", "-", 2, "-", 7,
-         "\U0001FA62", "Use 7 rope/climb. If knots>2, untie 2. Climbs?",
-         "\U0001FA62 Climbed: 4"),
+         "\U0001FA62", "A climber uses rope each ascent. While it's knotted, they untie sections. How many climbs?",
+         "\U0001FA62 Summit reached!\n4 climbs"),
         ("fuel", 36, "speed", 12, "trips", "fuel", ">", 0, "speed", ">", 6,
          "speed", "-", 2, "-", 6,
-         "\u26FD", "Burn 6 fuel/trip. If speed>6, slow by 2. Trips?",
-         "\u26FD Road trip: 6"),
+         "\u26FD", "A delivery truck burns fuel each trip. At high speed, the driver gradually slows down. Total trips?",
+         "\u26FD All delivered!\n6 trips"),
         ("health", 42, "venom", 10, "bites", "health", ">", 0, "venom", ">", 4,
          "venom", "-", 2, "-", 7,
-         "\U0001F40D", "Lose 7 HP/bite. If venom>4, cure 2. Bites survived?",
-         "\U0001F40D Survived: 6"),
+         "\U0001F40D", "A snake bites the explorer! Each bite drains health, but antivenom weakens the poison. Bites survived?",
+         "\U0001F40D Survived!\n6 bites endured"),
         ("ink", 32, "color", 8, "prints", "ink", ">", 0, "color", ">", 2,
          "color", "-", 1, "-", 8,
-         "\U0001F5A8\uFE0F", "Use 8 ink/print. If color>2, fade 1. Prints?",
-         "\U0001F5A8\uFE0F Printed: 4"),
+         "\U0001F5A8\uFE0F", "A printer uses ink each page. Color intensity fades with each print. How many pages before the ink runs out?",
+         "\U0001F5A8\uFE0F Ink empty!\n4 pages printed"),
         ("credits", 25, "loans", 10, "payments", "credits", ">", 0, "loans", ">", 4,
          "loans", "-", 2, "-", 5,
-         "\U0001F3E6", "Pay 5/month. If loans>4, reduce by 2. Payments?",
-         "\U0001F3E6 Paid: 5"),
+         "\U0001F3E6", "A student makes monthly loan payments. Multiple loans get consolidated over time. Months to pay off?",
+         "\U0001F3E6 Debt free!\n5 payments made"),
         ("stamina", 40, "terrain", 8, "miles", "stamina", ">", 0, "terrain", ">", 2,
          "terrain", "-", 1, "-", 8,
-         "\U0001F3DE\uFE0F", "Lose 8 stamina/mile. If rough (>2), smooth 1. Miles?",
-         "\U0001F3DE\uFE0F Hiked: 5"),
+         "\U0001F3DE\uFE0F", "A hiker loses stamina each mile. Rough terrain gradually smooths out as trails improve. Miles hiked?",
+         "\U0001F3DE\uFE0F Trail complete!\n5 miles hiked"),
         ("sanity", 30, "horror", 10, "rooms", "sanity", ">", 0, "horror", ">", 4,
          "horror", "-", 2, "-", 6,
-         "\U0001F47B", "Lose 6 sanity/room. If horror>4, reduce by 2. Rooms?",
-         "\U0001F47B Survived: 5"),
+         "\U0001F47B", "Exploring a haunted mansion! Each room drains sanity. The horror lessens deeper in. Rooms explored?",
+         "\U0001F47B Escaped!\n5 rooms survived"),
         ("battery", 48, "signal", 12, "calls", "battery", ">", 0, "signal", ">", 4,
          "signal", "-", 2, "-", 8,
-         "\U0001F4F1", "Use 8 battery/call. If signal>4, boost by 2. Calls?",
-         "\U0001F4F1 Called: 6"),
+         "\U0001F4F1", "A phone drains battery each call. Strong signal weakens as you move away. How many calls?",
+         "\U0001F4F1 Battery dead!\n6 calls made"),
         ("air", 36, "depth", 8, "dives", "air", ">", 0, "depth", ">", 2,
          "depth", "-", 1, "-", 6,
-         "\U0001F93F", "Use 6 air/dive. If deep (>2), reduce depth 1. Dives?",
-         "\U0001F93F Dove: 6"),
+         "\U0001F93F", "A scuba diver uses air each dive. As they go shallower, depth decreases. How many dives?",
+         "\U0001F93F Surfaced!\n6 dives completed"),
         ("stock", 40, "demand", 10, "sales", "stock", ">", 0, "demand", ">", 4,
          "demand", "-", 2, "-", 8,
-         "\U0001F6D2", "Sell 8 stock/sale. If demand>4, reduce by 2. Sales?",
-         "\U0001F6D2 Sold: 5"),
+         "\U0001F6D2", "A shop sells inventory each cycle. High demand fades as the trend passes. Total sales cycles?",
+         "\U0001F6D2 Sold out!\n5 sales cycles"),
         ("clay", 35, "kiln", 10, "firings", "clay", ">", 0, "kiln", ">", 4,
          "kiln", "-", 2, "-", 7,
-         "\U0001FAD9", "Use 7 clay/firing. If kiln>4, cool by 2. Firings?",
-         "\U0001FAD9 Fired: 5"),
+         "\U0001FAD9", "A potter uses clay each firing. The kiln cools between batches. How many firings?",
+         "\U0001FAD9 Kiln cooled!\n5 firings done"),
         ("seeds", 30, "pests", 8, "plantings", "seeds", ">", 0, "pests", ">", 3,
          "pests", "-", 1, "-", 6,
-         "\U0001F331", "Use 6 seeds/planting. If pests>3, kill 1. Plantings?",
-         "\U0001F331 Planted: 5"),
+         "\U0001F331", "A gardener uses seeds each planting. Pest control slowly eliminates the bugs. Total plantings?",
+         "\U0001F331 Garden blooming!\n5 plantings"),
         ("wood", 42, "rain", 12, "builds", "wood", ">", 0, "rain", ">", 4,
          "rain", "-", 2, "-", 7,
-         "\U0001FA9A", "Use 7 wood/build. If rain>4, reduce by 2. Builds?",
-         "\U0001FA9A Built: 6"),
+         "\U0001FA9A", "A carpenter uses wood each build. Rainy days slow progress but gradually clear up. Builds completed?",
+         "\U0001FA9A Workshop busy!\n6 builds done"),
         ("stone", 32, "cracks", 8, "blocks", "stone", ">", 0, "cracks", ">", 2,
          "cracks", "-", 1, "-", 8,
-         "\U0001FAA8", "Cut 8 stone/block. If cracks>2, smooth 1. Blocks?",
-         "\U0001FAA8 Carved: 4"),
+         "\U0001FAA8", "A sculptor carves stone blocks. Cracks in the stone smooth out over time. How many blocks carved?",
+         "\U0001FAA8 Masterpiece!\n4 blocks carved"),
     ]
     for v1, n1, v2, n2, vr, lcv, lco, lcval, iv, io, ival, ibv, ibo, ibval, v1o, v1s, emoji, goal, share in while_if_themes:
         add(tmpl_while_if(v1, n1, v2, n2, vr, lcv, lco, lcval, iv, io, ival, ibv, ibo, ibval, v1o, v1s,
@@ -1463,7 +1463,7 @@ def generate_puzzles():
         [id_("loot"), op("="), id_("gems"), op_m("*"), lit_m("2")],
         [pn("}")],
         [kw("return"), id_f("loot")],
-    ], "\U0001F4B0 Rich vault? Take gold + gem bonus. Poor? Just gems\u00D72",
+    ], "\U0001F4B0 A thief raids a vault. Rich haul? Grab the gold plus a gem bonus. Poor haul? Just pocket gems. Total loot?",
        "\U0001F4B0 Vault raided!\nGold: 40 + Bonus: 35\nTotal loot: 75!", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
@@ -1489,7 +1489,7 @@ def generate_puzzles():
         [id_("a"), op("="), id_("temp"), op_m("-"), id_("key")],
         [id_("b"), op("="), id_("temp"), op_m("+"), id_("key")],
         [kw("return"), id_("a"), op_m("+"), id_("b")],
-    ], "\U0001F510 Encrypt: key=a+b, temp=a*b. Transform a and b. What's a+b?",
+    ], "\U0001F510 A cipher adds a and b for a key, multiplies them for a temp value, then transforms both. What's a+b after encryption?",
        "\U0001F510 Encrypted!\na=11, b=31\nCipher: 42", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
@@ -1579,7 +1579,7 @@ def generate_puzzles():
         [kw("let"), id_("offset"), op("="), lit_m("32")],
         [kw("let"), id_f("fahrenheit"), op("="), id_("celsius"), op_m("*"), id_("factor"), op_m("/"), id_("divisor"), op_m("+"), id_("offset")],
         [kw("return"), id_f("fahrenheit")],
-    ], "\U0001F321\uFE0F Convert 20\u00B0C to Fahrenheit: C*9/5+32",
+    ], "\U0001F321\uFE0F The weather app shows Celsius. Convert it to Fahrenheit using the classic formula. How hot is it?",
        "\U0001F321\uFE0F Temperature converted!\n20\u00B0C = 68\u00B0F", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
@@ -1593,7 +1593,7 @@ def generate_puzzles():
         [pn("}"), kw("else"), pn("{")],
         [kw("return"), id_("gear")],
         [pn("}")],
-    ], "\U0001F392 Count gear (swords+shields) and total. Return total if > 10",
+    ], "\U0001F392 Pack your bag! Count swords and shields as gear, add potions for total. If total is over 10, take everything. Otherwise just the gear. What do you carry?",
        "\U0001F392 Inventory full!\nGear: 8, Potions: 8\nTotal: 16 items", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
@@ -1602,7 +1602,7 @@ def generate_puzzles():
         [kw("let"), id_("captain"), op("="), id_("total"), op_m("/"), id_("pirates")],
         [kw("let"), id_("crew"), op("="), id_("total"), op_m("-"), id_("captain")],
         [kw("return"), id_("crew")],
-    ], "\U0001F3F4\u200D\u2620\uFE0F Captain takes total/pirates. Crew gets the rest?",
+    ], "\U0001F3F4\u200D\u2620\uFE0F The captain claims their share of the treasure (divided by the pirate count). What does the crew get?",
        "\U0001F3F4\u200D\u2620\uFE0F Treasure split!\nCaptain: 30\nCrew: 90", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
@@ -1611,7 +1611,7 @@ def generate_puzzles():
         [kw("let"), id_("pixels"), op("="), id_("width"), op_m("*"), id_("height")],
         [kw("let"), id_("colored"), op("="), id_("pixels"), op_m("-"), lit_m("2")],
         [kw("return"), id_("colored")],
-    ], "\U0001F3A8 Canvas is width\u00D7height pixels. Color all but 2. How many colored?",
+    ], "\U0001F3A8 An artist fills a canvas (width times height pixels), but leaves 2 blank for contrast. How many are colored?",
        "\U0001F3A8 Art complete!\n4\u00D73 = 12 pixels\n10 colored \U0001F58C\uFE0F", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
@@ -1621,7 +1621,7 @@ def generate_puzzles():
         [kw("let"), id_f("totalBeats"), op("="), id_("bars"), op_m("*"), id_("beats")],
         [kw("let"), id_f("seconds"), op("="), id_("totalBeats"), op_m("*"), lit_m("60"), op_m("/"), id_("bpm")],
         [kw("return"), id_f("seconds")],
-    ], "\U0001F3B5 How many seconds for 8 bars at 4 beats/bar, 120 bpm?",
+    ], "\U0001F3B5 A DJ's track has bars of beats at a set tempo. How many seconds does the song last?",
        "\U0001F3B5 Track finished!\n32 beats \u00D7 60 / 120\n16 seconds \U0001F3B6", "hard", f"parsed_{idx:03d}"))
 
     # More hard puzzles with unique themes
@@ -1637,8 +1637,8 @@ def generate_puzzles():
         [id_f("days"), op("="), id_f("days"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("days")],
-    ], "\U0001F3F4\u200D\u2620\uFE0F Crew shrinks if >6. Rations last how many days?",
-       "\U0001F3F4\u200D\u2620\uFE0F Voyage: survived N days", "hard", f"parsed_{idx:03d}"))
+    ], "\U0001F3F4\u200D\u2620\uFE0F A pirate crew eats rations daily. While overstaffed, some crew members abandon ship. How many days do rations last?",
+       "\U0001F3F4\u200D\u2620\uFE0F Land ho!\nSurvived N days at sea", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("horde"), op("="), lit_m("25")],
@@ -1650,8 +1650,8 @@ def generate_puzzles():
         [id_f("volleys"), op("="), id_f("volleys"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("volleys")],
-    ], "\U0001F3F9 Archers improve (+1 per volley). Volleys to defeat horde?",
-       "\U0001F3F9 Horde defeated! N volleys", "hard", f"parsed_{idx:03d}"))
+    ], "\U0001F3F9 Archers train between volleys, getting better each time. How many volleys to clear the horde?",
+       "\U0001F3F9 Horde defeated!\nVictory in N volleys", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("temp"), op("="), lit_m("200")],
@@ -1666,8 +1666,8 @@ def generate_puzzles():
         [id_f("minutes"), op("="), id_f("minutes"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("minutes")],
-    ], "\U0001F525 Cool metal: -20 if >100, else -15. Minutes to reach 50?",
-       "\U0001F525 Metal cooled in N minutes", "hard", f"parsed_{idx:03d}"))
+    ], "\U0001F525 A blacksmith cools a blade. It cools faster when red-hot, slower once it dims. Minutes to reach safe temp?",
+       "\U0001F525 Blade quenched!\nCooled in N minutes", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("reactor"), op("="), lit_m("0")],
@@ -1680,8 +1680,8 @@ def generate_puzzles():
         [id_f("cycles"), op("="), id_f("cycles"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_("reactor")],
-    ], "\u2622\uFE0F Reactor output = rods*3 per cycle, rods deplete. Total output?",
-       "\u2622\uFE0F Reactor: total output", "hard", f"parsed_{idx:03d}"))
+    ], "\u2622\uFE0F A nuclear reactor's fuel rods deplete each cycle. Each rod generates 3 energy. Total output after 4 cycles?",
+       "\u2622\uFE0F Reactor shutdown!\nTotal output generated", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("debt"), op("="), lit_m("100")],
@@ -1706,8 +1706,8 @@ def generate_puzzles():
         [id_f("seasons"), op("="), id_f("seasons"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("seasons")],
-    ], "\U0001F41F Fish caught each season minus breeding. Seasons to deplete?",
-       "\U0001F41F Lake fished: N seasons", "hard", f"parsed_{idx:03d}"))
+    ], "\U0001F41F Fishers catch from the lake each season, but fish breed back some. How many seasons until the lake is depleted?",
+       "\U0001F41F Lake empty!\nN seasons of fishing", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("morale"), op("="), lit_m("10")],
@@ -1723,8 +1723,8 @@ def generate_puzzles():
         [id_f("battles"), op("="), id_f("battles"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("battles")],
-    ], "\u2694\uFE0F High morale: lose 10 troops. Low: lose 20. Battles fought?",
-       "\u2694\uFE0F Campaign: N battles", "hard", f"parsed_{idx:03d}"))
+    ], "\u2694\uFE0F An army fights battles. High morale means fewer losses, but morale drops each fight. How many battles before the army is too small?",
+       "\u2694\uFE0F Campaign over!\nN battles fought", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("pressure"), op("="), lit_m("100")],
@@ -1736,8 +1736,8 @@ def generate_puzzles():
         [id_f("releases"), op("="), id_f("releases"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("releases")],
-    ], "\U0001F4A8 Release valve weakens each time (-2). Releases to depressurize?",
-       "\U0001F4A8 Depressurized! N releases", "hard", f"parsed_{idx:03d}"))
+    ], "\U0001F4A8 A pressure valve gets weaker each release. How many releases before the pressure drops to a safe level?",
+       "\U0001F4A8 Safe pressure!\nN releases needed", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("students"), op("="), lit_m("40")],
@@ -1751,8 +1751,8 @@ def generate_puzzles():
         [id_("students"), op("="), id_("students"), op_m("-"), lit_m("8")],
         [pn("}")],
         [kw("return"), id_("passed")],
-    ], "\U0001F393 Students graduate if above bar. Bar drops, students leave. Passed?",
-       "\U0001F393 Graduated: N students", "hard", f"parsed_{idx:03d}"))
+    ], "\U0001F393 Students pass if they score above the bar. Each semester the bar drops and students leave. How many graduate?",
+       "\U0001F393 Graduation day!\nN students passed", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("sun"), op("="), lit_m("100")],
@@ -1766,8 +1766,8 @@ def generate_puzzles():
         [id_f("hours"), op("="), id_f("hours"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_("stored")],
-    ], "\u2600\uFE0F Solar panels generate 4*3 energy/hr. Sun fades. Total stored?",
-       "\u2600\uFE0F Solar: N energy stored", "hard", f"parsed_{idx:03d}"))
+    ], "\u2600\uFE0F Solar panels generate energy each hour, but the sun gradually sets. How much energy is stored before dark?",
+       "\u2600\uFE0F Sunset!\nN energy stored", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("army"), op("="), lit_m("60")],
@@ -1780,8 +1780,8 @@ def generate_puzzles():
         [id_f("rounds"), op("="), id_f("rounds"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("rounds")],
-    ], "\U0001F3F0 Siege: army/6 damage per round, army shrinks. Rounds to breach?",
-       "\U0001F3F0 Fort breached! N rounds", "hard", f"parsed_{idx:03d}"))
+    ], "\U0001F3F0 An army besieges a fort, dealing damage based on its size. But soldiers fall each round. Rounds to breach the walls?",
+       "\U0001F3F0 Walls breached!\nN rounds of siege", "hard", f"parsed_{idx:03d}"))
 
     # ============================================
     # ADDITIONAL PUZZLES to reach 365
@@ -1816,8 +1816,8 @@ def generate_puzzles():
 
     # More chain arithmetic
     extra_chain = [
-        ("base", 15, "tip", 3, "tax", 2, "bill", "+", "+", "\U0001F4B5", "Bill = base + tip + tax?", "\U0001F4B5 Bill: $20"),
-        ("hp", 100, "shield", 25, "hit", 40, "remain", "+", "-", "\u2764\uFE0F", "HP + shield - hit = remaining?", "\u2764\uFE0F Remaining: 85 HP"),
+        ("base", 15, "tip", 3, "tax", 2, "bill", "+", "+", "\U0001F4B5", "Dinner out! Add the tip and tax to the base price. What's the total bill?", "\U0001F4B5 Check please!\nTotal bill: $20"),
+        ("hp", 100, "shield", 25, "hit", 40, "remain", "+", "-", "\u2764\uFE0F", "A paladin absorbs a hit with HP and shield combined. How much health remains?", "\u2764\uFE0F Still standing!\n85 HP remaining"),
     ]
     for v1, n1, v2, n2, v3, n3, vr, o1, o2, emoji, goal, share in extra_chain:
         add(tmpl_chain3(v1, n1, v2, n2, v3, n3, vr, o1, o2, emoji, goal, share, f"parsed_{idx:03d}"))
@@ -1825,11 +1825,11 @@ def generate_puzzles():
     # More if/else
     extra_ifelse = [
         ("crystal", 30, "threshold", 25, ">", "result", "crystal", "+", 15, "crystal", "-", 10,
-         "\U0001F48E", "Crystal pure enough? Amplify +15, else shatter -10", "\U0001F48E Crystal: 45"),
+         "\U0001F48E", "A mage examines a crystal. Pure enough? Amplify its power. Flawed? It shatters a bit. Crystal strength?", "\U0001F48E Crystal amplified!\nStrength: 45"),
         ("voltage", 60, "limit", 50, ">", "circuit", "voltage", "-", 20, "voltage", "+", 15,
-         "\u26A1", "Over limit? Reduce -20, else boost +15", "\u26A1 Circuit: 40"),
+         "\u26A1", "The circuit hits a voltage spike! Over the limit? Blow a fuse. Under? Boost the signal. Circuit voltage?", "\u26A1 Circuit adjusted!\nVoltage: 40"),
         ("pollen", 25, "threshold", 20, ">", "harvest", "pollen", "*", 2, "pollen", "+", 5,
-         "\U0001F41D", "Enough pollen? Double yield, else small bonus", "\U0001F41D Harvest: 50"),
+         "\U0001F41D", "The bees return heavy with pollen. Enough for a big batch? Double the honey yield! Small haul? Add a little extra. Harvest?", "\U0001F41D Honey season!\nHarvest: 50"),
     ]
     for v1, n1, v2, n2, cmp, vr, tv, top, ta, fv, fop, fa, emoji, goal, share in extra_ifelse:
         add(tmpl_if_else_simple(v1, n1, v2, n2, cmp, vr, tv, top, ta, fv, fop, fa,
@@ -1847,8 +1847,8 @@ def generate_puzzles():
 
     # More while accum
     extra_accum = [
-        ("output", 5, "total", "factory", 4, 3, "\U0001F3ED", "Output grows by 4 each shift. Total after 3?", "\U0001F3ED Total: 27"),
-        ("height", 2, "climbed", "wall", 3, 4, "\U0001F9D7", "Climber gains 3 more each attempt. Height after 4?", "\U0001F9D7 Climbed: 26"),
+        ("output", 5, "total", "factory", 4, 3, "\U0001F3ED", "A factory's output increases by 4 each shift as machines warm up. Total production after 3 shifts?", "\U0001F3ED All shipped!\nTotal: 27"),
+        ("height", 2, "climbed", "wall", 3, 4, "\U0001F9D7", "A rock climber finds better grips each attempt, gaining 3 more height. How high after 4 attempts?", "\U0001F9D7 Top reached!\nClimbed: 26"),
     ]
     for v1, n1, vr, vacc, step, limit, emoji, goal, share in extra_accum:
         add(tmpl_while_accum(v1, n1, vr, vacc, step, limit, emoji, goal, share, f"parsed_{idx:03d}"))
@@ -1856,11 +1856,11 @@ def generate_puzzles():
     # More decay loops
     extra_decay = [
         ("collected", 0, "energy", 9, "laps", "+", "-", 1, ">", 0,
-         "\U0001F3C3", "Energy fades by 1 each lap. Total collected?", "\U0001F3C3 Collected: 45"),
+         "\U0001F3C3", "A runner collects energy tokens each lap, but tires out (-1 energy per lap). Total tokens before exhaustion?", "\U0001F3C3 Finish line!\nCollected: 45"),
         ("mined", 0, "vein", 10, "digs", "+", "-", 2, ">", 0,
-         "\u26CF\uFE0F", "Vein depletes by 2 each dig. Total mined?", "\u26CF\uFE0F Mined: 30"),
+         "\u26CF\uFE0F", "A gold vein thins by 2 with each dig. How much ore is mined before the vein runs out?", "\u26CF\uFE0F Vein tapped!\nMined: 30"),
         ("points", 0, "streak", 8, "games", "+", "-", 2, ">", 0,
-         "\U0001F3C0", "Streak drops by 2 each game. Total points?", "\U0001F3C0 Points: 20"),
+         "\U0001F3C0", "A winning streak earns points but fades by 2 each game. Total points before the streak breaks?", "\U0001F3C0 Streak ended!\nPoints: 20"),
     ]
     for v1, n1, v2, n2, vr, v1o, v2o, v2s, co, cval, emoji, goal, share in extra_decay:
         add(tmpl_while_decay(v1, n1, v2, n2, vr, v1o, v2o, v2s, co, cval,
@@ -1934,8 +1934,8 @@ def generate_puzzles():
         [id_f("trips"), op("="), id_f("trips"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("trips")],
-    ], "\U0001F6A2 Ship unloads cargo (shrinks). Light loads use 5. Trips?",
-       "\U0001F6A2 Voyage: N trips", "hard", f"parsed_{idx:03d}"))
+    ], "\U0001F6A2 A cargo ship unloads each trip. Heavy cargo shrinks as it's delivered. Light loads? Fixed cost instead. Total trips?",
+       "\U0001F6A2 All delivered!\nN trips completed", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("soil"), op("="), lit_m("50")],
@@ -1951,8 +1951,8 @@ def generate_puzzles():
         [id_("soil"), op("="), id_("soil"), op_m("-"), lit_m("8")],
         [pn("}")],
         [kw("return"), id_("harvest")],
-    ], "\U0001F33E Rain fades, soil depletes. Total harvest?",
-       "\U0001F33E Harvest total", "hard", f"parsed_{idx:03d}"))
+    ], "\U0001F33E A farm harvests what the rain provides, but rain fades and soil depletes. What's the total harvest?",
+       "\U0001F33E Season over!\nTotal harvest gathered", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("ice"), op("="), lit_m("40")],
@@ -1968,8 +1968,8 @@ def generate_puzzles():
         [id_f("days"), op("="), id_f("days"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("days")],
-    ], "\u2744\uFE0F Ice melts faster in sun (fades -2/day). Days to melt?",
-       "\u2744\uFE0F Ice melted! N days", "hard", f"parsed_{idx:03d}"))
+    ], "\u2744\uFE0F A glacier melts in the sun. Intense sun melts it fast, but the sun fades each day. How many days until it's gone?",
+       "\u2744\uFE0F Glacier gone!\nMelted in N days", "hard", f"parsed_{idx:03d}"))
 
     # Final 2 puzzles to reach 365
     add(tmpl_add2("gems", 16, "crystals", 9, "treasure", "\U0001F48E",

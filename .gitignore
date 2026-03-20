@@ -4,8 +4,10 @@
 *.swp
 *.swo
 
-# Claude Code
-.claude/
+# Claude Code (keep rules/ committable, ignore local config)
+.claude/*
+!.claude/rules/
+!.claude/CLAUDE.md
 
 # Dev artifacts
 games/*/generated_puzzles.json

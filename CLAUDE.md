@@ -19,13 +19,7 @@ Static portfolio website (GitHub Pages) for Andrew Chau at `aschau.github.io`. P
 
 ## Conventions
 
-- No inline `style=` — use CSS classes. Use design tokens from `:root`, never hardcode values.
-- Z-index via CSS custom properties (`--z-particles` through `--z-loading`). Never hardcode.
-- All `target="_blank"` links need `rel="noopener noreferrer"`.
-- Bootstrap `.row` must be inside `.container` or `.container-fluid`.
-- Nav links use relative paths (absolute breaks `file://`).
-- Past tense for previous roles, present for current (Blizzard, Friend Castle, Waxheart).
-- "Friend Castle" (two words), "Waxheart" (one word, lowercase h).
+See `.claude/rules/conventions.md` for coding standards (loaded automatically when editing HTML/CSS/JS).
 
 ## Adding Games/Tools
 

@@ -642,6 +642,14 @@
         winShareBtn.addEventListener('click', webShareResults);
         winCopyBtn.addEventListener('click', copyResults);
 
+        var walkthroughBtn = document.getElementById('win-walkthrough-btn');
+        if (walkthroughBtn) {
+            walkthroughBtn.addEventListener('click', function () {
+                winModal.hidden = true;
+                runExecution(function () { showWinModal(); });
+            });
+        }
+
         // Controls modal
         var controlsClose = document.getElementById('controls-close');
         var controlsModal = document.getElementById('controls-modal');

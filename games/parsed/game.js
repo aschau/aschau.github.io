@@ -6,7 +6,7 @@
 (function () {
     'use strict';
 
-    var SAVE_VERSION = 3;
+    var SAVE_VERSION = 4;
     var STORAGE_KEY = 'parsed_data';
 
     // Debug mode: ?puzzle=N loads puzzle N (0-indexed) without affecting daily save
@@ -1987,17 +1987,29 @@
         if (tokens.length === 0) return 0;
         if (tokens.length === 1) return this.resolveValue(tokens[0]);
 
-        // Simple left-to-right evaluation (no precedence for now)
-        var result = this.resolveValue(tokens[0]);
+        // Standard operator precedence: * / first, then + -
+        // Pass 1: resolve * and / into values
+        var resolved = [this.resolveValue(tokens[0])];
         for (var i = 1; i < tokens.length - 1; i += 2) {
             var op = tokens[i];
             var right = this.resolveValue(tokens[i + 1]);
-            switch (op) {
-                case '+': result = result + right; break;
-                case '-': result = result - right; break;
-                case '*': result = result * right; break;
-                case '/': result = right !== 0 ? Math.floor(result / right) : 0; break;
+            if (op === '*' || op === '/') {
+                var left = resolved[resolved.length - 1];
+                if (op === '*') {
+                    resolved[resolved.length - 1] = left * right;
+                } else {
+                    resolved[resolved.length - 1] = right !== 0 ? Math.floor(left / right) : 0;
+                }
+            } else {
+                resolved.push(op);
+                resolved.push(right);
             }
+        }
+        // Pass 2: resolve + and -
+        var result = resolved[0];
+        for (var j = 1; j < resolved.length - 1; j += 2) {
+            if (resolved[j] === '+') result = result + resolved[j + 1];
+            else if (resolved[j] === '-') result = result - resolved[j + 1];
         }
         return result;
     };

@@ -139,16 +139,30 @@ class Interpreter:
             return 0
         if len(tokens) == 1:
             return self._resolve(tokens[0])
-        result = self._resolve(tokens[0])
+        # Standard operator precedence: * / first, then + -
+        # Pass 1: resolve * and /
+        resolved = [self._resolve(tokens[0])]
         i = 1
         while i < len(tokens) - 1:
             op = tokens[i]
             right = self._resolve(tokens[i + 1])
-            if op == '+': result += right
-            elif op == '-': result -= right
-            elif op == '*': result *= right
-            elif op == '/': result = result // right if right else 0
+            if op in ('*', '/'):
+                left = resolved[-1]
+                if op == '*':
+                    resolved[-1] = left * right
+                else:
+                    resolved[-1] = left // right if right else 0
+            else:
+                resolved.append(op)
+                resolved.append(right)
             i += 2
+        # Pass 2: resolve + and -
+        result = resolved[0]
+        j = 1
+        while j < len(resolved) - 1:
+            if resolved[j] == '+': result += resolved[j + 1]
+            elif resolved[j] == '-': result -= resolved[j + 1]
+            j += 2
         return result
 
     def _resolve(self, token):

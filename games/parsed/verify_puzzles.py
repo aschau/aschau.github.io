@@ -15,6 +15,7 @@ Reads puzzles.js, outputs results to console and validation_results.txt
 import json
 import sys
 import os
+import re
 
 # ============================================
 # Interpreter (matches game.js exactly)
@@ -545,7 +546,102 @@ def verify_puzzle(puzzle, index):
     if puzzle['output'] in ('None', 'undefined', ''):
         issues.append(f"QUALITY: output is '{puzzle['output']}'")
 
-    # 7. Wording consistency: return variable should relate to the goal text
+    # 7. Story sanity checks
+    goal_text = puzzle.get('goal', '')
+    goal_lower = goal_text.lower()
+    output_val = int(puzzle['output']) if puzzle['output'].lstrip('-').isdigit() else None
+
+    # 7a. Numbers in goal should appear in the code
+    goal_numbers = re.findall(r'\b(\d+)\b', goal_text)
+    code_numbers = set()
+    for line in puzzle['lines']:
+        for t in line:
+            if t['y'] == 'lit':
+                code_numbers.add(t['t'])
+    for gn in goal_numbers:
+        if gn not in code_numbers and int(gn) > 3:  # skip small numbers (1-3) — too common in natural language
+            # Check if it could be the output
+            if gn != puzzle['output']:
+                issues.append(
+                    f"SANITY: goal mentions number '{gn}' but it doesn't appear in the code"
+                )
+
+    # 7b. "How many" questions should return non-negative values
+    if output_val is not None:
+        if ('how many' in goal_lower or 'how much' in goal_lower) and output_val < 0:
+            issues.append(
+                f"SANITY: goal asks 'how many/much' but output is negative ({output_val})"
+            )
+
+    # 7c. Numbers in goal should match loop bounds
+    for line in puzzle['lines']:
+        if line[0]['t'] in ('for', 'while') and len(line) >= 5:
+            # Extract the loop bound number
+            try:
+                if line[0]['t'] == 'for' and len(line) >= 6:
+                    loop_bound = line[5]['t']
+                elif line[0]['t'] == 'while':
+                    # Get the comparison value (last token before {)
+                    for ti in range(len(line) - 1, 0, -1):
+                        if line[ti]['t'] == '{':
+                            continue
+                        if line[ti]['y'] == 'lit':
+                            loop_bound = line[ti]['t']
+                            break
+                    else:
+                        loop_bound = None
+                else:
+                    loop_bound = None
+                if loop_bound and int(loop_bound) > 3:
+                    # Check if any number in the goal contradicts the loop bound
+                    for gn in goal_numbers:
+                        gn_val = int(gn)
+                        lb_val = int(loop_bound)
+                        # If goal says "6 rounds" but loop goes to 3, flag it
+                        if gn_val > 3 and gn_val != lb_val and gn != puzzle['output']:
+                            # Check if the goal number describes the loop count
+                            gn_idx = goal_text.find(gn)
+                            if gn_idx >= 0:
+                                context = goal_text[max(0, gn_idx-15):gn_idx+len(gn)+15].lower()
+                                # Only flag if context clearly describes a loop count
+                                # (not per-iteration values like "5 steps each")
+                                loop_words = ['round', 'time', 'day', 'hour', 'week',
+                                              'cycle', 'turn', 'session', 'set', 'level',
+                                              'minute', 'second', 'event', 'layer', 'night']
+                                if any(w in context for w in loop_words):
+                                    issues.append(
+                                        f"SANITY: goal mentions '{gn}' {context.strip()} but loop bound is {loop_bound}"
+                                    )
+            except (ValueError, UnboundLocalError):
+                pass
+
+    # 7d. If/else: check both branches produce different results
+    has_if = any(line[0]['t'] == 'if' for line in puzzle['lines'] if line)
+    has_else = any('else' in [t['t'] for t in line] for line in puzzle['lines'] if line)
+    if has_if and has_else:
+        # Run interpreter with the condition flipped conceptually
+        # (we can't easily do this, but we can check the if-condition isn't trivially true/false)
+        for line in puzzle['lines']:
+            if line[0]['t'] == 'if' and len(line) >= 4:
+                cond_tokens = []
+                for t in line[1:]:
+                    if t['t'] == '{':
+                        break
+                    cond_tokens.append(t['t'])
+                if len(cond_tokens) == 3:
+                    try:
+                        left = int(cond_tokens[0])
+                        right = int(cond_tokens[2])
+                        op = cond_tokens[1]
+                        # Both sides are literals — condition is always the same
+                        issues.append(
+                            f"SANITY: if condition '{left} {op} {right}' uses only literals — "
+                            f"one branch is dead code"
+                        )
+                    except ValueError:
+                        pass  # has variables, which is fine
+
+    # 8. Wording consistency: return variable should relate to the goal text
     goal_lower = puzzle.get('goal', '').lower()
     if solution_return:
         ret_name = solution_return[0] if len(solution_return) == 1 else None
@@ -570,7 +666,6 @@ def verify_puzzle(puzzle, index):
 
             # Also check: does the goal's question use a DIFFERENT word than the var?
             # e.g., goal asks "How many graduate?" but var is "passed"
-            import re
             question_words = re.findall(r'how (?:many|much) (\w+)', goal_lower)
             question_words += re.findall(r'what.s the (\w+)', goal_lower)
             question_words += re.findall(r'total (\w+)', goal_lower)
@@ -635,6 +730,21 @@ def main():
     if len(id_set) != len(ids):
         dupes = [pid for pid in id_set if ids.count(pid) > 1]
         print(f"DUPLICATE IDS: {dupes}\n")
+
+    # Check for duplicate puzzles by hashing the full code structure
+    import hashlib
+    seen_hashes = {}
+    for i, p in enumerate(puzzles):
+        # Hash the complete token structure (all token texts in order)
+        code_str = '|'.join(
+            ' '.join(t['t'] for t in line)
+            for line in p['lines']
+        )
+        code_hash = hashlib.md5(code_str.encode()).hexdigest()
+        if code_hash in seen_hashes:
+            prev_i = seen_hashes[code_hash]
+            print(f"DUPLICATE: #{i+1} and #{prev_i+1} have identical code structure!")
+        seen_hashes[code_hash] = i
 
     # Difficulty distribution
     diff_counts = {}

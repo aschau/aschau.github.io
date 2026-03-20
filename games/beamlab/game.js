@@ -631,12 +631,11 @@
 
     function getScoreLabel(used, par) {
         const diff = used - par;
-        if (diff <= -3) return 'Brilliant! (' + used + ' pieces)';
-        if (diff === -2) return 'Focused! (' + used + ' pieces)';
-        if (diff === -1) return 'Precise! (' + used + ' pieces)';
-        if (diff === 0) return 'Aligned (' + used + ' pieces)';
-        if (diff === 1) return 'Scattered (' + used + ' pieces)';
-        return 'Refracted +' + diff + ' (' + used + ' pieces)';
+        if (diff <= -1) return 'Brilliant! (' + used + ' pieces)';
+        if (diff === 0) return 'Focused (' + used + ' pieces)';
+        if (diff === 1) return 'Aligned (' + used + ' pieces)';
+        if (diff === 2) return 'Scattered (' + used + ' pieces)';
+        return 'Refracted +' + (diff - 2) + ' (' + used + ' pieces)';
     }
 
     // =============================================

@@ -5,12 +5,11 @@
 function generateShareText(puzzleNumber, piecesUsed, par, streak, gotGem, totalGems, username, puzzleInfo) {
     var diff = piecesUsed - par;
     var scoreLabel;
-    if (diff <= -3) scoreLabel = 'Brilliant!';
-    else if (diff === -2) scoreLabel = 'Focused!';
-    else if (diff === -1) scoreLabel = 'Precise!';
-    else if (diff === 0) scoreLabel = 'Aligned';
-    else if (diff === 1) scoreLabel = 'Scattered';
-    else scoreLabel = 'Refracted (+' + diff + ')';
+    if (diff <= -1) scoreLabel = 'Brilliant!';
+    else if (diff === 0) scoreLabel = 'Focused';
+    else if (diff === 1) scoreLabel = 'Aligned';
+    else if (diff === 2) scoreLabel = 'Scattered';
+    else scoreLabel = 'Refracted (+' + (diff - 2) + ')';
 
     // Header with name
     var header;

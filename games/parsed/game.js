@@ -9,6 +9,23 @@
     var SAVE_VERSION = 2;
     var STORAGE_KEY = 'parsed_data';
 
+    // Debug mode: ?puzzle=N loads puzzle N (0-indexed) without affecting daily save
+    // Only works on file:// or localhost — disabled in production
+    var debugMode = false;
+    (function () {
+        var loc = window.location;
+        var isLocal = loc.protocol === 'file:' || loc.hostname === 'localhost' || loc.hostname === '127.0.0.1';
+        if (!isLocal) return;
+        var params = new URLSearchParams(loc.search);
+        if (params.has('puzzle')) {
+            var idx = parseInt(params.get('puzzle'), 10);
+            if (!isNaN(idx) && idx >= 0 && idx < PUZZLES.length) {
+                debugMode = true;
+                window._debugPuzzleIndex = idx;
+            }
+        }
+    })();
+
     // --- Game State ---
     var puzzle = null;
     var puzzleNumber = 0;
@@ -64,11 +81,16 @@
     // =============================================
 
     function init() {
-        puzzle = getDailyPuzzle();
-        puzzleNumber = getDailyPuzzleNumber();
+        if (debugMode) {
+            puzzle = JSON.parse(JSON.stringify(PUZZLES[window._debugPuzzleIndex]));
+            puzzleNumber = window._debugPuzzleIndex + 1;
+        } else {
+            puzzle = getDailyPuzzle();
+            puzzleNumber = getDailyPuzzleNumber();
+        }
 
-        puzzleNumberEl.textContent = 'Puzzle #' + puzzleNumber;
-        puzzleDateEl.textContent = getTodayDateString();
+        puzzleNumberEl.textContent = (debugMode ? 'Debug ' : '') + 'Puzzle #' + puzzleNumber;
+        puzzleDateEl.textContent = debugMode ? 'Debug Mode' : getTodayDateString();
         parValue.textContent = puzzle.par;
         goalText.textContent = puzzle.goal;
 
@@ -2083,6 +2105,7 @@
     }
 
     function saveState() {
+        if (debugMode) return; // Don't save debug mode progress
         var data = loadData();
         data.version = SAVE_VERSION;
         var prevToday = data.today || {};
@@ -2115,6 +2138,7 @@
     }
 
     function restoreState() {
+        if (debugMode) return false; // Don't restore in debug mode
         var data = loadData();
         if (!data.today || data.today.date !== getTodayKey()) return false;
 

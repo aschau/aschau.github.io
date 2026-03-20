@@ -82,12 +82,34 @@
     // Initialization
     // =============================================
 
-    function init() {
-        puzzle = getDailyPuzzle();
-        puzzleNumber = getDailyPuzzleNumber();
+    // Debug mode: ?puzzle=N loads puzzle N (0-indexed) without affecting daily save
+    // Only works on file:// or localhost — disabled in production
+    let debugMode = false;
+    (function () {
+        const loc = window.location;
+        const isLocal = loc.protocol === 'file:' || loc.hostname === 'localhost' || loc.hostname === '127.0.0.1';
+        if (!isLocal) return;
+        const params = new URLSearchParams(loc.search);
+        if (params.has('puzzle')) {
+            const idx = parseInt(params.get('puzzle'), 10);
+            if (!isNaN(idx) && idx >= 0 && idx < PUZZLES.length) {
+                debugMode = true;
+                window._debugPuzzleIndex = idx;
+            }
+        }
+    })();
 
-        puzzleNumberEl.textContent = 'Puzzle #' + puzzleNumber;
-        puzzleDateEl.textContent = getTodayDateString();
+    function init() {
+        if (debugMode) {
+            puzzle = JSON.parse(JSON.stringify(PUZZLES[window._debugPuzzleIndex]));
+            puzzleNumber = window._debugPuzzleIndex + 1;
+        } else {
+            puzzle = getDailyPuzzle();
+            puzzleNumber = getDailyPuzzleNumber();
+        }
+
+        puzzleNumberEl.textContent = (debugMode ? 'Debug ' : '') + 'Puzzle #' + puzzleNumber;
+        puzzleDateEl.textContent = debugMode ? 'Debug Mode' : getTodayDateString();
         parValue.textContent = puzzle.par;
 
         grid = [];
@@ -1028,6 +1050,7 @@
     function getStorageKey() { return 'beamlab_data'; }
 
     function saveState() {
+        if (debugMode) return; // Don't save debug mode progress
         const pieces = [];
         for (let r = 0; r < GRID_SIZE; r++) {
             for (let c = 0; c < GRID_SIZE; c++) {
@@ -1068,6 +1091,7 @@
     }
 
     function restoreState() {
+        if (debugMode) return false; // Don't restore in debug mode
         const data = loadData();
         if (!data.today || data.today.date !== getTodayKey()) return false;
 

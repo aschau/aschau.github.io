@@ -882,6 +882,11 @@
         var isFirstSolve = !everSolved;
         everSolved = true;
 
+        // Lock board immediately — disable undo/reset, enable share
+        undoBtn.disabled = true;
+        resetBtn.disabled = true;
+        shareBtn.disabled = false;
+
         // Update best score
         if (bestScore === null || swapCount < bestScore) {
             bestScore = swapCount;

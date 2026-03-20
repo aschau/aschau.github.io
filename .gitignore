@@ -12,6 +12,7 @@ games/*/generated_puzzles.json
 games/*/validation_results.txt
 games/parsed/debug.html
 games/beamlab/debug.html
+**/og-image.html
 games/parsed/scene_configs.txt
 *.pyc
 __pycache__/

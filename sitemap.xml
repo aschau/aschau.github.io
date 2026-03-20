@@ -37,6 +37,46 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://aschau.github.io/projects/personal/spookyspoils.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://aschau.github.io/projects/personal/dateordie.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://aschau.github.io/projects/personal/lefttodie.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://aschau.github.io/projects/personal/dormdash.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://aschau.github.io/projects/personal/goinghome.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://aschau.github.io/projects/personal/lifeofpy.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://aschau.github.io/projects/personal/monochrome.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://aschau.github.io/projects/personal/scallywags.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://aschau.github.io/projects/personal/scuminvaders.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://aschau.github.io/projects/personal/snake.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://aschau.github.io/games/beamlab/</loc>
     <priority>0.7</priority>
   </url>

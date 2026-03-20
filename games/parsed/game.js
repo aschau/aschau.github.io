@@ -1553,11 +1553,15 @@
         var step = steps[index];
         var prevVars = index > 0 ? steps[index - 1].vars : {};
 
-        // Highlight current line
+        // Highlight current line and reset annotations on other lines
         var allLines = execCode.querySelectorAll('.exec-line');
         for (var i = 0; i < allLines.length; i++) {
             allLines[i].classList.remove('active');
             if (i < step.line) allLines[i].classList.add('done');
+            // Reset any annotated HTML back to plain text
+            if (execCodeLines && execCodeLines[i] && i !== step.line) {
+                allLines[i].textContent = execCodeLines[i].join(' ');
+            }
         }
         var activeLine = document.getElementById('exec-line-' + step.line);
         if (activeLine) activeLine.classList.add('active');
@@ -1578,6 +1582,11 @@
         var explainEl = document.getElementById('exec-explain');
         explainEl.innerHTML = explainStep(tokens, step, prevVars);
         explainEl.hidden = false;
+
+        // Show inline value annotations on active line
+        if (activeLine && tokens) {
+            renderAnnotatedLine(activeLine, tokens, prevVars);
+        }
 
         // Show output if present
         if (step.output !== undefined) {

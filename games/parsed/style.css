@@ -758,6 +758,7 @@ body {
 
 .exec-line.active {
     background: var(--color-accent-muted);
+    padding-top: 16px;
 }
 
 .exec-line.done {

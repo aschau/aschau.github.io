@@ -21,7 +21,7 @@ function generateShareText(puzzleNumber, piecesUsed, par, streak, gotGem, totalG
     }
 
     // Score line with gem
-    var scoreLine = scoreLabel + ' \u00B7 ' + piecesUsed + ' pieces' + (gotGem ? ' \uD83D\uDC8E' : '');
+    var scoreLine = scoreLabel + ' (' + piecesUsed + '/' + par + ')' + (gotGem ? ' \uD83D\uDC8E' : '');
 
     // Puzzle preview line (what they're up against — spoiler-free)
     var previewParts = [];

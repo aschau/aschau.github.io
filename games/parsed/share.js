@@ -20,15 +20,16 @@ function generateShareText(puzzleNumber, swaps, par, shareResult, streak, userna
         header = 'Parsed #' + puzzleNumber + ' \uD83D\uDFE2';
     }
 
-    var scoreLine = scoreLabel + ' (' + swaps + '/' + par + ')';
-
-    var lines = [header, scoreLine];
-
+    // Extract leading emoji from shareResult (e.g. "🏅 Points: 40!" → "🏅")
+    var themeEmoji = '';
     if (shareResult) {
-        lines.push(shareResult);
+        var emojiMatch = shareResult.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)/u);
+        if (emojiMatch) themeEmoji = emojiMatch[0] + ' ';
     }
 
-    lines.push(swaps + ' swap' + (swaps !== 1 ? 's' : ''));
+    var scoreLine = themeEmoji + scoreLabel + ' Swaps (' + swaps + '/' + par + ')';
+
+    var lines = [header, scoreLine];
 
     if (streak > 1) {
         lines.push('\uD83D\uDD25 ' + streak + ' day streak');

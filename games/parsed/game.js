@@ -665,6 +665,23 @@
         if (execSkip) {
             execSkip.addEventListener('click', skipExecution);
         }
+
+        // Exec replay and continue
+        var execReplay = document.getElementById('exec-replay');
+        var execContinue = document.getElementById('exec-continue');
+        if (execReplay) {
+            execReplay.addEventListener('click', function () {
+                runExecution(execCallback || function () { showWinModal(); });
+            });
+        }
+        if (execContinue) {
+            execContinue.addEventListener('click', function () {
+                execModal.hidden = true;
+                var sceneEl = document.getElementById('exec-scene');
+                if (sceneEl) sceneEl.hidden = true;
+                if (execCallback) execCallback();
+            });
+        }
     }
 
     function handleTokenClick(e) {
@@ -885,6 +902,11 @@
 
     var execTimeout = null;
     var execSkipped = false;
+    var execSteps = null;
+    var execSceneConfig = null;
+    var execCallback = null;
+    var execCodeLines = null;
+    var execAnimating = false;
 
     function runExecution(callback) {
         // Check reduced motion preference
@@ -894,11 +916,14 @@
         }
 
         execSkipped = false;
+        execAnimating = true;
+        execCallback = callback;
         execModal.hidden = false;
 
         // Build the code from current (solved) tokens
         var codeTokenLines = [];
         var codeDisplayLines = [];
+        execCodeLines = [];
         var tokenIdx = 0;
         for (var l = 0; l < puzzle.lines.length; l++) {
             var tokens = [];
@@ -907,6 +932,7 @@
                 tokenIdx++;
             }
             codeTokenLines.push(tokens);
+            execCodeLines.push(tokens);
             codeDisplayLines.push(tokens.join(' '));
         }
 
@@ -927,24 +953,102 @@
         var execGoal = document.getElementById('exec-goal');
         if (execGoal) execGoal.textContent = puzzle.goal;
 
+        // Reset UI
+        document.getElementById('exec-title').textContent = 'Running...';
+        document.getElementById('exec-actions').hidden = true;
+        document.getElementById('exec-explain').hidden = true;
+        document.getElementById('exec-skip').hidden = false;
+
         // Initialize scene animation
-        var sceneConfig = SCENE_CONFIGS[puzzle.id] || null;
+        execSceneConfig = SCENE_CONFIGS[puzzle.id] || null;
         var sceneEl = document.getElementById('exec-scene');
-        if (sceneConfig) {
+        if (execSceneConfig) {
             sceneEl.hidden = false;
-            document.getElementById('exec-scene-emoji').textContent = sceneConfig.emoji;
+            document.getElementById('exec-scene-emoji').textContent = execSceneConfig.emoji;
             document.getElementById('exec-scene-fill').style.width = '0%';
             document.getElementById('exec-scene-emoji').style.left = '5%';
-            document.getElementById('exec-scene-label').textContent = sceneConfig.label + ': ' + sceneConfig.min;
+            document.getElementById('exec-scene-label').textContent = execSceneConfig.label + ': ' + execSceneConfig.min;
         } else {
             sceneEl.hidden = true;
         }
 
         // Interpret and animate
         var interpreter = new PseudoInterpreter(codeTokenLines);
-        var steps = interpreter.execute();
+        execSteps = interpreter.execute();
 
-        animateSteps(steps, 0, callback, sceneConfig);
+        // Build timeline
+        buildTimeline(execSteps);
+
+        animateSteps(execSteps, 0);
+    }
+
+    function buildTimeline(steps) {
+        var timeline = document.getElementById('exec-timeline');
+        var track = document.getElementById('exec-timeline-track');
+        track.innerHTML = '';
+        if (steps.length < 2) {
+            timeline.hidden = true;
+            return;
+        }
+        timeline.hidden = false;
+        for (var i = 0; i < steps.length; i++) {
+            var dot = document.createElement('div');
+            dot.className = 'exec-step-dot';
+            dot.dataset.step = i;
+            dot.addEventListener('click', function () {
+                var idx = parseInt(this.dataset.step);
+                showStepState(idx);
+            });
+            track.appendChild(dot);
+        }
+    }
+
+    function updateTimelineDots(currentIdx) {
+        var dots = document.querySelectorAll('.exec-step-dot');
+        for (var i = 0; i < dots.length; i++) {
+            dots[i].classList.remove('current', 'reached');
+            if (i < currentIdx) dots[i].classList.add('reached');
+            if (i === currentIdx) dots[i].classList.add('current');
+        }
+    }
+
+    function showStepState(index) {
+        if (!execSteps || index < 0 || index >= execSteps.length) return;
+
+        // If still animating, stop
+        if (execAnimating) {
+            execSkipped = true;
+            if (execTimeout) clearTimeout(execTimeout);
+            execAnimating = false;
+            finishAnimation();
+        }
+
+        var step = execSteps[index];
+
+        // Highlight current line
+        var allLines = execCode.querySelectorAll('.exec-line');
+        for (var i = 0; i < allLines.length; i++) {
+            allLines[i].classList.remove('active', 'selected');
+        }
+        var activeLine = document.getElementById('exec-line-' + step.line);
+        if (activeLine) activeLine.classList.add('selected');
+
+        // Update variables to this step's state
+        if (step.vars) {
+            updateExecVars(step.vars, step.changedVar);
+        }
+
+        // Update scene
+        updateScene(execSceneConfig, step.vars);
+
+        // Update timeline
+        updateTimelineDots(index);
+
+        // Show output if present
+        if (step.output !== undefined) {
+            var label = execSceneConfig ? execSceneConfig.label : 'Answer';
+            execOutput.textContent = '> ' + label + ': ' + step.output;
+        }
     }
 
     function updateScene(sceneConfig, vars) {
@@ -957,22 +1061,45 @@
         document.getElementById('exec-scene-label').textContent = sceneConfig.label + ': ' + val;
     }
 
-    function animateSteps(steps, index, callback, sceneConfig) {
-        if (execSkipped || index >= steps.length) {
-            // Show final output with context from puzzle goal
-            if (steps.length > 0) {
-                var lastStep = steps[steps.length - 1];
-                if (lastStep.output !== undefined) {
-                    var answerLabel = sceneConfig ? sceneConfig.label : 'Answer';
-                    execOutput.textContent = '> ' + answerLabel + ': ' + lastStep.output;
-                    updateScene(sceneConfig, lastStep.vars);
-                }
+    function finishAnimation() {
+        // Show final output
+        if (execSteps && execSteps.length > 0) {
+            var lastStep = execSteps[execSteps.length - 1];
+            if (lastStep.output !== undefined) {
+                var answerLabel = execSceneConfig ? execSceneConfig.label : 'Answer';
+                execOutput.textContent = '> ' + answerLabel + ': ' + lastStep.output;
+                updateScene(execSceneConfig, lastStep.vars);
             }
+            updateTimelineDots(execSteps.length - 1);
+        }
 
-            execTimeout = setTimeout(function () {
-                execModal.hidden = true;
-                callback();
-            }, execSkipped ? 0 : 1000);
+        // Switch to interactive mode
+        document.getElementById('exec-title').textContent = 'Complete';
+        document.getElementById('exec-skip').hidden = true;
+        document.getElementById('exec-actions').hidden = false;
+
+        // Make lines tappable for explanations
+        var allLines = execCode.querySelectorAll('.exec-line');
+        for (var i = 0; i < allLines.length; i++) {
+            allLines[i].classList.remove('active', 'done');
+            allLines[i].classList.add('tappable');
+            allLines[i].dataset.lineIdx = i;
+            allLines[i].addEventListener('click', handleExecLineClick);
+        }
+    }
+
+    function animateSteps(steps, index) {
+        if (execSkipped || index >= steps.length) {
+            execAnimating = false;
+            if (execSkipped) {
+                // Skip pressed — jump to finished state
+                finishAnimation();
+            } else {
+                // Natural end — pause then show controls
+                execTimeout = setTimeout(function () {
+                    finishAnimation();
+                }, 800);
+            }
             return;
         }
 
@@ -993,17 +1120,89 @@
         }
 
         // Update scene animation
-        updateScene(sceneConfig, step.vars);
+        updateScene(execSceneConfig, step.vars);
+
+        // Update timeline
+        updateTimelineDots(index);
 
         // Show output if present
         if (step.output !== undefined) {
-            var answerLabel2 = sceneConfig ? sceneConfig.label : 'Answer';
+            var answerLabel2 = execSceneConfig ? execSceneConfig.label : 'Answer';
             execOutput.textContent = '> ' + answerLabel2 + ': ' + step.output;
         }
 
         execTimeout = setTimeout(function () {
-            animateSteps(steps, index + 1, callback, sceneConfig);
-        }, 700);
+            animateSteps(steps, index + 1);
+        }, 1400);
+    }
+
+    function handleExecLineClick(e) {
+        var lineIdx = parseInt(e.currentTarget.dataset.lineIdx);
+        if (isNaN(lineIdx) || !execCodeLines || !execCodeLines[lineIdx]) return;
+
+        // Highlight selected line
+        var allLines = execCode.querySelectorAll('.exec-line');
+        for (var i = 0; i < allLines.length; i++) {
+            allLines[i].classList.remove('selected');
+        }
+        e.currentTarget.classList.add('selected');
+
+        // Show explanation
+        var explain = explainLine(execCodeLines[lineIdx]);
+        var explainEl = document.getElementById('exec-explain');
+        explainEl.textContent = explain;
+        explainEl.hidden = false;
+
+        // Jump timeline to nearest step for this line
+        if (execSteps) {
+            for (var s = 0; s < execSteps.length; s++) {
+                if (execSteps[s].line === lineIdx) {
+                    showStepState(s);
+                    e.currentTarget.classList.add('selected');
+                    break;
+                }
+            }
+        }
+    }
+
+    function explainLine(tokens) {
+        if (!tokens || tokens.length === 0) return '';
+        var first = tokens[0];
+
+        if (first === '{' || first === '}') return 'Marks the start or end of a code block.';
+        if (first === '}' && tokens.length > 1 && tokens[1] === 'else') {
+            return 'Otherwise — if the condition above was false, run this block instead.';
+        }
+
+        if (first === 'let') {
+            var varName = tokens[1];
+            var expr = tokens.slice(3).join(' ');
+            return 'Create a new variable called \'' + varName + '\' and set it to ' + expr + '.';
+        }
+
+        if (first === 'while') {
+            var cond = tokens.slice(1, -1).join(' ');
+            return 'Loop — keep repeating the code below as long as ' + cond + '. Each repeat is one iteration.';
+        }
+
+        if (first === 'if') {
+            var ifCond = tokens.slice(1, -1).join(' ');
+            return 'Check — only run the code below if ' + ifCond + '. If not, skip to else (if there is one).';
+        }
+
+        if (first === 'return') {
+            var retExpr = tokens.slice(1).join(' ');
+            return 'Output ' + retExpr + ' as the final answer and stop the program.';
+        }
+
+        // Assignment: x = expr
+        if (tokens.length >= 3 && tokens[1] === '=') {
+            var assignVar = tokens[0];
+            var assignExpr = tokens.slice(2).join(' ');
+            return 'Update \'' + assignVar + '\' — set it to ' + assignExpr + ' (using current values).';
+        }
+
+        return 'Code statement.';
     }
 
     function updateExecVars(vars, changedVar) {
@@ -1033,9 +1232,8 @@
     function skipExecution() {
         execSkipped = true;
         if (execTimeout) clearTimeout(execTimeout);
-        execModal.hidden = true;
-        var sceneEl = document.getElementById('exec-scene');
-        if (sceneEl) sceneEl.hidden = true;
+        execAnimating = false;
+        finishAnimation();
     }
 
     function findToken(line, col) {

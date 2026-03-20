@@ -763,6 +763,76 @@ body {
     opacity: 0.5;
 }
 
+.exec-line.tappable {
+    cursor: pointer;
+    opacity: 1;
+}
+
+.exec-line.tappable:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.exec-line.tappable.selected {
+    background: var(--color-accent-muted);
+}
+
+.exec-timeline {
+    margin-bottom: 10px;
+    padding: 0 4px;
+}
+
+.exec-timeline-track {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 24px;
+}
+
+.exec-step-dot {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), height var(--transition-fast);
+    min-width: 4px;
+}
+
+.exec-step-dot:hover {
+    background: rgba(255, 255, 255, 0.25);
+    height: 10px;
+}
+
+.exec-step-dot.reached {
+    background: var(--color-accent-muted);
+}
+
+.exec-step-dot.current {
+    background: var(--color-accent);
+    height: 10px;
+}
+
+.exec-explain {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    background: rgba(100, 120, 255, 0.1);
+    border-left: 3px solid var(--color-accent);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.8rem;
+    color: var(--color-text);
+    line-height: 1.4;
+}
+
+.exec-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.exec-actions .action-btn {
+    flex: 1;
+}
+
 .exec-vars {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 6px;

@@ -226,7 +226,7 @@
         <div class="modal-overlay" id="exec-modal" hidden>
             <div class="modal exec-modal-wide">
                 <div class="modal-header">
-                    <h2>Running...</h2>
+                    <h2 id="exec-title">Running...</h2>
                     <button class="action-btn" id="exec-skip">Skip</button>
                 </div>
                 <div class="exec-goal" id="exec-goal"></div>
@@ -238,12 +238,20 @@
                         </div>
                         <div class="exec-scene-label" id="exec-scene-label"></div>
                     </div>
+                    <div class="exec-timeline" id="exec-timeline" hidden>
+                        <div class="exec-timeline-track" id="exec-timeline-track"></div>
+                    </div>
                     <div class="exec-code" id="exec-code"></div>
+                    <div class="exec-explain" id="exec-explain" hidden></div>
                     <div class="exec-vars" id="exec-vars">
                         <div class="exec-vars-title">Variables</div>
                         <div class="exec-vars-list" id="exec-vars-list"></div>
                     </div>
                     <div class="exec-output" id="exec-output"></div>
+                    <div class="exec-actions" id="exec-actions" hidden>
+                        <button class="action-btn" id="exec-replay">Replay</button>
+                        <button class="action-btn primary" id="exec-continue">Continue</button>
+                    </div>
                 </div>
             </div>
         </div>

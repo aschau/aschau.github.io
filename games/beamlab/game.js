@@ -945,7 +945,7 @@
     }
 
     function undo() {
-        if (moveHistory.length === 0) return;
+        if (solved || moveHistory.length === 0) return;
         const move = moveHistory.pop();
 
         switch (move.action) {
@@ -972,6 +972,7 @@
     }
 
     function resetBoard() {
+        if (solved) return;
         var data = loadData();
         if (data.today && data.today.everSolved) return;
         for (let r = 0; r < GRID_SIZE; r++) {
@@ -1016,7 +1017,8 @@
     }
 
     function updateButtons() {
-        undoBtn.disabled = moveHistory.length === 0;
+        undoBtn.disabled = solved || moveHistory.length === 0;
+        resetBtn.disabled = solved;
         shareBtn.disabled = !solved;
     }
 

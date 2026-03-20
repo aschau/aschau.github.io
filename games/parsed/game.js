@@ -874,6 +874,7 @@
     // =============================================
 
     function checkWin() {
+        if (solved) return;
         var result = tryRunCode();
         if (!result.success) return;
 

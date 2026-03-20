@@ -1024,11 +1024,16 @@
         }
 
         var step = execSteps[index];
+        var prevVars = index > 0 ? execSteps[index - 1].vars : {};
 
-        // Highlight current line
+        // Reset all lines to plain text and remove selection
         var allLines = execCode.querySelectorAll('.exec-line');
         for (var i = 0; i < allLines.length; i++) {
             allLines[i].classList.remove('active', 'selected');
+            // Reset any annotated HTML back to plain text
+            if (execCodeLines && execCodeLines[i]) {
+                allLines[i].textContent = execCodeLines[i].join(' ');
+            }
         }
         var activeLine = document.getElementById('exec-line-' + step.line);
         if (activeLine) activeLine.classList.add('selected');
@@ -1048,6 +1053,18 @@
         if (step.output !== undefined) {
             var label = execSceneConfig ? execSceneConfig.label : 'Answer';
             execOutput.textContent = '> ' + label + ': ' + step.output;
+        }
+
+        // Show step explanation with actual values
+        var tokens = execCodeLines[step.line];
+        var explain = explainStep(tokens, step, prevVars);
+        var explainEl = document.getElementById('exec-explain');
+        explainEl.innerHTML = explain;
+        explainEl.hidden = false;
+
+        // Render inline annotations on the selected line
+        if (activeLine && tokens) {
+            renderAnnotatedLine(activeLine, tokens, prevVars);
         }
     }
 
@@ -1104,6 +1121,7 @@
         }
 
         var step = steps[index];
+        var prevVars = index > 0 ? steps[index - 1].vars : {};
 
         // Highlight current line
         var allLines = execCode.querySelectorAll('.exec-line');
@@ -1125,6 +1143,12 @@
         // Update timeline
         updateTimelineDots(index);
 
+        // Show step explanation during animation
+        var tokens = execCodeLines[step.line];
+        var explainEl = document.getElementById('exec-explain');
+        explainEl.innerHTML = explainStep(tokens, step, prevVars);
+        explainEl.hidden = false;
+
         // Show output if present
         if (step.output !== undefined) {
             var answerLabel2 = execSceneConfig ? execSceneConfig.label : 'Answer';
@@ -1140,69 +1164,167 @@
         var lineIdx = parseInt(e.currentTarget.dataset.lineIdx);
         if (isNaN(lineIdx) || !execCodeLines || !execCodeLines[lineIdx]) return;
 
-        // Highlight selected line
-        var allLines = execCode.querySelectorAll('.exec-line');
-        for (var i = 0; i < allLines.length; i++) {
-            allLines[i].classList.remove('selected');
-        }
-        e.currentTarget.classList.add('selected');
-
-        // Show explanation
-        var explain = explainLine(execCodeLines[lineIdx]);
-        var explainEl = document.getElementById('exec-explain');
-        explainEl.textContent = explain;
-        explainEl.hidden = false;
-
-        // Jump timeline to nearest step for this line
+        // Jump timeline to the last step that executes this line
+        // (shows the final state for this line)
         if (execSteps) {
-            for (var s = 0; s < execSteps.length; s++) {
+            var found = false;
+            for (var s = execSteps.length - 1; s >= 0; s--) {
                 if (execSteps[s].line === lineIdx) {
                     showStepState(s);
-                    e.currentTarget.classList.add('selected');
+                    found = true;
                     break;
                 }
+            }
+            if (!found) {
+                // Line has no step (e.g. lone braces) — show generic explanation
+                var allLines = execCode.querySelectorAll('.exec-line');
+                for (var i = 0; i < allLines.length; i++) {
+                    allLines[i].classList.remove('selected');
+                }
+                e.currentTarget.classList.add('selected');
+                var explainEl = document.getElementById('exec-explain');
+                explainEl.innerHTML = explainStepGeneric(execCodeLines[lineIdx]);
+                explainEl.hidden = false;
             }
         }
     }
 
-    function explainLine(tokens) {
+    function resolveExpr(tokens, vars) {
+        // Substitute variable names with their values for display
+        var parts = [];
+        for (var i = 0; i < tokens.length; i++) {
+            var t = tokens[i];
+            if (t === '{' || t === '}') continue;
+            if (vars && vars.hasOwnProperty(t)) {
+                parts.push(String(vars[t]));
+            } else {
+                parts.push(t);
+            }
+        }
+        return parts.join(' ');
+    }
+
+    function explainStep(tokens, step, prevVars) {
         if (!tokens || tokens.length === 0) return '';
         var first = tokens[0];
+        var vars = step.vars || {};
+        // Use prevVars for the values BEFORE this step executed
+        var beforeVars = prevVars || {};
 
-        if (first === '{' || first === '}') return 'Marks the start or end of a code block.';
+        if (first === '{' || first === '}') {
+            return explainStepGeneric(tokens);
+        }
         if (first === '}' && tokens.length > 1 && tokens[1] === 'else') {
-            return 'Otherwise — if the condition above was false, run this block instead.';
+            return '<b>Otherwise</b> \u2014 the condition was false, so run this block instead.';
         }
 
         if (first === 'let') {
             var varName = tokens[1];
-            var expr = tokens.slice(3).join(' ');
-            return 'Create a new variable called \'' + varName + '\' and set it to ' + expr + '.';
+            var exprTokens = tokens.slice(3).filter(function (t) { return t !== '{' && t !== '}'; });
+            var resolved = resolveExpr(exprTokens, beforeVars);
+            var finalVal = vars[varName];
+            var result = '<b>Create</b> \'' + varName + '\'';
+            if (exprTokens.join(' ') !== resolved) {
+                result += ' \u2014 ' + exprTokens.join(' ') + ' = ' + resolved + ' \u2192 <b>' + finalVal + '</b>';
+            } else {
+                result += ' = <b>' + finalVal + '</b>';
+            }
+            return result;
         }
 
         if (first === 'while') {
-            var cond = tokens.slice(1, -1).join(' ');
-            return 'Loop — keep repeating the code below as long as ' + cond + '. Each repeat is one iteration.';
+            var condTokens = tokens.slice(1, -1);
+            var condResolved = resolveExpr(condTokens, beforeVars);
+            var condResult = step.changedVar === null && !step.output;
+            // Check if the loop body was entered (next step exists and is inside loop)
+            var condText = condTokens.join(' ');
+            var result = '<b>Loop check</b> \u2014 is ' + condText + '?';
+            if (condText !== condResolved) {
+                result += '\n' + condResolved;
+            }
+            return result;
         }
 
         if (first === 'if') {
-            var ifCond = tokens.slice(1, -1).join(' ');
-            return 'Check — only run the code below if ' + ifCond + '. If not, skip to else (if there is one).';
+            var ifCondTokens = tokens.slice(1, -1);
+            var ifResolved = resolveExpr(ifCondTokens, beforeVars);
+            var result = '<b>Check</b> \u2014 is ' + ifCondTokens.join(' ') + '?';
+            if (ifCondTokens.join(' ') !== ifResolved) {
+                result += '\n' + ifResolved;
+            }
+            return result;
         }
 
         if (first === 'return') {
-            var retExpr = tokens.slice(1).join(' ');
-            return 'Output ' + retExpr + ' as the final answer and stop the program.';
+            var retTokens = tokens.slice(1);
+            var retResolved = resolveExpr(retTokens, beforeVars);
+            var retVal = step.output;
+            var result = '<b>Return</b> ' + retTokens.join(' ');
+            if (retTokens.join(' ') !== retResolved) {
+                result += ' = ' + retResolved;
+            }
+            result += ' \u2192 <b>' + retVal + '</b>';
+            return result;
         }
 
         // Assignment: x = expr
         if (tokens.length >= 3 && tokens[1] === '=') {
             var assignVar = tokens[0];
-            var assignExpr = tokens.slice(2).join(' ');
-            return 'Update \'' + assignVar + '\' — set it to ' + assignExpr + ' (using current values).';
+            var exprTokens2 = tokens.slice(2);
+            var resolved2 = resolveExpr(exprTokens2, beforeVars);
+            var oldVal = beforeVars.hasOwnProperty(assignVar) ? beforeVars[assignVar] : '?';
+            var newVal = vars[assignVar];
+            var result = '<b>' + assignVar + '</b> = ' + exprTokens2.join(' ');
+            if (exprTokens2.join(' ') !== resolved2) {
+                result += ' = ' + resolved2;
+            }
+            result += ' \u2192 <b>' + newVal + '</b>';
+            if (oldVal !== newVal) {
+                result += '  <span style="opacity:0.5">(was ' + oldVal + ')</span>';
+            }
+            return result;
         }
 
+        return explainStepGeneric(tokens);
+    }
+
+    function explainStepGeneric(tokens) {
+        if (!tokens || tokens.length === 0) return '';
+        var first = tokens[0];
+        if (first === '{' || first === '}') return 'Marks the start or end of a code block.';
+        if (first === '}' && tokens.length > 1 && tokens[1] === 'else') {
+            return 'Otherwise \u2014 if the condition above was false, run this block instead.';
+        }
+        if (first === 'let') return 'Creates a new variable and sets its initial value.';
+        if (first === 'while') return 'Loop \u2014 repeats the code below while the condition is true.';
+        if (first === 'if') return 'Check \u2014 only runs the code below if the condition is true.';
+        if (first === 'return') return 'Outputs a value as the final answer.';
+        if (tokens.length >= 3 && tokens[1] === '=') return 'Updates the variable on the left with a new value.';
         return 'Code statement.';
+    }
+
+    function renderAnnotatedLine(lineEl, tokens, vars) {
+        // Build annotated HTML: show values under variable names
+        if (!vars || Object.keys(vars).length === 0) {
+            lineEl.innerHTML = '';
+            lineEl.textContent = tokens.join(' ');
+            return;
+        }
+        var html = '';
+        for (var i = 0; i < tokens.length; i++) {
+            var t = tokens[i];
+            if (i > 0) html += ' ';
+            if (vars.hasOwnProperty(t)) {
+                html += '<span class="exec-annotated">' + escapeHtml(t) + '<span class="exec-annotation">' + vars[t] + '</span></span>';
+            } else {
+                html += escapeHtml(t);
+            }
+        }
+        lineEl.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     function updateExecVars(vars, changedVar) {

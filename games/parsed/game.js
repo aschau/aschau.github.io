@@ -690,6 +690,20 @@
                 if (execCallback) execCallback();
             });
         }
+
+        // Step arrows
+        var stepPrev = document.getElementById('exec-step-prev');
+        var stepNext = document.getElementById('exec-step-next');
+        if (stepPrev) {
+            stepPrev.addEventListener('click', function () {
+                if (execCurrentStep > 0) showStepState(execCurrentStep - 1);
+            });
+        }
+        if (stepNext) {
+            stepNext.addEventListener('click', function () {
+                if (execSteps && execCurrentStep < execSteps.length - 1) showStepState(execCurrentStep + 1);
+            });
+        }
     }
 
     function handleTokenClick(e) {
@@ -915,6 +929,7 @@
     var execCallback = null;
     var execCodeLines = null;
     var execAnimating = false;
+    var execCurrentStep = -1;
 
     function runExecution(callback) {
         // Check reduced motion preference
@@ -1022,6 +1037,7 @@
 
     function showStepState(index) {
         if (!execSteps || index < 0 || index >= execSteps.length) return;
+        execCurrentStep = index;
 
         // If still animating, stop
         if (execAnimating) {

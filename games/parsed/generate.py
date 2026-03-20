@@ -22,12 +22,20 @@ class Interpreter:
     def __init__(self):
         self.vars = {}
         self.output = None
+        self.var_history = {}  # var_name -> [values] for scene config tracing
 
     def run(self, lines):
         self.vars = {}
         self.output = None
+        self.var_history = {}
         self._exec_block(lines, 0, len(lines) - 1)
         return self.output
+
+    def _track_var(self, name, value):
+        """Record variable value for scene config min/max computation."""
+        if name not in self.var_history:
+            self.var_history[name] = []
+        self.var_history[name].append(value)
 
     def _exec_block(self, lines, start, end):
         i = start
@@ -54,6 +62,7 @@ class Interpreter:
                 var_name = line[1]
                 expr = [t for t in line[3:] if t not in ('{', '}')]
                 self.vars[var_name] = self._eval_expr(expr)
+                self._track_var(var_name, self.vars[var_name])
                 i += 1
             elif first == 'return':
                 self.output = self._eval_expr(line[1:])
@@ -76,6 +85,7 @@ class Interpreter:
                 block_end = self._find_block_end(lines, i)
                 for fi in range(start_val, end_val + 1):  # inclusive
                     self.vars[var_name] = fi
+                    self._track_var(var_name, fi)
                     self._exec_block(lines, i + 1, block_end - 1)
                     if self.output is not None:
                         return
@@ -110,6 +120,7 @@ class Interpreter:
             else:
                 if len(line) >= 3 and line[1] == '=':
                     self.vars[line[0]] = self._eval_expr(line[2:])
+                    self._track_var(line[0], self.vars[line[0]])
                 i += 1
 
     def _get_condition(self, line):
@@ -330,6 +341,28 @@ def make_puzzle(lines_data, goal, share_result, difficulty, seed_id):
     else:
         par = 3
 
+    # Scene config: auto-derive from execution trace
+    return_var = None
+    for line in lines_data:
+        tokens = [t["t"] for t in line]
+        if tokens and tokens[0] == "return":
+            for t in line[1:]:
+                if t["y"] == "id":
+                    return_var = t["t"]
+                    break
+            break
+
+    scene = None
+    if return_var and return_var in interp.var_history:
+        values = interp.var_history[return_var]
+        scene = {
+            "emoji": goal.split(" ", 1)[0],
+            "driverVar": return_var,
+            "min": min(values),
+            "max": max(values),
+            "label": return_var.capitalize()
+        }
+
     return {
         "lines": lines_data,
         "goal": goal,
@@ -337,7 +370,8 @@ def make_puzzle(lines_data, goal, share_result, difficulty, seed_id):
         "shareResult": share_result,
         "par": par,
         "difficulty": difficulty,
-        "id": puzzle_id
+        "id": puzzle_id,
+        "scene": scene
     }
 
 
@@ -756,11 +790,11 @@ def generate_puzzles():
         ("health", 80, 80, 3, "-", 5, "\u2764\uFE0F", "Start with 80 HP. Lose 5 HP each of 3 poison ticks. Health remaining?", "\u2764\uFE0F HP: 65!"),
         ("altitude", 200, 200, 5, "-", 15, "\U0001F6AC", "A hot air balloon starts at 200 feet. It descends 15 feet each minute for 5 minutes. Altitude?", "\U0001F6AC Altitude: 125 feet!"),
         ("inventory", 30, 30, 4, "+", 8, "\U0001F4E6", "A warehouse starts with 30 items. Receive 8 new items each of 4 shipments. Total inventory?", "\U0001F4E6 Inventory: 62!"),
-        ("charge", 20, 20, 5, "+", 12, "\U0001F50B", "A battery starts at 20%. Charge 12% each hour for 5 hours. Charge level?", "\U0001F50B Charged: 80%!"),
+        ("charge", 20, 20, 5, "+", 12, "\U0001F50B", "A battery starts at 20% and gains 12% per plug-in. After 5 plug-ins, what's the charge?", "\U0001F50B Charged: 80%!"),
         ("fame", 10, 10, 3, "*", 2, "\u2B50", "Start with 10 fame. Double your fame each of 3 viral posts. Total fame?", "\u2B50 Famous: 80!"),
         ("temp", 40, 40, 4, "-", 6, "\u2744\uFE0F", "Start at 40 degrees. It drops 6 degrees each of 4 hours. Temperature?", "\u2744\uFE0F Chilly: 16 degrees!"),
         ("morale", 60, 60, 5, "+", 7, "\U0001F389", "Team morale starts at 60. Each of 5 wins adds 7 morale. Final morale?", "\U0001F389 Pumped: 95!"),
-        ("supplies", 100, 100, 6, "-", 12, "\U0001F3D5\uFE0F", "Start a camping trip with 100 supplies. Use 12 each of 6 days. Supplies left?", "\U0001F3D5\uFE0F Supplies: 28!"),
+        ("supplies", 100, 100, 6, "-", 12, "\U0001F3D5\uFE0F", "Start a camping trip with 100 supplies and use 12 per outing. After 6 outings, how many supplies remain?", "\U0001F3D5\uFE0F Supplies: 28!"),
     ]
     for vr, v_start, n_start, n_end, k_op, k_val, emoji, goal, share in for_custom_start_themes:
         add(tmpl_for_custom_start(vr, v_start, n_start, n_end, k_op, k_val, emoji, goal, share, f"parsed_{idx:03d}"))
@@ -814,13 +848,13 @@ def generate_puzzles():
     for_if_themes = [
         # (vr, n_end, threshold, emoji, goal, share)
         ("loot", 8, 4, "\U0001FA99", "A dungeon has 8 rooms. Only rooms numbered above 4 have treasure. Collect room numbers as loot. Total loot?", "\U0001FA99 Loot: 26!"),
-        ("score", 10, 6, "\U0001F3AF", "Play 10 rounds. Only rounds after round 6 score big — add the round number. Total score?", "\U0001F3AF Bonus: 34!"),
+        ("score", 10, 6, "\U0001F3AF", "Play 10 rounds. The first 6 are warm-up, but each one after scores big — add its number. Total score?", "\U0001F3AF Bonus: 34!"),
         ("harvest", 7, 3, "\U0001F33E", "Harvest 7 fields. Only mature ones (above 3) produce yield equal to their number. Total harvest?", "\U0001F33E Harvest: 22!"),
         ("xp", 6, 2, "\U0001F47E", "Fight 6 monsters. Only the tough ones (above level 2) award XP equal to their level. Total XP?", "\U0001F47E XP: 18!"),
-        ("power", 9, 5, "\u26A1", "A machine runs 9 cycles. Only cycles above 5 generate power equal to the cycle number. Total power?", "\u26A1 Power: 30!"),
+        ("power", 9, 5, "\u26A1", "A machine runs 9 cycles. The first 5 are warm-up, but each one after generates power equal to its number. Total power?", "\u26A1 Power: 30!"),
         ("tips", 8, 3, "\U0001F4B0", "Serve 8 tables. Only big parties (table number above 3) tip their table number. Total tips?", "\U0001F4B0 Tips: 30!"),
         ("gems", 7, 4, "\U0001F48E", "Explore 7 caves. Only deep caves (above 4) contain gems equal to the cave number. Total gems?", "\U0001F48E Gems: 18!"),
-        ("points", 10, 7, "\U0001F3C6", "A 10-round tournament. Only the finals (rounds above 7) award points equal to the round. Total points?", "\U0001F3C6 Points: 27!"),
+        ("points", 10, 7, "\U0001F3C6", "A 10-round tournament. The first 7 are qualifiers, but each final awards points equal to its number. Total points?", "\U0001F3C6 Points: 27!"),
         ("stars", 6, 3, "\u2B50", "A telescope scans 6 sectors. Only bright sectors (above 3) reveal stars equal to the sector number. Total stars?", "\u2B50 Stars: 15!"),
         ("notes", 8, 5, "\U0001F3B5", "An 8-bar solo. Only the last bars (above bar 5) hit the high notes. Sum of those bar numbers?", "\U0001F3B5 Solo: 21!"),
     ]
@@ -867,8 +901,8 @@ def generate_puzzles():
          "\U0001F327\uFE0F", "The forecast calls for rain. If it's wet enough, crops triple. Otherwise they wither. Harvest?", "\U0001F327\uFE0F Bumper crop!\nHarvest: 60"),
         ("level", 10, "boss", 8, ">", "outcome", "level", "*", 2, "level", "-", 3,
          "\U0001F47E", "You encounter the boss! If your level is higher, you deal double damage. Otherwise, you take a hit. Outcome?", "\U0001F47E Victory!\nOutcome: 20"),
-        ("speed", 50, "limit", 60, "<", "fine", "speed", "+", 0, "speed", "-", 10,
-         "\U0001F6A8", "A car passes a speed trap. Under the limit? Drive on. Over? Get a fine. What's the fine?", "\U0001F6A8 Drive safe!\nResult: 50"),
+        ("speed", 50, "limit", 60, "<", "result", "speed", "+", 0, "speed", "-", 10,
+         "\U0001F6A8", "A car checks its speed against the limit. Under? Keep cruising at current speed. Over? Slow down. Result?", "\U0001F6A8 Drive safe!\nResult: 50"),
         ("hunger", 30, "fullness", 20, ">", "eat", "hunger", "-", 10, "hunger", "+", 5,
          "\U0001F354", "Lunchtime! If you're still hungry, eat a full meal. If not, just grab a snack. Hunger level?", "\U0001F354 Lunch break!\nHunger: 20"),
         ("gold", 100, "price", 80, ">", "remaining", "gold", "-", 80, "gold", "+", 10,
@@ -987,20 +1021,20 @@ def generate_puzzles():
         ("deposit", 25, "savings", 6, "\U0001F4B5", "Deposit $25 each month for 6 months. Total savings?", "\U0001F4B5 Saved: $150"),
         ("xp", 15, "total", 4, "\u2B50", "Earn 15 XP per quest, 4 quests. What's the total?", "\u2B50 XP: 60"),
         ("harvest", 8, "bushels", 7, "\U0001F33E", "Harvest 8 units per field, 7 fields. Total bushels?", "\U0001F33E Harvested: 56"),
-        ("petals", 6, "bouquets", 5, "\U0001F33A", "Pick 6 petals per flower, 5 flowers. Total bouquets?", "\U0001F33A Petals: 30"),
-        ("paint", 3, "layers", 8, "\U0001F3A8", "Apply 3 coats per layer, 8 layers. Coverage?", "\U0001F3A8 Coverage: 24"),
-        ("bricks", 12, "rows", 5, "\U0001F9F1", "Lay 12 bricks per row, 5 rows. Total?", "\U0001F9F1 Bricks: 60"),
-        ("scoops", 2, "cones", 6, "\U0001F366", "Put 2 scoops per cone, 6 cones. Total?", "\U0001F366 Scoops: 12"),
-        ("laps", 5, "total", 4, "\U0001F3CA", "Swim 5 laps per session, 4 sessions. Total?", "\U0001F3CA Laps: 20"),
-        ("throws", 9, "innings", 3, "\u26BE", "Throw 9 pitches per inning, 3 innings. Total?", "\u26BE Pitches: 27"),
-        ("lines", 8, "pages", 6, "\U0001F4DD", "Write 8 lines per page, 6 pages. Total?", "\U0001F4DD Lines: 48"),
-        ("notes", 4, "measures", 8, "\U0001F3B5", "Play 4 notes per measure, 8 measures. Total?", "\U0001F3B5 Notes: 32"),
-        ("blocks", 6, "towers", 4, "\U0001F3D7\uFE0F", "Stack 6 blocks per tower, 4 towers. Total?", "\U0001F3D7\uFE0F Blocks: 24"),
-        ("samples", 3, "tests", 7, "\U0001F52C", "Analyze 3 samples per test, 7 tests. Total?", "\U0001F52C Samples: 21"),
-        ("sparks", 5, "fireworks", 6, "\U0001F386", "Each firework has 5 sparks, 6 fireworks. Total?", "\U0001F386 Sparks: 30"),
-        ("stitches", 15, "patches", 3, "\U0001F9F5", "Sew 15 stitches per patch, 3 patches. Total?", "\U0001F9F5 Stitches: 45"),
-        ("drops", 8, "vials", 5, "\U0001F9EA", "Add 8 drops per vial, 5 vials. Total?", "\U0001F9EA Drops: 40"),
-        ("coins", 11, "chests", 4, "\U0001FA99", "Find 11 coins per chest, 4 chests. Total?", "\U0001FA99 Coins: 44"),
+        ("petals", 6, "total", 5, "\U0001F33A", "Pick 6 petals per flower, 5 flowers. How many total?", "\U0001F33A Petals: 30"),
+        ("paint", 3, "coats", 8, "\U0001F3A8", "Apply 3 coats per layer, 8 layers. How many coats?", "\U0001F3A8 Coverage: 24"),
+        ("bricks", 12, "total", 5, "\U0001F9F1", "Lay 12 bricks per row, 5 rows. How many total?", "\U0001F9F1 Bricks: 60"),
+        ("scoops", 2, "total", 6, "\U0001F366", "Put 2 scoops per cone, 6 cones. How many total?", "\U0001F366 Scoops: 12"),
+        ("laps", 5, "total", 4, "\U0001F3CA", "Swim 5 laps per session, 4 sessions. How many total?", "\U0001F3CA Laps: 20"),
+        ("throws", 9, "total", 3, "\u26BE", "Throw 9 pitches per inning, 3 innings. How many total?", "\u26BE Pitches: 27"),
+        ("lines", 8, "total", 6, "\U0001F4DD", "Write 8 lines per page, 6 pages. How many total?", "\U0001F4DD Lines: 48"),
+        ("notes", 4, "total", 8, "\U0001F3B5", "Play 4 notes per measure, 8 measures. How many total?", "\U0001F3B5 Notes: 32"),
+        ("blocks", 6, "total", 4, "\U0001F3D7\uFE0F", "Stack 6 blocks per tower, 4 towers. How many total?", "\U0001F3D7\uFE0F Blocks: 24"),
+        ("samples", 3, "total", 7, "\U0001F52C", "Analyze 3 samples per test, 7 tests. How many total?", "\U0001F52C Samples: 21"),
+        ("sparks", 5, "total", 6, "\U0001F386", "Each firework has 5 sparks, 6 fireworks. How many total?", "\U0001F386 Sparks: 30"),
+        ("stitches", 15, "total", 3, "\U0001F9F5", "Sew 15 stitches per patch, 3 patches. How many total?", "\U0001F9F5 Stitches: 45"),
+        ("drops", 8, "total", 5, "\U0001F9EA", "Add 8 drops per vial, 5 vials. How many total?", "\U0001F9EA Drops: 40"),
+        ("coins", 11, "total", 4, "\U0001FA99", "Find 11 coins per chest, 4 chests. How many total?", "\U0001FA99 Coins: 44"),
     ]
     for v1, n1, vr, limit, emoji, goal, share in while_counter:
         add(tmpl_while_counter(v1, n1, vr, limit, emoji, goal, share, f"parsed_{idx:03d}"))
@@ -1023,7 +1057,7 @@ def generate_puzzles():
         ("rainfall", 5, "water", "cistern", 2, 6, "\U0001F327\uFE0F", "Monsoon season! Rainfall increases by 2 each day. How much water fills the cistern after 6 days?", "\U0001F327\uFE0F Cistern full!\nWater: 60"),
         ("talent", 3, "fame", "celebrity", 2, 4, "\U0001F31F", "An entertainer's talent grows by 2 with each show. How famous after 4 shows?", "\U0001F31F Star born!\nFame: 24"),
         ("seeds", 6, "planted", "garden", 2, 5, "\U0001F33B", "A gardener plants more seeds each day (+2). How many planted after 5 days?", "\U0001F33B Garden full!\nPlanted: 50"),
-        ("exp", 10, "total", "skill", 5, 4, "\U0001F3AF", "An adventurer earns more XP each level (+5 per level). What's the total?", "\U0001F3AF Leveled up!\nSkill: 70"),
+        ("exp", 10, "xp", "skill", 5, 4, "\U0001F3AF", "An adventurer earns 10 XP on the first quest, then 5 more XP per quest beyond that. Total XP from 4 quests?", "\U0001F3AF Leveled up!\nSkill: 70"),
         ("voltage", 4, "charge", "capacitor", 3, 3, "\u26A1", "A capacitor builds voltage faster each pulse (+3). How much charge after 3 pulses?", "\u26A1 Charged!\nVoltage: 21"),
         ("heat", 15, "energy", "reactor", 5, 3, "\u2622\uFE0F", "A reactor's heat output increases by 5 each cycle. Total energy after 3 cycles?", "\u2622\uFE0F Reactor hot!\nEnergy: 60"),
         ("likes", 7, "followers", "social", 4, 4, "\U0001F44D", "Each post earns 4 more likes than the last as the account grows. Followers after 4 posts?", "\U0001F44D Going viral!\nFollowers: 46"),
@@ -1127,7 +1161,7 @@ def generate_puzzles():
         [id_f("hours"), op("="), id_f("hours"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("hours")],
-    ], "\U0001F321\uFE0F Heat rises 8 degrees/hour. Hours to reach 45?",
+    ], "\U0001F321\uFE0F Starting at 5 degrees, warmth adds 8 each tick. How many hours to reach 45?",
        "\U0001F321\uFE0F Warm! 5 hours", "medium", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
@@ -2005,8 +2039,8 @@ def generate_puzzles():
 
     # More for loop + if
     extra_for_if = [
-        ("points", 10, 5, "\U0001F3C5", "A judge scores 10 rounds. Only rounds above 5 earn points equal to the round number. Total points?", "\U0001F3C5 Points: 40!"),
-        ("profit", 8, 4, "\U0001F4B0", "Run a shop for 8 days. Only busy days (above day 4) earn profit equal to the day. Total profit?", "\U0001F4B0 Profit: 26!"),
+        ("points", 10, 5, "\U0001F3C5", "A judge scores 10 rounds. The first 5 don't count, but each one after earns points equal to its number. Total points?", "\U0001F3C5 Points: 40!"),
+        ("profit", 8, 4, "\U0001F4B0", "Run a shop for 8 days. The first 4 are slow, but each busy one after that earns profit equal to its number. Total profit?", "\U0001F4B0 Profit: 26!"),
         ("letters", 7, 3, "\u2709\uFE0F", "Write 7 letters. Only long ones (above 3) need postage equal to the letter number. Total letters?", "\u2709\uFE0F Letters: 22!"),
     ]
     for vr, n_end, threshold, emoji, goal, share in extra_for_if:
@@ -2166,7 +2200,7 @@ def generate_puzzles():
     more_for = [
         ("shells", 5, 4, "\U0001F41A", "Collect 4 shells from each of 5 beaches. How many shells?", "\U0001F41A Collected: 20 shells!"),
         ("arrows", 6, 3, "\U0001F3F9", "Fire 3 arrows each round for 6 rounds. Total arrows shot?", "\U0001F3F9 Fired: 18 arrows!"),
-        ("notes", 4, 8, "\U0001F3B5", "Learn 8 notes each day for 4 days. How many notes total?", "\U0001F3B5 Learned: 32 notes!"),
+        ("notes", 4, 8, "\U0001F3B5", "Practice 8 notes per session for 4 sessions. How many notes total?", "\U0001F3B5 Learned: 32 notes!"),
         ("frames", 5, 6, "\U0001F3AC", "Render 6 frames each second for 5 seconds. Total frames?", "\U0001F3AC Rendered: 30 frames!"),
         ("seeds", 7, 4, "\U0001F331", "Plant 4 seeds in each of 7 pots. How many seeds?", "\U0001F331 Planted: 28 seeds!"),
         ("laps", 8, 3, "\U0001F3CA", "Swim 3 laps each set for 8 sets. Total laps?", "\U0001F3CA Swam: 24 laps!"),
@@ -2186,8 +2220,8 @@ def generate_puzzles():
         add(tmpl_for_triangular(vr, n_end, emoji, goal, share, f"parsed_{idx:03d}"))
 
     more_for_mul = [
-        ("rumor", 3, 6, "\U0001F5E3\uFE0F", "A rumor spreads — each person tells 3 others for 6 rounds. How big is the rumor?", "\U0001F5E3\uFE0F Rumor: 729 people!"),
-        ("cells", 2, 5, "\U0001F9EC", "A cell divides: doubles each hour for 5 hours. How many cells?", "\U0001F9EC Cells: 32!"),
+        ("rumor", 3, 6, "\U0001F5E3\uFE0F", "A rumor spreads — each person tells 6 others for 3 rounds. How big is the rumor?", "\U0001F5E3\uFE0F Rumor: 216 people!"),
+        ("cells", 2, 5, "\U0001F9EC", "A cell multiplies 5-fold each cycle for 2 cycles. How many cells?", "\U0001F9EC Cells: 25!"),
     ]
     for vr, start_val, n_end, emoji, goal, share in more_for_mul:
         add(tmpl_for_multiply(vr, start_val, n_end, emoji, goal, share, f"parsed_{idx:03d}"))

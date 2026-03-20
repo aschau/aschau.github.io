@@ -23,6 +23,7 @@ A daily code puzzle game. Swap scrambled code tokens to fix buggy programs and m
 Run: `python generate.py`. Outputs `puzzles.js`.
 - Template functions create token structures, theme data provides variable names/values/goals
 - Par computed from simulated scramble (min_swaps + 3)
+- Scene configs (`puzzle.scene`) auto-derived from execution trace (driverVar, min, max, emoji, label)
 - Puzzles shuffled with seed 42 for even difficulty distribution
 
 ## Verification
@@ -30,7 +31,7 @@ Run: `python verify_puzzles.py`. Checks: structural validity, interpreter execut
 
 ## Execution Animation
 - 1400ms per step with inline value annotations (green numbers above variable names)
-- Themed scene strip (emoji progress bar driven by key variable, configs in `SCENE_CONFIGS`)
+- Themed scene strip (emoji progress bar driven by key variable, configs auto-generated in `puzzle.scene` by `generate.py`)
 - Step timeline with prev/next arrows, dot track (hidden if >20 steps), step counter
 - Replay/Continue buttons, tappable lines for explanations after completion
 - Walkthrough button in win modal to re-open animation

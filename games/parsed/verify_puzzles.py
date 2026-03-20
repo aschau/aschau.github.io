@@ -338,6 +338,129 @@ def validate_expr(tokens, line_num, declared, assign_target=None):
 
 
 # ============================================
+# Scramble Simulation (matches game.js exactly)
+# ============================================
+
+def hash_string(s):
+    """Matches game.js hashString."""
+    h = 0
+    for ch in s:
+        h = ((h << 5) - h + ord(ch)) & 0xFFFFFFFF
+        if h >= 0x80000000:
+            h -= 0x100000000
+    return h
+
+
+def seeded_rng(seed):
+    """Matches game.js seededRng."""
+    s = [seed & 0xFFFFFFFF]
+
+    def rng():
+        s[0] = (s[0] + 0x6D2B79F5) & 0xFFFFFFFF
+        t = s[0] ^ (s[0] >> 15)
+        # Math.imul approximation
+        t = imul(t, 1 | (s[0] & 0xFFFFFFFF)) & 0xFFFFFFFF
+        t = (t + (imul(t ^ (t >> 7), 61 | (t & 0xFFFFFFFF)) & 0xFFFFFFFF)) & 0xFFFFFFFF
+        t = t ^ t
+        t = (t ^ (t >> 14)) & 0xFFFFFFFF
+        return t / 4294967296
+
+    return rng
+
+
+def imul(a, b):
+    """Matches JS Math.imul — 32-bit integer multiply."""
+    a = a & 0xFFFFFFFF
+    b = b & 0xFFFFFFFF
+    result = (a * b) & 0xFFFFFFFF
+    if result >= 0x80000000:
+        result -= 0x100000000
+    return result
+
+
+def simulate_scramble(solution_order, puzzle_id):
+    """Replicate the game's seeded Fisher-Yates shuffle."""
+    texts = solution_order[:]
+    h = hash_string(puzzle_id or 'puzzle')
+
+    # The game tries multiple attempts until scrambled != solution
+    for attempt in range(100):
+        seed = h + attempt * 7919
+        s = [seed & 0xFFFFFFFF]
+
+        def make_rng(seed_val):
+            state = [seed_val & 0xFFFFFFFF]
+            def rng():
+                state[0] = (state[0] + 0x6D2B79F5) & 0xFFFFFFFF
+                t = state[0] ^ (state[0] >> 15)
+                t = (t * (1 | state[0])) & 0xFFFFFFFF
+                t = (t + ((t ^ (t >> 7)) * (61 | t) & 0xFFFFFFFF)) & 0xFFFFFFFF
+                t = (t ^ (t >> 14)) & 0xFFFFFFFF
+                return t / 4294967296
+            return rng
+
+        rng = make_rng(seed)
+        texts = solution_order[:]
+        for i in range(len(texts) - 1, 0, -1):
+            j = int(rng() * (i + 1))
+            texts[i], texts[j] = texts[j], texts[i]
+
+        if texts != solution_order:
+            break
+
+    return texts
+
+
+def count_min_swaps(scrambled, target):
+    """Count minimum swaps to go from scrambled to target order.
+
+    Handles duplicate values by tracking positions, not just values.
+    For tokens with duplicates, we try the assignment that minimizes swaps.
+    """
+    n = len(scrambled)
+    if n != len(target):
+        return n  # shouldn't happen
+
+    # For simple case (all unique), count cycles in permutation
+    # For duplicates, use greedy matching
+    # Build position mapping: where does each target token need to come from?
+    used = [False] * n
+    perm = [0] * n
+
+    for i in range(n):
+        # Find the best source for target[i] in scrambled
+        best = -1
+        for j in range(n):
+            if not used[j] and scrambled[j] == target[i]:
+                if j == i:
+                    best = j
+                    break  # already in place, perfect
+                if best == -1:
+                    best = j
+        if best == -1:
+            return n  # can't solve — shouldn't happen
+        used[best] = True
+        perm[i] = best
+
+    # Count cycles — swaps = n - num_cycles
+    visited = [False] * n
+    cycles = 0
+    for i in range(n):
+        if visited[i] or perm[i] == i:
+            if not visited[i]:
+                cycles += 1
+                visited[i] = True
+            continue
+        cycles += 1
+        j = i
+        while not visited[j]:
+            visited[j] = True
+            j = perm[j]
+
+    return n - cycles
+
+
+# ============================================
 # Full Verification Pipeline
 # ============================================
 
@@ -349,12 +472,14 @@ def verify_puzzle(puzzle, index):
     # Extract solution code lines
     code_lines = []
     movable_tokens = []
+    movable_tokens_raw = []
     for line in puzzle['lines']:
         tokens = [t['t'] for t in line]
         code_lines.append(tokens)
         for t in line:
             if not t['f']:
                 movable_tokens.append(t['t'])
+                movable_tokens_raw.append(t)
 
     # 1. Structural validation
     struct_errors = validate_structure(code_lines)
@@ -413,14 +538,65 @@ def verify_puzzle(puzzle, index):
     par = puzzle.get('par', 0)
     if par < 2:
         issues.append(f"QUALITY: par={par} is too low")
-    if par > 20:
+    if par > 30:
         issues.append(f"QUALITY: par={par} is unusually high")
 
     # Check output is not empty/weird
     if puzzle['output'] in ('None', 'undefined', ''):
         issues.append(f"QUALITY: output is '{puzzle['output']}'")
 
-    # 7. Check for duplicate IDs (done at batch level, not here)
+    # 7. Wording consistency: return variable should relate to the goal text
+    goal_lower = puzzle.get('goal', '').lower()
+    if solution_return:
+        ret_name = solution_return[0] if len(solution_return) == 1 else None
+        if ret_name and ret_name not in KEYWORDS:
+            ret_lower = ret_name.lower()
+            ret_stem = ret_lower.rstrip('s').rstrip('ed').rstrip('ing')
+            found_in_goal = (
+                ret_lower in goal_lower or
+                ret_stem in goal_lower or
+                ret_lower + 's' in goal_lower
+            )
+            if not found_in_goal:
+                all_vars = set()
+                for line in puzzle['lines']:
+                    for t in line:
+                        if t['y'] == 'id':
+                            all_vars.add(t['t'])
+                issues.append(
+                    f"WORDING: return var '{ret_name}' not mentioned in goal. "
+                    f"Vars: {sorted(all_vars)}. Goal: {puzzle['goal'][:80]}..."
+                )
+
+            # Also check: does the goal's question use a DIFFERENT word than the var?
+            # e.g., goal asks "How many graduate?" but var is "passed"
+            import re
+            question_words = re.findall(r'how (?:many|much) (\w+)', goal_lower)
+            question_words += re.findall(r'what.s the (\w+)', goal_lower)
+            question_words += re.findall(r'total (\w+)', goal_lower)
+            for qw in question_words:
+                qw_stem = qw.rstrip('s').rstrip('ed').rstrip('ing').rstrip('?')
+                if qw_stem and ret_stem and qw_stem != ret_stem and qw not in ret_lower and ret_stem not in qw:
+                    issues.append(
+                        f"WORDING: goal asks about '{qw}' but return var is '{ret_name}' — consider renaming"
+                    )
+
+    # 8. Scramble simulation — verify puzzle is solvable at par
+    solution_order = [t['t'] for t in movable_tokens_raw if not t['f']]
+    if len(solution_order) >= 2:
+        scrambled = simulate_scramble(solution_order, puzzle.get('id', ''))
+        if scrambled == solution_order:
+            issues.append("SCRAMBLE: puzzle is already solved after scrambling — not a real puzzle")
+        else:
+            min_swaps = count_min_swaps(scrambled, solution_order)
+            par = puzzle.get('par', 0)
+            if min_swaps > par:
+                issues.append(
+                    f"PAR: minimum swaps ({min_swaps}) exceeds par ({par}) — "
+                    f"puzzle is unsolvable at par"
+                )
+
+    # 9. Check for duplicate IDs (done at batch level, not here)
 
     return issues
 
@@ -435,6 +611,7 @@ def load_puzzles(filename):
 
 
 def main():
+    sys.stdout.reconfigure(encoding='utf-8')
     script_dir = os.path.dirname(os.path.abspath(__file__))
     puzzles_file = os.path.join(script_dir, 'puzzles.js')
 

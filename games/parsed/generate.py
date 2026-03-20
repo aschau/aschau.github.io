@@ -1991,7 +1991,7 @@ def generate_puzzles():
 
     # More for loop + if
     extra_for_if = [
-        ("medals", 10, 5, "\U0001F3C5", "Compete in 10 events. Only events above 5 earn a medal equal to the event number. Total medals?", "\U0001F3C5 Medals: 40!"),
+        ("points", 10, 5, "\U0001F3C5", "A judge scores 10 rounds. Only rounds above 5 earn points equal to the round number. Total points?", "\U0001F3C5 Points: 40!"),
         ("profit", 8, 4, "\U0001F4B0", "Run a shop for 8 days. Only busy days (above day 4) earn profit equal to the day. Total profit?", "\U0001F4B0 Profit: 26!"),
         ("letters", 7, 3, "\u2709\uFE0F", "Write 7 letters. Only long ones (above 3) need postage equal to the letter number. Total letters?", "\u2709\uFE0F Letters: 22!"),
     ]

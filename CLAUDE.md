@@ -182,16 +182,17 @@ A daily code puzzle game. Swap scrambled code tokens to fix buggy programs and m
 - **Files**: `index.html`, `style.css`, `game.js` (core engine), `puzzles.js` (inline puzzle data + daily selection), `share.js` (clipboard sharing), `generate.py` (puzzle generator), `verify_puzzles.py` (puzzle validator)
 - **Puzzle data**: 30 themed puzzles stored inline in `puzzles.js`. Each puzzle has a 2D `lines` array of tokens, a `goal` (prompt text), expected `output`, `par`, `difficulty`, and `id`. Do not edit `puzzles.js` manually.
 - **Token format**: Each token is `{t, y, f}` — `t` is text, `y` is category (`kw`=keyword, `id`=identifier, `op`=operator, `lit`=literal, `pn`=punctuation), `f` is fixed flag (1=immovable, 0=swappable). Players can only swap tokens where `f===0`.
-- **Validation**: Three-stage validation in `tryRunCode()`:
-  1. **Structural** (`validateStructure`): checks syntax (declarations, conditions, assignments)
-  2. **Execution** (`PseudoInterpreter`): runs the code and captures output + final variable states
-  3. **Logic**: compares final variable values against the solution. This allows equivalent expressions (`a+b` == `b+a`) but catches cheats like bypassing loops or misassigning variables. Shows "LOGIC ERROR" if output is correct but variable states don't match.
-- **Interpreter**: `PseudoInterpreter` class — left-to-right evaluation (no operator precedence), integer division with floor, max 200 steps / 50 loop iterations. Tracks `vars` (variable state) and `output` (return value).
-- **Scrambling**: Seeded Fisher-Yates shuffle (deterministic per puzzle `id`). Only movable tokens are shuffled. `solutionOrder` stores correct arrangement; `solutionVars` stores expected final variable state.
+- **Validation**: Four-stage validation in `tryRunCode()`:
+  1. **Structural** (`validateStructure`): checks syntax, tracks `let` declarations, and catches undeclared variable usage. Assignment to undeclared variable → "can't assign to 'x' — not declared". Using undeclared var in expression → "can't set 'x' to 'y' — 'y' not declared". Undeclared var in condition → "'x' is not defined".
+  2. **Execution** (`PseudoInterpreter`): runs the code and captures output + final variable states. `resolveValue` throws on undeclared variables (never silently returns 0). Assignment to undeclared variables throws. Infinite loops (50+ iterations with condition still true) throw "infinite loop detected".
+  3. **Return check**: compares player's return expression tokens against `solutionReturn` (the solution's return line). Runs BEFORE output comparison so "return fuel" instead of "return altitude" shows "returning the wrong value" even when the output number differs.
+  4. **Logic**: compares final variable values against `solutionVars`. Allows equivalent expressions (`a+b` == `b+a`) but catches cheats like bypassing loops. Shows "LOGIC ERROR" if output is correct but variable states don't match.
+- **Interpreter**: `PseudoInterpreter` class — left-to-right evaluation (no operator precedence), integer division with floor, max 200 steps / 50 loop iterations (throws on infinite loops). Tracks `vars` (variable state) and `output` (return value). `resolveValue` throws on undeclared variables.
+- **Scrambling**: Seeded Fisher-Yates shuffle (deterministic per puzzle `id`). Only movable tokens are shuffled. `solutionOrder` stores correct arrangement; `solutionVars` stores expected final variable state; `solutionReturn` stores expected return line tokens.
 - **Daily puzzle**: Selected by date offset from `LAUNCH_EPOCH` in `puzzles.js`. Cycles through 30 puzzles.
 - **Scoring**: Par system (golf-style). Best score across resets is saved.
 - **Persistence**: `localStorage` key `parsed_data` stores today's board state, stats, streaks. `SAVE_VERSION` constant — bump when format changes.
-- **Execution animation**: On win, replays code execution step-by-step (400ms per step) with line highlighting and variable state panel.
+- **Execution animation**: On win, replays code execution step-by-step (700ms per step) with line highlighting, variable state panel, and themed scene strip. The scene strip shows the puzzle's emoji sliding along a progress bar driven by the key variable (e.g., rocket emoji tracks altitude, sword emoji tracks rooms cleared). Scene configs are in `SCENE_CONFIGS` in `game.js`, keyed by puzzle `id`. The puzzle's `goal` text is shown at the top for context, and the output label uses the scene's `label` (e.g., "Altitude: 100" instead of generic "Output: 100").
 - **Theme**: Dark glassmorphism default, light mode override. Manual toggle saved in `localStorage` key `parsed_theme`.
 - **Fonts**: Xolonium for title (loaded from `../../fonts/`), Inter (Google Fonts) for body.
 - **Share**: Narrative share text with score label, swap count, and streak. Web Share API with clipboard fallback.

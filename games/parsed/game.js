@@ -16,6 +16,7 @@
     var movableTokens = [];   // subset of currentTokens where f===0
     var solutionOrder = [];   // the correct text values for each movable slot
     var solutionVars = null;  // expected final variable state from correct arrangement
+    var solutionReturn = null; // expected return line tokens from correct arrangement
     var selectedIndex = null; // index into movableTokens of currently selected token
     var swapCount = 0;
     var moveHistory = [];     // [{a, b}] indices into movableTokens
@@ -78,6 +79,18 @@
         solutionOrder = [];
         for (var i = 0; i < movableTokens.length; i++) {
             solutionOrder.push(movableTokens[i].t);
+        }
+
+        // Capture the solution's return line tokens
+        solutionReturn = null;
+        for (var rl = 0; rl < puzzle.lines.length; rl++) {
+            if (puzzle.lines[rl][0].t === 'return') {
+                solutionReturn = [];
+                for (var rc = 1; rc < puzzle.lines[rl].length; rc++) {
+                    solutionReturn.push(puzzle.lines[rl][rc].t);
+                }
+                break;
+            }
         }
 
         // Run the solution to capture expected final variable state
@@ -382,6 +395,33 @@
             var outputStr = String(output);
             if (typeof output === 'boolean') outputStr = output ? 'true' : 'false';
 
+            // Check return expression FIRST — catches returning the wrong
+            // variable (e.g. 'return fuel' instead of 'return altitude')
+            // regardless of whether the output value happens to match.
+            if (solutionReturn) {
+                var playerReturn = null;
+                for (var ri = 0; ri < codeLines.length; ri++) {
+                    if (codeLines[ri][0] === 'return') {
+                        playerReturn = codeLines[ri].slice(1);
+                        break;
+                    }
+                }
+                if (playerReturn) {
+                    var returnMatch = playerReturn.length === solutionReturn.length;
+                    if (returnMatch) {
+                        for (var rj = 0; rj < solutionReturn.length; rj++) {
+                            if (playerReturn[rj] !== solutionReturn[rj]) {
+                                returnMatch = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (!returnMatch) {
+                        return { success: false, type: 'logic', output: outputStr, errors: ['> returning the wrong value \u2014 re-read the prompt'] };
+                    }
+                }
+            }
+
             if (outputStr === puzzle.output) {
                 // Output matches — verify the logic is correct by comparing
                 // final variable states against the solution. This allows
@@ -413,13 +453,15 @@
                 return { success: false, type: 'output', errors: ['> returned ' + outputStr + ', expected ' + puzzle.output] };
             }
         } catch (e) {
-            return { success: false, type: 'compile', errors: ['error: unexpected token arrangement'] };
+            var errMsg = e.message || 'unexpected token arrangement';
+            return { success: false, type: 'compile', errors: ['error: ' + errMsg] };
         }
     }
 
 
     function validateStructure(codeLines) {
         var errors = [];
+        var declared = {}; // track variables declared with 'let'
         for (var i = 0; i < codeLines.length; i++) {
             var line = codeLines[i];
             var ln = i + 1;
@@ -443,9 +485,11 @@
                     errors.push('line ' + ln + ': \'' + line[1] + '\' is a keyword, not a variable name');
                 } else if (isOperator(line[1])) {
                     errors.push('line ' + ln + ': unexpected operator \'' + line[1] + '\' in declaration');
+                } else {
+                    declared[line[1]] = true;
                 }
-                // Check expression tokens after =
-                var exprErr = validateExpr(line.slice(3), ln);
+                // Check expression tokens after = (variables used here must already be declared)
+                var exprErr = validateExpr(line.slice(3), ln, declared, line[1]);
                 if (exprErr) errors.push(exprErr);
             } else if (first === 'while' || first === 'if') {
                 // while/if <expr> <op> <expr> {
@@ -464,10 +508,21 @@
                     if (!hasComp) {
                         errors.push('line ' + ln + ': missing comparison operator in ' + first + ' condition');
                     }
+                    // Check that variables in condition are declared
+                    for (var j2 = 1; j2 < line.length - 1; j2++) {
+                        var ct = line[j2];
+                        if (!isOperator(ct) && !isKeyword(ct) && ct !== '{' && ct !== '}' && isNaN(Number(ct)) && !declared[ct]) {
+                            errors.push('line ' + ln + ': \'' + ct + '\' is not defined');
+                            break;
+                        }
+                    }
                 }
             } else if (first === 'return') {
                 if (line.length < 2) {
                     errors.push('line ' + ln + ': return with no value');
+                } else {
+                    var retErr = validateExpr(line.slice(1), ln, declared);
+                    if (retErr) errors.push(retErr);
                 }
             } else {
                 // Assignment: <id> = <expr>
@@ -479,13 +534,19 @@
                     errors.push('line ' + ln + ': unexpected keyword \'' + first + '\'');
                 } else if (isOperator(first)) {
                     errors.push('line ' + ln + ': unexpected operator \'' + first + '\' at start of line');
+                } else if (!declared[first]) {
+                    errors.push('line ' + ln + ': can\'t assign to \'' + first + '\' — not declared');
+                } else {
+                    // Check expression tokens after =
+                    var assignErr = validateExpr(line.slice(2), ln, declared, first);
+                    if (assignErr) errors.push(assignErr);
                 }
             }
         }
         return errors;
     }
 
-    function validateExpr(tokens, lineNum) {
+    function validateExpr(tokens, lineNum, declared, assignTarget) {
         // Check for obvious issues: two operators in a row, operator at start/end
         var filtered = tokens.filter(function (t) { return t !== '{' && t !== '}'; });
         if (filtered.length === 0) return null;
@@ -498,6 +559,18 @@
         for (var i = 0; i < filtered.length - 1; i++) {
             if (isArithOp(filtered[i]) && isArithOp(filtered[i + 1])) {
                 return 'line ' + lineNum + ': unexpected operator \'' + filtered[i + 1] + '\' after \'' + filtered[i] + '\'';
+            }
+        }
+        // Check for undeclared variables in expression
+        if (declared) {
+            for (var j = 0; j < filtered.length; j++) {
+                var tok = filtered[j];
+                if (!isArithOp(tok) && !isOperator(tok) && !isKeyword(tok) && isNaN(Number(tok)) && tok !== '' && !declared[tok]) {
+                    if (assignTarget) {
+                        return 'line ' + lineNum + ': can\'t set \'' + assignTarget + '\' to \'' + tok + '\' \u2014 \'' + tok + '\' not declared';
+                    }
+                    return 'line ' + lineNum + ': \'' + tok + '\' is not defined';
+                }
             }
         }
         return null;
@@ -776,6 +849,40 @@
     // Execution Animation (Human Resource Machine style)
     // =============================================
 
+    // Scene config: emoji + driver variable for each puzzle's visual animation
+    var SCENE_CONFIGS = {
+        '2de6ff34': { emoji: '\uD83D\uDE80', driverVar: 'altitude', min: 0, max: 100, label: 'Altitude' },
+        '04c2720f': { emoji: '\u2694\uFE0F', driverVar: 'rooms', min: 0, max: 8, label: 'Rooms cleared' },
+        '538ef028': { emoji: '\uD83E\uDDEA', driverVar: 'potency', min: 1, max: 47, label: 'Potency' },
+        '7c531481': { emoji: '\uD83D\uDEE1\uFE0F', driverVar: 'charge', min: 2, max: 12, label: 'Charge' },
+        '6afc86bc': { emoji: '\uD83D\uDCB0', driverVar: 'loot', min: 0, max: 75, label: 'Loot' },
+        'd7ee1255': { emoji: '\uD83D\uDD25', driverVar: 'cooked', min: 0, max: 5, label: 'Cooked' },
+        'd2e136a1': { emoji: '\uD83D\uDC09', driverVar: 'trust', min: 0, max: 9, label: 'Trust' },
+        '57b2e72f': { emoji: '\uD83D\uDEF8', driverVar: 'dist', min: 0, max: 20, label: 'Distance' },
+        '0076eb1b': { emoji: '\uD83D\uDD10', driverVar: 'a', min: 7, max: 11, label: 'Cipher a' },
+        'f82620d5': { emoji: '\uD83D\uDC7E', driverVar: 'turns', min: 0, max: 2, label: 'Turns' },
+        'b76a901b': { emoji: '\uD83C\uDF3E', driverVar: 'crops', min: 0, max: 4, label: 'Crops' },
+        '47705d50': { emoji: '\uD83C\uDFA3', driverVar: 'fish', min: 0, max: 12, label: 'Fish caught' },
+        '6fecb3b6': { emoji: '\uD83C\uDFF0', driverVar: 'volleys', min: 0, max: 10, label: 'Volleys' },
+        'c8ec5185': { emoji: '\u2728', driverVar: 'gold', min: 0, max: 27, label: 'Gold' },
+        '55d9d436': { emoji: '\uD83C\uDFCE\uFE0F', driverVar: 'distance', min: 0, max: 30, label: 'Distance' },
+        '54fa7820': { emoji: '\uD83E\uDE84', driverVar: 'power', min: 1, max: 243, label: 'Power' },
+        '3349f0e4': { emoji: '\uD83C\uDFF0', driverVar: 'waves', min: 0, max: 5, label: 'Waves' },
+        'c1ae95a3': { emoji: '\uD83D\uDCB5', driverVar: 'balance', min: 100, max: 145, label: 'Balance' },
+        '56d77e74': { emoji: '\u2694\uFE0F', driverVar: 'blade', min: 0, max: 40, label: 'Blade quality' },
+        'f6732a36': { emoji: '\uD83E\uDDE9', driverVar: 'pos', min: 0, max: 25, label: 'Position' },
+        '7b8066ce': { emoji: '\uD83C\uDFF4\u200D\u2620\uFE0F', driverVar: 'crew', min: 0, max: 90, label: 'Crew share' },
+        '555e0f7a': { emoji: '\uD83E\uDDDF', driverVar: 'zombies', min: 2, max: 64, label: 'Zombies' },
+        'b934e6e3': { emoji: '\uD83E\uDE82', driverVar: 'height', min: 100, max: 0, label: 'Height' },
+        '0a55ab21': { emoji: '\uD83C\uDF3B', driverVar: 'flowers', min: 0, max: 18, label: 'Flowers' },
+        '2a8791f0': { emoji: '\uD83D\uDD0B', driverVar: 'battery', min: 100, max: 20, label: 'Battery' },
+        '2bc68e51': { emoji: '\uD83C\uDF6A', driverVar: 'cookies', min: 0, max: 36, label: 'Cookies' },
+        '91b3e052': { emoji: '\uD83C\uDF21\uFE0F', driverVar: 'fahrenheit', min: 0, max: 68, label: 'Fahrenheit' },
+        'b32fe104': { emoji: '\uD83C\uDF92', driverVar: 'total', min: 0, max: 16, label: 'Total items' },
+        'd1501c80': { emoji: '\uD83C\uDFA8', driverVar: 'colored', min: 0, max: 10, label: 'Colored pixels' },
+        '6eab5fdd': { emoji: '\uD83C\uDFB5', driverVar: 'seconds', min: 0, max: 16, label: 'Seconds' }
+    };
+
     var execTimeout = null;
     var execSkipped = false;
 
@@ -816,27 +923,56 @@
         execVarsList.innerHTML = '';
         execOutput.textContent = '';
 
+        // Show puzzle goal for context
+        var execGoal = document.getElementById('exec-goal');
+        if (execGoal) execGoal.textContent = puzzle.goal;
+
+        // Initialize scene animation
+        var sceneConfig = SCENE_CONFIGS[puzzle.id] || null;
+        var sceneEl = document.getElementById('exec-scene');
+        if (sceneConfig) {
+            sceneEl.hidden = false;
+            document.getElementById('exec-scene-emoji').textContent = sceneConfig.emoji;
+            document.getElementById('exec-scene-fill').style.width = '0%';
+            document.getElementById('exec-scene-emoji').style.left = '5%';
+            document.getElementById('exec-scene-label').textContent = sceneConfig.label + ': ' + sceneConfig.min;
+        } else {
+            sceneEl.hidden = true;
+        }
+
         // Interpret and animate
         var interpreter = new PseudoInterpreter(codeTokenLines);
         var steps = interpreter.execute();
 
-        animateSteps(steps, 0, callback);
+        animateSteps(steps, 0, callback, sceneConfig);
     }
 
-    function animateSteps(steps, index, callback) {
+    function updateScene(sceneConfig, vars) {
+        if (!sceneConfig || !vars || !vars.hasOwnProperty(sceneConfig.driverVar)) return;
+        var val = vars[sceneConfig.driverVar];
+        var range = Math.abs(sceneConfig.max - sceneConfig.min);
+        var pct = range > 0 ? Math.min(Math.abs(val - sceneConfig.min) / range, 1) * 90 + 5 : 5;
+        document.getElementById('exec-scene-fill').style.width = pct + '%';
+        document.getElementById('exec-scene-emoji').style.left = pct + '%';
+        document.getElementById('exec-scene-label').textContent = sceneConfig.label + ': ' + val;
+    }
+
+    function animateSteps(steps, index, callback, sceneConfig) {
         if (execSkipped || index >= steps.length) {
-            // Show final output
+            // Show final output with context from puzzle goal
             if (steps.length > 0) {
                 var lastStep = steps[steps.length - 1];
                 if (lastStep.output !== undefined) {
-                    execOutput.textContent = '> Output: ' + lastStep.output;
+                    var answerLabel = sceneConfig ? sceneConfig.label : 'Answer';
+                    execOutput.textContent = '> ' + answerLabel + ': ' + lastStep.output;
+                    updateScene(sceneConfig, lastStep.vars);
                 }
             }
 
             execTimeout = setTimeout(function () {
                 execModal.hidden = true;
                 callback();
-            }, execSkipped ? 0 : 800);
+            }, execSkipped ? 0 : 1000);
             return;
         }
 
@@ -856,14 +992,18 @@
             updateExecVars(step.vars, step.changedVar);
         }
 
+        // Update scene animation
+        updateScene(sceneConfig, step.vars);
+
         // Show output if present
         if (step.output !== undefined) {
-            execOutput.textContent = '> Output: ' + step.output;
+            var answerLabel2 = sceneConfig ? sceneConfig.label : 'Answer';
+            execOutput.textContent = '> ' + answerLabel2 + ': ' + step.output;
         }
 
         execTimeout = setTimeout(function () {
-            animateSteps(steps, index + 1, callback);
-        }, 400);
+            animateSteps(steps, index + 1, callback, sceneConfig);
+        }, 700);
     }
 
     function updateExecVars(vars, changedVar) {
@@ -894,6 +1034,8 @@
         execSkipped = true;
         if (execTimeout) clearTimeout(execTimeout);
         execModal.hidden = true;
+        var sceneEl = document.getElementById('exec-scene');
+        if (sceneEl) sceneEl.hidden = true;
     }
 
     function findToken(line, col) {
@@ -973,6 +1115,9 @@
                     this.executeBlock(i + 1, whileEnd - 1);
                     loopCount++;
                 }
+                if (loopCount >= 50 && this.evalCondition(condTokens)) {
+                    throw new Error('infinite loop detected');
+                }
                 this.addStep(i, null); // final condition check (false)
                 i = whileEnd + 1;
             } else if (firstToken === 'if') {
@@ -1011,6 +1156,9 @@
                 // Assignment: x = expr
                 var assignVar = line[0];
                 if (line.length >= 3 && line[1] === '=') {
+                    if (!this.vars.hasOwnProperty(assignVar)) {
+                        throw new Error('can\'t assign to \'' + assignVar + '\' \u2014 not declared');
+                    }
                     var assignExpr = line.slice(2);
                     var assignVal = this.evalExpr(assignExpr);
                     this.vars[assignVar] = assignVal;
@@ -1075,7 +1223,7 @@
         if (!isNaN(num) && token !== '') return num;
         // Variable?
         if (this.vars.hasOwnProperty(token)) return this.vars[token];
-        return 0;
+        throw new Error('\'' + token + '\' is not defined');
     };
 
     PseudoInterpreter.prototype.findBlockEnd = function (startLine) {

@@ -904,11 +904,12 @@
         var displayScore = swapCount;
         var diff = displayScore - puzzle.par;
         var scoreLabel;
-        if (diff < 0) scoreLabel = 'Under Par!';
-        else if (diff === 0) scoreLabel = 'Par';
-        else if (diff === 1) scoreLabel = 'Bogey';
-        else if (diff === 2) scoreLabel = 'Double Bogey';
-        else scoreLabel = '+' + diff;
+        if (diff <= -3) scoreLabel = 'Genius!';
+        else if (diff === -2) scoreLabel = 'Hacker!';
+        else if (diff === -1) scoreLabel = 'Optimized!';
+        else if (diff === 0) scoreLabel = 'Compiled';
+        else if (diff === 1) scoreLabel = 'Verbose';
+        else scoreLabel = 'Spaghetti (+' + diff + ')';
 
         winPuzzle.textContent = 'Parsed #' + puzzleNumber;
         winScore.textContent = scoreLabel + ' (' + displayScore + ' swap' + (displayScore !== 1 ? 's' : '') + ')';
@@ -2296,7 +2297,7 @@
     function getShareText() {
         if (typeof generateShareText !== 'function') return '';
         var stats = loadStats();
-        return generateShareText(puzzleNumber, swapCount, puzzle.shareResult || '', stats.currentStreak, getUsername());
+        return generateShareText(puzzleNumber, swapCount, puzzle.par, puzzle.shareResult || '', stats.currentStreak, getUsername());
     }
 
     function copyResults() {

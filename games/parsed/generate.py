@@ -68,6 +68,18 @@ class Interpreter:
                         return
                     loop_count += 1
                 i = block_end + 1
+            elif first == 'for':
+                # for i = start to end {
+                var_name = line[1]
+                start_val = self._resolve(line[3])
+                end_val = self._resolve(line[5])
+                block_end = self._find_block_end(lines, i)
+                for fi in range(start_val, end_val + 1):  # inclusive
+                    self.vars[var_name] = fi
+                    self._exec_block(lines, i + 1, block_end - 1)
+                    if self.output is not None:
+                        return
+                i = block_end + 1
             elif first == 'if':
                 block_end = self._find_block_end(lines, i)
                 cond = self._get_condition(line)
@@ -202,6 +214,10 @@ def id_f(text):
     """Fixed identifier."""
     return T(text, "id", True)
 
+def kw_to():
+    """The 'to' keyword for for-loops."""
+    return T("to", "kw", True)
+
 
 def make_puzzle(lines_data, goal, share_result, difficulty, seed_id):
     """Build a puzzle dict, compute output, set par."""
@@ -249,7 +265,7 @@ def tmpl_add2(v1, n1, v2, n2, vr, emoji, goal, share, seed):
         [kw("let"), id_(v2), op("="), lit_m(str(n2))],
         [kw("let"), id_f(vr), op("="), id_(v1), op_m("+"), id_(v2)],
         [kw("return"), id_f(vr)],
-    ], emoji + " " + goal, share, "easy", seed)
+    ], emoji + " " + goal, share, "medium", seed)
 
 def tmpl_sub2(v1, n1, v2, n2, vr, emoji, goal, share, seed):
     """Easy: let a = X; let b = Y; let result = a - b; return result"""
@@ -258,7 +274,7 @@ def tmpl_sub2(v1, n1, v2, n2, vr, emoji, goal, share, seed):
         [kw("let"), id_(v2), op("="), lit_m(str(n2))],
         [kw("let"), id_f(vr), op("="), id_(v1), op_m("-"), id_(v2)],
         [kw("return"), id_f(vr)],
-    ], emoji + " " + goal, share, "easy", seed)
+    ], emoji + " " + goal, share, "medium", seed)
 
 def tmpl_mul2(v1, n1, v2, n2, vr, emoji, goal, share, seed):
     """Easy: let a = X; let b = Y; let result = a * b; return result"""
@@ -267,7 +283,7 @@ def tmpl_mul2(v1, n1, v2, n2, vr, emoji, goal, share, seed):
         [kw("let"), id_(v2), op("="), lit_m(str(n2))],
         [kw("let"), id_f(vr), op("="), id_(v1), op_m("*"), id_(v2)],
         [kw("return"), id_f(vr)],
-    ], emoji + " " + goal, share, "easy", seed)
+    ], emoji + " " + goal, share, "medium", seed)
 
 def tmpl_div2(v1, n1, v2, n2, vr, emoji, goal, share, seed):
     """Easy: let a = X; let b = Y; let result = a / b; return result"""
@@ -276,7 +292,7 @@ def tmpl_div2(v1, n1, v2, n2, vr, emoji, goal, share, seed):
         [kw("let"), id_(v2), op("="), lit_m(str(n2))],
         [kw("let"), id_f(vr), op("="), id_(v1), op_m("/"), id_(v2)],
         [kw("return"), id_f(vr)],
-    ], emoji + " " + goal, share, "easy", seed)
+    ], emoji + " " + goal, share, "medium", seed)
 
 def tmpl_chain3(v1, n1, v2, n2, v3, n3, vr, op1, op2, emoji, goal, share, seed):
     """Easy: three vars, chain calc: result = v1 op1 v2 op2 v3 (left-to-right)"""
@@ -286,7 +302,7 @@ def tmpl_chain3(v1, n1, v2, n2, v3, n3, vr, op1, op2, emoji, goal, share, seed):
         [kw("let"), id_(v3), op("="), lit_m(str(n3))],
         [kw("let"), id_f(vr), op("="), id_(v1), op_m(op1), id_(v2), op_m(op2), id_(v3)],
         [kw("return"), id_f(vr)],
-    ], emoji + " " + goal, share, "easy", seed)
+    ], emoji + " " + goal, share, "medium", seed)
 
 def tmpl_multi_step(v1, n1, v2, n2, vi, op1, v3, n3, vr, op2, emoji, goal, share, seed):
     """Easy: let a=X, b=Y, inter = a op1 b, c=Z, result = inter op2 c"""
@@ -297,7 +313,7 @@ def tmpl_multi_step(v1, n1, v2, n2, vi, op1, v3, n3, vr, op2, emoji, goal, share
         [kw("let"), id_(v3), op("="), lit_m(str(n3))],
         [kw("let"), id_f(vr), op("="), id_(vi), op_m(op2), id_(v3)],
         [kw("return"), id_f(vr)],
-    ], emoji + " " + goal, share, "easy", seed)
+    ], emoji + " " + goal, share, "medium", seed)
 
 def tmpl_add_sub_chain(v1, n1, v2, n2, v3, n3, vr, emoji, goal, share, seed):
     """Easy: result = v1 + v2 - v3"""
@@ -307,7 +323,7 @@ def tmpl_add_sub_chain(v1, n1, v2, n2, v3, n3, vr, emoji, goal, share, seed):
         [kw("let"), id_(v3), op("="), lit_m(str(n3))],
         [kw("let"), id_f(vr), op("="), id_(v1), op_m("+"), id_(v2), op_m("-"), id_(v3)],
         [kw("return"), id_f(vr)],
-    ], emoji + " " + goal, share, "easy", seed)
+    ], emoji + " " + goal, share, "medium", seed)
 
 def tmpl_mul_add(v1, n1, v2, n2, v3, n3, vr, emoji, goal, share, seed):
     """Easy: result = v1 * v2 + v3 (left-to-right: (v1*v2)+v3)"""
@@ -317,7 +333,7 @@ def tmpl_mul_add(v1, n1, v2, n2, v3, n3, vr, emoji, goal, share, seed):
         [kw("let"), id_(v3), op("="), lit_m(str(n3))],
         [kw("let"), id_f(vr), op("="), id_(v1), op_m("*"), id_(v2), op_m("+"), id_(v3)],
         [kw("return"), id_f(vr)],
-    ], emoji + " " + goal, share, "easy", seed)
+    ], emoji + " " + goal, share, "medium", seed)
 
 def tmpl_two_step_return(v1, n1, v2, n2, vi, op1, vr, op2, c, emoji, goal, share, seed):
     """Easy: inter = v1 op1 v2; result = inter op2 c; return result"""
@@ -327,7 +343,7 @@ def tmpl_two_step_return(v1, n1, v2, n2, vi, op1, vr, op2, c, emoji, goal, share
         [kw("let"), id_(vi), op("="), id_(v1), op_m(op1), id_(v2)],
         [kw("let"), id_f(vr), op("="), id_(vi), op_m(op2), lit_m(str(c))],
         [kw("return"), id_f(vr)],
-    ], emoji + " " + goal, share, "easy", seed)
+    ], emoji + " " + goal, share, "medium", seed)
 
 def tmpl_if_else_simple(v1, n1, v2, n2, cmp_op, vr, true_v, true_op, true_arg,
                          false_v, false_op, false_arg, emoji, goal, share, seed):
@@ -342,7 +358,7 @@ def tmpl_if_else_simple(v1, n1, v2, n2, cmp_op, vr, true_v, true_op, true_arg,
         [id_(vr), op("="), id_(false_v), op_m(false_op), lit_m(str(false_arg))],
         [pn("}")],
         [kw("return"), id_f(vr)],
-    ], emoji + " " + goal, share, "easy", seed)
+    ], emoji + " " + goal, share, "medium", seed)
 
 def tmpl_if_else_3var(v1, n1, v2, n2, v3, n3, cmp_v1, cmp_op, cmp_v2,
                        vr, true_expr_parts, false_expr_parts, emoji, goal, share, seed):
@@ -359,7 +375,7 @@ def tmpl_if_else_3var(v1, n1, v2, n2, v3, n3, cmp_v1, cmp_op, cmp_v2,
         [pn("}")],
         [kw("return"), id_f(vr)],
     ]
-    return make_puzzle(lines, emoji + " " + goal, share, "easy", seed)
+    return make_puzzle(lines, emoji + " " + goal, share, "medium", seed)
 
 def tmpl_if_else_calc(v1, n1, v2, n2, cmp_op, cmp_val, vr, vi,
                        true_op, false_op, emoji, goal, share, seed):
@@ -375,7 +391,7 @@ def tmpl_if_else_calc(v1, n1, v2, n2, cmp_op, cmp_val, vr, vi,
         [id_(vr), op("="), id_(vi), op_m(false_op), id_(v2)],
         [pn("}")],
         [kw("return"), id_f(vr)],
-    ], emoji + " " + goal, share, "easy", seed)
+    ], emoji + " " + goal, share, "medium", seed)
 
 def tmpl_while_counter(v1, n1, vr, limit, emoji, goal, share, seed, diff="medium"):
     """Medium: simple while with counter"""
@@ -479,6 +495,71 @@ def tmpl_while_if(v1, n1, v2, n2, vr, loop_cond_v, loop_cond_op, loop_cond_val,
         [kw("return"), id_(vr)],
     ], emoji + " " + goal, share, diff, seed)
 
+def tmpl_for_accum(vr, n_end, k, emoji, goal, share, seed, diff="medium"):
+    """Easy: let total = 0; for i = 1 to N { total = total + K } return total"""
+    return make_puzzle([
+        [kw("let"), id_(vr), op("="), lit("0")],
+        [kw("for"), id_f("i"), op("="), lit("1"), kw_to(), lit_m(str(n_end)), pn("{")],
+        [id_(vr), op("="), id_(vr), op_m("+"), lit_m(str(k))],
+        [pn("}")],
+        [kw("return"), id_(vr)],
+    ], emoji + " " + goal, share, diff, seed)
+
+def tmpl_for_triangular(vr, n_end, emoji, goal, share, seed, diff="medium"):
+    """Easy-medium: let total = 0; for i = 1 to N { total = total + i } return total"""
+    return make_puzzle([
+        [kw("let"), id_(vr), op("="), lit("0")],
+        [kw("for"), id_f("i"), op("="), lit("1"), kw_to(), lit_m(str(n_end)), pn("{")],
+        [id_(vr), op("="), id_(vr), op_m("+"), id_f("i")],
+        [pn("}")],
+        [kw("return"), id_(vr)],
+    ], emoji + " " + goal, share, diff, seed)
+
+def tmpl_for_multiply(vr, n_end, k, emoji, goal, share, seed, diff="medium"):
+    """Medium: let result = 1; for i = 1 to N { result = result * K } return result"""
+    return make_puzzle([
+        [kw("let"), id_(vr), op("="), lit("1")],
+        [kw("for"), id_f("i"), op("="), lit("1"), kw_to(), lit_m(str(n_end)), pn("{")],
+        [id_(vr), op("="), id_(vr), op_m("*"), lit_m(str(k))],
+        [pn("}")],
+        [kw("return"), id_(vr)],
+    ], emoji + " " + goal, share, diff, seed)
+
+def tmpl_for_if(vr, n_end, threshold, emoji, goal, share, seed, diff="medium"):
+    """Medium: for i = 1 to N { if i > K { total = total + i } } return total"""
+    return make_puzzle([
+        [kw("let"), id_(vr), op("="), lit("0")],
+        [kw("for"), id_f("i"), op("="), lit("1"), kw_to(), lit_m(str(n_end)), pn("{")],
+        [kw("if"), id_f("i"), op_m(">"), lit_m(str(threshold)), pn("{")],
+        [id_(vr), op("="), id_(vr), op_m("+"), id_f("i")],
+        [pn("}")],
+        [pn("}")],
+        [kw("return"), id_(vr)],
+    ], emoji + " " + goal, share, diff, seed)
+
+def tmpl_for_custom_start(vr, v_start, n_start, n_end, k_op, k_val, emoji, goal, share, seed, diff="medium"):
+    """Easy: let total = start_val; for i = 1 to N { total = total op K } return total"""
+    return make_puzzle([
+        [kw("let"), id_(vr), op("="), lit_m(str(v_start))],
+        [kw("for"), id_f("i"), op("="), lit("1"), kw_to(), lit_m(str(n_end)), pn("{")],
+        [id_(vr), op("="), id_(vr), op_m(k_op), lit_m(str(k_val))],
+        [pn("}")],
+        [kw("return"), id_(vr)],
+    ], emoji + " " + goal, share, diff, seed)
+
+def tmpl_for_two_var(vr, v2, v2_start, n_end, vr_op, v2_op, v2_step, emoji, goal, share, seed, diff="medium"):
+    """Medium: two vars in for loop"""
+    return make_puzzle([
+        [kw("let"), id_(vr), op("="), lit("0")],
+        [kw("let"), id_(v2), op("="), lit_m(str(v2_start))],
+        [kw("for"), id_f("i"), op("="), lit("1"), kw_to(), lit_m(str(n_end)), pn("{")],
+        [id_(vr), op("="), id_(vr), op_m(vr_op), id_(v2)],
+        [id_(v2), op("="), id_(v2), op_m(v2_op), lit_m(str(v2_step))],
+        [pn("}")],
+        [kw("return"), id_(vr)],
+    ], emoji + " " + goal, share, diff, seed)
+
+
 def tmpl_while_if_else(v1, n1, v2, n2, vr, loop_v, loop_op, loop_val,
                         if_v, if_op, if_val,
                         true_assign_v, true_assign_op, true_assign_val,
@@ -517,120 +598,21 @@ def generate_puzzles():
         idx += 1
 
     # ============================================
-    # EASY: Simple arithmetic (~100 puzzles)
+    # MEDIUM: Chain & multi-step arithmetic (~20 puzzles)
     # ============================================
 
-    # --- Addition (25) ---
-    add_themes = [
-        ("apples", 12, "oranges", 8, "fruit", "\U0001F34E", "How many pieces of fruit total?", "\U0001F34E Fruit basket!\n12 apples + 8 oranges = 20"),
-        ("cats", 7, "dogs", 5, "pets", "\U0001F431", "How many pets in the shelter?", "\U0001F431 Pet count: 12!"),
-        ("swords", 15, "arrows", 9, "weapons", "\u2694\uFE0F", "Total weapons in the armory?", "\u2694\uFE0F Armory stocked!\n15 swords + 9 arrows = 24"),
-        ("stars", 20, "moons", 13, "celestial", "\u2B50", "How many celestial bodies?", "\u2B50 Sky survey: 33 objects found"),
-        ("rubies", 8, "sapphires", 14, "jewels", "\U0001F48E", "Total gems in the crown?", "\U0001F48E Crown complete!\n8 rubies + 14 sapphires = 22"),
-        ("knights", 6, "archers", 11, "army", "\U0001F3F0", "How big is the army?", "\U0001F3F0 Army assembled: 17 soldiers"),
-        ("guitars", 3, "drums", 4, "instruments", "\U0001F3B8", "How many instruments on stage?", "\U0001F3B8 Band ready: 7 instruments"),
-        ("lions", 9, "tigers", 6, "bigCats", "\U0001F981", "Total big cats at the zoo?", "\U0001F981 Zoo tour: 15 big cats"),
-        ("cookies", 25, "brownies", 18, "treats", "\U0001F36A", "How many treats for the party?", "\U0001F36A Party platter: 43 treats"),
-        ("pages", 45, "notes", 12, "reading", "\U0001F4DA", "Total pages of reading material?", "\U0001F4DA Study time: 57 pages"),
-        ("rockets", 3, "satellites", 8, "missions", "\U0001F680", "How many space missions?", "\U0001F680 Space program: 11 missions"),
-        ("goals", 4, "assists", 7, "points", "\u26BD", "Total stat points this season?", "\u26BD Season stats: 11 points"),
-        ("roses", 15, "tulips", 10, "bouquet", "\U0001F339", "How many flowers in the bouquet?", "\U0001F339 Bouquet: 25 flowers"),
-        ("photos", 30, "videos", 12, "memories", "\U0001F4F7", "Total memories captured?", "\U0001F4F7 Album: 42 memories"),
-        ("pizzas", 3, "burgers", 5, "meals", "\U0001F355", "How many meals ordered?", "\U0001F355 Food order: 8 meals"),
-        ("elves", 8, "dwarves", 7, "fellowship", "\U0001F9DD", "How many in the fellowship?", "\U0001F9DD Fellowship formed: 15 members"),
-        ("cups", 6, "plates", 9, "dishes", "\u2615", "How many dishes to wash?", "\u2615 Dishes: 15 total"),
-        ("emails", 22, "texts", 35, "messages", "\U0001F4E7", "Total unread messages?", "\U0001F4E7 Inbox: 57 messages"),
-        ("red", 11, "blue", 14, "pixels", "\U0001F3A8", "Total colored pixels?", "\U0001F3A8 Canvas: 25 pixels"),
-        ("wolves", 5, "bears", 3, "predators", "\U0001F43A", "How many predators in the forest?", "\U0001F43A Forest: 8 predators"),
-        ("gold", 40, "silver", 25, "coins", "\U0001FA99", "Total coins in the chest?", "\U0001FA99 Treasure: 65 coins"),
-        ("protons", 6, "neutrons", 8, "particles", "\u269B\uFE0F", "How many particles in the atom?", "\u269B\uFE0F Atom: 14 particles"),
-        ("vowels", 5, "consonants", 21, "letters", "\U0001F524", "Total letters in the alphabet?", "\U0001F524 Alphabet: 26 letters"),
-        ("wins", 18, "losses", 7, "games", "\U0001F3C6", "Total games this season?", "\U0001F3C6 Season: 25 games"),
-        ("tacos", 6, "burritos", 4, "order", "\U0001F32E", "How many items in the order?", "\U0001F32E Order up: 10 items"),
-    ]
-    for v1, n1, v2, n2, vr, emoji, goal, share, in add_themes:
-        add(tmpl_add2(v1, n1, v2, n2, vr, emoji, goal, share, f"parsed_{idx:03d}"))
-
-    # --- Subtraction (15) ---
-    sub_themes = [
-        ("budget", 500, "expenses", 320, "savings", "\U0001F4B0", "How much money is left?", "\U0001F4B0 Savings: $180"),
-        ("hitPoints", 100, "damage", 35, "health", "\u2764\uFE0F", "How much health remains?", "\u2764\uFE0F Health: 65 HP"),
-        ("stock", 80, "sold", 45, "remaining", "\U0001F4E6", "How many items remain in stock?", "\U0001F4E6 Stock: 35 remaining"),
-        ("fuel", 200, "burned", 75, "tank", "\u26FD", "How much fuel is left in the tank?", "\u26FD Tank: 125 liters"),
-        ("tickets", 150, "claimed", 98, "available", "\U0001F3AB", "How many tickets are available?", "\U0001F3AB Tickets: 52 available"),
-        ("battery", 100, "used", 37, "charge", "\U0001F50B", "What's the battery charge level?", "\U0001F50B Charge: 63%"),
-        ("capacity", 250, "passengers", 180, "seats", "\u2708\uFE0F", "How many empty seats on the plane?", "\u2708\uFE0F Empty seats: 70"),
-        ("bytes", 1024, "used", 640, "free", "\U0001F4BE", "How much disk space is free?", "\U0001F4BE Free: 384 bytes"),
-        ("lifespan", 80, "age", 25, "years", "\u231B", "How many years remaining?", "\u231B Years left: 55"),
-        ("altitude", 300, "descent", 120, "height", "\U0001F6EB", "What's the altitude after descent?", "\U0001F6EB Altitude: 180m"),
-        ("score", 95, "penalty", 15, "final", "\U0001F4AF", "What's the final score after penalties?", "\U0001F4AF Final: 80 points"),
-        ("oxygen", 100, "consumed", 42, "air", "\U0001F4A8", "How much oxygen remains?", "\U0001F4A8 Oxygen: 58%"),
-        ("armor", 50, "corrosion", 18, "defense", "\U0001F6E1\uFE0F", "How much defense after corrosion?", "\U0001F6E1\uFE0F Defense: 32"),
-        ("mana", 75, "spell", 30, "reserve", "\U0001FA84", "How much mana in reserve after casting?", "\U0001FA84 Mana: 45"),
-        ("population", 200, "emigrated", 55, "residents", "\U0001F3D8\uFE0F", "How many residents remain?", "\U0001F3D8\uFE0F Residents: 145"),
-    ]
-    for v1, n1, v2, n2, vr, emoji, goal, share in sub_themes:
-        add(tmpl_sub2(v1, n1, v2, n2, vr, emoji, goal, share, f"parsed_{idx:03d}"))
-
-    # --- Multiplication (15) ---
-    mul_themes = [
-        ("rows", 6, "cols", 8, "cells", "\U0001F4CA", "How many cells in the grid?", "\U0001F4CA Grid: 6\u00D78 = 48 cells"),
-        ("price", 12, "quantity", 5, "cost", "\U0001F6D2", "What's the total cost?", "\U0001F6D2 Total: $60"),
-        ("speed", 15, "hours", 4, "distance", "\U0001F697", "How far did the car travel?", "\U0001F697 Distance: 60 miles"),
-        ("length", 9, "width", 7, "area", "\U0001F4D0", "What's the area of the room?", "\U0001F4D0 Area: 63 sq ft"),
-        ("teams", 4, "players", 11, "athletes", "\U0001F3C8", "Total athletes in the league?", "\U0001F3C8 League: 44 athletes"),
-        ("chapters", 12, "pagesEach", 8, "totalPages", "\U0001F4D6", "How many pages in the book?", "\U0001F4D6 Book: 96 pages"),
-        ("wagons", 5, "cargo", 14, "freight", "\U0001F682", "Total cargo units on the train?", "\U0001F682 Freight: 70 units"),
-        ("hives", 3, "bees", 50, "swarm", "\U0001F41D", "How many bees in the apiary?", "\U0001F41D Swarm: 150 bees"),
-        ("floors", 8, "rooms", 6, "total", "\U0001F3E2", "Total rooms in the building?", "\U0001F3E2 Building: 48 rooms"),
-        ("baskets", 7, "eggs", 12, "supply", "\U0001F95A", "Total eggs collected?", "\U0001F95A Supply: 84 eggs"),
-        ("days", 7, "tasks", 3, "weekly", "\U0001F4C5", "Total tasks per week?", "\U0001F4C5 Weekly: 21 tasks"),
-        ("packs", 4, "cards", 13, "deck", "\U0001F0CF", "Total cards in the deck?", "\U0001F0CF Deck: 52 cards"),
-        ("shelves", 5, "books", 15, "library", "\U0001F4DA", "Total books on the shelves?", "\U0001F4DA Library: 75 books"),
-        ("tables", 8, "chairs", 4, "seating", "\U0001FA91", "Total chairs in the restaurant?", "\U0001FA91 Seating: 32 chairs"),
-        ("layers", 3, "neurons", 16, "network", "\U0001F9E0", "Total neurons in the network?", "\U0001F9E0 Network: 48 neurons"),
-    ]
-    for v1, n1, v2, n2, vr, emoji, goal, share in mul_themes:
-        add(tmpl_mul2(v1, n1, v2, n2, vr, emoji, goal, share, f"parsed_{idx:03d}"))
-
-    # --- Division (10) ---
-    div_themes = [
-        ("pizza", 24, "friends", 6, "slices", "\U0001F355", "How many slices per friend?", "\U0001F355 Fair share: 4 slices each"),
-        ("treasure", 100, "pirates", 5, "share", "\U0001F3F4\u200D\u2620\uFE0F", "How much gold per pirate?", "\U0001F3F4\u200D\u2620\uFE0F Share: 20 gold each"),
-        ("distance", 120, "speed", 4, "time", "\u23F1\uFE0F", "How many hours is the trip?", "\u23F1\uFE0F Trip: 30 hours"),
-        ("totalXP", 200, "monsters", 8, "xpEach", "\U0001F47E", "How much XP per monster?", "\U0001F47E XP: 25 per monster"),
-        ("budget", 150, "months", 6, "monthly", "\U0001F4B8", "What's the monthly budget?", "\U0001F4B8 Monthly: $25"),
-        ("candies", 36, "kids", 9, "each", "\U0001F36C", "How many candies per kid?", "\U0001F36C Fair: 4 candies each"),
-        ("mileage", 450, "gallons", 15, "mpg", "\u26FD", "What's the fuel efficiency?", "\u26FD Efficiency: 30 mpg"),
-        ("harvest", 180, "bushels", 12, "yield", "\U0001F33E", "What's the yield per bushel?", "\U0001F33E Yield: 15 per bushel"),
-        ("data", 256, "packets", 8, "size", "\U0001F4E1", "How big is each data packet?", "\U0001F4E1 Packet: 32 bytes"),
-        ("marathon", 42, "checkpoints", 6, "spacing", "\U0001F3C3", "Distance between checkpoints?", "\U0001F3C3 Spacing: 7 km"),
-    ]
-    for v1, n1, v2, n2, vr, emoji, goal, share in div_themes:
-        add(tmpl_div2(v1, n1, v2, n2, vr, emoji, goal, share, f"parsed_{idx:03d}"))
-
-    # --- Chain arithmetic (15) ---
+    # --- Chain arithmetic (5) ---
     chain_themes = [
         ("base", 10, "bonus", 5, "tax", 3, "pay", "+", "-", "\U0001F4B5", "You earned a base wage plus a bonus, but tax takes a cut. What's your paycheck?", "\U0001F4B5 Payday!\nBase + bonus - tax = $12"),
         ("attack", 8, "rage", 3, "block", 4, "hit", "+", "-", "\u2694\uFE0F", "A warrior's attack is boosted by rage, but the enemy blocks. How much damage lands?", "\u2694\uFE0F Critical hit!\n8 + 3 rage - 4 blocked = 7 damage"),
         ("flour", 3, "eggs", 2, "sugar", 4, "batter", "*", "+", "\U0001F370", "Mix flour and eggs together, then fold in sugar. How many cups of batter?", "\U0001F370 Batter whipped!\nMixed up 10 cups"),
         ("width", 5, "height", 3, "border", 4, "canvas", "+", "*", "\U0001F5BC\uFE0F", "Combine width and height, then stretch by the border size. How big is the canvas?", "\U0001F5BC\uFE0F Canvas stretched!\n32 pixels wide"),
         ("speed", 12, "time", 3, "wind", 6, "flight", "*", "+", "\U0001F6EB", "A plane flies at speed for some time, then gets a tailwind boost. Total flight distance?", "\U0001F6EB Landed safely!\n42 miles traveled"),
-        ("coins", 20, "gems", 5, "fee", 3, "loot", "+", "-", "\U0001FA99", "You found coins and gems in a dungeon, but the merchant takes a fee. Net loot?", "\U0001FA99 Loot secured!\n20 coins + 5 gems - 3 fee = 22"),
-        ("steel", 4, "carbon", 3, "heat", 2, "alloy", "*", "+", "\u2699\uFE0F", "Blend steel with carbon, then add heat treatment. What's the alloy strength?", "\u2699\uFE0F Alloy forged!\n14 units of strength"),
-        ("dots", 8, "lines", 2, "shapes", 3, "art", "+", "*", "\U0001F3A8", "Combine dots and lines into a pattern, then repeat it for each shape. How complex is the art?", "\U0001F3A8 Masterpiece!\n30 elements in the artwork"),
-        ("bass", 6, "treble", 4, "reverb", 2, "sound", "+", "*", "\U0001F3B5", "Mix bass and treble together, then apply reverb. What's the sound level?", "\U0001F3B5 Track mixed!\n20 dB of sound"),
-        ("rain", 15, "sun", 8, "frost", 5, "weather", "-", "+", "\U0001F327\uFE0F", "It rained hard, then the sun dried things out, but frost crept back in. What's the weather reading?", "\U0001F327\uFE0F Weather report!\nRain - sun + frost = 12"),
-        ("herbs", 3, "spices", 4, "salt", 2, "flavor", "*", "+", "\U0001F9C2", "Grind herbs with spices, then season with salt. How bold is the flavor?", "\U0001F9C2 Chef's kiss!\n14 flavor points"),
-        ("level", 10, "xp", 5, "quests", 3, "rank", "+", "-", "\U0001F396\uFE0F", "Your level plus bonus XP, minus quests already spent. What's your rank?", "\U0001F396\uFE0F Ranked up!\nRank 12 achieved"),
-        ("code", 8, "bugs", 3, "fixes", 2, "quality", "-", "*", "\U0001F41B", "Start with code, squash the bugs, then multiply by fix rounds. What's the quality score?", "\U0001F41B Bugs squashed!\nQuality score: 10"),
-        ("fans", 50, "vip", 10, "staff", 5, "venue", "+", "+", "\U0001F3DF\uFE0F", "General fans, VIP guests, and staff all fill the venue. How many people total?", "\U0001F3DF\uFE0F Packed house!\n65 people in the venue"),
-        ("vowels", 5, "consonants", 3, "words", 2, "poem", "*", "+", "\U0001F4DD", "Vowels pair with consonants to form syllables, then add extra words. What's the poem score?", "\U0001F4DD Poem written!\nScore: 17"),
     ]
     for v1, n1, v2, n2, v3, n3, vr, o1, o2, emoji, goal, share in chain_themes:
         add(tmpl_chain3(v1, n1, v2, n2, v3, n3, vr, o1, o2, emoji, goal, share, f"parsed_{idx:03d}"))
 
-    # --- Multi-step / two-step (20) ---
+    # --- Multi-step / two-step (10) ---
     multistep_themes = [
         ("eggs", 6, "milk", 4, "mix", "+", "butter", 3, "batter", "*", "\U0001F95E", "Whisk eggs and milk together, then fold in butter. How much batter?", "\U0001F95E Pancakes incoming!\n30 cups of batter ready"),
         ("iron", 15, "coal", 5, "ingot", "+", "hammers", 2, "blade", "*", "\u2694\uFE0F", "Smelt iron with coal into an ingot, then hammer it into shape. Blade quality?", "\u2694\uFE0F Blade forged!\nQuality: 40"),
@@ -640,21 +622,143 @@ def generate_puzzles():
         ("wheat", 20, "chaff", 8, "grain", "-", "mills", 3, "flour", "*", "\U0001F33E", "Separate wheat from chaff, then grind it through the mills. How much flour?", "\U0001F33E Mills grinding!\n36 bags of flour"),
         ("notes", 8, "rests", 2, "bars", "*", "tempo", 5, "rhythm", "+", "\U0001F3B6", "Arrange notes with rests into bars, then add the tempo. What's the rhythm score?", "\U0001F3B6 Music flows!\nRhythm score: 21"),
         ("planks", 10, "nails", 5, "frame", "+", "paint", 2, "cabin", "*", "\U0001F3E0", "Nail planks into a frame, then apply coats of paint. How sturdy is the cabin?", "\U0001F3E0 Cabin built!\nSturdiness: 30"),
-        ("cores", 4, "threads", 8, "compute", "*", "cache", 2, "speed", "+", "\U0001F4BB", "Each core runs multiple threads, plus cache speeds things up. Total processing speed?", "\U0001F4BB Benchmark passed!\nSpeed: 34"),
-        ("seeds", 15, "rain", 3, "growth", "+", "sun", 2, "harvest", "*", "\U0001F331", "Seeds sprout with rain, then sunshine multiplies the growth. How big is the harvest?", "\U0001F331 Bumper crop!\nHarvest: 36"),
-        ("copper", 20, "tin", 4, "bronze", "+", "forge", 3, "weapons", "*", "\U0001F528", "Alloy copper with tin into bronze, then forge it into weapons. How many weapons?", "\U0001F528 Arsenal ready!\n72 weapons forged"),
-        ("flour", 5, "sugar", 3, "dough", "*", "oven", 10, "cake", "+", "\U0001F382", "Knead flour with sugar into dough, then add oven time. What's the cake score?", "\U0001F382 Cake baked!\nScore: 25"),
-        ("gravity", 10, "mass", 6, "force", "*", "friction", 12, "motion", "-", "\U0001F30D", "Gravity pulls on the mass creating force, but friction fights back. Net motion?", "\U0001F30D Physics solved!\nNet motion: 48"),
-        ("words", 12, "typos", 3, "draft", "-", "edits", 3, "final", "*", "\U0001F4DD", "Write a draft, remove the typos, then polish with editing rounds. Final word count?", "\U0001F4DD Published!\nFinal: 27 words"),
-        ("stock", 50, "orders", 15, "shipped", "-", "returns", 5, "net", "-", "\U0001F4E6", "Ship out the orders from stock, then subtract returns. What's left in the warehouse?", "\U0001F4E6 Inventory updated!\nNet stock: 30"),
         ("health", 100, "poison", 25, "current", "-", "potion", 10, "final", "+", "\U0001F48A", "A hero takes poison damage but drinks a healing potion. What's the final HP?", "\U0001F48A Potion worked!\nFinal HP: 85"),
-        ("fans", 40, "exits", 15, "crowd", "-", "arrivals", 10, "total", "+", "\U0001F3C8", "Some fans leave the stadium, but new arrivals show up. How many in the crowd?", "\U0001F3C8 Crowd count!\nTotal: 35 fans"),
-        ("oxygen", 50, "leak", 12, "tank", "-", "refill", 8, "reserve", "+", "\U0001F4A8", "The tank springs a leak, but you manage a partial refill. Oxygen reserve?", "\U0001F4A8 Patched up!\nReserve: 46 units"),
-        ("gems", 30, "cuts", 6, "polished", "/", "sets", 4, "rings", "+", "\U0001F48D", "A jeweler splits gems into equal cuts, then adds them to ring sets. Total rings?", "\U0001F48D Jewelry crafted!\n9 rings made"),
         ("logs", 24, "splits", 4, "boards", "/", "nails", 3, "shelves", "+", "\U0001FA9A", "Split the logs into boards, then nail on some extras. How many shelves?", "\U0001FA9A Workshop done!\n9 shelves built"),
     ]
     for v1, n1, v2, n2, vi, o1, v3, n3, vr, o2, emoji, goal, share in multistep_themes:
         add(tmpl_multi_step(v1, n1, v2, n2, vi, o1, v3, n3, vr, o2, emoji, goal, share, f"parsed_{idx:03d}"))
+
+    # ============================================
+    # EASY: For loop — accumulator (~20 puzzles)
+    # ============================================
+
+    for_accum_themes = [
+        # (vr, n_end, k, emoji, goal, share)
+        ("coins", 5, 3, "\U0001FA99", "A pirate finds 3 gold coins each day for 5 days. How many coins total?", "\U0001FA99 Treasure: 15 coins!"),
+        ("points", 4, 10, "\U0001F3AF", "Score 10 points each round for 4 rounds. Total score?", "\U0001F3AF Score: 40 points!"),
+        ("bricks", 6, 4, "\U0001F9F1", "A mason lays 4 bricks each hour for 6 hours. Total bricks?", "\U0001F9F1 Wall: 24 bricks!"),
+        ("treats", 3, 7, "\U0001F36A", "A baker makes 7 cookies each batch for 3 batches. Total treats?", "\U0001F36A Baked: 21 treats!"),
+        ("steps", 8, 5, "\U0001F6B6", "Walk 5 steps each minute for 8 minutes. Total steps?", "\U0001F6B6 Walked: 40 steps!"),
+        ("gems", 7, 2, "\U0001F48E", "Mine 2 gems each day for 7 days. Total gems?", "\U0001F48E Mined: 14 gems!"),
+        ("flowers", 4, 6, "\U0001F33B", "Plant 6 flowers each row for 4 rows. Total flowers?", "\U0001F33B Garden: 24 flowers!"),
+        ("sparks", 5, 8, "\u2728", "A firework launches 8 sparks each second for 5 seconds. Total sparks?", "\u2728 Show: 40 sparks!"),
+        ("fish", 6, 3, "\U0001F41F", "A fisherman catches 3 fish each hour for 6 hours. Total catch?", "\U0001F41F Catch: 18 fish!"),
+        ("pages", 5, 12, "\U0001F4D6", "Read 12 pages each night for 5 nights. Total pages read?", "\U0001F4D6 Read: 60 pages!"),
+        ("arrows", 4, 9, "\U0001F3F9", "An archer fires 9 arrows each round for 4 rounds. Total arrows shot?", "\U0001F3F9 Shot: 36 arrows!"),
+        ("scoops", 3, 4, "\U0001F366", "Put 4 scoops on each of 3 sundaes. Total scoops?", "\U0001F366 Scoops: 12!"),
+        ("notes", 6, 5, "\U0001F3B5", "Play 5 notes each measure for 6 measures. Total notes?", "\U0001F3B5 Music: 30 notes!"),
+        ("candles", 7, 3, "\U0001F56F\uFE0F", "Light 3 candles each night for 7 nights. Total candles lit?", "\U0001F56F\uFE0F Lit: 21 candles!"),
+        ("laps", 5, 4, "\U0001F3CA", "Swim 4 laps each session for 5 sessions. Total laps?", "\U0001F3CA Swam: 20 laps!"),
+        ("stars", 8, 6, "\u2B50", "An astronomer maps 6 stars each hour for 8 hours. Total stars mapped?", "\u2B50 Mapped: 48 stars!"),
+        ("blocks", 4, 7, "\U0001F3D7\uFE0F", "Stack 7 blocks each layer for 4 layers. Total blocks?", "\U0001F3D7\uFE0F Built: 28 blocks!"),
+        ("potions", 3, 5, "\U0001F9EA", "Brew 5 potions each day for 3 days. Total potions?", "\U0001F9EA Brewed: 15 potions!"),
+        ("stitches", 6, 8, "\U0001F9F5", "Sew 8 stitches each panel for 6 panels. Total stitches?", "\U0001F9F5 Sewn: 48 stitches!"),
+        ("reps", 5, 10, "\U0001F4AA", "Do 10 pushups each set for 5 sets. Total reps?", "\U0001F4AA Workout: 50 reps!"),
+    ]
+    for vr, n_end, k, emoji, goal, share in for_accum_themes:
+        add(tmpl_for_accum(vr, n_end, k, emoji, goal, share, f"parsed_{idx:03d}"))
+
+    # ============================================
+    # EASY: For loop — with starting value (~10 puzzles)
+    # ============================================
+
+    for_custom_start_themes = [
+        # (vr, v_start, n_start, n_end, k_op, k_val, emoji, goal, share)
+        ("score", 100, 100, 4, "+", 5, "\U0001F3AE", "Start with 100 points. Earn 5 bonus points each of 4 rounds. Final score?", "\U0001F3AE Score: 120!"),
+        ("balance", 50, 50, 6, "+", 10, "\U0001F4B5", "Start with $50 in savings. Deposit $10 each month for 6 months. Balance?", "\U0001F4B5 Saved: $110!"),
+        ("health", 80, 80, 3, "-", 5, "\u2764\uFE0F", "Start with 80 HP. Lose 5 HP each of 3 poison ticks. Health remaining?", "\u2764\uFE0F HP: 65!"),
+        ("altitude", 200, 200, 5, "-", 15, "\U0001F6AC", "A hot air balloon starts at 200 feet. It descends 15 feet each minute for 5 minutes. Altitude?", "\U0001F6AC Altitude: 125 feet!"),
+        ("inventory", 30, 30, 4, "+", 8, "\U0001F4E6", "A warehouse starts with 30 items. Receive 8 new items each of 4 shipments. Total inventory?", "\U0001F4E6 Inventory: 62!"),
+        ("charge", 20, 20, 5, "+", 12, "\U0001F50B", "A battery starts at 20%. Charge 12% each hour for 5 hours. Charge level?", "\U0001F50B Charged: 80%!"),
+        ("fame", 10, 10, 3, "*", 2, "\u2B50", "Start with 10 fame. Double your fame each of 3 viral posts. Total fame?", "\u2B50 Famous: 80!"),
+        ("frost", 40, 40, 4, "-", 6, "\u2744\uFE0F", "Start at 40 degrees. It drops 6 degrees each of 4 hours. Temperature?", "\u2744\uFE0F Chilly: 16 degrees!"),
+        ("morale", 60, 60, 5, "+", 7, "\U0001F389", "Team morale starts at 60. Each of 5 wins adds 7 morale. Final morale?", "\U0001F389 Pumped: 95!"),
+        ("supplies", 100, 100, 6, "-", 12, "\U0001F3D5\uFE0F", "Start a camping trip with 100 supplies. Use 12 each of 6 days. Supplies left?", "\U0001F3D5\uFE0F Supplies: 28!"),
+    ]
+    for vr, v_start, n_start, n_end, k_op, k_val, emoji, goal, share in for_custom_start_themes:
+        add(tmpl_for_custom_start(vr, v_start, n_start, n_end, k_op, k_val, emoji, goal, share, f"parsed_{idx:03d}"))
+
+    # ============================================
+    # EASY-MEDIUM: For loop — triangular numbers (~12 puzzles)
+    # ============================================
+
+    for_triangular_themes = [
+        # (vr, n_end, emoji, goal, share)
+        ("steps", 6, "\U0001F3E2", "You climb a staircase. Floor 1 needs 1 step, floor 2 needs 2, and so on up to 6. Total steps?", "\U0001F3E2 Climbed: 21 steps!"),
+        ("gifts", 5, "\U0001F381", "Each day of a holiday you give that day's number in gifts. After 5 days, total gifts?", "\U0001F381 Gifted: 15 presents!"),
+        ("pushups", 7, "\U0001F4AA", "Day 1: 1 pushup. Day 2: 2. Up to day 7. Total pushups this week?", "\U0001F4AA Gains: 28 pushups!"),
+        ("coins", 8, "\U0001FA99", "A piggy bank grows each day — 1 coin on day 1, 2 on day 2, up to day 8. Total savings?", "\U0001FA99 Saved: 36 coins!"),
+        ("layers", 4, "\U0001F370", "Stack a layer cake: 1 layer thick, then 2, then 3, then 4. Total layers of frosting?", "\U0001F370 Layered: 10!"),
+        ("drops", 10, "\U0001F4A7", "A leak drips more each hour — 1 drop, then 2, 3... up to 10. Total drops spilled?", "\U0001F4A7 Spilled: 55 drops!"),
+        ("bows", 5, "\U0001F3BB", "A violinist takes bows after each piece — 1 for piece 1, 2 for piece 2, up to 5. Total bows?", "\U0001F3BB Encore: 15 bows!"),
+        ("xp", 9, "\u2B50", "Earn 1 XP for quest 1, 2 XP for quest 2, up to quest 9. Total XP earned?", "\u2B50 XP: 45!"),
+        ("petals", 6, "\U0001F33C", "A flower grows 1 petal, then 2, then 3... up to 6. Total petals on the bloom?", "\U0001F33C Bloomed: 21 petals!"),
+        ("claps", 4, "\U0001F44F", "After song 1, 1 clap. After song 2, 2 claps. Up to song 4. Total applause?", "\U0001F44F Applause: 10 claps!"),
+        ("sparks", 7, "\U0001F525", "A forge heats up — 1 spark minute 1, 2 sparks minute 2, up to 7. Total sparks?", "\U0001F525 Forged: 28 sparks!"),
+        ("tiles", 5, "\U0001F9E9", "Row 1 gets 1 tile, row 2 gets 2, up to row 5. Total tiles placed?", "\U0001F9E9 Tiled: 15!"),
+    ]
+    for vr, n_end, emoji, goal, share in for_triangular_themes:
+        add(tmpl_for_triangular(vr, n_end, emoji, goal, share, f"parsed_{idx:03d}"))
+
+    # ============================================
+    # MEDIUM: For loop — multiply (~10 puzzles)
+    # ============================================
+
+    for_multiply_themes = [
+        # (vr, n_end, k, emoji, goal, share)
+        ("size", 4, 2, "\U0001F9A0", "A cell divides: it doubles in size each of 4 cycles. Final size?", "\U0001F9A0 Grown: 16!"),
+        ("rumor", 3, 3, "\U0001F5E3\uFE0F", "A rumor triples each day for 3 days. How far has it spread?", "\U0001F5E3\uFE0F Spread: 27!"),
+        ("power", 5, 2, "\u26A1", "A reactor doubles its output each stage for 5 stages. Final power?", "\u26A1 Power: 32!"),
+        ("swarm", 3, 4, "\U0001F41D", "A bee colony quadruples each month for 3 months. Final swarm size?", "\U0001F41D Swarm: 64!"),
+        ("echo", 4, 3, "\U0001F50A", "An echo triples in volume with each bounce for 4 bounces. Final volume?", "\U0001F50A Echo: 81!"),
+        ("crystal", 3, 5, "\U0001F48E", "A crystal grows 5x each layer for 3 layers. Final size?", "\U0001F48E Crystal: 125!"),
+        ("fire", 6, 2, "\U0001F525", "A wildfire doubles each hour for 6 hours. Final area burned?", "\U0001F525 Fire: 64!"),
+        ("chain", 4, 2, "\U0001F517", "A chain reaction doubles each step for 4 steps. Final reaction size?", "\U0001F517 Reaction: 16!"),
+        ("ripple", 5, 2, "\U0001F30A", "A ripple doubles in radius each second for 5 seconds. Final radius?", "\U0001F30A Ripple: 32!"),
+        ("virus", 3, 3, "\U0001F9A0", "A computer virus triples each hour for 3 hours. Infected machines?", "\U0001F9A0 Infected: 27!"),
+    ]
+    for vr, n_end, k, emoji, goal, share in for_multiply_themes:
+        add(tmpl_for_multiply(vr, n_end, k, emoji, goal, share, f"parsed_{idx:03d}"))
+
+    # ============================================
+    # MEDIUM: For loop + if (~10 puzzles)
+    # ============================================
+
+    for_if_themes = [
+        # (vr, n_end, threshold, emoji, goal, share)
+        ("loot", 8, 4, "\U0001FA99", "A dungeon has 8 rooms. Only rooms numbered above 4 have treasure. Collect room numbers as loot. Total loot?", "\U0001FA99 Loot: 26!"),
+        ("score", 10, 6, "\U0001F3AF", "Play 10 rounds. Only rounds after round 6 score big — add the round number. Total bonus?", "\U0001F3AF Bonus: 34!"),
+        ("harvest", 7, 3, "\U0001F33E", "Harvest 7 fields. Only mature ones (above 3) produce yield equal to their number. Total harvest?", "\U0001F33E Harvest: 22!"),
+        ("xp", 6, 2, "\U0001F47E", "Fight 6 monsters. Only the tough ones (above level 2) award XP equal to their level. Total XP?", "\U0001F47E XP: 18!"),
+        ("power", 9, 5, "\u26A1", "A machine runs 9 cycles. Only cycles above 5 generate power equal to the cycle number. Total watts?", "\u26A1 Power: 30!"),
+        ("tips", 8, 3, "\U0001F4B0", "Serve 8 tables. Only big parties (table number above 3) tip their table number. Total tips?", "\U0001F4B0 Tips: 30!"),
+        ("gems", 7, 4, "\U0001F48E", "Explore 7 caves. Only deep caves (above 4) contain gems equal to the cave number. Total gems?", "\U0001F48E Gems: 18!"),
+        ("points", 10, 7, "\U0001F3C6", "A 10-round tournament. Only the finals (rounds above 7) award points equal to the round. Total points?", "\U0001F3C6 Points: 27!"),
+        ("stars", 6, 3, "\u2B50", "A telescope scans 6 sectors. Only bright sectors (above 3) reveal stars equal to the sector number. Total stars?", "\u2B50 Stars: 15!"),
+        ("notes", 8, 5, "\U0001F3B5", "An 8-bar solo. Only the last bars (above bar 5) hit the high notes. Sum of those bar numbers?", "\U0001F3B5 Solo: 21!"),
+    ]
+    for vr, n_end, threshold, emoji, goal, share in for_if_themes:
+        add(tmpl_for_if(vr, n_end, threshold, emoji, goal, share, f"parsed_{idx:03d}"))
+
+    # ============================================
+    # MEDIUM: For loop — two variable (~10 puzzles)
+    # ============================================
+
+    for_two_var_themes = [
+        # (vr, v2, v2_start, n_end, vr_op, v2_op, v2_step, emoji, goal, share)
+        ("distance", "speed", 3, 5, "+", "+", 2, "\U0001F697", "A car accelerates — speed starts at 3 and increases by 2 each tick. Total distance after 5 ticks?", "\U0001F697 Driven: 35!"),
+        ("gold", "wage", 5, 4, "+", "+", 3, "\U0001F4B0", "A worker's wage starts at 5 and rises by 3 each day. Total gold earned after 4 days?", "\U0001F4B0 Earned: 38!"),
+        ("harvest", "yield", 10, 3, "+", "-", 2, "\U0001F33E", "Each season the yield drops by 2 (starting at 10). Total harvest over 3 seasons?", "\U0001F33E Harvested: 24!"),
+        ("score", "combo", 8, 4, "+", "-", 1, "\U0001F3AE", "A combo multiplier starts at 8 and fades by 1 each hit. Total score after 4 hits?", "\U0001F3AE Score: 26!"),
+        ("altitude", "thrust", 20, 3, "+", "-", 5, "\U0001F680", "A rocket's thrust starts at 20 and drops by 5 each burn. Total altitude gained after 3 burns?", "\U0001F680 Altitude: 45!"),
+        ("melody", "volume", 6, 5, "+", "+", 1, "\U0001F3B5", "A crescendo starts at volume 6 and grows by 1 each beat. Total melody power after 5 beats?", "\U0001F3B5 Melody: 40!"),
+        ("paint", "strokes", 4, 6, "+", "+", 2, "\U0001F58C\uFE0F", "An artist's brush strokes start at 4 and widen by 2 each pass. Total paint applied after 6 passes?", "\U0001F58C\uFE0F Painted: 54!"),
+        ("damage", "power", 12, 4, "+", "-", 2, "\u2694\uFE0F", "A warrior's power starts at 12 and weakens by 2 each swing. Total damage after 4 swings?", "\u2694\uFE0F Damage: 36!"),
+        ("savings", "income", 15, 3, "+", "+", 5, "\U0001F4B8", "Income starts at 15 and grows by 5 each month. Total saved after 3 months?", "\U0001F4B8 Saved: 55!"),
+        ("depth", "drill", 7, 5, "+", "+", 1, "\u26CF\uFE0F", "Drill speed starts at 7 and increases by 1 each stage. Total depth after 5 stages?", "\u26CF\uFE0F Drilled: 45!"),
+    ]
+    for vr, v2, v2_start, n_end, vr_op, v2_op, v2_step, emoji, goal, share in for_two_var_themes:
+        add(tmpl_for_two_var(vr, v2, v2_start, n_end, vr_op, v2_op, v2_step, emoji, goal, share, f"parsed_{idx:03d}"))
 
     # ============================================
     # EASY-MEDIUM: if/else branching (~55 puzzles)
@@ -1318,16 +1422,16 @@ def generate_puzzles():
 
     add(make_puzzle([
         [kw("let"), id_("health"), op("="), lit_m("40")],
-        [kw("let"), id_("regen"), op("="), lit_m("5")],
+        [kw("let"), id_("regen"), op("="), lit_m("8")],
         [kw("let"), id_f("turns"), op("="), lit("0")],
         [kw("while"), id_("health"), op_m("<"), lit_m("60"), pn("{")],
         [id_("health"), op("="), id_("health"), op_m("+"), id_("regen")],
-        [id_("regen"), op("="), id_("regen"), op_m("-"), lit_m("1")],
+        [id_("regen"), op("="), id_("regen"), op_m("-"), lit_m("2")],
         [id_f("turns"), op("="), id_f("turns"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("turns")],
     ], "\u2764\uFE0F A wounded hero regenerates health, but the healing gets weaker each turn. How many turns to fully heal?",
-       "\u2764\uFE0F Healed: 40+5+4+3+2+1+... 5 turns", "medium", f"parsed_{idx:03d}"))
+       "\u2764\uFE0F Healed: 40+8+6+4+2 = 60 in 4 turns", "medium", f"parsed_{idx:03d}"))
 
     # ============================================
     # HARD: While + if/else inside (~50 puzzles)
@@ -1727,17 +1831,17 @@ def generate_puzzles():
        "\u2694\uFE0F Campaign over!\nN battles fought", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
-        [kw("let"), id_("pressure"), op("="), lit_m("100")],
-        [kw("let"), id_("valve"), op("="), lit_m("12")],
+        [kw("let"), id_("pressure"), op("="), lit_m("60")],
+        [kw("let"), id_("valve"), op("="), lit_m("20")],
         [kw("let"), id_f("releases"), op("="), lit("0")],
-        [kw("while"), id_("pressure"), op_m(">"), lit_m("30"), pn("{")],
+        [kw("while"), id_("pressure"), op_m(">"), lit_m("10"), pn("{")],
         [id_("pressure"), op("="), id_("pressure"), op_m("-"), id_("valve")],
-        [id_("valve"), op("="), id_("valve"), op_m("-"), lit_m("2")],
+        [id_("valve"), op("="), id_("valve"), op_m("-"), lit_m("5")],
         [id_f("releases"), op("="), id_f("releases"), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_f("releases")],
     ], "\U0001F4A8 A pressure valve gets weaker each release. How many releases before the pressure drops to a safe level?",
-       "\U0001F4A8 Safe pressure!\nN releases needed", "hard", f"parsed_{idx:03d}"))
+       "\U0001F4A8 Safe pressure!\n4 releases needed", "hard", f"parsed_{idx:03d}"))
 
     add(make_puzzle([
         [kw("let"), id_("students"), op("="), lit_m("40")],
@@ -1787,40 +1891,39 @@ def generate_puzzles():
     # ADDITIONAL PUZZLES to reach 365
     # ============================================
 
-    # More easy arithmetic
-    extra_add = [
-        ("scoops", 5, "sprinkles", 8, "sundae", "\U0001F368", "How many toppings on the sundae?", "\U0001F368 Sundae: 13 toppings"),
-        ("silver", 18, "bronze", 22, "medals", "\U0001F3C5", "Total medals won?", "\U0001F3C5 Medals: 40"),
-        ("dwarves", 7, "hobbits", 4, "party", "\U0001F9DD", "How many in the adventuring party?", "\U0001F9DD Party: 11"),
-        ("mushrooms", 9, "peppers", 6, "toppings", "\U0001F355", "Total pizza toppings?", "\U0001F355 Toppings: 15"),
-        ("dolphins", 12, "whales", 5, "pod", "\U0001F42C", "How many marine mammals spotted?", "\U0001F42C Pod: 17"),
+    # More for loop accumulators
+    extra_for_accum = [
+        ("apples", 6, 5, "\U0001F34E", "Pick 5 apples from each of 6 trees. Total apples?", "\U0001F34E Picked: 30 apples!"),
+        ("xp", 4, 15, "\U0001F47E", "Defeat 4 monsters worth 15 XP each. Total XP?", "\U0001F47E XP: 60!"),
+        ("planks", 7, 3, "\U0001FA9A", "Cut 3 planks from each of 7 logs. Total planks?", "\U0001FA9A Cut: 21 planks!"),
     ]
-    for v1, n1, v2, n2, vr, emoji, goal, share in extra_add:
-        add(tmpl_add2(v1, n1, v2, n2, vr, emoji, goal, share, f"parsed_{idx:03d}"))
+    for vr, n_end, k, emoji, goal, share in extra_for_accum:
+        add(tmpl_for_accum(vr, n_end, k, emoji, goal, share, f"parsed_{idx:03d}"))
 
-    extra_sub = [
-        ("calories", 200, "burned", 135, "net", "\U0001F525", "Net calories after workout?", "\U0001F525 Net: 65 cal"),
-        ("inventory", 75, "shipped", 48, "warehouse", "\U0001F4E6", "Items left in warehouse?", "\U0001F4E6 Warehouse: 27"),
-        ("mana", 120, "drain", 45, "pool", "\U0001FA84", "Mana remaining after spell drain?", "\U0001FA84 Pool: 75"),
+    # More for loop triangular
+    extra_for_tri = [
+        ("stacks", 8, "\U0001F4DA", "Stack books: 1 on shelf 1, 2 on shelf 2, up to shelf 8. Total books stacked?", "\U0001F4DA Stacked: 36!"),
+        ("reps", 6, "\U0001F3CB\uFE0F", "Workout: 1 rep set 1, 2 reps set 2, up to set 6. Total reps?", "\U0001F3CB\uFE0F Reps: 21!"),
     ]
-    for v1, n1, v2, n2, vr, emoji, goal, share in extra_sub:
-        add(tmpl_sub2(v1, n1, v2, n2, vr, emoji, goal, share, f"parsed_{idx:03d}"))
+    for vr, n_end, emoji, goal, share in extra_for_tri:
+        add(tmpl_for_triangular(vr, n_end, emoji, goal, share, f"parsed_{idx:03d}"))
 
-    extra_mul = [
-        ("wheels", 4, "cars", 8, "total", "\U0001F697", "Total wheels in the parking lot?", "\U0001F697 Wheels: 32"),
-        ("strings", 6, "guitars", 5, "total", "\U0001F3B8", "Total guitar strings needed?", "\U0001F3B8 Strings: 30"),
-        ("legs", 8, "spiders", 3, "total", "\U0001F577\uFE0F", "Total spider legs?", "\U0001F577\uFE0F Legs: 24"),
+    # More for loop multiply
+    extra_for_mul = [
+        ("cells", 5, 2, "\U0001F9EC", "Cells divide: they double each generation for 5 generations. Final count?", "\U0001F9EC Cells: 32!"),
+        ("zombies", 4, 3, "\U0001F9DF", "Zombies triple each night for 4 nights. Final horde?", "\U0001F9DF Horde: 81!"),
     ]
-    for v1, n1, v2, n2, vr, emoji, goal, share in extra_mul:
-        add(tmpl_mul2(v1, n1, v2, n2, vr, emoji, goal, share, f"parsed_{idx:03d}"))
+    for vr, n_end, k, emoji, goal, share in extra_for_mul:
+        add(tmpl_for_multiply(vr, n_end, k, emoji, goal, share, f"parsed_{idx:03d}"))
 
-    # More chain arithmetic
-    extra_chain = [
-        ("base", 15, "tip", 3, "tax", 2, "bill", "+", "+", "\U0001F4B5", "Dinner out! Add the tip and tax to the base price. What's the total bill?", "\U0001F4B5 Check please!\nTotal bill: $20"),
-        ("hp", 100, "shield", 25, "hit", 40, "remain", "+", "-", "\u2764\uFE0F", "A paladin absorbs a hit with HP and shield combined. How much health remains?", "\u2764\uFE0F Still standing!\n85 HP remaining"),
+    # More for loop + if
+    extra_for_if = [
+        ("medals", 10, 5, "\U0001F3C5", "Compete in 10 events. Only events above 5 earn a medal equal to the event number. Total medals?", "\U0001F3C5 Medals: 40!"),
+        ("profit", 8, 4, "\U0001F4B0", "Run a shop for 8 days. Only busy days (above day 4) earn profit equal to the day. Total profit?", "\U0001F4B0 Profit: 26!"),
+        ("letters", 7, 3, "\u2709\uFE0F", "Write 7 letters. Only long ones (above 3) need stamps equal to the letter number. Total stamps?", "\u2709\uFE0F Stamps: 22!"),
     ]
-    for v1, n1, v2, n2, v3, n3, vr, o1, o2, emoji, goal, share in extra_chain:
-        add(tmpl_chain3(v1, n1, v2, n2, v3, n3, vr, o1, o2, emoji, goal, share, f"parsed_{idx:03d}"))
+    for vr, n_end, threshold, emoji, goal, share in extra_for_if:
+        add(tmpl_for_if(vr, n_end, threshold, emoji, goal, share, f"parsed_{idx:03d}"))
 
     # More if/else
     extra_ifelse = [
@@ -1971,13 +2074,45 @@ def generate_puzzles():
     ], "\u2744\uFE0F A glacier melts in the sun. Intense sun melts it fast, but the sun fades each day. How many days until it's gone?",
        "\u2744\uFE0F Glacier gone!\nMelted in N days", "hard", f"parsed_{idx:03d}"))
 
-    # Final 2 puzzles to reach 365
-    add(tmpl_add2("gems", 16, "crystals", 9, "treasure", "\U0001F48E",
-                   "How many jewels in the treasure chest?", "\U0001F48E Treasure: 25 jewels",
-                   f"parsed_{idx:03d}"))
-    add(tmpl_mul2("wings", 2, "butterflies", 11, "total", "\U0001F98B",
-                   "Total butterfly wings in the garden?", "\U0001F98B Wings: 22 total",
-                   f"parsed_{idx:03d}"))
+    # --- Additional for-loop and if/else puzzles to fill to 365 ---
+
+    more_for = [
+        ("shells", 5, 4, "\U0001F41A", "Collect 4 shells from each of 5 beaches. How many shells?", "\U0001F41A Collected: 20 shells!"),
+        ("arrows", 6, 3, "\U0001F3F9", "Fire 3 arrows each round for 6 rounds. Total arrows shot?", "\U0001F3F9 Fired: 18 arrows!"),
+        ("songs", 4, 8, "\U0001F3B5", "Learn 8 notes each day for 4 days. How many notes total?", "\U0001F3B5 Learned: 32 notes!"),
+        ("frames", 5, 6, "\U0001F3AC", "Render 6 frames each second for 5 seconds. Total frames?", "\U0001F3AC Rendered: 30 frames!"),
+        ("seeds", 7, 4, "\U0001F331", "Plant 4 seeds in each of 7 pots. How many planted?", "\U0001F331 Planted: 28 seeds!"),
+        ("laps", 8, 3, "\U0001F3CA", "Swim 3 laps each set for 8 sets. Total laps?", "\U0001F3CA Swam: 24 laps!"),
+        ("tickets", 6, 5, "\U0001F3AB", "Sell 5 tickets each hour for 6 hours. Total sales?", "\U0001F3AB Sold: 30 tickets!"),
+        ("photos", 4, 9, "\U0001F4F8", "Take 9 photos at each of 4 landmarks. Total photos?", "\U0001F4F8 Taken: 36 photos!"),
+    ]
+    for vr, n_end, k, emoji, goal, share in more_for:
+        add(tmpl_for_accum(vr, n_end, k, emoji, goal, share, f"parsed_{idx:03d}"))
+
+    more_for_tri = [
+        ("pages", 7, "\U0001F4D6", "Read 1 page day 1, 2 pages day 2, up to day 7. Total pages read?", "\U0001F4D6 Read: 28 pages!"),
+        ("pushups", 5, "\U0001F4AA", "Do 1 pushup in set 1, 2 in set 2, up to set 5. Total reps?", "\U0001F4AA Reps: 15!"),
+        ("stars", 6, "\u2B50", "Earn 1 star level 1, 2 stars level 2, up to level 6. Total stars?", "\u2B50 Stars: 21!"),
+        ("likes", 8, "\u2764\uFE0F", "Get 1 like hour 1, 2 likes hour 2, up to hour 8. Total likes?", "\u2764\uFE0F Likes: 36!"),
+    ]
+    for vr, n_end, emoji, goal, share in more_for_tri:
+        add(tmpl_for_triangular(vr, n_end, emoji, goal, share, f"parsed_{idx:03d}"))
+
+    more_for_mul = [
+        ("rumor", 3, 6, "\U0001F5E3\uFE0F", "A rumor spreads — each person tells 3 others for 6 rounds. How many heard it?", "\U0001F5E3\uFE0F Rumor: 729 people!"),
+        ("cells", 2, 5, "\U0001F9EC", "A cell divides: doubles each hour for 5 hours. How many cells?", "\U0001F9EC Cells: 32!"),
+    ]
+    for vr, start_val, n_end, emoji, goal, share in more_for_mul:
+        add(tmpl_for_multiply(vr, start_val, n_end, emoji, goal, share, f"parsed_{idx:03d}"))
+
+    more_for_if = [
+        ("grade", 8, 5, "\U0001F393", "Grade homework: full marks for problems above 5, half marks below. Total score after 8 problems?", "\U0001F393 Graded!"),
+        ("snacks", 6, 3, "\U0001F36C", "Hand out snacks: big kids (above 3) get extra, little ones get some. Total after 6 kids?", "\U0001F36C Shared!"),
+        ("tips", 7, 4, "\U0001F4B5", "Wait tables: big parties (above 4) tip more, small ones tip less. Total tips for 7 tables?", "\U0001F4B5 Tips collected!"),
+        ("saves", 5, 3, "\U0001F3AE", "A goalkeeper faces shots: hard ones (above 3) are tougher. Saves after 5 rounds?", "\U0001F3AE Saved!"),
+    ]
+    for vr, n_end, threshold, emoji, goal, share in more_for_if:
+        add(tmpl_for_if(vr, n_end, threshold, emoji, goal, share, f"parsed_{idx:03d}"))
 
     # Check total count
     print(f"\nTotal puzzles generated: {len(puzzles)}")

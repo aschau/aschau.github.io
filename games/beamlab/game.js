@@ -45,6 +45,7 @@
     let puzzleNumber = 0;
     let fixedCells = new Set();  // cells with pre-placed mirrors (can't be moved)
     let selectedMirrorType = 'fwd';
+    let winningSolution = null;  // saved board state from first solve
 
     // --- DOM refs ---
     const gridContainer = document.getElementById('grid-container');
@@ -64,6 +65,7 @@
     const undoBtn = document.getElementById('undo-btn');
     const resetBtn = document.getElementById('reset-btn');
     const shareBtn = document.getElementById('share-btn');
+    const restoreBtn = document.getElementById('restore-btn');
     const helpBtn = document.getElementById('help-btn');
     const helpModal = document.getElementById('help-modal');
     const helpClose = document.getElementById('help-close');
@@ -160,12 +162,6 @@
         updateButtons();
         updateStatsDisplay();
         setupEventListeners();
-
-        if (solved) {
-            shareBtn.disabled = false;
-            resetBtn.disabled = true;
-            undoBtn.disabled = true;
-        }
 
         // Show quick controls for first-time visitors
         if (!localStorage.getItem('beamlab_seen_controls')) {
@@ -542,25 +538,25 @@
     function checkWinCondition() {
         if (targetsHit.every(Boolean)) {
             solved = true;
-            const used = countPiecesUsed();
 
             var data = loadData();
             var alreadySolvedToday = data.today && data.today.date === getTodayKey() && data.today.everSolved;
 
-            // First solve of the day: record streak + initial stats
             if (!alreadySolvedToday) {
+                // First solve: record stats, best score, save winning solution
+                const used = countPiecesUsed();
                 updateStats(used);
+                updateBestScore(used);
+                saveWinningSolution();
             }
-
-            updateBestScore(used);
 
             saveState();
             updateStatsDisplay();
-            shareBtn.disabled = false;
-            resetBtn.disabled = true;
-            undoBtn.disabled = true;
+            updateButtons();
 
-            setTimeout(function () { showWinModal(); }, 600);
+            if (!alreadySolvedToday) {
+                setTimeout(function () { showWinModal(); }, 600);
+            }
         }
     }
 
@@ -676,8 +672,10 @@
 
         undoBtn.addEventListener('click', undo);
         resetBtn.addEventListener('click', resetBoard);
+        if (restoreBtn) restoreBtn.addEventListener('click', restoreSolution);
         shareBtn.addEventListener('click', function () {
-            if (solved) showWinModal();
+            var data = loadData();
+            if (data.today && data.today.everSolved) showWinModal();
         });
 
         helpBtn.addEventListener('click', () => { helpModal.hidden = false; });
@@ -842,7 +840,9 @@
 
     function refreshSharePreview() {
         var sharePreview = document.getElementById('share-preview');
-        if (sharePreview && typeof generateShareText === 'function' && solved) {
+        var rData = loadData();
+        var rEverSolved = rData.today && rData.today.everSolved;
+        if (sharePreview && typeof generateShareText === 'function' && rEverSolved) {
             var data = loadData();
             var todayData = data.today || {};
             var bestScore = todayData.bestScore || countPiecesUsed();
@@ -853,7 +853,6 @@
     }
 
     function handleCellClick(e) {
-        if (solved) return;
         const cell = e.target.closest('.cell');
         if (!cell) return;
 
@@ -872,7 +871,6 @@
 
     function handleCellRightClick(e) {
         e.preventDefault();
-        if (solved) return;
         const cell = e.target.closest('.cell');
         if (!cell) return;
         var r = parseInt(cell.dataset.r), c = parseInt(cell.dataset.c);
@@ -893,6 +891,7 @@
         moveHistory.push({ action: 'place', r, c, type });
         grid[r][c] = type;
         inventory[type]--;
+        solved = false;
 
         updateCellVisual(r, c);
         traceLaser();
@@ -921,6 +920,7 @@
         inventory[oldType]++;
         inventory[newType]--;
         grid[r][c] = newType;
+        solved = false;
 
         updateCellVisual(r, c);
         traceLaser();
@@ -936,6 +936,7 @@
         moveHistory.push({ action: 'remove', r, c, type });
         grid[r][c] = null;
         inventory[type]++;
+        solved = false;
 
         updateCellVisual(r, c);
         traceLaser();
@@ -945,7 +946,8 @@
     }
 
     function undo() {
-        if (solved || moveHistory.length === 0) return;
+        if (moveHistory.length === 0) return;
+        solved = false;
         const move = moveHistory.pop();
 
         switch (move.action) {
@@ -972,9 +974,6 @@
     }
 
     function resetBoard() {
-        if (solved) return;
-        var data = loadData();
-        if (data.today && data.today.everSolved) return;
         for (let r = 0; r < GRID_SIZE; r++) {
             for (let c = 0; c < GRID_SIZE; c++) {
                 if (isPiece(grid[r][c]) && !fixedCells.has(r + ',' + c)) {
@@ -987,7 +986,6 @@
         moveHistory = [];
         solved = false;
         gemCollected = false;
-        shareBtn.disabled = true;
 
         renderGrid();
         traceLaser();
@@ -1017,9 +1015,15 @@
     }
 
     function updateButtons() {
-        undoBtn.disabled = solved || moveHistory.length === 0;
-        resetBtn.disabled = solved;
-        shareBtn.disabled = !solved;
+        var data = loadData();
+        var hasEverSolved = data.today && data.today.everSolved;
+        undoBtn.disabled = moveHistory.length === 0;
+        resetBtn.disabled = false;
+        shareBtn.disabled = !hasEverSolved;
+        if (restoreBtn) {
+            restoreBtn.disabled = !hasEverSolved || solved;
+            restoreBtn.hidden = !hasEverSolved;
+        }
     }
 
     function updateBestScore(used) {
@@ -1056,6 +1060,54 @@
 
     function getStorageKey() { return 'beamlab_data'; }
 
+    function saveWinningSolution() {
+        var pieces = [];
+        for (var r = 0; r < GRID_SIZE; r++) {
+            for (var c = 0; c < GRID_SIZE; c++) {
+                if (isPiece(grid[r][c]) && !fixedCells.has(r + ',' + c)) {
+                    pieces.push({ r: r, c: c, type: grid[r][c] });
+                }
+            }
+        }
+        winningSolution = pieces;
+        var data = loadData();
+        if (data.today) {
+            data.today.winningSolution = pieces;
+            try { localStorage.setItem(getStorageKey(), JSON.stringify(data)); } catch (e) { }
+        }
+    }
+
+    function restoreSolution() {
+        if (!winningSolution) return;
+
+        // Clear all non-fixed pieces
+        for (var r = 0; r < GRID_SIZE; r++) {
+            for (var c = 0; c < GRID_SIZE; c++) {
+                if (isPiece(grid[r][c]) && !fixedCells.has(r + ',' + c)) {
+                    grid[r][c] = null;
+                }
+            }
+        }
+
+        // Restore winning pieces
+        inventory = { fwd: 0, bck: 0, split: 0, ...puzzle.inventory };
+        for (var i = 0; i < winningSolution.length; i++) {
+            var p = winningSolution[i];
+            grid[p.r][p.c] = p.type;
+            if (inventory[p.type] !== undefined) inventory[p.type]--;
+        }
+
+        moveHistory = [];
+        solved = true;
+        gemCollected = false;
+
+        renderGrid();
+        traceLaser();
+        updateInventoryUI();
+        updateButtons();
+        saveState();
+    }
+
     function saveState() {
         if (debugMode) return; // Don't save debug mode progress
         const pieces = [];
@@ -1079,10 +1131,11 @@
             score: solved ? countPiecesUsed() : null,
             bestScore: prevToday.bestScore || null,
             gemEverCollected: prevToday.gemEverCollected || false,
-            par: puzzle.par
+            par: puzzle.par,
+            winningSolution: prevToday.winningSolution || null
         };
-        // Preserve best score and gem across resets
-        if (solved) {
+        // Preserve best score and gem from first solve only
+        if (solved && !prevToday.everSolved) {
             var current = countPiecesUsed();
             if (data.today.bestScore === null || current < data.today.bestScore) {
                 data.today.bestScore = current;
@@ -1111,7 +1164,8 @@
             }
         }
 
-        solved = !!data.today.solved || !!data.today.everSolved;
+        solved = !!data.today.solved;
+        winningSolution = data.today.winningSolution || null;
         return true;
     }
 

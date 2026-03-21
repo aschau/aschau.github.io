@@ -42,5 +42,5 @@ Run: `python verify_puzzles.py`. Checks: structural validity, interpreter execut
 - Score labels: Genius (-3), Hacker (-2), Optimized (-1), Compiled (0), Verbose (+1), Spaghetti (+2+)
 
 ## Persistence
-`localStorage` key `parsed_data`: board state, stats, streaks. `SAVE_VERSION` = 3 — bump when format changes. Board locks after first solve — reset/undo disabled, no replays.
+`localStorage` key `parsed_data`: board state, winningSolution, firstSolveSwaps, stats, streaks. `SAVE_VERSION` = 4 — bump when format changes. After first solve, board stays interactive for replay — score/stats frozen to first solve. "Restore" button appears to snap back to winning arrangement.
 Theme in `parsed_theme`. Username in `parsed_username`.

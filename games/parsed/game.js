@@ -40,6 +40,8 @@
     var solved = false;
     var everSolved = false;
     var bestScore = null;
+    var winningSolution = null;  // saved token arrangement from first solve
+    var firstSolveSwaps = null;  // swap count from first solve (for sharing)
 
     // --- DOM refs ---
     var codeGrid = document.getElementById('code-grid');
@@ -52,6 +54,7 @@
     var undoBtn = document.getElementById('undo-btn');
     var resetBtn = document.getElementById('reset-btn');
     var shareBtn = document.getElementById('share-btn');
+    var restoreBtn = document.getElementById('restore-btn');
     var helpBtn = document.getElementById('help-btn');
     var helpModal = document.getElementById('help-modal');
     var helpClose = document.getElementById('help-close');
@@ -155,12 +158,6 @@
         updateUI();
         updateStatsDisplay();
         setupEventListeners();
-
-        if (solved) {
-            shareBtn.disabled = false;
-            resetBtn.disabled = true;
-            undoBtn.disabled = true;
-        }
 
         // First-visit controls
         if (!localStorage.getItem('parsed_seen_controls')) {
@@ -660,7 +657,8 @@
         codeGrid.addEventListener('click', handleTokenClick);
         undoBtn.addEventListener('click', handleUndo);
         resetBtn.addEventListener('click', handleReset);
-        shareBtn.addEventListener('click', function () { showWinModal(); });
+        if (restoreBtn) restoreBtn.addEventListener('click', restoreSolution);
+        shareBtn.addEventListener('click', function () { if (everSolved) showWinModal(); });
 
         helpBtn.addEventListener('click', function () { helpModal.hidden = false; });
         helpClose.addEventListener('click', function () { helpModal.hidden = true; });
@@ -762,8 +760,6 @@
     }
 
     function handleTokenClick(e) {
-        if (solved) return;
-
         var tokenEl = e.target.closest('.token.movable');
         if (!tokenEl) {
             // Clicked elsewhere — deselect
@@ -799,6 +795,7 @@
         movableTokens[a].t = movableTokens[b].t;
         movableTokens[b].t = tmpText;
 
+        solved = false;
         swapCount++;
         moveHistory.push({ a: a, b: b });
 
@@ -820,7 +817,8 @@
     }
 
     function handleUndo() {
-        if (moveHistory.length === 0 || solved) return;
+        if (moveHistory.length === 0) return;
+        solved = false;
 
         var last = moveHistory.pop();
         // Reverse the swap
@@ -837,8 +835,6 @@
     }
 
     function handleReset() {
-        if (everSolved) return;
-
         // Re-scramble with a seeded shuffle based on puzzle id
         buildTokenArrays();
         solutionOrder = [];
@@ -882,32 +878,28 @@
         var isFirstSolve = !everSolved;
         everSolved = true;
 
-        // Lock board immediately — disable undo/reset, enable share
-        undoBtn.disabled = true;
-        resetBtn.disabled = true;
-        shareBtn.disabled = false;
-
-        // Update best score
-        if (bestScore === null || swapCount < bestScore) {
-            bestScore = swapCount;
-        }
-
-        saveState();
-
         if (isFirstSolve) {
+            // Freeze first-solve score and save winning arrangement
+            bestScore = swapCount;
+            firstSolveSwaps = swapCount;
+            winningSolution = movableTokens.map(function (t) { return t.t; });
             updateStats(swapCount);
         }
 
+        saveState();
         updateStatsDisplay();
+        updateUI();
 
-        // Run execution animation, then show win modal
-        runExecution(function () {
-            showWinModal();
-        });
+        if (isFirstSolve) {
+            // Run execution animation, then show win modal
+            runExecution(function () {
+                showWinModal();
+            });
+        }
     }
 
     function showWinModal() {
-        var displayScore = swapCount;
+        var displayScore = firstSolveSwaps !== null ? firstSolveSwaps : swapCount;
         var diff = displayScore - puzzle.par;
         var scoreLabel;
         if (diff <= -3) scoreLabel = 'Genius!';
@@ -1697,8 +1689,13 @@
 
     function updateUI() {
         swapsUsed.textContent = swapCount;
-        undoBtn.disabled = moveHistory.length === 0 || solved;
-        resetBtn.disabled = everSolved;
+        undoBtn.disabled = moveHistory.length === 0;
+        resetBtn.disabled = false;
+        shareBtn.disabled = !everSolved;
+        if (restoreBtn) {
+            restoreBtn.disabled = !everSolved || solved;
+            restoreBtn.hidden = !everSolved;
+        }
     }
 
     function updateStatsDisplay() {
@@ -1824,6 +1821,24 @@
         return STORAGE_KEY;
     }
 
+    function restoreSolution() {
+        if (!winningSolution || winningSolution.length !== movableTokens.length) return;
+
+        for (var i = 0; i < movableTokens.length; i++) {
+            movableTokens[i].t = winningSolution[i];
+        }
+
+        swapCount = firstSolveSwaps || 0;
+        moveHistory = [];
+        solved = true;
+        selectedIndex = null;
+
+        renderCode();
+        updateConsole();
+        updateUI();
+        saveState();
+    }
+
     function saveState() {
         if (debugMode) return; // Don't save debug mode progress
         var data = loadData();
@@ -1842,14 +1857,17 @@
             initialScramble: initialScramble,
             swapCount: swapCount,
             bestScore: prevToday.bestScore || null,
+            firstSolveSwaps: prevToday.firstSolveSwaps || null,
+            winningSolution: prevToday.winningSolution || null,
             par: puzzle.par,
             moveHistory: moveHistory
         };
 
-        if (solved) {
-            if (data.today.bestScore === null || swapCount < data.today.bestScore) {
-                data.today.bestScore = swapCount;
-            }
+        // Only freeze score on first solve
+        if (solved && !prevToday.everSolved) {
+            data.today.bestScore = swapCount;
+            data.today.firstSolveSwaps = swapCount;
+            data.today.winningSolution = movableTokens.map(function (t) { return t.t; });
         }
 
         try {
@@ -1875,8 +1893,10 @@
         swapCount = data.today.swapCount || 0;
         moveHistory = data.today.moveHistory || [];
         everSolved = !!data.today.everSolved;
-        solved = !!data.today.solved || everSolved;
+        solved = !!data.today.solved;
         bestScore = data.today.bestScore || null;
+        firstSolveSwaps = data.today.firstSolveSwaps || null;
+        winningSolution = data.today.winningSolution || null;
 
         return true;
     }
@@ -1949,7 +1969,8 @@
     function getShareText() {
         if (typeof generateShareText !== 'function') return '';
         var stats = loadStats();
-        return generateShareText(puzzleNumber, swapCount, puzzle.par, puzzle.shareResult || '', stats.currentStreak, getUsername());
+        var shareSwaps = firstSolveSwaps !== null ? firstSolveSwaps : swapCount;
+        return generateShareText(puzzleNumber, shareSwaps, puzzle.par, puzzle.shareResult || '', stats.currentStreak, getUsername());
     }
 
     function copyResults() {

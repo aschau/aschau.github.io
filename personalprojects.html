@@ -10,12 +10,12 @@
     <link rel="stylesheet" href="css/stylesheet.css">
 
     <title>Andrew Chau | Personal Projects</title>
-    <meta name="description" content="Personal and indie projects by Andrew Chau — Co-founder of Friend Castle, Engineer and Technical Producer on Waxheart, the evolution of this portfolio website from college project to AI-powered development, plus award-winning college game projects built in Unity and Python.">
+    <meta name="description" content="Personal and indie projects by Andrew Chau — Co-founder of Friend Castle, Engineer and Technical Producer on Waxheart, daily puzzle games Beamlab and Parsed, the evolution of this portfolio website from college project to AI-powered development, plus award-winning college game projects built in Unity and Python.">
     <link rel="canonical" href="https://aschau.github.io/personalprojects.html">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Andrew Chau | Personal Projects">
-    <meta property="og:description" content="Co-founder of Friend Castle, Engineer on Waxheart, portfolio evolution from college to AI-powered development, plus award-winning college game projects.">
+    <meta property="og:description" content="Co-founder of Friend Castle, Engineer on Waxheart, daily puzzle games Beamlab and Parsed, portfolio evolution from college to AI-powered development, plus award-winning college game projects.">
     <meta property="og:url" content="https://aschau.github.io/personalprojects.html">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://aschau.github.io/img/about-me/me.JPG">
@@ -23,7 +23,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Andrew Chau | Personal Projects">
-    <meta name="twitter:description" content="Co-founder of Friend Castle, Engineer on Waxheart, portfolio evolution from college to AI-powered development, plus award-winning college game projects.">
+    <meta name="twitter:description" content="Co-founder of Friend Castle, Engineer on Waxheart, daily puzzle games Beamlab and Parsed, portfolio evolution from college to AI-powered development, plus award-winning college game projects.">
     <meta name="twitter:image" content="https://aschau.github.io/img/about-me/me.JPG">
 
   </head>
@@ -38,12 +38,17 @@
           <a class="list-group-item list-group-item-dark list-group-item-action active" id="FriendCastleList" data-toggle="list" href="#FriendCastle" role="tab" aria-controls="FriendCastleControls">
             Friend Castle
             <hr class="my-2 hr-grey">
-            <i>Current</i>
+            <i>2023 - Present</i>
           </a>
           <a class="list-group-item list-group-item-dark list-group-item-action" id="WaxHeartList" data-toggle="list" href="#WaxHeart" role="tab" aria-controls="WaxHeartControls">
             Waxheart
             <hr class="my-2 hr-grey">
-            <i>Current</i>
+            <i>2024 - Present</i>
+          </a>
+          <a class="list-group-item list-group-item-dark list-group-item-action" id="GamesToolsList" data-toggle="list" href="#GamesTools" role="tab" aria-controls="GamesToolsControls">
+            Games &amp; Tools
+            <hr class="my-2 hr-grey">
+            <i>2026 - Present</i>
           </a>
           <a class="list-group-item list-group-item-dark list-group-item-action" id="PortfolioList" data-toggle="list" href="#Portfolio" role="tab" aria-controls="PortfolioControls">
             This Website
@@ -202,6 +207,120 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <div class="tab-pane fade" id="GamesTools" role="tabpanel" aria-labelledby="GamesToolsList">
+            <div class="container my-4">
+              <div class="card text-white bg-dark">
+                <div class="card-body">
+                  <h5 class="card-title">Games & Tools — Built with AI</h5>
+                  <p class="card-text">
+                    I started using Claude Code on March 14th, 2026. Within a week, everything below was live — two complete daily puzzle games with 365 puzzles each, and a room layout planner with a full furniture library. That kind of turnaround would have been impossible working solo in my spare time — especially in languages I'm not deeply familiar with.
+                  </p>
+                  <p class="card-text">
+                    I barely know HTML, CSS, or JavaScript — but I know game design, I know how to code, and I know how to direct an AI tool effectively. I bring the creative direction, design sensibility, and vision for what the end product should feel like. Claude handles the implementation details — the CSS quirks, the JavaScript patterns, the beam-tracing math. I direct, review, and iterate. It's like having a very fast junior developer who never gets tired, and knowing how to steer that effectively is a skill in itself.
+                  </p>
+                  <p class="card-text">
+                    These projects are proof of concept for a workflow I believe in: AI doesn't replace creative direction or design judgment — it removes the friction between having an idea and shipping it.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-deck mr-2 my-4">
+              <div class="card text-white bg-dark mb-4">
+                <div class="card-body">
+                  <h5 class="card-title">Beamlab</h5>
+                  <img src="games/beamlab/og-image.png" class="img-fluid rounded mb-3" alt="Beamlab daily laser puzzle game">
+                  <p class="card-text">
+                    A daily laser puzzle. Place mirrors and beam splitters on a 6x6 grid to route a laser beam from the source to all targets. Fewer pieces = better score.
+                  </p>
+                  <p class="card-text"><b>How it started:</b></p>
+                  <ul class="text-white">
+                    <li>Basic mirror placement (/ and \) with a single laser source and target</li>
+                    <li>Simple brute-force puzzle generation</li>
+                    <li>Tap-to-cycle interaction for piece types</li>
+                  </ul>
+                  <p class="card-text"><b>How it evolved:</b></p>
+                  <ul class="text-white">
+                    <li>Added beam splitters that split the laser into two paths, each needing its own target</li>
+                    <li>Splitters now have two rotatable orientations — tap to flip which direction they reflect</li>
+                    <li>Pre-placed gold "fixed" mirrors that constrain the puzzle and can't be moved</li>
+                    <li>Optional gem collectibles that require creative detours from the main solution</li>
+                    <li>Walls-first generation algorithm with recursive backtracking for natural difficulty scaling</li>
+                    <li>Beam-aware solver with inventory-based pruning for fast validation</li>
+                    <li>Multiprocessed puzzle regeneration leveraging all CPU cores</li>
+                  </ul>
+                  <p class="card-text"><b>Where it is now:</b></p>
+                  <ul class="text-white">
+                    <li>365 daily puzzles across three difficulty tiers (medium, hard, expert)</li>
+                    <li>Scoring system: Brilliant / Focused / Aligned / Scattered / Refracted</li>
+                    <li>Daily streaks, shareable results, and gem collection stats</li>
+                  </ul>
+                  <a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary mr-2 mb-2">Play Beamlab</a>
+                </div>
+              </div>
+              <div class="w-100 d-none d-sm-block d-xl-none"></div>
+              <div class="card text-white bg-dark mb-4">
+                <div class="card-body">
+                  <h5 class="card-title">Parsed</h5>
+                  <img src="games/parsed/og-image.png" class="img-fluid rounded mb-3" alt="Parsed daily code puzzle game">
+                  <p class="card-text">
+                    A daily code puzzle. Swap scrambled tokens in a buggy program to make it produce the correct output. Think Wordle meets debugging.
+                  </p>
+                  <p class="card-text"><b>How it started:</b></p>
+                  <ul class="text-white">
+                    <li>Simple token-swapping on short code snippets</li>
+                    <li>Basic interpreter for arithmetic and variable assignments</li>
+                    <li>Static puzzle set with manual difficulty tuning</li>
+                  </ul>
+                  <p class="card-text"><b>How it evolved:</b></p>
+                  <ul class="text-white">
+                    <li>Full pseudo-interpreter supporting for loops, while loops, if/else, and nested logic</li>
+                    <li>Themed puzzles with real-world narratives — counting inventory, tracking scores, managing budgets</li>
+                    <li>Execution animation that plays through each step with inline variable annotations</li>
+                    <li>Themed scene strips with emoji progress bars driven by the code's key variable</li>
+                    <li>Tappable code lines for step-by-step explanations after solving</li>
+                    <li>Automated verification pipeline checking solvability, narrative consistency, and duplicate detection</li>
+                  </ul>
+                  <p class="card-text"><b>Where it is now:</b></p>
+                  <ul class="text-white">
+                    <li>365 daily puzzles across medium and hard tiers with six programming concepts</li>
+                    <li>Scoring system: Genius / Hacker / Optimized / Compiled / Verbose / Spaghetti</li>
+                    <li>Daily streaks, shareable results, and walkthrough replays</li>
+                  </ul>
+                  <a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary mr-2 mb-2">Play Parsed</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="container my-4">
+              <div class="card text-white bg-dark">
+                <div class="card-body">
+                  <h5 class="card-title">SnapLayout</h5>
+                  <img src="tools/snaplayout/og-image.png" class="img-fluid rounded mb-3" alt="SnapLayout room layout planner">
+                  <p class="card-text">
+                    A free, mobile-friendly room layout planner. Import a floorplan image (or draw rooms from scratch), set the scale, and drag and drop furniture with real-world dimensions. No sign-up required.
+                  </p>
+                  <p class="card-text"><b>How it started:</b></p>
+                  <ul class="text-white">
+                    <li>Basic canvas with draggable furniture rectangles</li>
+                    <li>Simple image import for floorplan backgrounds</li>
+                  </ul>
+                  <p class="card-text"><b>Where it is now:</b></p>
+                  <ul class="text-white">
+                    <li>Scale calibration — draw a line between known points and enter the real distance</li>
+                    <li>Wall drawing tool for creating rooms from scratch</li>
+                    <li>Furniture library across 6 categories with real dimensions (in/ft/cm/m)</li>
+                    <li>Z-ordering, undo/redo, keyboard shortcuts, snap-to-grid</li>
+                    <li>Export to PNG at 2x resolution</li>
+                    <li>Auto-saves to localStorage</li>
+                  </ul>
+                  <a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary mr-2 mb-2">Open SnapLayout</a>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <div class="tab-pane fade" id="Portfolio" role="tabpanel" aria-labelledby="PortfolioList">

@@ -33,5 +33,5 @@ Run: `python validate.py`. Checks solvability, correct par, gem presence/reachab
 - 💎 only shown if gem was collected on the (only) solve attempt
 
 ## Persistence
-`localStorage` key `beamlab_data`: board state, bestScore, gemEverCollected, winningSolution, stats, streaks. After first solve, board stays interactive for replay — score/stats frozen to first solve. "Restore" button appears to snap back to winning arrangement.
+`localStorage` key `beamlab_data`: board state, bestScore, firstSolveScore, gemEverCollected, winningSolution, stats, streaks. After first solve, board stays interactive for replay — score/stats frozen to first solve. `firstSolveScore` variable (like Parsed's `firstSolveSwaps`) holds exact piece count from first solve for sharing, avoiding stale `countPiecesUsed()` fallback. "Restore" button appears to snap back to winning arrangement.
 Theme in `beamlab_theme`. Username in `beamlab_username`.

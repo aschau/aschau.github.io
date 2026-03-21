@@ -46,6 +46,7 @@
     let fixedCells = new Set();  // cells with pre-placed mirrors (can't be moved)
     let selectedMirrorType = 'fwd';
     let winningSolution = null;  // saved board state from first solve
+    let firstSolveScore = null;  // piece count from first solve (for sharing)
 
     // --- DOM refs ---
     const gridContainer = document.getElementById('grid-container');
@@ -139,6 +140,7 @@
 
         solved = false;
         gemCollected = false;
+        firstSolveScore = null;
         moveHistory = [];
         targetsHit = puzzle.targets.map(() => false);
 
@@ -545,6 +547,7 @@
             if (!alreadySolvedToday) {
                 // First solve: record stats, best score, save winning solution
                 const used = countPiecesUsed();
+                firstSolveScore = used;
                 updateStats(used);
                 updateBestScore(used);
                 saveWinningSolution();
@@ -563,7 +566,7 @@
     function showWinModal() {
         var data = loadData();
         var todayData = data.today || {};
-        var bestScore = todayData.bestScore || countPiecesUsed();
+        var bestScore = firstSolveScore !== null ? firstSolveScore : (todayData.bestScore || countPiecesUsed());
         var everGotGem = todayData.gemEverCollected || gemCollected;
         var score = getScoreLabel(bestScore, puzzle.par);
         var stats = loadStats();
@@ -845,7 +848,7 @@
         if (sharePreview && typeof generateShareText === 'function' && rEverSolved) {
             var data = loadData();
             var todayData = data.today || {};
-            var bestScore = todayData.bestScore || countPiecesUsed();
+            var bestScore = firstSolveScore !== null ? firstSolveScore : (todayData.bestScore || countPiecesUsed());
             var everGotGem = todayData.gemEverCollected || gemCollected;
             var stats = loadStats();
             sharePreview.textContent = generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems, getUsername(), getPuzzleInfo());
@@ -1130,6 +1133,7 @@
             mirrors: pieces,
             score: solved ? countPiecesUsed() : null,
             bestScore: prevToday.bestScore || null,
+            firstSolveScore: prevToday.firstSolveScore || null,
             gemEverCollected: prevToday.gemEverCollected || false,
             par: puzzle.par,
             winningSolution: prevToday.winningSolution || null
@@ -1140,6 +1144,7 @@
             if (data.today.bestScore === null || current < data.today.bestScore) {
                 data.today.bestScore = current;
             }
+            data.today.firstSolveScore = current;
             if (gemCollected) {
                 data.today.gemEverCollected = true;
             }
@@ -1166,6 +1171,7 @@
 
         solved = !!data.today.solved;
         winningSolution = data.today.winningSolution || null;
+        firstSolveScore = data.today.firstSolveScore || null;
         return true;
     }
 
@@ -1251,7 +1257,7 @@
         if (typeof generateShareText !== 'function') return '';
         var data = loadData();
         var todayData = data.today || {};
-        var bestScore = todayData.bestScore || countPiecesUsed();
+        var bestScore = firstSolveScore !== null ? firstSolveScore : (todayData.bestScore || countPiecesUsed());
         var everGotGem = todayData.gemEverCollected || gemCollected;
         var stats = loadStats();
         return generateShareText(puzzleNumber, bestScore, puzzle.par, stats.currentStreak, everGotGem, stats.totalGems, getUsername(), getPuzzleInfo());

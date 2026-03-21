@@ -6,7 +6,7 @@
 (function () {
     'use strict';
 
-    const SAVE_VERSION = 11; // bump this when puzzle format changes to clear stale data
+    const SAVE_VERSION = 12; // bump this when puzzle format changes to clear stale data
     const GRID_SIZE = 6;
     const SVG_SIZE = 600; // viewBox
     const CELL_SVG = SVG_SIZE / GRID_SIZE; // 100
@@ -22,16 +22,15 @@
     const FWD_REFLECT = { right: 'up', left: 'down', up: 'right', down: 'left' };
     const BCK_REFLECT = { right: 'down', left: 'up', up: 'left', down: 'right' };
 
-    // Splitter: reflects one direction AND passes through
-    // A splitter acts like a / mirror but also lets the beam continue straight
-    const SPLIT_REFLECT = FWD_REFLECT; // reflected direction (same as / mirror)
-
     const EDGE_ENTRY_DIR = { left: 'right', right: 'left', top: 'down', bottom: 'up' };
 
-    // Piece types
-    const PIECE_TYPES = ['fwd', 'bck', 'split'];
+    // Piece types — split_fwd reflects like /, split_bck reflects like \
+    const PIECE_TYPES = ['fwd', 'bck', 'split_fwd', 'split_bck'];
     function isPiece(val) { return PIECE_TYPES.includes(val); }
     function isMirror(val) { return val === 'fwd' || val === 'bck'; }
+    function isSplitter(val) { return val === 'split_fwd' || val === 'split_bck'; }
+    // Map grid type to inventory key (splitters share a pool)
+    function invKey(type) { return isSplitter(type) ? 'split' : type; }
 
     // --- Game State ---
     let puzzle = null;
@@ -57,10 +56,12 @@
     const edgeLeft = document.getElementById('edge-left');
     const invFwdCount = document.getElementById('inv-fwd-count');
     const invBckCount = document.getElementById('inv-bck-count');
-    const invSplitCount = document.getElementById('inv-split-count');
+    const invSplitFwdCount = document.getElementById('inv-split-fwd-count');
+    const invSplitBckCount = document.getElementById('inv-split-bck-count');
     const invFwdBtn = document.getElementById('inv-fwd');
     const invBckBtn = document.getElementById('inv-bck');
-    const invSplitBtn = document.getElementById('inv-split');
+    const invSplitFwdBtn = document.getElementById('inv-split-fwd');
+    const invSplitBckBtn = document.getElementById('inv-split-bck');
     const parValue = document.getElementById('par-value');
     const mirrorsUsedEl = document.getElementById('mirrors-used');
     const undoBtn = document.getElementById('undo-btn');
@@ -131,7 +132,9 @@
         fixedCells = new Set();
         if (puzzle.fixed) {
             for (const f of puzzle.fixed) {
-                grid[f.r][f.c] = f.type;
+                // Normalize legacy 'split' to 'split_fwd'
+                var ftype = f.type === 'split' ? 'split_fwd' : f.type;
+                grid[f.r][f.c] = ftype;
                 fixedCells.add(f.r + ',' + f.c);
             }
         }
@@ -165,11 +168,11 @@
         updateStatsDisplay();
         setupEventListeners();
 
-        // Show quick controls for first-time visitors
-        if (!localStorage.getItem('beamlab_seen_controls')) {
+        // Show quick controls for first-time visitors (or after controls change)
+        if (localStorage.getItem('beamlab_seen_controls') !== '2') {
             var controlsModal = document.getElementById('controls-modal');
             if (controlsModal) controlsModal.hidden = false;
-            localStorage.setItem('beamlab_seen_controls', '1');
+            localStorage.setItem('beamlab_seen_controls', '2');
         }
     }
 
@@ -225,22 +228,24 @@
             line.setAttribute('x1', '15'); line.setAttribute('y1', '15');
             line.setAttribute('x2', '85'); line.setAttribute('y2', '85');
             svg.appendChild(line);
-        } else if (type === 'split') {
-            // Splitter: X shape (cross of both diagonals)
-            const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line1.setAttribute('x1', '15'); line1.setAttribute('y1', '85');
-            line1.setAttribute('x2', '85'); line1.setAttribute('y2', '15');
-            line1.classList.add('split-line');
-            const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line2.setAttribute('x1', '15'); line2.setAttribute('y1', '15');
-            line2.setAttribute('x2', '85'); line2.setAttribute('y2', '85');
-            line2.classList.add('split-line');
+        } else if (isSplitter(type)) {
+            // Splitter: X shape — emphasize the reflecting diagonal
+            const fwdLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            fwdLine.setAttribute('x1', '15'); fwdLine.setAttribute('y1', '85');
+            fwdLine.setAttribute('x2', '85'); fwdLine.setAttribute('y2', '15');
+            fwdLine.classList.add('split-line');
+            fwdLine.classList.add(type === 'split_fwd' ? 'split-primary' : 'split-secondary');
+            const bckLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            bckLine.setAttribute('x1', '15'); bckLine.setAttribute('y1', '15');
+            bckLine.setAttribute('x2', '85'); bckLine.setAttribute('y2', '85');
+            bckLine.classList.add('split-line');
+            bckLine.classList.add(type === 'split_bck' ? 'split-primary' : 'split-secondary');
             // Center diamond
             const diamond = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
             diamond.setAttribute('points', '50,35 65,50 50,65 35,50');
             diamond.classList.add('split-diamond');
-            svg.appendChild(line1);
-            svg.appendChild(line2);
+            svg.appendChild(fwdLine);
+            svg.appendChild(bckLine);
             svg.appendChild(diamond);
         }
 
@@ -259,7 +264,7 @@
             cell.classList.add('wall');
         } else if (isPiece(grid[r][c])) {
             addPieceVisual(cell, grid[r][c]);
-            if (grid[r][c] === 'split') cell.classList.add('splitter');
+            if (isSplitter(grid[r][c])) cell.classList.add('splitter');
             if (fixedCells.has(r + ',' + c)) cell.classList.add('fixed');
         }
     }
@@ -436,9 +441,10 @@
                 points.push({ x: cx, y: cy });
                 laserPath.push({ r, c });
 
-                if (cellContent === 'split') {
+                if (isSplitter(cellContent)) {
                     // Splitter: beam continues straight AND spawns a reflected beam
-                    const reflectedDir = SPLIT_REFLECT[dir];
+                    var reflectTable = cellContent === 'split_fwd' ? FWD_REFLECT : BCK_REFLECT;
+                    const reflectedDir = reflectTable[dir];
 
                     // Spawn reflected beam (starts from this cell center)
                     const reflR = r + DIRECTIONS[reflectedDir].dr;
@@ -669,8 +675,11 @@
         // Inventory selection
         invFwdBtn.addEventListener('click', () => { selectedMirrorType = 'fwd'; updateInventoryUI(); });
         invBckBtn.addEventListener('click', () => { selectedMirrorType = 'bck'; updateInventoryUI(); });
-        if (invSplitBtn) {
-            invSplitBtn.addEventListener('click', () => { selectedMirrorType = 'split'; updateInventoryUI(); });
+        if (invSplitFwdBtn) {
+            invSplitFwdBtn.addEventListener('click', () => { selectedMirrorType = 'split_fwd'; updateInventoryUI(); });
+        }
+        if (invSplitBckBtn) {
+            invSplitBckBtn.addEventListener('click', () => { selectedMirrorType = 'split_bck'; updateInventoryUI(); });
         }
 
         undoBtn.addEventListener('click', undo);
@@ -883,17 +892,20 @@
 
     function placePiece(r, c) {
         let type = selectedMirrorType;
-        if (inventory[type] <= 0) {
-            // Try other types in order
-            const fallback = PIECE_TYPES.filter(t => t !== type && inventory[t] > 0);
-            if (fallback.length === 0) return;
-            type = fallback[0];
+        var ik = invKey(type);
+        if (inventory[ik] <= 0) {
+            // Try other types in order: mirrors first, then splitters
+            var fallbackTypes = ['fwd', 'bck', 'split_fwd', 'split_bck'];
+            var fb = fallbackTypes.filter(function (t) { return t !== type && inventory[invKey(t)] > 0; });
+            if (fb.length === 0) return;
+            type = fb[0];
             selectedMirrorType = type;
+            ik = invKey(type);
         }
 
         moveHistory.push({ action: 'place', r, c, type });
         grid[r][c] = type;
-        inventory[type]--;
+        inventory[ik]--;
         solved = false;
 
         updateCellVisual(r, c);
@@ -905,23 +917,22 @@
 
     function rotatePiece(r, c) {
         const oldType = grid[r][c];
-        // Cycle through available types: fwd → bck → split → fwd (skip types with 0 total)
-        const availableTypes = PIECE_TYPES.filter(t => {
-            if (t === oldType) return true; // current type is always "available" for cycling
-            return inventory[t] > 0;
-        });
+        var newType;
 
-        const currentIdx = availableTypes.indexOf(oldType);
-        const nextIdx = (currentIdx + 1) % availableTypes.length;
-        const newType = availableTypes[nextIdx];
-
-        if (newType === oldType) return; // only one type available
+        if (isMirror(oldType)) {
+            // Flip mirror: fwd ↔ bck (swaps inventory)
+            newType = oldType === 'fwd' ? 'bck' : 'fwd';
+            if (inventory[newType] <= 0) return; // can't flip without inventory
+            inventory[oldType]++;
+            inventory[newType]--;
+        } else if (isSplitter(oldType)) {
+            // Flip splitter orientation: split_fwd ↔ split_bck (no inventory change — same piece)
+            newType = oldType === 'split_fwd' ? 'split_bck' : 'split_fwd';
+        } else {
+            return;
+        }
 
         moveHistory.push({ action: 'rotate', r, c, from: oldType, to: newType });
-
-        // Return old type to inventory, take new type
-        inventory[oldType]++;
-        inventory[newType]--;
         grid[r][c] = newType;
         solved = false;
 
@@ -934,11 +945,12 @@
 
     function removePiece(r, c) {
         if (!isPiece(grid[r][c])) return;
+        if (fixedCells.has(r + ',' + c)) return;
 
         const type = grid[r][c];
         moveHistory.push({ action: 'remove', r, c, type });
         grid[r][c] = null;
-        inventory[type]++;
+        inventory[invKey(type)]++;
         solved = false;
 
         updateCellVisual(r, c);
@@ -956,16 +968,19 @@
         switch (move.action) {
             case 'place':
                 grid[move.r][move.c] = null;
-                inventory[move.type]++;
+                inventory[invKey(move.type)]++;
                 break;
             case 'rotate':
                 grid[move.r][move.c] = move.from;
-                inventory[move.to]++;
-                inventory[move.from]--;
+                // Splitter rotation doesn't change inventory (same piece, different orientation)
+                if (isMirror(move.from)) {
+                    inventory[move.to]++;
+                    inventory[move.from]--;
+                }
                 break;
             case 'remove':
                 grid[move.r][move.c] = move.type;
-                inventory[move.type]--;
+                inventory[invKey(move.type)]--;
                 break;
         }
 
@@ -989,6 +1004,7 @@
         moveHistory = [];
         solved = false;
         gemCollected = false;
+        selectedMirrorType = 'fwd';
 
         renderGrid();
         traceLaser();
@@ -1004,15 +1020,18 @@
     function updateInventoryUI() {
         invFwdCount.textContent = inventory.fwd;
         invBckCount.textContent = inventory.bck;
-        if (invSplitCount) invSplitCount.textContent = inventory.split;
+        if (invSplitFwdCount) invSplitFwdCount.textContent = inventory.split;
+        if (invSplitBckCount) invSplitBckCount.textContent = inventory.split;
 
         invFwdBtn.classList.toggle('selected', selectedMirrorType === 'fwd');
         invBckBtn.classList.toggle('selected', selectedMirrorType === 'bck');
-        if (invSplitBtn) invSplitBtn.classList.toggle('selected', selectedMirrorType === 'split');
+        if (invSplitFwdBtn) invSplitFwdBtn.classList.toggle('selected', selectedMirrorType === 'split_fwd');
+        if (invSplitBckBtn) invSplitBckBtn.classList.toggle('selected', selectedMirrorType === 'split_bck');
 
         invFwdBtn.classList.toggle('empty', inventory.fwd <= 0);
         invBckBtn.classList.toggle('empty', inventory.bck <= 0);
-        if (invSplitBtn) invSplitBtn.classList.toggle('empty', inventory.split <= 0);
+        if (invSplitFwdBtn) invSplitFwdBtn.classList.toggle('empty', inventory.split <= 0);
+        if (invSplitBckBtn) invSplitBckBtn.classList.toggle('empty', inventory.split <= 0);
 
         mirrorsUsedEl.textContent = countPiecesUsed();
     }
@@ -1096,8 +1115,10 @@
         inventory = { fwd: 0, bck: 0, split: 0, ...puzzle.inventory };
         for (var i = 0; i < winningSolution.length; i++) {
             var p = winningSolution[i];
-            grid[p.r][p.c] = p.type;
-            if (inventory[p.type] !== undefined) inventory[p.type]--;
+            var ptype = p.type === 'split' ? 'split_fwd' : p.type;
+            grid[p.r][p.c] = ptype;
+            var pik = invKey(ptype);
+            if (inventory[pik] !== undefined) inventory[pik]--;
         }
 
         moveHistory = [];
@@ -1163,8 +1184,10 @@
         if (data.today.mirrors) {
             for (const m of data.today.mirrors) {
                 if (m.r < GRID_SIZE && m.c < GRID_SIZE && grid[m.r][m.c] === null) {
-                    grid[m.r][m.c] = m.type;
-                    if (inventory[m.type] !== undefined) inventory[m.type]--;
+                    var mtype = m.type === 'split' ? 'split_fwd' : m.type;
+                    grid[m.r][m.c] = mtype;
+                    var mik = invKey(mtype);
+                    if (inventory[mik] !== undefined) inventory[mik]--;
                 }
             }
         }

@@ -89,9 +89,13 @@
                     <span class="inventory-count" id="inv-bck-count">0</span>
                 </button>
                 <span id="inv-split-section">
-                    <button class="inventory-item splitter-btn" id="inv-split" data-type="split">
-                        <span class="mirror-icon">X</span>
-                        <span class="inventory-count" id="inv-split-count">0</span>
+                    <button class="inventory-item splitter-btn" id="inv-split-fwd" data-type="split_fwd" title="Splitter (reflects like /)">
+                        <svg class="inv-icon" viewBox="0 0 100 100"><line x1="15" y1="85" x2="85" y2="15" class="split-primary"/><line x1="15" y1="15" x2="85" y2="85" class="split-secondary"/><polygon points="50,35 65,50 50,65 35,50" class="split-diamond"/></svg>
+                        <span class="inventory-count" id="inv-split-fwd-count">0</span>
+                    </button>
+                    <button class="inventory-item splitter-btn" id="inv-split-bck" data-type="split_bck" title="Splitter (reflects like \)">
+                        <svg class="inv-icon" viewBox="0 0 100 100"><line x1="15" y1="85" x2="85" y2="15" class="split-secondary"/><line x1="15" y1="15" x2="85" y2="85" class="split-primary"/><polygon points="50,35 65,50 50,65 35,50" class="split-diamond"/></svg>
+                        <span class="inventory-count" id="inv-split-bck-count">0</span>
                     </button>
                 </span>
             </div>
@@ -129,7 +133,11 @@
                     <div class="help-rules">
                         <div class="help-rule">
                             <span class="help-icon">&#9755;</span>
-                            <span><strong>Tap</strong> to place. <strong>Tap again</strong> to cycle type.</span>
+                            <span><strong>Select</strong> a piece below, then <strong>tap</strong> to place it.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#8635;</span>
+                            <span><strong>Tap a placed piece</strong> to rotate it ( / &#8596; \ ).</span>
                         </div>
                         <div class="help-rule">
                             <span class="help-icon">&times;</span>
@@ -160,7 +168,7 @@
                         </div>
                         <div class="help-rule">
                             <span class="help-icon">X</span>
-                            <span><strong>Splitters</strong> split the beam — one path reflects, the other continues straight through.</span>
+                            <span><strong>Splitters</strong> split the beam — one path reflects (like / or \ depending on orientation), the other continues straight. Tap to rotate.</span>
                         </div>
                         <div class="help-rule">
                             <span class="help-icon">&#9632;</span>
@@ -172,7 +180,7 @@
                         </div>
                         <div class="help-rule">
                             <span class="help-icon">&#9755;</span>
-                            <span><strong>Tap</strong> to place a piece. <strong>Tap again</strong> to cycle its type. <strong>Double-tap</strong> or <strong>right-click</strong> to remove.</span>
+                            <span><strong>Select</strong> a piece type below, then <strong>tap</strong> to place. <strong>Tap again</strong> to rotate ( / &#8596; \ ). <strong>Double-tap</strong> or <strong>right-click</strong> to remove.</span>
                         </div>
                         <div class="help-rule">
                             <span class="help-icon">&#9733;</span>

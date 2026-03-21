@@ -74,8 +74,11 @@ def simulate(grid, source):
             if v == 'wall':
                 break
             cells_visited.add((r, c))
-            if v == 'split':
+            if v == 'split' or v == 'split_fwd':
                 rd = FWD[d]
+                queue.append((r + DR[rd], c + DC[rd], rd))
+            elif v == 'split_bck':
+                rd = BCK[d]
                 queue.append((r + DR[rd], c + DC[rd], rd))
             elif v == 'fwd':
                 d = FWD[d]
@@ -306,7 +309,8 @@ def _build_splitter_path(r, c, d, walls_set, branch_mirrors, visited, min_covera
 
     for si in positions[:5]:
         sr, sc = beam_line[si]
-        ref_d = FWD[d]
+        split_type = random.choice(['split_fwd', 'split_bck'])
+        ref_d = FWD[d] if split_type == 'split_fwd' else BCK[d]
         pre = set(beam_line[:si + 1])
         remaining_straight = set(beam_line[si + 1:])
 
@@ -332,7 +336,7 @@ def _build_splitter_path(r, c, d, walls_set, branch_mirrors, visited, min_covera
                     info = get_exit_info(sr2, sc2)
                     if info and str_n == 0:
                         all_path = pre | ref_cells
-                        all_mirrors = [(sr, sc, 'split')] + ref_mirrors
+                        all_mirrors = [(sr, sc, split_type)] + ref_mirrors
                         rows = {r for r, c in all_path}
                         cols = {c for r, c in all_path}
                         if len(rows) >= min_coverage and len(cols) >= min_coverage:
@@ -354,7 +358,7 @@ def _build_splitter_path(r, c, d, walls_set, branch_mirrors, visited, min_covera
                     continue
 
                 all_path = pre | ref_cells | str_cells
-                all_mirrors = [(sr, sc, 'split')] + ref_mirrors + str_mirrors
+                all_mirrors = [(sr, sc, split_type)] + ref_mirrors + str_mirrors
 
                 rows = {r for r, c in all_path}
                 cols = {c for r, c in all_path}
@@ -516,7 +520,7 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
 
         # 6. Build puzzle and verify minimum ADDITIONAL pieces with full solver
         #    Fixed pieces are already on the grid (handled by make_grid via 'fixed')
-        has_split = any(t == 'split' for _, _, t in mirrors)
+        has_split = any(t in ('split', 'split_fwd', 'split_bck') for _, _, t in mirrors)
         inv_temp = {'fwd': 8, 'bck': 8}
         if has_split:
             inv_temp['split'] = 3
@@ -541,7 +545,7 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
         par = min_pieces + 1
         inv = {'fwd': par, 'bck': par}
         if has_split:
-            inv['split'] = 2
+            inv['split'] = max(2, par - 1)
         puzzle['par'] = par
         puzzle['inventory'] = inv
         puzzle['_min'] = min_pieces
@@ -689,7 +693,7 @@ def patch():
             for _ in range(50):
                 r = random.random()
                 diff = p.get('difficulty', 'hard')
-                use_splitter = any(f.get('type') == 'split' for f in p.get('fixed', []))
+                use_splitter = any(f.get('type') in ('split', 'split_fwd', 'split_bck') for f in p.get('fixed', []))
                 candidate = generate_puzzle(diff, use_splitter=use_splitter)
                 if candidate and isinstance(candidate, dict) and 'source' in candidate:
                     candidate.pop('_fail_reasons', None)
@@ -774,8 +778,79 @@ function getTodayDateString() {{
     print(f'Saved JS to {js_path}')
 
 
+def _generate_one_puzzle(args):
+    """Worker function for multiprocessing puzzle generation."""
+    idx, seed_val = args
+    random.seed(seed_val)
+    for _ in range(50):
+        r = random.random()
+        diff = 'medium' if r < 0.2 else ('hard' if r < 0.65 else 'expert')
+        use_splitter = random.random() < 0.25
+        candidate = generate_puzzle(diff, use_splitter=use_splitter)
+        if candidate and isinstance(candidate, dict) and 'source' in candidate:
+            candidate.pop('_fail_reasons', None)
+            candidate.pop('_min', None)
+            candidate['id'] = puzzle_hash(candidate)
+            return (idx, candidate)
+    return (idx, None)
+
+
+def regenerate_future():
+    """Keep past/today puzzles, regenerate future ones with updated mechanics."""
+    from datetime import date
+    from multiprocessing import Pool, cpu_count
+    seed = int(sys.argv[2]) if len(sys.argv) > 2 else 42
+    random.seed(seed)
+
+    json_path = Path(__file__).parent / 'puzzles.json'
+    existing = json.loads(json_path.read_text())
+    total = len(existing)
+
+    epoch = date(2026, 3, 17)
+    today = date.today()
+    days_passed = (today - epoch).days
+    cutoff = max(0, days_passed)  # keep indices 0..cutoff (inclusive)
+
+    num_to_gen = total - cutoff - 1
+    cores = cpu_count()
+    print(f'Regenerating puzzles: keeping 0-{cutoff} ({cutoff + 1} served), regenerating {num_to_gen} using {cores} cores...')
+    print('---')
+    sys.stdout.flush()
+
+    # Generate unique seeds for each puzzle worker
+    worker_args = [(i, seed + i * 7919) for i in range(cutoff + 1, total)]
+
+    results = {}
+    with Pool(cores) as pool:
+        for idx, puzzle in pool.imap_unordered(_generate_one_puzzle, worker_args):
+            results[idx] = puzzle
+            status = f'par={puzzle["par"]}, id={puzzle["id"]}' if puzzle else 'FAILED'
+            print(f'  Puzzle {idx + 1}: {status}')
+            sys.stdout.flush()
+
+    # Assemble in order
+    puzzles = existing[:cutoff + 1]
+    seen_hashes = {puzzle_hash(p) for p in puzzles}
+    regenerated = 0
+
+    for i in range(cutoff + 1, total):
+        p = results.get(i)
+        if p and puzzle_hash(p) not in seen_hashes:
+            seen_hashes.add(puzzle_hash(p))
+            puzzles.append(p)
+            regenerated += 1
+        else:
+            puzzles.append(existing[i])
+
+    print(f'---')
+    print(f'Kept {cutoff + 1}, regenerated {regenerated} of {total} puzzles')
+    save_puzzles(puzzles)
+
+
 if __name__ == '__main__':
     if '--patch' in sys.argv:
         patch()
+    elif '--regenerate-future' in sys.argv:
+        regenerate_future()
     else:
         main()

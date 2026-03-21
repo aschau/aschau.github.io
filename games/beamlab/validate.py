@@ -45,8 +45,11 @@ def simulate(grid, source):
             if v == 'wall':
                 break
             cells_visited.add((r, c))
-            if v == 'split':
+            if v == 'split' or v == 'split_fwd':
                 rd = FWD[d]
+                queue.append((r + DR[rd], c + DC[rd], rd))
+            elif v == 'split_bck':
+                rd = BCK[d]
                 queue.append((r + DR[rd], c + DC[rd], rd))
             elif v == 'fwd':
                 d = FWD[d]
@@ -113,6 +116,11 @@ def get_candidate_cells(puzzle):
     return sorted(expanded)
 
 
+def _inv_key(t):
+    """Map piece type to inventory key (splitters share 'split' pool)."""
+    return 'split' if t in ('split_fwd', 'split_bck') else t
+
+
 def solve(puzzle):
     """Find minimum pieces to solve. Uses beam-aware backtracking.
 
@@ -129,20 +137,25 @@ def solve(puzzle):
     types = []
     if inv.get('fwd', 0) > 0: types.append('fwd')
     if inv.get('bck', 0) > 0: types.append('bck')
-    if inv.get('split', 0) > 0: types.append('split')
+    if inv.get('split', 0) > 0:
+        types.append('split_fwd')
+        types.append('split_bck')
 
     candidates = get_candidate_cells(puzzle)
     target_set = {(t['edge'], t['pos']) for t in puzzle['targets']}
     total_inv = sum(inv.get(t, 0) for t in ['fwd', 'bck', 'split'])
     max_search = min(total_inv, puzzle.get('par', 99) + 2, 7)
 
+    # Track inventory remaining for pruning
+    inv_remaining = {k: inv.get(k, 0) for k in ['fwd', 'bck', 'split']}
+
     for num in range(1, max_search + 1):
-        if _backtrack(grid, puzzle, candidates, types, 0, num, target_set):
+        if _backtrack(grid, puzzle, candidates, types, 0, num, target_set, inv_remaining):
             return num
     return -1
 
 
-def _backtrack(grid, puzzle, cells, types, start, left, target_set):
+def _backtrack(grid, puzzle, cells, types, start, left, target_set, inv_remaining):
     if left == 0:
         return hits_all(grid, puzzle)
     if len(cells) - start < left:
@@ -163,10 +176,16 @@ def _backtrack(grid, puzzle, cells, types, start, left, target_set):
         if (r, c) not in beam_cells:
             continue
         for t in types:
+            ik = _inv_key(t)
+            if inv_remaining[ik] <= 0:
+                continue
             grid[r][c] = t
-            if _backtrack(grid, puzzle, cells, types, i + 1, left - 1, target_set):
+            inv_remaining[ik] -= 1
+            if _backtrack(grid, puzzle, cells, types, i + 1, left - 1, target_set, inv_remaining):
                 grid[r][c] = None
+                inv_remaining[ik] += 1
                 return True
+            inv_remaining[ik] += 1
             grid[r][c] = None
     return False
 
@@ -218,18 +237,21 @@ def solve_with_gem(puzzle, max_pieces):
     types = []
     if inv.get('fwd', 0) > 0: types.append('fwd')
     if inv.get('bck', 0) > 0: types.append('bck')
-    if inv.get('split', 0) > 0: types.append('split')
+    if inv.get('split', 0) > 0:
+        types.append('split_fwd')
+        types.append('split_bck')
 
     candidates = get_candidate_cells(puzzle)
     target_set = {(t['edge'], t['pos']) for t in puzzle['targets']}
+    inv_remaining = {k: inv.get(k, 0) for k in ['fwd', 'bck', 'split']}
 
     for num in range(1, max_pieces + 1):
-        if _backtrack_gem(grid, puzzle, candidates, types, 0, num, gem, target_set):
+        if _backtrack_gem(grid, puzzle, candidates, types, 0, num, gem, target_set, inv_remaining):
             return num
     return -1
 
 
-def _backtrack_gem(grid, puzzle, cells, types, start, left, gem, target_set):
+def _backtrack_gem(grid, puzzle, cells, types, start, left, gem, target_set, inv_remaining):
     if left == 0:
         return hits_all_and_gem(grid, puzzle)
     if len(cells) - start < left:
@@ -249,10 +271,16 @@ def _backtrack_gem(grid, puzzle, cells, types, start, left, gem, target_set):
         if (r, c) not in beam_cells:
             continue
         for t in types:
+            ik = _inv_key(t)
+            if inv_remaining[ik] <= 0:
+                continue
             grid[r][c] = t
-            if _backtrack_gem(grid, puzzle, cells, types, i + 1, left - 1, gem, target_set):
+            inv_remaining[ik] -= 1
+            if _backtrack_gem(grid, puzzle, cells, types, i + 1, left - 1, gem, target_set, inv_remaining):
                 grid[r][c] = None
+                inv_remaining[ik] += 1
                 return True
+            inv_remaining[ik] += 1
             grid[r][c] = None
     return False
 
@@ -270,21 +298,25 @@ def solve_returning_solution(puzzle, max_search=None):
     types = []
     if inv.get('fwd', 0) > 0: types.append('fwd')
     if inv.get('bck', 0) > 0: types.append('bck')
-    if inv.get('split', 0) > 0: types.append('split')
+    if inv.get('split', 0) > 0:
+        types.append('split_fwd')
+        types.append('split_bck')
 
     candidates = get_candidate_cells(puzzle)
     if max_search is None:
         total_inv = sum(inv.get(t, 0) for t in ['fwd', 'bck', 'split'])
         max_search = min(total_inv, puzzle.get('par', 99) + 2, 7)
 
+    inv_remaining = {k: inv.get(k, 0) for k in ['fwd', 'bck', 'split']}
+
     for num in range(1, max_search + 1):
-        result = _backtrack_one(grid, puzzle, candidates, types, 0, num, [])
+        result = _backtrack_one(grid, puzzle, candidates, types, 0, num, [], inv_remaining)
         if result is not None:
             return result
     return None
 
 
-def _backtrack_one(grid, puzzle, cells, types, start, left, current):
+def _backtrack_one(grid, puzzle, cells, types, start, left, current, inv_remaining):
     """Backtrack to find one solution, returning piece placements."""
     if left == 0:
         if hits_all(grid, puzzle):
@@ -297,14 +329,20 @@ def _backtrack_one(grid, puzzle, cells, types, start, left, current):
         if grid[r][c] is not None:
             continue
         for t in types:
+            ik = _inv_key(t)
+            if inv_remaining[ik] <= 0:
+                continue
             grid[r][c] = t
+            inv_remaining[ik] -= 1
             current.append((r, c, t))
-            result = _backtrack_one(grid, puzzle, cells, types, i + 1, left - 1, current)
+            result = _backtrack_one(grid, puzzle, cells, types, i + 1, left - 1, current, inv_remaining)
             if result is not None:
                 grid[r][c] = None
+                inv_remaining[ik] += 1
                 current.pop()
                 return result
             current.pop()
+            inv_remaining[ik] += 1
             grid[r][c] = None
     return None
 
@@ -321,16 +359,19 @@ def find_all_min_solutions(puzzle, num_pieces, max_solutions=20, time_limit=5.0)
     types = []
     if inv.get('fwd', 0) > 0: types.append('fwd')
     if inv.get('bck', 0) > 0: types.append('bck')
-    if inv.get('split', 0) > 0: types.append('split')
+    if inv.get('split', 0) > 0:
+        types.append('split_fwd')
+        types.append('split_bck')
 
     candidates = get_candidate_cells(puzzle)
     solutions = []
     deadline = time.time() + time_limit
-    _find_all(grid, puzzle, candidates, types, 0, num_pieces, [], solutions, max_solutions, deadline)
+    inv_remaining = {k: inv.get(k, 0) for k in ['fwd', 'bck', 'split']}
+    _find_all(grid, puzzle, candidates, types, 0, num_pieces, [], solutions, max_solutions, deadline, inv_remaining)
     return solutions
 
 
-def _find_all(grid, puzzle, cells, types, start, left, current, solutions, max_solutions, deadline):
+def _find_all(grid, puzzle, cells, types, start, left, current, solutions, max_solutions, deadline, inv_remaining):
     """Collect all solutions at a given piece count with beam-path pruning."""
     if len(solutions) >= max_solutions or time.time() > deadline:
         return
@@ -349,10 +390,15 @@ def _find_all(grid, puzzle, cells, types, start, left, current, solutions, max_s
         if (r, c) not in beam_cells:
             continue
         for t in types:
+            ik = _inv_key(t)
+            if inv_remaining[ik] <= 0:
+                continue
             grid[r][c] = t
+            inv_remaining[ik] -= 1
             current.append((r, c, t))
-            _find_all(grid, puzzle, cells, types, i + 1, left - 1, current, solutions, max_solutions, deadline)
+            _find_all(grid, puzzle, cells, types, i + 1, left - 1, current, solutions, max_solutions, deadline, inv_remaining)
             current.pop()
+            inv_remaining[ik] += 1
             grid[r][c] = None
 
 

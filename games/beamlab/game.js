@@ -1181,8 +1181,13 @@
         const data = loadData();
         if (!data.today || data.today.date !== getTodayKey()) return false;
 
-        if (data.today.mirrors) {
-            for (const m of data.today.mirrors) {
+        // If already solved today, restore the winning solution so state can't be reset by revisiting
+        var mirrorsToRestore = data.today.everSolved && data.today.winningSolution
+            ? data.today.winningSolution
+            : data.today.mirrors;
+
+        if (mirrorsToRestore) {
+            for (const m of mirrorsToRestore) {
                 if (m.r < GRID_SIZE && m.c < GRID_SIZE && grid[m.r][m.c] === null) {
                     var mtype = m.type === 'split' ? 'split_fwd' : m.type;
                     grid[m.r][m.c] = mtype;
@@ -1192,7 +1197,7 @@
             }
         }
 
-        solved = !!data.today.solved;
+        solved = data.today.everSolved ? true : !!data.today.solved;
         winningSolution = data.today.winningSolution || null;
         firstSolveScore = data.today.firstSolveScore || null;
         return true;

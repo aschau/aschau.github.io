@@ -1880,9 +1880,14 @@
         var data = loadData();
         if (!data.today || data.today.date !== getTodayKey()) return false;
 
-        if (data.today.arrangement && data.today.arrangement.length === movableTokens.length) {
+        // If already solved today, restore the winning solution so state can't be reset by revisiting
+        var arrangementToRestore = data.today.everSolved && data.today.winningSolution
+            ? data.today.winningSolution
+            : data.today.arrangement;
+
+        if (arrangementToRestore && arrangementToRestore.length === movableTokens.length) {
             for (var i = 0; i < movableTokens.length; i++) {
-                movableTokens[i].t = data.today.arrangement[i];
+                movableTokens[i].t = arrangementToRestore[i];
             }
         }
 
@@ -1890,10 +1895,10 @@
             initialScramble = data.today.initialScramble;
         }
 
-        swapCount = data.today.swapCount || 0;
-        moveHistory = data.today.moveHistory || [];
+        swapCount = data.today.everSolved ? (data.today.firstSolveSwaps || data.today.swapCount || 0) : (data.today.swapCount || 0);
+        moveHistory = data.today.everSolved ? [] : (data.today.moveHistory || []);
         everSolved = !!data.today.everSolved;
-        solved = !!data.today.solved;
+        solved = data.today.everSolved ? true : !!data.today.solved;
         bestScore = data.today.bestScore || null;
         firstSolveSwaps = data.today.firstSolveSwaps || null;
         winningSolution = data.today.winningSolution || null;

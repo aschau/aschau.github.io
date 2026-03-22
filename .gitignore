@@ -18,3 +18,6 @@ games/beamlab/debug.html
 games/parsed/scene_configs.txt
 *.pyc
 __pycache__/
+
+# Private / unreleased projects
+_private/

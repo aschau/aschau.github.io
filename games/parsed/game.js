@@ -32,7 +32,8 @@
     var currentTokens = [];   // flat array: [{t, y, f, line, col, solutionIndex}]
     var movableTokens = [];   // subset of currentTokens where f===0
     var solutionOrder = [];   // the correct text values for each movable slot
-    var solutionVars = null;  // expected final variable state from correct arrangement
+    var solutionStepCount = 0; // minimum execution steps from correct solution
+    var solutionChangedVars = null; // vars that change during correct solution execution
     var solutionReturn = null; // expected return line tokens from correct arrangement
     var selectedIndex = null; // index into movableTokens of currently selected token
     var swapCount = 0;
@@ -130,13 +131,28 @@
         try {
             var solInterp = new PseudoInterpreter(solLines);
             solInterp.execute();
-            solutionVars = {};
-            var solKeys = Object.keys(solInterp.vars);
-            for (var sk = 0; sk < solKeys.length; sk++) {
-                solutionVars[solKeys[sk]] = solInterp.vars[solKeys[sk]];
+            solutionStepCount = solInterp.steps.length;
+            // Track how many distinct values each variable takes in the solution
+            if (solInterp.steps.length > 0) {
+                solutionChangedVars = {};
+                for (var si = 0; si < solInterp.steps.length; si++) {
+                    var sv = solInterp.steps[si].vars;
+                    var svKeys = Object.keys(sv);
+                    for (var svi = 0; svi < svKeys.length; svi++) {
+                        var svk = svKeys[svi];
+                        if (!solutionChangedVars[svk]) solutionChangedVars[svk] = {};
+                        solutionChangedVars[svk][sv[svk]] = true;
+                    }
+                }
+                // Convert to counts of distinct values
+                var scvKeys = Object.keys(solutionChangedVars);
+                for (var sci = 0; sci < scvKeys.length; sci++) {
+                    solutionChangedVars[scvKeys[sci]] = Object.keys(solutionChangedVars[scvKeys[sci]]).length;
+                }
             }
         } catch (e) {
-            solutionVars = null;
+            solutionStepCount = 0;
+            solutionChangedVars = null;
         }
 
         // Scramble movable tokens
@@ -443,33 +459,71 @@
                 }
             }
 
-            if (outputStr === puzzle.output) {
-                // Output matches — verify the logic is correct by comparing
-                // final variable states against the solution. This allows
-                // equivalent expressions (a+b == b+a) but catches cheats
-                // like bypassing loops or misassigning variables.
-                var logicValid = true;
-                if (solutionVars) {
-                    var playerVars = interp.vars;
-                    var solKeys = Object.keys(solutionVars);
-                    var playerKeys = Object.keys(playerVars);
-                    if (solKeys.length !== playerKeys.length) {
-                        logicValid = false;
-                    } else {
-                        for (var vi = 0; vi < solKeys.length; vi++) {
-                            var vk = solKeys[vi];
-                            if (!playerVars.hasOwnProperty(vk) || playerVars[vk] !== solutionVars[vk]) {
-                                logicValid = false;
-                                break;
+            // Check output against all valid outputs (alternative
+            // literal arrangements that produce different but valid answers)
+            var validOutputs = puzzle.validOutputs || [puzzle.output];
+            var outputValid = false;
+            for (var oi = 0; oi < validOutputs.length; oi++) {
+                if (outputStr === validOutputs[oi]) {
+                    outputValid = true;
+                    break;
+                }
+            }
+
+            if (outputValid) {
+                // Guard against loop-bypass cheats: if the solution requires
+                // loops (many steps), but the player's code barely executed,
+                // they likely set the answer as an initial value and skipped
+                // the loop entirely.
+                if (solutionStepCount > 0 && interp.steps.length < solutionStepCount / 2) {
+                    return { success: false, type: 'logic', output: outputStr, errors: ['> output is correct, but the logic doesn\'t match the prompt'] };
+                }
+                // Reject if any variable went negative during execution —
+                // narratively nonsensical (can't have negative air, depth, etc.)
+                // Only enforced when the intended solution itself stays non-negative.
+                if (puzzle.noNeg) {
+                    var steps = interp.steps;
+                    for (var si = 0; si < steps.length; si++) {
+                        var stepVars = steps[si].vars;
+                        var vkeys = Object.keys(stepVars);
+                        for (var vi = 0; vi < vkeys.length; vi++) {
+                            if (typeof stepVars[vkeys[vi]] === 'number' && stepVars[vkeys[vi]] < 0) {
+                                return { success: false, type: 'logic', output: outputStr, errors: ['> ' + vkeys[vi] + ' went negative \u2014 that doesn\'t make sense here'] };
                             }
                         }
                     }
                 }
-                if (logicValid) {
-                    return { success: true, output: outputStr };
-                } else {
-                    return { success: false, type: 'logic', output: outputStr, errors: ['> output is correct, but the logic doesn\'t match the prompt'] };
+                // Reject if a variable that should actively change is stuck.
+                // Solution vars with 3+ distinct values must also take 3+ in
+                // the player's execution.  This catches bypassed logic (depth
+                // stuck at one value) while allowing valid alternatives with
+                // different step sizes or loop counts.
+                if (solutionChangedVars && interp.steps.length > 0) {
+                    var MIN_DISTINCT = 3;
+                    var scKeys = Object.keys(solutionChangedVars);
+                    for (var ci = 0; ci < scKeys.length; ci++) {
+                        var cv = scKeys[ci];
+                        var solDistinct = solutionChangedVars[cv];
+                        if (solDistinct < MIN_DISTINCT) continue;
+                        var playerVals = {};
+                        for (var si = 0; si < interp.steps.length; si++) {
+                            var pv = interp.steps[si].vars;
+                            if (pv.hasOwnProperty(cv)) {
+                                playerVals[pv[cv]] = true;
+                            }
+                        }
+                        var playerDistinct = Object.keys(playerVals).length;
+                        if (playerDistinct < MIN_DISTINCT) {
+                            var msg = playerDistinct <= 1
+                                ? '> ' + cv + ' never changed \u2014 re-read the prompt'
+                                : '> ' + cv + ' barely changed \u2014 re-read the prompt';
+                            return { success: false, type: 'logic', output: outputStr, errors: [msg] };
+                        }
+                    }
                 }
+                // Different arrangements that produce valid answers are
+                // accepted — allows multiple narrative interpretations.
+                return { success: true, output: outputStr };
             } else {
                 return { success: false, type: 'output', errors: ['> returned ' + outputStr + ', expected ' + puzzle.output] };
             }
@@ -1058,6 +1112,46 @@
         }
 
         counter.textContent = '1 / ' + steps.length;
+
+        // Make counter clickable to type a step number
+        counter.style.cursor = 'pointer';
+        counter.title = 'Click to jump to step';
+        counter.addEventListener('click', function () {
+            if (!execSteps || execAnimating) return;
+            var total = execSteps.length;
+            var input = document.createElement('input');
+            input.type = 'number';
+            input.min = 1;
+            input.max = total;
+            input.value = execCurrentStep + 1;
+            input.className = 'exec-step-input';
+            input.style.width = '3.5em';
+            input.style.textAlign = 'center';
+            input.style.fontSize = 'inherit';
+            input.style.background = 'rgba(255,255,255,0.1)';
+            input.style.border = '1px solid rgba(255,255,255,0.3)';
+            input.style.borderRadius = '4px';
+            input.style.color = 'inherit';
+            counter.textContent = '';
+            counter.appendChild(input);
+            var suffix = document.createTextNode(' / ' + total);
+            counter.appendChild(suffix);
+            input.focus();
+            input.select();
+            function commit() {
+                var val = parseInt(input.value);
+                if (!isNaN(val) && val >= 1 && val <= total) {
+                    showStepState(val - 1);
+                } else {
+                    counter.textContent = (execCurrentStep + 1) + ' / ' + total;
+                }
+            }
+            input.addEventListener('blur', commit);
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+                if (e.key === 'Escape') { counter.textContent = (execCurrentStep + 1) + ' / ' + total; }
+            });
+        });
     }
 
     function updateTimelineDots(currentIdx) {
@@ -1141,9 +1235,13 @@
     }
 
     function finishAnimation() {
-        // Show final output
+        // Show final output and variable state
         if (execSteps && execSteps.length > 0) {
+            execCurrentStep = execSteps.length - 1;
             var lastStep = execSteps[execSteps.length - 1];
+            if (lastStep.vars) {
+                updateExecVars(lastStep.vars, null);
+            }
             if (lastStep.output !== undefined) {
                 var answerLabel = execSceneConfig ? execSceneConfig.label : 'Answer';
                 execOutput.textContent = '> ' + answerLabel + ': ' + lastStep.output;

@@ -13,6 +13,8 @@ Outputs: puzzles.js (overwrites existing)
 import json
 import hashlib
 import random
+from itertools import permutations
+from collections import Counter
 
 # ============================================
 # Interpreter (matches game.js logic exactly)
@@ -244,6 +246,13 @@ def kw_to():
     return T("to", "kw", True)
 
 
+# Maximum par by difficulty — puzzles exceeding these will have tokens
+# auto-fixed to reduce swap count.  Keeps puzzles achievable while
+# still allowing meaningful challenge.
+MAX_PAR_MEDIUM = 12
+MAX_PAR_HARD   = 15
+
+
 def _hash_string_js(s):
     """Match game.js hashString."""
     h = 0
@@ -341,6 +350,86 @@ def make_puzzle(lines_data, goal, share_result, difficulty, seed_id):
     else:
         par = 3
 
+    # --- Cap par by fixing excess movable tokens ---
+    max_par = MAX_PAR_HARD if difficulty == "hard" else MAX_PAR_MEDIUM
+    if par > max_par:
+        # Build flat list of (line_idx, tok_idx) for all movable tokens
+        movable = []
+        for li, line in enumerate(lines_data):
+            for ti, tok in enumerate(line):
+                if not tok["f"]:
+                    movable.append((li, ti))
+
+        # Prioritise which tokens to fix: duplicates first (least info),
+        # then literals, then operators, then identifiers (most info last).
+        # Within a category, prefer tokens whose text appears most often.
+        from collections import Counter
+        text_counts = Counter(lines_data[li][ti]["t"] for li, ti in movable)
+        cat_rank = {"lit": 0, "op": 1, "id": 2}
+
+        def fix_priority(idx_pair):
+            li, ti = idx_pair
+            tok = lines_data[li][ti]
+            # Higher = fix later (more interesting to keep movable)
+            is_dup = 1 if text_counts[tok["t"]] > 1 else 0
+            return (-is_dup, cat_rank.get(tok["y"], 3), -text_counts[tok["t"]])
+
+        fix_order = sorted(movable, key=fix_priority)
+
+        for li, ti in fix_order:
+            if par <= max_par:
+                break
+            lines_data[li][ti]["f"] = 1
+            # Recompute solution_order and par
+            solution_order = []
+            for line in lines_data:
+                for t in line:
+                    if not t["f"]:
+                        solution_order.append(t["t"])
+            if len(solution_order) >= 2:
+                scrambled = _simulate_scramble(solution_order, puzzle_id)
+                min_swaps = _count_min_swaps(scrambled, solution_order)
+                par = max(3, min_swaps + 3)
+            else:
+                par = 3
+
+    # --- Prevent loop-bypass cheats ---
+    # If the return var's init is swappable AND the output value appears
+    # as a swappable literal elsewhere, fix the return var's init so it
+    # can't be set to the answer directly.
+    return_var_name = None
+    for line in lines_data:
+        toks = [t["t"] for t in line]
+        if toks and toks[0] == "return":
+            for t in line[1:]:
+                if t["y"] == "id":
+                    return_var_name = t["t"]
+                    break
+            break
+    if return_var_name:
+        swappable_lits = [t["t"] for line in lines_data for t in line
+                          if not t["f"] and t["y"] == "lit"]
+        if output_str in swappable_lits:
+            # Fix the return var's init value so it can't be swapped
+            for line in lines_data:
+                toks = [t["t"] for t in line]
+                if (len(toks) >= 4 and toks[0] == "let"
+                        and toks[1] == return_var_name and not line[3]["f"]):
+                    line[3]["f"] = 1
+                    # Recompute par after fixing
+                    solution_order = []
+                    for ln in lines_data:
+                        for t in ln:
+                            if not t["f"]:
+                                solution_order.append(t["t"])
+                    if len(solution_order) >= 2:
+                        scrambled = _simulate_scramble(solution_order, puzzle_id)
+                        min_swaps = _count_min_swaps(scrambled, solution_order)
+                        par = max(3, min_swaps + 3)
+                    else:
+                        par = 3
+                    break
+
     # Scene config: auto-derive from execution trace
     return_var = None
     for line in lines_data:
@@ -363,16 +452,73 @@ def make_puzzle(lines_data, goal, share_result, difficulty, seed_id):
             "label": return_var.capitalize()
         }
 
-    return {
+    # --- Compute all valid outputs from literal permutations ---
+    # Permute swappable numeric literals to find alternative valid
+    # arrangements.  Any output from a non-erroring permutation is
+    # accepted as correct — this allows multiple narrative
+    # interpretations of the same puzzle.
+    lit_positions = []
+    for li, line in enumerate(lines_data):
+        for ti, tok in enumerate(line):
+            if not tok["f"] and tok["y"] == "lit":
+                lit_positions.append((li, ti))
+
+    valid_outputs = {output_str}
+    if lit_positions:
+        orig_values = [lines_data[li][ti]["t"] for li, ti in lit_positions]
+        seen_perms = set()
+        for perm in permutations(orig_values):
+            if perm in seen_perms:
+                continue
+            seen_perms.add(perm)
+            # Substitute literals
+            for idx, (li, ti) in enumerate(lit_positions):
+                lines_data[li][ti]["t"] = perm[idx]
+            test_code = [[t["t"] for t in line] for line in lines_data]
+            try:
+                test_interp = Interpreter()
+                result = test_interp.run(test_code)
+                if result is not None:
+                    # Reject if any variable went negative during execution
+                    any_negative = False
+                    for vname, history in test_interp.var_history.items():
+                        if any(v < 0 for v in history if isinstance(v, (int, float))):
+                            any_negative = True
+                            break
+                    if not any_negative:
+                        r_str = str(result).lower() if isinstance(result, bool) else str(result)
+                        valid_outputs.add(r_str)
+            except Exception:
+                pass
+            # Restore originals
+            for idx, (li, ti) in enumerate(lit_positions):
+                lines_data[li][ti]["t"] = orig_values[idx]
+
+    valid_outputs_list = sorted(valid_outputs, key=lambda x: (x != output_str, x))
+
+    # Check if the intended solution itself has any variable going negative.
+    # If so, we can't enforce a no-negatives check at runtime for this puzzle.
+    solution_has_negatives = False
+    for vname, history in interp.var_history.items():
+        if any(v < 0 for v in history if isinstance(v, (int, float))):
+            solution_has_negatives = True
+            break
+
+    result = {
         "lines": lines_data,
         "goal": goal,
         "output": output_str,
+        "validOutputs": valid_outputs_list,
         "shareResult": share_result,
         "par": par,
         "difficulty": difficulty,
         "id": puzzle_id,
         "scene": scene
     }
+    # Only add flag when solution is clean — runtime will enforce no-negatives
+    if not solution_has_negatives:
+        result["noNeg"] = 1
+    return result
 
 
 # ============================================
@@ -601,14 +747,17 @@ def tmpl_while_decay(v1, n1, v2, n2, vr, v1_op, v2_op, v2_step, cond_op, cond_va
 def tmpl_while_if(v1, n1, v2, n2, vr, loop_cond_v, loop_cond_op, loop_cond_val,
                    if_v, if_op, if_val, if_body_v, if_body_op, if_body_val,
                    v1_op, v1_step, emoji, goal, share, seed, diff="hard"):
-    """Hard: while + if inside"""
+    """Hard: while + if inside.
+    loop_cond_val and if_body_op are fixed — the loop stopping condition
+    (always 0) and the if-body operator (always -) are not part of the
+    puzzle.  This prevents degenerate solutions like 'depth - 0'."""
     return make_puzzle([
         [kw("let"), id_(v1), op("="), lit_m(str(n1))],
         [kw("let"), id_(v2), op("="), lit_m(str(n2))],
         [kw("let"), id_(vr), op("="), lit("0")],
-        [kw("while"), id_(loop_cond_v), op_m(loop_cond_op), lit_m(str(loop_cond_val)), pn("{")],
+        [kw("while"), id_(loop_cond_v), op_m(loop_cond_op), lit(str(loop_cond_val)), pn("{")],
         [kw("if"), id_(if_v), op_m(if_op), lit_m(str(if_val)), pn("{")],
-        [id_(if_body_v), op("="), id_(if_body_v), op_m(if_body_op), lit_m(str(if_body_val))],
+        [id_(if_body_v), op("="), id_(if_body_v), op(if_body_op), lit(str(if_body_val))],
         [pn("}")],
         [id_(v1), op("="), id_(v1), op_m(v1_op), lit_m(str(v1_step))],
         [id_(vr), op("="), id_(vr), op("+"), lit("1")],
@@ -1617,10 +1766,10 @@ def generate_puzzles():
          "signal", "-", 2, "-", 8,
          "\U0001F4F1", "A phone drains battery each call. Strong signal weakens as you move away. How many calls?",
          "\U0001F4F1 Battery dead!\n6 calls made"),
-        ("air", 36, "depth", 8, "dives", "air", ">", 0, "depth", ">", 2,
+        ("air", 36, "depth", 8, "breaths", "air", ">", 0, "depth", ">", 2,
          "depth", "-", 1, "-", 6,
-         "\U0001F93F", "A scuba diver uses air each dive. As they go shallower, depth decreases. How many dives?",
-         "\U0001F93F Surfaced!\n6 dives completed"),
+         "\U0001F93F", "A scuba diver uses air each breath. As the dive goes on, they slowly rise to the surface. How many breaths until air runs out?",
+         "\U0001F93F Surfaced!\n6 breaths taken"),
         ("stock", 40, "demand", 10, "sales", "stock", ">", 0, "demand", ">", 4,
          "demand", "-", 2, "-", 8,
          "\U0001F6D2", "A shop sells inventory each cycle. High demand fades as the trend passes. Total sales cycles?",

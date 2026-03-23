@@ -11,18 +11,23 @@ A daily code puzzle game. Swap scrambled code tokens to fix buggy programs and m
 - Token format: `{t, y, f}` — text, category (kw/id/op/lit/pn), fixed flag (1=immovable, 0=swappable).
 - Interpreter: standard operator precedence (* / before + -), integer division with floor. Supports `let`, `return`, `while`, `if/else`, `for i = start to end { }` (inclusive range). `resolveValue` throws on undeclared variables.
 - Scoring: `par = min_swaps + 3` computed from actual scramble. Labels: Genius (-3), Hacker (-2), Optimized (-1), Compiled (0), Verbose (+1), Spaghetti (+2+).
-- Scrambling: seeded Fisher-Yates shuffle per puzzle `id`.
+- Scrambling: seeded Fisher-Yates shuffle per puzzle `id` — deterministic, all players see the same scramble on the same day.
 
 ## Validation Pipeline (game.js `tryRunCode`)
 1. **Structural** (`validateStructure`): syntax, `let` declarations, undeclared var usage
 2. **Execution** (`PseudoInterpreter`): runs code, captures output + final var states. Throws on undeclared vars and infinite loops.
 3. **Return check**: verifies return expression matches `solutionReturn` BEFORE output comparison
-4. **Logic**: compares final var values against `solutionVars`
+4. **Multi-output check**: output compared against `puzzle.validOutputs` (array of all accepted answers from valid literal permutations). Multiple narrative interpretations of the same puzzle are accepted.
+5. **Loop-bypass check**: if player's execution step count is less than half the solution's, rejects as cheat (prevents setting the answer directly and skipping the loop)
 
 ## Generation
 Run: `python generate.py`. Outputs `puzzles.js`.
 - Template functions create token structures, theme data provides variable names/values/goals
 - Par computed from simulated scramble (min_swaps + 3)
+- **Par cap**: MAX_PAR_MEDIUM=12, MAX_PAR_HARD=15. Puzzles exceeding these caps have their least-interesting swappable tokens auto-fixed (duplicates and literals first) to reduce swap count.
+- **Valid outputs**: generator permutes all swappable numeric literals, runs each permutation through the interpreter, and collects outputs where no variable goes negative during execution. Stored as `validOutputs` array per puzzle.
+- **Anti-bypass**: if the return variable's init value is swappable AND the expected output appears as a swappable literal, the init value is auto-fixed to prevent trivial solutions.
+- **Template guards**: `tmpl_while_if` fixes the loop stopping condition (always 0) and if-body operator (always -) to prevent degenerate arrangements like `depth - 0`.
 - Scene configs (`puzzle.scene`) auto-derived from execution trace (driverVar, min, max, emoji, label)
 - Puzzles shuffled with seed 42 for even difficulty distribution
 
@@ -35,6 +40,7 @@ Run: `python verify_puzzles.py`. Checks: structural validity, interpreter execut
 - Step timeline with prev/next arrows, dot track (hidden if >20 steps), step counter
 - Replay/Continue buttons, tappable lines for explanations after completion
 - Walkthrough button in win modal to re-open animation
+- Skip button jumps to final state (updates variables, scene, output, and timeline)
 
 ## Sharing
 - Share text: `Username's Parsed #N 🟢 / 🏅 ScoreLabel Swaps (swaps/par) / streak / URL`

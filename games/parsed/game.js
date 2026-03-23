@@ -480,16 +480,13 @@
                 }
                 // Reject if any variable went negative during execution —
                 // narratively nonsensical (can't have negative air, depth, etc.)
-                // Only enforced when the intended solution itself stays non-negative.
-                if (puzzle.noNeg) {
-                    var steps = interp.steps;
-                    for (var si = 0; si < steps.length; si++) {
-                        var stepVars = steps[si].vars;
-                        var vkeys = Object.keys(stepVars);
-                        for (var vi = 0; vi < vkeys.length; vi++) {
-                            if (typeof stepVars[vkeys[vi]] === 'number' && stepVars[vkeys[vi]] < 0) {
-                                return { success: false, type: 'logic', output: outputStr, errors: ['> ' + vkeys[vi] + ' went negative \u2014 that doesn\'t make sense here'] };
-                            }
+                var steps = interp.steps;
+                for (var si = 0; si < steps.length; si++) {
+                    var stepVars = steps[si].vars;
+                    var vkeys = Object.keys(stepVars);
+                    for (var vi = 0; vi < vkeys.length; vi++) {
+                        if (typeof stepVars[vkeys[vi]] === 'number' && stepVars[vkeys[vi]] < 0) {
+                            return { success: false, type: 'logic', output: outputStr, errors: ['> ' + vkeys[vi] + ' went negative \u2014 that doesn\'t make sense here'] };
                         }
                     }
                 }

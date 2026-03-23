@@ -498,15 +498,13 @@ def make_puzzle(lines_data, goal, share_result, difficulty, seed_id):
 
     valid_outputs_list = sorted(valid_outputs, key=lambda x: (x != output_str, x))
 
-    # Check if the intended solution itself has any variable going negative.
-    # If so, we can't enforce a no-negatives check at runtime for this puzzle.
-    solution_has_negatives = False
+    # Verify the intended solution has no variable going negative.
+    # All puzzles must stay non-negative — no exceptions.
     for vname, history in interp.var_history.items():
         if any(v < 0 for v in history if isinstance(v, (int, float))):
-            solution_has_negatives = True
-            break
+            raise ValueError(f"Puzzle {seed_id}: {vname} goes negative in solution! Fix the values.")
 
-    result = {
+    return {
         "lines": lines_data,
         "goal": goal,
         "output": output_str,
@@ -517,10 +515,6 @@ def make_puzzle(lines_data, goal, share_result, difficulty, seed_id):
         "id": puzzle_id,
         "scene": scene
     }
-    # Only add flag when solution is clean — runtime will enforce no-negatives
-    if not solution_has_negatives:
-        result["noNeg"] = 1
-    return result
 
 
 # ============================================
@@ -693,6 +687,7 @@ def build_while_if_else(cfg):
         [id_(cfg["false_v"]), op("="), id_(cfg["false_v"]), op_m(cfg["false_op"]), lit_m(str(cfg["false_val"]))],
         [pn("}")],
         [id_(cfg["dec_v"]), op("="), id_(cfg["dec_v"]), op_m(cfg["dec_op"]), lit_m(str(cfg["dec_val"]))],
+        [id_(cfg["vr"]), op("="), id_(cfg["vr"]), op("+"), lit("1")],
         [pn("}")],
         [kw("return"), id_(cfg["vr"])],
     ], cfg["emoji"] + " " + cfg["goal"], cfg["share"], cfg.get("diff", "hard"), cfg["seed"])
@@ -888,7 +883,7 @@ def theme_combat():
           v1_op="+", v2_op="-", v2_step=2, cond_op=">", cond_val=0,
           emoji="\u2694\uFE0F", goal="A warrior tires with each swing, losing power per attack. Total damage dealt before exhaustion?",
           share="\u2694\uFE0F Battle over!\nDamage: 20"),
-        P("while_if", v1="energy", n1=30, v2="shield", n2=20, vr="hits",
+        P("while_if", v1="energy", n1=35, v2="shield", n2=20, vr="hits",
           loop_cond_v="energy", loop_cond_op=">", loop_cond_val=0,
           if_v="shield", if_op=">", if_val=5, if_body_v="shield", if_body_op="-", if_body_val=3,
           v1_op="-", v1_step=7, emoji="\u26A1",
@@ -1577,14 +1572,14 @@ def theme_technology():
           v1_op="-", v1_step=6, emoji="\U0001F4BB",
           goal="A server handles requests, consuming bandwidth. Load balancing improves over time. Requests before bandwidth runs out?",
           share="\U0001F4BB Server down!\nN requests served", diff="hard"),
-        P("while_if_else", v1="cache", n1=10, v2="memory", n2=80, vr="cycles",
+        P("while_if_else", v1="cache", n1=12, v2="memory", n2=70, vr="cycles",
           loop_v="memory", loop_op=">", loop_val=10,
           if_v="cache", if_op=">", if_val=4,
           true_v="memory", true_op="-", true_val=8,
           false_v="memory", false_op="-", false_val=18,
           dec_v="cache", dec_op="-", dec_val=2, emoji="\U0001F4BB",
           goal="A program runs cycles using memory. Good cache means less memory used, but cache degrades. How many cycles?",
-          share="\U0001F4BB Out of memory!\nN cycles completed", diff="hard"),
+          share="\U0001F4BB Out of memory!\n6 cycles completed", diff="hard"),
     ]
 
 @theme("mining")
@@ -1681,14 +1676,14 @@ def theme_weather():
           true_op="+", false_op="-", emoji="\u26C8\uFE0F",
           goal="Storm brewing! Intense enough? Thunder amplifies it. Mild? Lightning dissipates. Storm power?",
           share="\u26C8\uFE0F Storm passed!\nPower measured"),
-        P("while_if_else", v1="ice", n1=40, v2="sun", n2=10, vr="days",
+        P("while_if_else", v1="ice", n1=36, v2="sun", n2=12, vr="days",
           loop_v="ice", loop_op=">", loop_val=0,
           if_v="sun", if_op=">", if_val=6,
           true_v="ice", true_op="-", true_val=10,
           false_v="ice", false_op="-", false_val=3,
           dec_v="sun", dec_op="-", dec_val=2, emoji="\u2744\uFE0F",
           goal="A glacier melts in the sun. Intense sun melts it fast, but the sun fades each day. How many days until it's gone?",
-          share="\u2744\uFE0F Glacier gone!\nMelted in N days", diff="hard"),
+          share="\u2744\uFE0F Glacier gone!\nMelted in 5 days", diff="hard"),
         P("for_accum", vr="candles", n_end=7, k=3, emoji="\U0001F56F\uFE0F",
           goal="Light candles each night. Total candles lit?",
           share="\U0001F56F\uFE0F Lit: 21 candles!"),
@@ -1831,14 +1826,14 @@ def theme_gaming():
           v1_op="-", v1_step=7, emoji="\U0001F47E",
           goal="A game character takes poison bites. Antidote weakens the poison over time. How many bites before defeat?",
           share="\U0001F47E Game over!\nN ticks survived", diff="hard"),
-        P("while_if_else", v1="luck", n1=10, v2="coins", n2=60, vr="flips",
+        P("while_if_else", v1="luck", n1=12, v2="coins", n2=60, vr="flips",
           loop_v="coins", loop_op=">", loop_val=10,
           if_v="luck", if_op=">", if_val=4,
           true_v="coins", true_op="-", true_val=5,
           false_v="coins", false_op="-", false_val=15,
           dec_v="luck", dec_op="-", dec_val=2, emoji="\U0001F3B0",
           goal="A gambler flips coins. High luck means small losses, but luck fades each flip. How many flips until broke?",
-          share="\U0001F3B0 Bust!\nN flips played", diff="hard"),
+          share="\U0001F3B0 Bust!\n6 flips played", diff="hard"),
     ]
 
 @theme("animals")
@@ -2022,14 +2017,14 @@ def theme_exploration():
           true_op="+", false_op="-", emoji="\U0001F393",
           goal="Report card day! Making the honor roll? Boost math score. Falling short? Science takes a hit. GPA?",
           share="\U0001F393 Report card!\nGPA calculated"),
-        P("while_if_else", v1="ship", n1=80, v2="cargo", n2=15, vr="trips",
+        P("while_if_else", v1="ship", n1=80, v2="cargo", n2=18, vr="trips",
           loop_v="ship", loop_op=">", loop_val=10,
           if_v="cargo", if_op=">", if_val=5,
           true_v="ship", true_op="-", true_val=15,
           false_v="ship", false_op="-", false_val=5,
           dec_v="cargo", dec_op="-", dec_val=3, emoji="\U0001F6A2",
           goal="A cargo ship unloads each trip. Heavy cargo shrinks as it's delivered. Total trips?",
-          share="\U0001F6A2 All delivered!\nN trips completed", diff="hard"),
+          share="\U0001F6A2 All delivered!\n5 trips completed", diff="hard"),
         P("while_decay", v1="total", n1=0, v2="boost", n2=10, vr="rounds",
           v1_op="+", v2_op="-", v2_step=2, cond_op=">", cond_val=0,
           emoji="\U0001F4A8", goal="A turbo boost fades each round. What's the total?",
@@ -2075,21 +2070,21 @@ def theme_medieval():
           v1_op="-", v1_step=7, emoji="\U0001FA9A",
           goal="A carpenter uses wood each build. Rainy days gradually clear up. Builds completed?",
           share="\U0001FA9A Workshop busy!\n6 builds done", diff="hard"),
-        P("while_if_else", v1="morale", n1=10, v2="troops", n2=100, vr="battles",
+        P("while_if_else", v1="morale", n1=12, v2="troops", n2=100, vr="battles",
           loop_v="troops", loop_op=">", loop_val=20,
           if_v="morale", if_op=">", if_val=5,
           true_v="troops", true_op="-", true_val=10,
           false_v="troops", false_op="-", false_val=20,
           dec_v="morale", dec_op="-", dec_val=2, emoji="\u2694\uFE0F",
           goal="An army fights battles. High morale means fewer losses, but morale drops each fight. How many battles?",
-          share="\u2694\uFE0F Campaign over!\nN battles fought", diff="hard"),
+          share="\u2694\uFE0F Campaign over!\n6 battles fought", diff="hard"),
         P("for_two_var", vr="distance", v2="speed", v2_start=3, n_end=5, vr_op="+", v2_op="+", v2_step=2, emoji="\U0001F697",
           goal="A cart accelerates each tick. Total distance?",
           share="\U0001F697 Driven: 35!"),
-        P("while_decay", v1="distance", n1=0, v2="speed", n2=18, vr="laps",
+        P("while_decay", v1="distance", n1=0, v2="speed", n2=24, vr="laps",
           v1_op="+", v2_op="-", v2_step=4, cond_op=">", cond_val=0,
           emoji="\U0001F3C3", goal="A runner slows each lap. Total distance?",
-          share="\U0001F3C3 Race done!\nDistance: 46"),
+          share="\U0001F3C3 Race done!\nDistance: 84"),
         P("while_two_var", v1="harvest", n1=0, v2="seeds", n2=35, op1="+", step1=5, op2="-", step2=5,
           cond_v="seeds", cond_op=">", cond_val="0", ret_v="harvest",
           emoji="\U0001F33D", goal="A farmer plants seeds until the bag is empty. What's the harvest?",
@@ -2148,10 +2143,10 @@ def theme_electronics():
         P("for_custom_start", vr="charge", v_start=25, n_end=5, k_op="+", k_val=12, emoji="\U0001F50B",
           goal="A battery charges each plug-in. After all plug-ins, what's the charge?",
           share="\U0001F50B Charged: 85%!"),
-        P("while_decay", v1="pressure", n1=0, v2="force", n2=16, vr="cycles",
+        P("while_decay", v1="pressure", n1=0, v2="force", n2=15, vr="cycles",
           v1_op="+", v2_op="-", v2_step=3, cond_op=">", cond_val=0,
           emoji="\U0001F4A5", goal="A hydraulic press loses force each cycle. Total pressure before it gives out?",
-          share="\U0001F4A5 Press spent!\nPressure: 55", diff="hard"),
+          share="\U0001F4A5 Press spent!\nPressure: 40", diff="hard"),
         P("while_if", v1="battery", n1=48, v2="signal", n2=12, vr="calls",
           loop_cond_v="battery", loop_cond_op=">", loop_cond_val=0,
           if_v="signal", if_op=">", if_val=4, if_body_v="signal", if_body_op="-", if_body_val=2,
@@ -2229,14 +2224,14 @@ def theme_pirates():
         P("for_custom_start", vr="score", v_start=95, n_end=4, k_op="+", k_val=5, emoji="\U0001F3AE",
           goal="Start with a score. Earn bonus each round. Final score?",
           share="\U0001F3AE Score: 115!"),
-        P("while_if_else", v1="crew", n1=12, v2="rations", n2=48, vr="days",
+        P("while_if_else", v1="crew", n1=12, v2="rations", n2=54, vr="days",
           loop_v="rations", loop_op=">", loop_val=0,
           if_v="crew", if_op=">", if_val=6,
           true_v="crew", true_op="-", true_val=2,
           false_v="rations", false_op="-", false_val=6,
           dec_v="rations", dec_op="-", dec_val=6, emoji="\U0001F3F4\u200D\u2620\uFE0F",
           goal="A pirate crew eats rations daily. While overstaffed, some abandon ship. How many days do rations last?",
-          share="\U0001F3F4\u200D\u2620\uFE0F Land ho!\nSurvived N days at sea", diff="hard"),
+          share="\U0001F3F4\u200D\u2620\uFE0F Land ho!\nSurvived 6 days at sea", diff="hard"),
     ]
 
 
@@ -2267,6 +2262,17 @@ def generate_puzzles():
     # Check total count
     print(f"\nTotal puzzles generated: {len(puzzles)}")
 
+    # Check for duplicate content hashes — every puzzle must be unique
+    seen_ids = {}
+    for i, p in enumerate(puzzles):
+        if p["id"] in seen_ids:
+            raise ValueError(
+                f"Duplicate puzzle ID {p['id']}! "
+                f"Puzzle {i} ({p['goal'][:50]}) has same code as "
+                f"puzzle {seen_ids[p['id']]} — change variable names or values."
+            )
+        seen_ids[p["id"]] = i
+
     # Shuffle with fixed seed for even difficulty distribution
     rng = random.Random(42)
     rng.shuffle(puzzles)
@@ -2279,7 +2285,7 @@ def generate_puzzles():
         {"lines":[[{"t":"let","y":"kw","f":1},{"t":"points","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"0","y":"lit","f":1}],[{"t":"for","y":"kw","f":1},{"t":"i","y":"id","f":1},{"t":"=","y":"op","f":1},{"t":"1","y":"lit","f":1},{"t":"to","y":"kw","f":1},{"t":"10","y":"lit","f":0},{"t":"{","y":"pn","f":1}],[{"t":"if","y":"kw","f":1},{"t":"i","y":"id","f":1},{"t":">","y":"op","f":0},{"t":"5","y":"lit","f":0},{"t":"{","y":"pn","f":1}],[{"t":"points","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"points","y":"id","f":0},{"t":"+","y":"op","f":0},{"t":"i","y":"id","f":1}],[{"t":"}","y":"pn","f":1}],[{"t":"}","y":"pn","f":1}],[{"t":"return","y":"kw","f":1},{"t":"points","y":"id","f":0}]],"goal":"\U0001F3C5 A judge scores 10 rounds. The first 5 don't count, but each one after earns points equal to its number. Total points?","output":"40","validOutputs":["40","0"],"shareResult":"\U0001F3C5 Points: 40!","par":9,"difficulty":"medium","id":"13742abb","scene":{"emoji":"\U0001F3C5","driverVar":"points","min":0,"max":40,"label":"Points"},"noNeg":1},
         {"lines":[[{"t":"let","y":"kw","f":1},{"t":"tips","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"0","y":"lit","f":1}],[{"t":"for","y":"kw","f":1},{"t":"i","y":"id","f":1},{"t":"=","y":"op","f":1},{"t":"1","y":"lit","f":1},{"t":"to","y":"kw","f":1},{"t":"8","y":"lit","f":0},{"t":"{","y":"pn","f":1}],[{"t":"if","y":"kw","f":1},{"t":"i","y":"id","f":1},{"t":">","y":"op","f":0},{"t":"3","y":"lit","f":0},{"t":"{","y":"pn","f":1}],[{"t":"tips","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"tips","y":"id","f":0},{"t":"+","y":"op","f":0},{"t":"i","y":"id","f":1}],[{"t":"}","y":"pn","f":1}],[{"t":"}","y":"pn","f":1}],[{"t":"return","y":"kw","f":1},{"t":"tips","y":"id","f":0}]],"goal":"\U0001F4B0 Serve 8 tables. Only big parties (table number above 3) tip their table number. Total tips?","output":"30","validOutputs":["30","0"],"shareResult":"\U0001F4B0 Tips: 30!","par":5,"difficulty":"medium","id":"2285009f","scene":{"emoji":"\U0001F4B0","driverVar":"tips","min":0,"max":30,"label":"Tips"},"noNeg":1},
         {"lines":[[{"t":"let","y":"kw","f":1},{"t":"air","y":"id","f":1},{"t":"=","y":"op","f":1},{"t":"36","y":"lit","f":0}],[{"t":"let","y":"kw","f":1},{"t":"depth","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"8","y":"lit","f":0}],[{"t":"let","y":"kw","f":1},{"t":"breaths","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"0","y":"lit","f":1}],[{"t":"while","y":"kw","f":1},{"t":"air","y":"id","f":0},{"t":">","y":"op","f":1},{"t":"0","y":"lit","f":1},{"t":"{","y":"pn","f":1}],[{"t":"if","y":"kw","f":1},{"t":"depth","y":"id","f":0},{"t":">","y":"op","f":1},{"t":"2","y":"lit","f":0},{"t":"{","y":"pn","f":1}],[{"t":"depth","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"depth","y":"id","f":0},{"t":"-","y":"op","f":1},{"t":"1","y":"lit","f":1}],[{"t":"}","y":"pn","f":1}],[{"t":"air","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"air","y":"id","f":0},{"t":"-","y":"op","f":0},{"t":"6","y":"lit","f":0}],[{"t":"breaths","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"breaths","y":"id","f":0},{"t":"+","y":"op","f":1},{"t":"1","y":"lit","f":1}],[{"t":"}","y":"pn","f":1}],[{"t":"return","y":"kw","f":1},{"t":"breaths","y":"id","f":0}]],"goal":"\U0001F93F A scuba diver uses air each breath. As the dive goes on, they slowly rise to the surface. How many breaths until air runs out?","output":"6","validOutputs":["6","18","3","4"],"shareResult":"\U0001F93F Surfaced!\n6 breaths taken","par":15,"difficulty":"hard","id":"8b795b27","scene":{"emoji":"\U0001F93F","driverVar":"breaths","min":0,"max":6,"label":"Breaths"},"noNeg":1},
-        {"lines":[[{"t":"let","y":"kw","f":1},{"t":"timer","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"20","y":"lit","f":0}],[{"t":"let","y":"kw","f":1},{"t":"tick","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"3","y":"lit","f":0}],[{"t":"let","y":"kw","f":1},{"t":"alerts","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"0","y":"lit","f":1}],[{"t":"while","y":"kw","f":1},{"t":"timer","y":"id","f":0},{"t":">","y":"op","f":0},{"t":"0","y":"lit","f":1},{"t":"{","y":"pn","f":1}],[{"t":"timer","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"timer","y":"id","f":0},{"t":"-","y":"op","f":0},{"t":"tick","y":"id","f":0}],[{"t":"alerts","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"alerts","y":"id","f":0},{"t":"+","y":"op","f":1},{"t":"1","y":"lit","f":1}],[{"t":"}","y":"pn","f":1}],[{"t":"return","y":"kw","f":1},{"t":"alerts","y":"id","f":0}]],"goal":"\u23F0 Timer counts down by tick. How many alerts?","output":"7","validOutputs":["7"],"shareResult":"\u23F0 Timer done! 7 alerts","par":12,"difficulty":"medium","id":"2edd3cd4","scene":{"emoji":"\u23F0","driverVar":"alerts","min":0,"max":7,"label":"Alerts"}},
+        {"lines":[[{"t":"let","y":"kw","f":1},{"t":"timer","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"21","y":"lit","f":0}],[{"t":"let","y":"kw","f":1},{"t":"tick","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"3","y":"lit","f":0}],[{"t":"let","y":"kw","f":1},{"t":"alerts","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"0","y":"lit","f":1}],[{"t":"while","y":"kw","f":1},{"t":"timer","y":"id","f":0},{"t":">","y":"op","f":0},{"t":"0","y":"lit","f":1},{"t":"{","y":"pn","f":1}],[{"t":"timer","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"timer","y":"id","f":0},{"t":"-","y":"op","f":0},{"t":"tick","y":"id","f":0}],[{"t":"alerts","y":"id","f":0},{"t":"=","y":"op","f":1},{"t":"alerts","y":"id","f":0},{"t":"+","y":"op","f":1},{"t":"1","y":"lit","f":1}],[{"t":"}","y":"pn","f":1}],[{"t":"return","y":"kw","f":1},{"t":"alerts","y":"id","f":0}]],"goal":"\u23F0 Timer counts down by tick. How many alerts?","output":"7","validOutputs":["7"],"shareResult":"\u23F0 Timer done! 7 alerts","par":12,"difficulty":"medium","id":"2edd3cd4","scene":{"emoji":"\u23F0","driverVar":"alerts","min":0,"max":7,"label":"Alerts"}},
     ]
     for i, legacy in enumerate(LEGACY_PUZZLES):
         puzzles[i] = legacy

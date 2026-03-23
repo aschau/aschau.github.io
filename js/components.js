@@ -23,6 +23,19 @@
     ]}
   ];
 
+  // Inject favicon + apple touch icon if not already present
+  if (!document.querySelector('link[rel="icon"]')) {
+    var favicon = document.createElement("link");
+    favicon.rel = "icon";
+    favicon.type = "image/png";
+    favicon.href = basePath + "img/favicon.png";
+    document.head.appendChild(favicon);
+    var apple = document.createElement("link");
+    apple.rel = "apple-touch-icon";
+    apple.href = basePath + "img/favicon-apple.png";
+    document.head.appendChild(apple);
+  }
+
   var path = window.location.pathname;
   var currentPage = path.substring(path.lastIndexOf("/") + 1) || "index.html";
 

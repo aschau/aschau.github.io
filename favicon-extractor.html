@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head><title>Favicon Extractor</title></head>
+<body style="background:#222;color:#fff;font-family:sans-serif;padding:40px;text-align:center;">
+<h2>Favicon Extractor</h2>
+<p>Front-facing standing frame from your pixel character, scaled to favicon sizes.</p>
+<div style="display:flex;gap:40px;justify-content:center;margin:30px 0;">
+  <div>
+    <p>Original 64x64</p>
+    <canvas id="c64" width="64" height="64" style="border:1px solid #555;image-rendering:pixelated;width:128px;height:128px;"></canvas>
+  </div>
+  <div>
+    <p>Favicon 32x32</p>
+    <canvas id="c32" width="32" height="32" style="border:1px solid #555;image-rendering:pixelated;width:128px;height:128px;"></canvas>
+  </div>
+  <div>
+    <p>Apple Touch 180x180</p>
+    <canvas id="c180" width="180" height="180" style="border:1px solid #555;width:180px;height:180px;"></canvas>
+  </div>
+</div>
+<p style="color:#aaa;">Right-click a canvas above and "Save image as..." to download.<br>
+Save the 32x32 as <code>favicon.png</code> in your repo root.</p>
+<script>
+var img = new Image();
+img.onload = function () {
+  // Spritesheet is 832x3456 (13 cols x 54 rows of 64x64 frames)
+  // CSS uses background-size: 832px 3456px
+  // Idle front-facing pose: background-position 0 -640px = row 10, col 0
+  var frameW = 64, frameH = 64;
+  var best = { sx: 0, sy: 640 }; // row 10, col 0 — front-facing idle
+
+  // Draw 64x64
+  var c64 = document.getElementById('c64').getContext('2d');
+  c64.imageSmoothingEnabled = false;
+  c64.drawImage(img, best.sx, best.sy, frameW, frameH, 0, 0, 64, 64);
+
+  // Draw 32x32
+  var c32 = document.getElementById('c32').getContext('2d');
+  c32.imageSmoothingEnabled = false;
+  c32.drawImage(img, best.sx, best.sy, frameW, frameH, 0, 0, 32, 32);
+
+  // Draw 180x180 (apple touch icon)
+  var c180 = document.getElementById('c180').getContext('2d');
+  c180.imageSmoothingEnabled = false;
+  c180.fillStyle = '#1a1a2e';
+  c180.fillRect(0, 0, 180, 180);
+  // Center the 64x64 frame scaled up to ~140px in the 180x180 canvas
+  var scale = 140;
+  var offset = (180 - scale) / 2;
+  c180.drawImage(img, best.sx, best.sy, frameW, frameH, offset, offset, scale, scale);
+};
+img.src = 'img/character-spritesheet.png';
+</script>
+</body>
+</html>

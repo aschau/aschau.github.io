@@ -2063,10 +2063,28 @@
     }
 
     function restoreSolution() {
-        if (!winningSolution || winningSolution.length !== movableTokens.length) return;
+        // Try in-memory winningSolution first, then localStorage, then solutionOrder
+        var solution = winningSolution;
+        if (!solution || solution.length !== movableTokens.length) {
+            // Fallback: reload from localStorage
+            var data = loadData();
+            var today = archiveMode ? loadArchiveState() : (data.today || {});
+            if (today.winningSolution && today.winningSolution.length === movableTokens.length) {
+                solution = today.winningSolution;
+                winningSolution = solution;
+            }
+        }
+        if (!solution || solution.length !== movableTokens.length) {
+            // Last resort: use the solution order from puzzle data
+            if (solutionOrder && solutionOrder.length === movableTokens.length) {
+                solution = solutionOrder;
+                winningSolution = solution;
+            }
+        }
+        if (!solution || solution.length !== movableTokens.length) return;
 
         for (var i = 0; i < movableTokens.length; i++) {
-            movableTokens[i].t = winningSolution[i];
+            movableTokens[i].t = solution[i];
         }
 
         swapCount = firstSolveSwaps || 0;

@@ -3,7 +3,7 @@
 // Themed execution results, not just scores
 // ============================================
 
-function generateShareText(puzzleNumber, swaps, par, shareResult, streak, username) {
+function generateShareText(puzzleNumber, swaps, par, shareResult, streak, username, isArchive) {
     var diff = swaps - par;
     var scoreLabel;
     if (diff <= -3) scoreLabel = 'Genius!';
@@ -13,11 +13,12 @@ function generateShareText(puzzleNumber, swaps, par, shareResult, streak, userna
     else if (diff === 1) scoreLabel = 'Verbose';
     else scoreLabel = 'Spaghetti (+' + diff + ')';
 
+    var puzzleLabel = 'Parsed #' + puzzleNumber + (isArchive ? ' (Archive)' : '');
     var header;
     if (username) {
-        header = username + "'s Parsed #" + puzzleNumber + ' \uD83D\uDFE2';
+        header = username + "'s " + puzzleLabel + ' \uD83D\uDFE2';
     } else {
-        header = 'Parsed #' + puzzleNumber + ' \uD83D\uDFE2';
+        header = puzzleLabel + ' \uD83D\uDFE2';
     }
 
     // Extract leading emoji from shareResult (e.g. "🏅 Points: 40!" → "🏅")
@@ -31,11 +32,13 @@ function generateShareText(puzzleNumber, swaps, par, shareResult, streak, userna
 
     var lines = [header, scoreLine];
 
-    if (streak > 1) {
+    if (!isArchive && streak > 1) {
         lines.push('\uD83D\uDD25 ' + streak + ' day streak');
     }
 
-    lines.push('https://aschau.github.io/games/parsed');
+    var url = 'https://aschau.github.io/games/parsed';
+    if (isArchive) url += '?day=' + puzzleNumber;
+    lines.push(url);
 
     return lines.join('\n');
 }

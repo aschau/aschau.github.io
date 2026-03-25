@@ -26,6 +26,21 @@
         }
     })();
 
+    // Archive mode: ?day=N loads past puzzle N (1-based puzzle number)
+    var archiveMode = false;
+    var archivePuzzleNumber = null;
+    (function () {
+        var params = new URLSearchParams(window.location.search);
+        if (params.has('day')) {
+            var dayNum = parseInt(params.get('day'), 10);
+            var todayNum = getDailyPuzzleNumber();
+            if (!isNaN(dayNum) && dayNum >= 1 && dayNum < todayNum) {
+                archiveMode = true;
+                archivePuzzleNumber = dayNum;
+            }
+        }
+    })();
+
     // --- Game State ---
     var puzzle = null;
     var puzzleNumber = 0;
@@ -88,13 +103,27 @@
         if (debugMode) {
             puzzle = JSON.parse(JSON.stringify(PUZZLES[window._debugPuzzleIndex]));
             puzzleNumber = window._debugPuzzleIndex + 1;
+        } else if (archiveMode) {
+            var archiveIndex = (archivePuzzleNumber - 1) % PUZZLES.length;
+            puzzle = JSON.parse(JSON.stringify(PUZZLES[archiveIndex]));
+            puzzleNumber = archivePuzzleNumber;
         } else {
             puzzle = getDailyPuzzle();
             puzzleNumber = getDailyPuzzleNumber();
         }
 
-        puzzleNumberEl.textContent = (debugMode ? 'Debug ' : '') + 'Puzzle #' + puzzleNumber;
-        puzzleDateEl.textContent = debugMode ? 'Debug Mode' : getTodayDateString();
+        if (debugMode) {
+            puzzleNumberEl.textContent = 'Debug Puzzle #' + puzzleNumber;
+            puzzleDateEl.textContent = 'Debug Mode';
+        } else if (archiveMode) {
+            puzzleNumberEl.textContent = 'Puzzle #' + puzzleNumber;
+            puzzleDateEl.textContent = getPuzzleDateString(puzzleNumber);
+            document.getElementById('archive-banner').hidden = false;
+            document.querySelector('.game-container').classList.add('has-archive-banner');
+        } else {
+            puzzleNumberEl.textContent = 'Puzzle #' + puzzleNumber;
+            puzzleDateEl.textContent = getTodayDateString();
+        }
         parValue.textContent = puzzle.par;
         goalText.textContent = puzzle.goal;
 
@@ -715,6 +744,19 @@
         helpClose.addEventListener('click', function () { helpModal.hidden = true; });
         helpModal.addEventListener('click', function (e) { if (e.target === helpModal) helpModal.hidden = true; });
 
+        // Archive modal
+        var archiveBtn = document.getElementById('archive-btn');
+        var archiveModal = document.getElementById('archive-modal');
+        var archiveClose = document.getElementById('archive-close');
+        if (archiveBtn && archiveModal) {
+            archiveBtn.addEventListener('click', function () {
+                renderArchiveGrid();
+                archiveModal.hidden = false;
+            });
+            archiveClose.addEventListener('click', function () { archiveModal.hidden = true; });
+            archiveModal.addEventListener('click', function (e) { if (e.target === archiveModal) archiveModal.hidden = true; });
+        }
+
         // Clear all stats & progress (inline confirm, no browser modal)
         var clearBtn = document.getElementById('clear-stats-btn');
         if (clearBtn) {
@@ -934,7 +976,7 @@
             bestScore = swapCount;
             firstSolveSwaps = swapCount;
             winningSolution = movableTokens.map(function (t) { return t.t; });
-            updateStats(swapCount);
+            if (!archiveMode) updateStats(swapCount);
         }
 
         saveState();
@@ -962,15 +1004,19 @@
         else if (diff === 1) scoreLabel = 'Verbose';
         else scoreLabel = 'Spaghetti (+' + diff + ')';
 
-        winPuzzle.textContent = 'Parsed #' + puzzleNumber;
+        winPuzzle.textContent = 'Parsed #' + puzzleNumber + (archiveMode ? ' (Archive)' : '');
         winScore.textContent = scoreLabel + ' (' + displayScore + ' swap' + (displayScore !== 1 ? 's' : '') + ')';
         winResult.textContent = puzzle.shareResult || '';
 
-        var stats = loadStats();
-        if (stats.currentStreak > 1) {
-            winStreak.textContent = '\uD83D\uDD25 ' + stats.currentStreak + ' day streak';
-        } else {
+        if (archiveMode) {
             winStreak.textContent = '';
+        } else {
+            var stats = loadStats();
+            if (stats.currentStreak > 1) {
+                winStreak.textContent = '\uD83D\uDD25 ' + stats.currentStreak + ' day streak';
+            } else {
+                winStreak.textContent = '';
+            }
         }
 
         // Username prompt
@@ -1915,6 +1961,7 @@
     // =============================================
 
     function getStorageKey() {
+        if (archiveMode) return 'parsed_archive_' + archivePuzzleNumber;
         return STORAGE_KEY;
     }
 
@@ -1938,6 +1985,7 @@
 
     function saveState() {
         if (debugMode) return; // Don't save debug mode progress
+        if (archiveMode) { saveArchiveState(); return; }
         var data = loadData();
         data.version = SAVE_VERSION;
         var prevToday = data.today || {};
@@ -1972,8 +2020,55 @@
         } catch (e) { }
     }
 
+    function saveArchiveState() {
+        var prev = loadArchiveState();
+        var arrangement = movableTokens.map(function (t) { return t.t; });
+
+        var state = {
+            version: SAVE_VERSION,
+            puzzleNumber: archivePuzzleNumber,
+            solved: solved,
+            everSolved: prev.everSolved || solved,
+            arrangement: arrangement,
+            initialScramble: initialScramble,
+            swapCount: swapCount,
+            firstSolveSwaps: prev.firstSolveSwaps || null,
+            winningSolution: prev.winningSolution || null,
+            par: puzzle.par,
+            moveHistory: moveHistory
+        };
+
+        if (solved && !prev.everSolved) {
+            state.firstSolveSwaps = swapCount;
+            state.winningSolution = movableTokens.map(function (t) { return t.t; });
+        }
+
+        try {
+            localStorage.setItem(getStorageKey(), JSON.stringify(state));
+            // Update solved index for archive grid
+            var solvedKey = 'parsed_archive_solved';
+            var solvedSet = {};
+            try { solvedSet = JSON.parse(localStorage.getItem(solvedKey)) || {}; } catch (e) { }
+            if (state.everSolved) solvedSet[archivePuzzleNumber] = true;
+            localStorage.setItem(solvedKey, JSON.stringify(solvedSet));
+        } catch (e) { }
+    }
+
+    function loadArchiveState() {
+        try {
+            var raw = localStorage.getItem(getStorageKey());
+            if (raw) {
+                var state = JSON.parse(raw);
+                if (state.version === SAVE_VERSION) return state;
+            }
+        } catch (e) { }
+        return {};
+    }
+
     function restoreState() {
         if (debugMode) return false; // Don't restore in debug mode
+        if (archiveMode) return restoreArchiveState();
+
         var data = loadData();
         if (!data.today || data.today.date !== getTodayKey()) return false;
 
@@ -2003,6 +2098,34 @@
         return true;
     }
 
+    function restoreArchiveState() {
+        var state = loadArchiveState();
+        if (!state.puzzleNumber) return false;
+
+        var arrangementToRestore = state.everSolved && state.winningSolution
+            ? state.winningSolution
+            : state.arrangement;
+
+        if (arrangementToRestore && arrangementToRestore.length === movableTokens.length) {
+            for (var i = 0; i < movableTokens.length; i++) {
+                movableTokens[i].t = arrangementToRestore[i];
+            }
+        }
+
+        if (state.initialScramble) {
+            initialScramble = state.initialScramble;
+        }
+
+        swapCount = state.everSolved ? (state.firstSolveSwaps || state.swapCount || 0) : (state.swapCount || 0);
+        moveHistory = state.everSolved ? [] : (state.moveHistory || []);
+        everSolved = !!state.everSolved;
+        solved = state.everSolved ? true : !!state.solved;
+        firstSolveSwaps = state.firstSolveSwaps || null;
+        winningSolution = state.winningSolution || null;
+
+        return true;
+    }
+
     function loadData() {
         try {
             var raw = localStorage.getItem(getStorageKey());
@@ -2027,7 +2150,10 @@
     // =============================================
 
     function loadStats() {
-        var data = loadData();
+        // Always read stats from daily storage, not archive
+        var raw;
+        try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { }
+        var data = raw ? JSON.parse(raw) : {};
         return data.stats || { played: 0, solved: 0, currentStreak: 0, maxStreak: 0,  distribution: {} };
     }
 
@@ -2070,9 +2196,9 @@
 
     function getShareText() {
         if (typeof generateShareText !== 'function') return '';
-        var stats = loadStats();
         var shareSwaps = firstSolveSwaps !== null ? firstSolveSwaps : swapCount;
-        return generateShareText(puzzleNumber, shareSwaps, puzzle.par, puzzle.shareResult || '', stats.currentStreak, getUsername());
+        var streakVal = archiveMode ? 0 : loadStats().currentStreak;
+        return generateShareText(puzzleNumber, shareSwaps, puzzle.par, puzzle.shareResult || '', streakVal, getUsername(), archiveMode);
     }
 
     function copyResults() {
@@ -2115,6 +2241,75 @@
             }).catch(function () { /* user cancelled */ });
         } else {
             copyResults();
+        }
+    }
+
+    // =============================================
+    // Archive Grid
+    // =============================================
+
+    function getPuzzleDateString(num) {
+        var epoch = new Date(LAUNCH_EPOCH);
+        epoch.setHours(0, 0, 0, 0);
+        var d = new Date(epoch.getTime() + (num - 1) * 86400000);
+        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function getPuzzleEmoji(puzzleIndex) {
+        var p = PUZZLES[puzzleIndex];
+        if (!p || !p.shareResult) return '';
+        var m = p.shareResult.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F?)/u);
+        return m ? m[0] : '';
+    }
+
+    function renderArchiveGrid() {
+        var grid = document.getElementById('archive-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        var todayNum = getDailyPuzzleNumber();
+        var solvedSet = {};
+        try { solvedSet = JSON.parse(localStorage.getItem('parsed_archive_solved')) || {}; } catch (e) { }
+
+        // Also check if today's daily puzzle is solved
+        var dailyData = {};
+        try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) dailyData = JSON.parse(raw);
+        } catch (e) { }
+        var dailySolved = dailyData.today && dailyData.today.date === getTodayKey() && dailyData.today.everSolved;
+
+        for (var n = 1; n <= todayNum; n++) {
+            var cell = document.createElement('a');
+            cell.className = 'archive-cell';
+
+            var idx = (n - 1) % PUZZLES.length;
+            var emoji = getPuzzleEmoji(idx);
+
+            var numSpan = document.createElement('span');
+            numSpan.className = 'archive-cell-num';
+            numSpan.textContent = n;
+
+            if (emoji) {
+                var emojiSpan = document.createElement('span');
+                emojiSpan.className = 'archive-cell-emoji';
+                emojiSpan.textContent = emoji;
+                cell.appendChild(emojiSpan);
+            }
+            cell.appendChild(numSpan);
+
+            if (n === todayNum) {
+                cell.classList.add('today');
+                cell.href = './';
+                cell.title = 'Today — ' + getTodayDateString();
+                if (dailySolved) cell.classList.add('solved');
+            } else {
+                cell.href = '?day=' + n;
+                cell.title = '#' + n + ' — ' + getPuzzleDateString(n);
+                if (solvedSet[n]) cell.classList.add('solved');
+            }
+
+            grid.appendChild(cell);
         }
     }
 

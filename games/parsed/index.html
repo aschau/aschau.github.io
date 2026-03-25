@@ -52,6 +52,7 @@
             <div class="header-top">
                 <h1 class="game-title">Parsed</h1>
                 <div class="header-buttons">
+                    <button class="icon-btn" id="archive-btn" aria-label="Puzzle archive">&#128197;</button>
                     <button class="icon-btn" id="username-btn" aria-label="Set display name">&#9998;</button>
                     <button class="icon-btn" id="theme-btn" aria-label="Toggle theme">&#9790;</button>
                     <button class="icon-btn" id="help-btn" aria-label="How to play">?</button>
@@ -110,6 +111,25 @@
             </div>
             <div class="footer-copyright">&copy; 2026 Andrew Chau. Licensed under CC BY-NC 4.0.</div>
         </footer>
+
+        <!-- Archive Banner (shown in archive mode) -->
+        <div class="archive-banner" id="archive-banner" hidden>
+            Playing from the archive &middot; <a href="./">Back to today's puzzle</a>
+        </div>
+
+        <!-- Archive Modal -->
+        <div class="modal-overlay" id="archive-modal" hidden>
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Puzzle Archive</h2>
+                    <button class="modal-close" id="archive-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p class="archive-subtitle">Play any past puzzle. Archive scores don't count toward your streak.</p>
+                    <div class="archive-grid" id="archive-grid"></div>
+                </div>
+            </div>
+        </div>
 
         <!-- Quick Controls (first visit only) -->
         <div class="modal-overlay" id="controls-modal" hidden>

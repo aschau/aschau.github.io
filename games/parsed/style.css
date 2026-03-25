@@ -1019,6 +1019,104 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* ---- Archive ---- */
+
+.archive-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    text-align: center;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    background: var(--color-accent-muted);
+    border-bottom: 1px solid var(--color-border-accent);
+    color: var(--color-text);
+}
+
+.archive-banner a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    margin-left: 2px;
+}
+
+.archive-banner[hidden] {
+    display: none;
+}
+
+.game-container.has-archive-banner {
+    padding-top: 32px;
+}
+
+.archive-subtitle {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 16px;
+}
+
+.archive-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    max-height: 340px;
+    overflow-y: auto;
+    padding: 2px;
+}
+
+.archive-cell {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    transition: border-color 0.15s, background 0.15s;
+    gap: 1px;
+    padding: 2px;
+}
+
+.archive-cell-emoji {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.archive-cell-num {
+    font-size: 0.7rem;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.archive-cell:hover {
+    border-color: var(--color-border-accent);
+    background: var(--glass-bg-hover);
+    color: var(--color-text);
+}
+
+.archive-cell.solved {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.archive-cell.today {
+    border-color: var(--color-accent);
+    background: var(--color-accent-subtle);
+    color: var(--color-accent);
+    font-weight: 700;
+}
+
+.archive-cell.future {
+    opacity: 0.25;
+    pointer-events: none;
+    cursor: default;
+}
+
 /* ---- Responsive ---- */
 
 @media (max-width: 600px) {

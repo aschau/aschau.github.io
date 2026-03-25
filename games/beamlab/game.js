@@ -1101,6 +1101,14 @@
     }
 
     function restoreSolution() {
+        // Try in-memory first, then reload from localStorage
+        if (!winningSolution) {
+            var data = loadData();
+            var today = data.today || {};
+            if (today.winningSolution) {
+                winningSolution = today.winningSolution;
+            }
+        }
         if (!winningSolution) return;
 
         // Clear all non-fixed pieces

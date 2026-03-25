@@ -941,11 +941,13 @@
         updateStatsDisplay();
         updateUI();
 
+        // Always show win feedback (execution animation on first solve, modal on re-solve)
         if (isFirstSolve) {
-            // Run execution animation, then show win modal
             runExecution(function () {
                 showWinModal();
             });
+        } else {
+            showWinModal();
         }
     }
 
@@ -1786,7 +1788,7 @@
         swapsUsed.textContent = swapCount;
         undoBtn.disabled = moveHistory.length === 0;
         resetBtn.disabled = false;
-        shareBtn.disabled = !everSolved;
+        shareBtn.disabled = !solved;
         if (restoreBtn) {
             restoreBtn.disabled = !everSolved || solved;
             restoreBtn.hidden = !everSolved;

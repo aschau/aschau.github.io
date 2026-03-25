@@ -545,6 +545,7 @@
 
     function checkWinCondition() {
         if (targetsHit.every(Boolean)) {
+            var wasSolved = solved;
             solved = true;
 
             var data = loadData();
@@ -563,7 +564,7 @@
             updateStatsDisplay();
             updateButtons();
 
-            if (!alreadySolvedToday) {
+            if (!wasSolved) {
                 setTimeout(function () { showWinModal(); }, 600);
             }
         }
@@ -1041,7 +1042,7 @@
         var hasEverSolved = data.today && data.today.everSolved;
         undoBtn.disabled = moveHistory.length === 0;
         resetBtn.disabled = false;
-        shareBtn.disabled = !hasEverSolved;
+        shareBtn.disabled = !solved;
         if (restoreBtn) {
             restoreBtn.disabled = !hasEverSolved || solved;
             restoreBtn.hidden = !hasEverSolved;

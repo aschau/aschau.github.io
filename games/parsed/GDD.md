@@ -6,9 +6,11 @@ A daily code puzzle game where players swap scrambled pseudocode tokens to fix b
 ## Core Loop
 1. Player sees a scrambled program with a narrative goal (e.g., "A baker uses flour each batch. How many pastries?")
 2. Movable tokens (numbers, variable names, operators) are out of place; fixed tokens (keywords, structure) are locked
-3. Player swaps tokens to arrange them into working code
-4. Pressing "Check" validates: does the code compile, execute, and produce a valid output?
-5. On success: score based on swap count vs par, execution animation plays, share card generated
+3. Player swaps tokens to arrange them into working code — console shows syntax errors in real-time
+4. When the code compiles (no syntax errors), player presses **Run** to execute
+5. Code animates step-by-step — player watches variables change, then sees the verdict
+6. On success: score based on swap count vs par, win modal with share card
+7. On failure: error shown (Wrong Output / Logic Error) — player closes and keeps swapping
 
 ## Puzzle Types
 | Type | Code Pattern | Difficulty | Example |
@@ -53,15 +55,21 @@ Different arrangements of swappable numeric literals can produce different but e
 - Deterministic: all players see the same scramble on the same day
 - Generator simulates this exact scramble to compute accurate par
 
+## Run & Auto-Run Modes
+- **Manual mode (default)**: console only shows syntax errors — output is hidden until the player presses Run. Forces deliberate reasoning about the code before checking. Win detection only happens via Run.
+- **Auto mode** (toggle in console header): hand-holdy mode — console shows full output/errors on every swap, win detected automatically. Good for beginners.
+- Toggle persisted in localStorage, default off.
+
 ## Execution Animation
-- After solving, the code runs step-by-step with 1400ms per step
-- Inline value annotations appear above variable names (green numbers)
+- Plays on every Run (both correct and incorrect code) and on first-solve in auto mode
+- 1400ms per step with inline value annotations (green numbers above variable names)
 - Themed scene strip: emoji progress bar driven by the key variable
 - Step timeline with prev/next arrows, clickable dots (hidden if >20 steps)
 - Clickable step counter — type a number to jump directly to that step
 - Skip button jumps to final state with all variables updated
 - Tappable lines for post-completion explanations
 - Walkthrough button in win modal to re-watch
+- **Dry-run verdict**: after animation, title shows result (Build Successful / Wrong Output / Logic Error) with error details in red
 
 ## Puzzle Generation Architecture
 **Theme-centric** — each theme (cooking, combat, diving, etc.) is a first-class concept:
@@ -96,7 +104,7 @@ https://aschau.github.io/games/parsed/
 - Tracks: board state, winning solution, first solve swaps, stats, streaks
 - After first solve: board stays interactive for replay, score frozen to first attempt
 - Restore button snaps back to winning arrangement
-- Username in `parsed_username`, theme in `parsed_theme`
+- Username in `parsed_username`, theme in `parsed_theme`, auto-run toggle in `parsed_autorun`
 
 ## Interpreter
 - Supports: `let`, `return`, `while`, `if/else`, `for i = start to end { }` (inclusive range)

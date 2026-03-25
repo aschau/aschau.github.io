@@ -84,6 +84,10 @@
                 <div class="console-header">
                     <span class="console-prompt">&gt;</span>
                     <span class="console-title" id="console-title">Compiling...</span>
+                    <label class="autorun-toggle" title="Auto-run: show output on every swap">
+                        <input type="checkbox" id="autorun-check">
+                        <span class="autorun-label">Auto</span>
+                    </label>
                 </div>
                 <div class="console-output" id="console-output">
                     <!-- Error/success messages rendered by JS -->
@@ -98,6 +102,7 @@
             <div class="action-buttons">
                 <button class="action-btn" id="undo-btn" disabled>Undo</button>
                 <button class="action-btn" id="reset-btn">Reset</button>
+                <button class="action-btn" id="run-btn" disabled>Run</button>
                 <button class="action-btn" id="restore-btn" hidden disabled>Restore</button>
                 <button class="action-btn primary" id="share-btn" disabled>Share</button>
             </div>
@@ -181,15 +186,19 @@
                         </div>
                         <div class="help-rule">
                             <span class="help-icon">&#128187;</span>
-                            <span>The <strong>console</strong> shows errors in real-time. Fix them all to compile!</span>
+                            <span>The <strong>console</strong> shows syntax errors in real-time. Fix them all until it says <strong>Ready</strong>.</span>
+                        </div>
+                        <div class="help-rule">
+                            <span class="help-icon">&#9654;</span>
+                            <span>When ready, tap <strong>Run</strong> to execute your code. Watch it step through, then see if the output is correct.</span>
                         </div>
                         <div class="help-rule">
                             <span class="help-icon">&#11088;</span>
                             <span>Fewer swaps = better score. Beat <strong>par</strong> for bragging rights.</span>
                         </div>
                         <div class="help-rule">
-                            <span class="help-icon">&#128064;</span>
-                            <span>Watch the code <strong>execute</strong> when you solve it!</span>
+                            <span class="help-icon">&#9881;</span>
+                            <span>Want hints? Toggle <strong>Auto</strong> in the console to see output after every swap.</span>
                         </div>
                     </div>
                     <div class="help-footer">

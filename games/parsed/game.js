@@ -42,6 +42,7 @@
     })();
 
     // --- Game State ---
+    var autoRun = localStorage.getItem('parsed_autorun') === 'true'; // default OFF
     var puzzle = null;
     var puzzleNumber = 0;
     var currentTokens = [];   // flat array: [{t, y, f, line, col, solutionIndex}]
@@ -70,6 +71,8 @@
     var undoBtn = document.getElementById('undo-btn');
     var resetBtn = document.getElementById('reset-btn');
     var shareBtn = document.getElementById('share-btn');
+    var runBtn = document.getElementById('run-btn');
+    var autorunCheck = document.getElementById('autorun-check');
     var restoreBtn = document.getElementById('restore-btn');
     var helpBtn = document.getElementById('help-btn');
     var helpModal = document.getElementById('help-modal');
@@ -379,17 +382,10 @@
 
     function updateConsole() {
         var result = tryRunCode();
+        lastRunResult = result;
         consoleOutput.innerHTML = '';
 
-        if (result.success) {
-            consoleTitle.textContent = 'BUILD SUCCESSFUL \u2713';
-            consoleTitle.className = 'console-title success';
-
-            var successLine = document.createElement('div');
-            successLine.className = 'console-line success';
-            successLine.textContent = '> Output: ' + result.output;
-            consoleOutput.appendChild(successLine);
-        } else if (result.type === 'compile') {
+        if (result.type === 'compile') {
             consoleTitle.textContent = 'SyntaxError';
             consoleTitle.className = 'console-title error';
 
@@ -399,34 +395,58 @@
                 errLine.textContent = result.errors[i];
                 consoleOutput.appendChild(errLine);
             }
-        } else if (result.type === 'logic') {
-            consoleTitle.textContent = 'LOGIC ERROR';
-            consoleTitle.className = 'console-title error';
+            announce('Syntax error');
+        } else if (autoRun || solved) {
+            // Auto-run mode or already solved — show full result
+            if (result.success) {
+                consoleTitle.textContent = 'BUILD SUCCESSFUL \u2713';
+                consoleTitle.className = 'console-title success';
 
-            var outLine = document.createElement('div');
-            outLine.className = 'console-line success';
-            outLine.textContent = '> Output: ' + result.output;
-            consoleOutput.appendChild(outLine);
+                var successLine = document.createElement('div');
+                successLine.className = 'console-line success';
+                successLine.textContent = '> Output: ' + result.output;
+                consoleOutput.appendChild(successLine);
+                announce('Build successful');
+            } else if (result.type === 'logic') {
+                consoleTitle.textContent = 'LOGIC ERROR';
+                consoleTitle.className = 'console-title error';
 
-            for (var i = 0; i < result.errors.length; i++) {
-                var errLine = document.createElement('div');
-                errLine.className = 'console-line error';
-                errLine.textContent = result.errors[i];
-                consoleOutput.appendChild(errLine);
+                var outLine = document.createElement('div');
+                outLine.className = 'console-line success';
+                outLine.textContent = '> Output: ' + result.output;
+                consoleOutput.appendChild(outLine);
+
+                for (var i = 0; i < result.errors.length; i++) {
+                    var errLine = document.createElement('div');
+                    errLine.className = 'console-line error';
+                    errLine.textContent = result.errors[i];
+                    consoleOutput.appendChild(errLine);
+                }
+                announce('Logic error');
+            } else {
+                consoleTitle.textContent = 'WRONG OUTPUT';
+                consoleTitle.className = 'console-title error';
+
+                for (var i = 0; i < result.errors.length; i++) {
+                    var errLine = document.createElement('div');
+                    errLine.className = 'console-line error';
+                    errLine.textContent = result.errors[i];
+                    consoleOutput.appendChild(errLine);
+                }
+                announce('Wrong output');
             }
         } else {
-            consoleTitle.textContent = 'WRONG OUTPUT';
-            consoleTitle.className = 'console-title error';
+            // Manual mode — code compiles but don't reveal output
+            consoleTitle.textContent = 'Ready';
+            consoleTitle.className = 'console-title success';
 
-            for (var i = 0; i < result.errors.length; i++) {
-                var errLine = document.createElement('div');
-                errLine.className = 'console-line error';
-                errLine.textContent = result.errors[i];
-                consoleOutput.appendChild(errLine);
-            }
+            var readyLine = document.createElement('div');
+            readyLine.className = 'console-line info';
+            readyLine.textContent = '> Code compiles. Press Run to execute.';
+            consoleOutput.appendChild(readyLine);
+            announce('Code compiles');
         }
 
-        announce(result.success ? 'Build successful' : (result.type === 'compile' ? 'Syntax error' : (result.type === 'logic' ? 'Logic error' : 'Wrong output')));
         return result.success;
     }
 
@@ -738,6 +758,16 @@
         undoBtn.addEventListener('click', handleUndo);
         resetBtn.addEventListener('click', handleReset);
         if (restoreBtn) restoreBtn.addEventListener('click', restoreSolution);
+        if (runBtn) runBtn.addEventListener('click', handleRunCode);
+        if (autorunCheck) {
+            autorunCheck.checked = autoRun;
+            autorunCheck.addEventListener('change', function () {
+                autoRun = autorunCheck.checked;
+                localStorage.setItem('parsed_autorun', autoRun ? 'true' : 'false');
+                updateConsole();
+                updateUI();
+            });
+        }
         shareBtn.addEventListener('click', function () { if (everSolved) showWinModal(); });
 
         helpBtn.addEventListener('click', function () { helpModal.hidden = false; });
@@ -879,7 +909,7 @@
             var isCorrect = updateConsole();
             updateUI();
             saveState();
-            if (isCorrect) checkWin();
+            if (autoRun && isCorrect) checkWin();
         }
     }
 
@@ -958,6 +988,27 @@
     // Store initial scramble for consistent reset
     var initialScramble = null;
 
+    function handleRunCode() {
+        if (solved) return;
+        var result = tryRunCode();
+        if (result.type === 'compile') {
+            // Flash the console to draw attention to the syntax error
+            consolePanel.classList.add('console-flash');
+            setTimeout(function () { consolePanel.classList.remove('console-flash'); }, 600);
+            return;
+        }
+        // Animate execution, then check result
+        runExecution(function () {
+            var runResult = tryRunCode();
+            if (runResult.success) {
+                execModal.hidden = true;
+                checkWin();
+            } else {
+                // Wrong — modal stays open with verdict shown by finishAnimation
+            }
+        }, true);
+    }
+
     // =============================================
     // Win Check & Execution Animation
     // =============================================
@@ -979,16 +1030,18 @@
             if (!archiveMode) updateStats(swapCount);
         }
 
+        updateConsole();
         saveState();
         updateStatsDisplay();
         updateUI();
 
-        // Always show win feedback (execution animation on first solve, modal on re-solve)
-        if (isFirstSolve) {
+        if (autoRun && isFirstSolve) {
+            // Auto-run mode: animate execution then show win modal
             runExecution(function () {
                 showWinModal();
             });
         } else {
+            // Manual mode: player already watched animation via Run
             showWinModal();
         }
     }
@@ -1053,9 +1106,13 @@
     var execAnimating = false;
     var execCurrentStep = -1;
 
-    function runExecution(callback) {
-        // Check reduced motion preference
-        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var execDryRun = false;
+
+    function runExecution(callback, dryRun) {
+        execDryRun = !!dryRun;
+
+        // Check reduced motion preference (skip animation but still show stepper for dry runs)
+        if (!dryRun && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             callback();
             return;
         }
@@ -1065,7 +1122,7 @@
         execCallback = callback;
         execModal.hidden = false;
 
-        // Build the code from current (solved) tokens
+        // Build the code from current tokens
         var codeTokenLines = [];
         var codeDisplayLines = [];
         execCodeLines = [];
@@ -1093,6 +1150,7 @@
 
         execVarsList.innerHTML = '';
         execOutput.textContent = '';
+        execOutput.className = 'exec-output';
 
         // Show puzzle goal for context
         var execGoal = document.getElementById('exec-goal');
@@ -1280,8 +1338,8 @@
     }
 
     function finishAnimation() {
-        // Show final output and variable state
-        if (execSteps && execSteps.length > 0) {
+        // Show final output and variable state (skip for dry runs — they set output separately)
+        if (!execDryRun && execSteps && execSteps.length > 0) {
             execCurrentStep = execSteps.length - 1;
             var lastStep = execSteps[execSteps.length - 1];
             if (lastStep.vars) {
@@ -1296,9 +1354,42 @@
         }
 
         // Switch to interactive mode
-        document.getElementById('exec-title').textContent = 'Complete';
         document.getElementById('exec-skip').hidden = true;
         document.getElementById('exec-actions').hidden = false;
+
+        var replayBtn = document.getElementById('exec-replay');
+        var continueBtn = document.getElementById('exec-continue');
+        if (execDryRun) {
+            if (replayBtn) replayBtn.hidden = true;
+            if (continueBtn) continueBtn.textContent = 'Close';
+
+            // Show clear verdict based on tryRunCode result
+            var dryResult = tryRunCode();
+            if (dryResult.success) {
+                document.getElementById('exec-title').textContent = 'Build Successful';
+                execOutput.textContent = '> Output: ' + dryResult.output;
+                execOutput.className = 'exec-output';
+            } else {
+                // Show error type as title
+                var errorTitle = dryResult.type === 'output' ? 'Wrong Output'
+                    : dryResult.type === 'logic' ? 'Logic Error'
+                    : 'Error';
+                document.getElementById('exec-title').textContent = errorTitle;
+
+                // Show error details
+                var errorText = dryResult.errors ? dryResult.errors.join('\n') : '';
+                if (dryResult.output) {
+                    execOutput.textContent = '> Output: ' + dryResult.output + '\n' + errorText;
+                } else {
+                    execOutput.textContent = errorText;
+                }
+                execOutput.className = 'exec-output exec-output-wrong';
+            }
+        } else {
+            document.getElementById('exec-title').textContent = 'Complete';
+            if (replayBtn) replayBtn.hidden = false;
+            if (continueBtn) continueBtn.textContent = 'Continue';
+        }
 
         // Make lines tappable for explanations
         var allLines = execCode.querySelectorAll('.exec-line');
@@ -1830,11 +1921,17 @@
     // UI Updates
     // =============================================
 
+    var lastRunResult = null; // cached result from tryRunCode for Run button state
+
     function updateUI() {
         swapsUsed.textContent = swapCount;
         undoBtn.disabled = moveHistory.length === 0;
         resetBtn.disabled = false;
         shareBtn.disabled = !solved;
+        if (runBtn) {
+            // Enable Run when code executes (no syntax errors) and not already solved
+            runBtn.disabled = solved || !lastRunResult || lastRunResult.type === 'compile';
+        }
         if (restoreBtn) {
             restoreBtn.disabled = !everSolved || solved;
             restoreBtn.hidden = !everSolved;

@@ -34,6 +34,12 @@ Run: `python generate.py`. Outputs `puzzles.js`.
 ## Verification
 Run: `python verify_puzzles.py`. Checks: structural validity, interpreter execution, return expression, wording consistency (return var matches goal text), scramble solvability at par, narrative sanity (numbers in goal match code), duplicate detection.
 
+## Run & Auto-Run Modes
+- **Manual mode (default)**: console only shows syntax errors. When code compiles, console says "Ready" and the **Run** button enables. Pressing Run animates execution step-by-step, then shows verdict (Build Successful / Wrong Output / Logic Error). Win detection only triggers via Run.
+- **Auto mode** (toggle checkbox in console header): original behavior — console shows full output/errors on every swap, win detected automatically on correct swap, first-solve plays execution animation then shows win modal.
+- Run button available in both modes — always animates execution when code compiles.
+- Toggle persisted in `localStorage` key `parsed_autorun` (default `false`).
+
 ## Execution Animation
 - 1400ms per step with inline value annotations (green numbers above variable names)
 - Themed scene strip (emoji progress bar driven by key variable, configs auto-generated in `puzzle.scene` by `generate.py`)
@@ -41,6 +47,7 @@ Run: `python verify_puzzles.py`. Checks: structural validity, interpreter execut
 - Replay/Continue buttons, tappable lines for explanations after completion
 - Walkthrough button in win modal to re-open animation
 - Skip button jumps to final state (updates variables, scene, output, and timeline)
+- **Dry-run mode** (via Run button): same animation, but finishes with verdict — title shows error type, output shown in red if wrong. Close button instead of Replay/Continue.
 
 ## Sharing
 - Share text: `Username's Parsed #N 🟢 / 🏅 ScoreLabel Swaps (swaps/par) / streak / URL`
@@ -49,4 +56,4 @@ Run: `python verify_puzzles.py`. Checks: structural validity, interpreter execut
 
 ## Persistence
 `localStorage` key `parsed_data`: board state, winningSolution, firstSolveSwaps, stats, streaks. `SAVE_VERSION` = 4 — bump when format changes. After first solve, board stays interactive for replay — score/stats frozen to first solve. "Restore" button appears to snap back to winning arrangement.
-Theme in `parsed_theme`. Username in `parsed_username`.
+Theme in `parsed_theme`. Username in `parsed_username`. Auto-run toggle in `parsed_autorun`.

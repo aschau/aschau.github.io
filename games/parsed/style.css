@@ -352,6 +352,27 @@ body {
     font-weight: 600;
 }
 
+.autorun-toggle {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.7rem;
+}
+
+.autorun-toggle input {
+    accent-color: var(--color-accent);
+    cursor: pointer;
+    margin: 0;
+}
+
+.autorun-label {
+    color: var(--color-text-muted);
+    opacity: 0.7;
+}
+
 .console-title {
     color: var(--color-text-muted);
     font-weight: 500;
@@ -396,6 +417,20 @@ body {
     padding-top: 6px;
     border-top: 1px solid var(--glass-border);
     font-weight: 500;
+}
+
+.console-flash {
+    animation: consoleFlash 0.6s ease;
+}
+
+@keyframes consoleFlash {
+    0%, 100% { border-color: var(--glass-border); }
+    30% { border-color: var(--color-error); box-shadow: 0 0 12px rgba(255, 80, 80, 0.3); }
+}
+
+.exec-output-wrong {
+    color: var(--color-error) !important;
+    white-space: pre-wrap;
 }
 
 /* ---- Par Display ---- */

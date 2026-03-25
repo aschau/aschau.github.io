@@ -1,4 +1,4 @@
-"""Beamlab Puzzle Generator — Walls-First with Path-Determined Targets
+"""Beamlab Puzzle Generator — Walls-First with Quality Filters
 
 Generation order:
 1. Place structured walls (maze-like patterns with corridors)
@@ -7,18 +7,18 @@ Generation order:
 4. Target = wherever the beam exits the grid
 5. Remove mirrors — those become the player's puzzle to solve
 6. Place gem adjacent to beam path
-7. Verify with solver
-
-This eliminates expensive solution-space analysis: walls constrain the grid
-from the start, so the path builder is fast and shortcuts are naturally blocked.
+7. Verify with solver + quality filters (solution count, node count)
 
 Usage: python generate.py [count] [seed]
+       python generate.py --regenerate-future [--all] [seed]
+       python generate.py --patch [seed]
 """
 
 import json, random, sys, time, hashlib
 from pathlib import Path
 from validate import (solve as validate_solve, solve_with_gem,
-                      solve_with_known_solution)
+                      solve_with_known_solution, solve_with_stats,
+                      find_all_min_solutions, solve_returning_solution)
 
 GRID = 6
 FWD = {'right': 'up', 'left': 'down', 'up': 'right', 'down': 'left'}
@@ -99,7 +99,6 @@ def make_empty_grid():
 
 
 def get_exit_info(r, c):
-    """Map an out-of-bounds position to (edge, pos)."""
     if r < 0:    return ('top', c)
     if r >= GRID: return ('bottom', c)
     if c < 0:    return ('left', r)
@@ -108,22 +107,15 @@ def get_exit_info(r, c):
 
 
 # =============================================
-# Wall Placement (Maze-like patterns)
+# Wall Placement
 # =============================================
 
 def place_walls_structured(num_walls, entry_r, entry_c, entry_d):
-    """Place walls that create interesting corridors without blocking the entry.
-
-    Strategies mixed together:
-    - Corridor walls: pairs/triples in a line to create channels
-    - Barrier walls: block direct paths to force detours
-    - Scattered walls: individual cells to narrow options
-    """
+    """Place walls using corridors, barriers, and scatter patterns."""
     walls = set()
-    # Entry line cells — don't wall these (beam must enter)
     entry_line = set()
     r, c = entry_r, entry_c
-    for _ in range(2):  # protect first 2 cells of entry
+    for _ in range(2):
         if 0 <= r < GRID and 0 <= c < GRID:
             entry_line.add((r, c))
         r += DR[entry_d]
@@ -131,17 +123,13 @@ def place_walls_structured(num_walls, entry_r, entry_c, entry_d):
 
     all_cells = [(r, c) for r in range(GRID) for c in range(GRID)
                  if (r, c) not in entry_line]
-
     strategies = ['corridor', 'barrier', 'scatter']
 
-    for _ in range(num_walls * 3):  # extra iterations to hit target
+    for _ in range(num_walls * 3):
         if len(walls) >= num_walls:
             break
-
         strategy = random.choice(strategies)
-
         if strategy == 'corridor':
-            # Place 2-3 walls in a line (horizontal or vertical)
             hor = random.choice([True, False])
             if hor:
                 row = random.randint(0, GRID - 1)
@@ -156,9 +144,7 @@ def place_walls_structured(num_walls, entry_r, entry_c, entry_d):
             for rc in cells:
                 if rc not in entry_line and rc not in walls and len(walls) < num_walls:
                     walls.add(rc)
-
         elif strategy == 'barrier':
-            # Single wall on the direct entry path (forces a detour)
             r, c = entry_r, entry_c
             steps = random.randint(2, GRID - 1)
             for _ in range(steps):
@@ -166,19 +152,15 @@ def place_walls_structured(num_walls, entry_r, entry_c, entry_d):
                 c += DC[entry_d]
             if 0 <= r < GRID and 0 <= c < GRID and (r, c) not in entry_line and (r, c) not in walls:
                 walls.add((r, c))
-
-        else:  # scatter
+        else:
             candidates = [rc for rc in all_cells if rc not in walls]
             if candidates:
                 walls.add(random.choice(candidates))
 
-    # Verify connectivity — make sure at least 70% of non-wall cells are reachable
-    # from the entry via flood fill (no isolated pockets)
     wall_list = list(walls)
     grid_check = make_empty_grid()
     for wr, wc in wall_list:
         grid_check[wr][wc] = 'wall'
-
     reachable = set()
     flood = [(entry_r, entry_c)]
     while flood:
@@ -192,28 +174,17 @@ def place_walls_structured(num_walls, entry_r, entry_c, entry_d):
         reachable.add((fr, fc))
         for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             flood.append((fr + dr, fc + dc))
-
     open_cells = GRID * GRID - len(walls)
     if len(reachable) < open_cells * 0.7:
-        return None  # walls create too many isolated pockets
-
+        return None
     return wall_list
 
 
 # =============================================
-# Path Building (through wall-constrained grid)
+# Path Building
 # =============================================
 
 def _build_path(r, c, d, walls_set, mirrors_left, visited, mirrors, min_coverage=4):
-    """Build a beam path through a wall-constrained grid.
-
-    The beam walks straight until hitting a wall or grid edge,
-    then we place a mirror to turn. Target = wherever the beam
-    eventually exits the grid.
-
-    Returns (path_cells, mirrors, exit_edge, exit_pos) or None.
-    """
-    # Trace straight line (stop at wall, edge, or visited cell)
     line = []
     cr, cc = r, c
     while 0 <= cr < GRID and 0 <= cc < GRID:
@@ -222,22 +193,18 @@ def _build_path(r, c, d, walls_set, mirrors_left, visited, mirrors, min_coverage
         line.append((cr, cc))
         cr += DR[d]
         cc += DC[d]
-
     if not line:
         return None
 
-    # Coverage pruning: check if we can still reach min_coverage rows and cols
     all_cells = visited | set(line)
     current_rows = len({r for r, c in all_cells})
     current_cols = len({c for r, c in all_cells})
     if current_rows + mirrors_left < min_coverage or current_cols + mirrors_left < min_coverage:
         return None
 
-    # No mirrors left — beam exits from end of line
     if mirrors_left == 0:
         last_r, last_c = line[-1]
         exit_r, exit_c = last_r + DR[d], last_c + DC[d]
-        # Must exit grid (not hit a wall inside grid)
         if not (0 <= exit_r < GRID and 0 <= exit_c < GRID):
             info = get_exit_info(exit_r, exit_c)
             if info:
@@ -247,51 +214,31 @@ def _build_path(r, c, d, walls_set, mirrors_left, visited, mirrors, min_coverage
                     return (set(line), list(mirrors), info[0], info[1])
         return None
 
-    # Place a mirror at each position — prefer LONGER segments first
     indices = list(range(len(line) - 1, -1, -1))
-    # Add some randomness so we don't always pick the longest
     if random.random() < 0.3:
         random.shuffle(indices)
-
     for idx in indices:
         mr, mc = line[idx]
         segment = set(line[:idx + 1])
         new_visited = visited | segment
-
         turns = list(PERPENDICULAR[d])
         random.shuffle(turns)
-
         for new_d in turns:
             nr, nc = mr + DR[new_d], mc + DC[new_d]
             if not (0 <= nr < GRID and 0 <= nc < GRID):
                 continue
             if (nr, nc) in new_visited or (nr, nc) in walls_set:
                 continue
-
             mtype = TURN_MIRROR[(d, new_d)]
-            result = _build_path(
-                nr, nc, new_d, walls_set,
-                mirrors_left - 1, new_visited,
-                mirrors + [(mr, mc, mtype)],
-                min_coverage
-            )
+            result = _build_path(nr, nc, new_d, walls_set, mirrors_left - 1,
+                                 new_visited, mirrors + [(mr, mc, mtype)], min_coverage)
             if result:
                 sub_cells, sub_mirrors, exit_edge, exit_pos = result
                 return (segment | sub_cells, sub_mirrors, exit_edge, exit_pos)
-
     return None
 
 
 def _build_splitter_path(r, c, d, walls_set, branch_mirrors, visited, min_coverage=4):
-    """Build a path with one splitter creating two branches.
-
-    Places the splitter on the initial straight line, then builds
-    two sub-paths (reflected + straight-through). Each branch's
-    exit becomes a target.
-
-    Returns (path_cells, mirrors, [(exit_edge, exit_pos), ...]) or None.
-    """
-    # Straight line from entry
     beam_line = []
     cr, cc = r, c
     while 0 <= cr < GRID and 0 <= cc < GRID:
@@ -300,13 +247,11 @@ def _build_splitter_path(r, c, d, walls_set, branch_mirrors, visited, min_covera
         beam_line.append((cr, cc))
         cr += DR[d]
         cc += DC[d]
-
     if len(beam_line) < 2:
         return None
 
     positions = list(range(len(beam_line)))
     random.shuffle(positions)
-
     for si in positions[:5]:
         sr, sc = beam_line[si]
         split_type = random.choice(['split_fwd', 'split_bck'])
@@ -317,22 +262,17 @@ def _build_splitter_path(r, c, d, walls_set, branch_mirrors, visited, min_covera
         for total in range(branch_mirrors + 1):
             for ref_n in range(total + 1):
                 str_n = total - ref_n
-
-                # Reflected branch
                 rr, rc = sr + DR[ref_d], sc + DC[ref_d]
                 if not (0 <= rr < GRID and 0 <= rc < GRID) or (rr, rc) in walls_set:
                     continue
-
                 ref_visited = pre | remaining_straight
                 ref = _build_path(rr, rc, ref_d, walls_set, ref_n, ref_visited, [], 3)
                 if not ref:
                     continue
                 ref_cells, ref_mirrors, ref_exit_edge, ref_exit_pos = ref
 
-                # Straight branch
                 sr2, sc2 = sr + DR[d], sc + DC[d]
                 if not (0 <= sr2 < GRID and 0 <= sc2 < GRID):
-                    # Exits immediately
                     info = get_exit_info(sr2, sc2)
                     if info and str_n == 0:
                         all_path = pre | ref_cells
@@ -340,32 +280,25 @@ def _build_splitter_path(r, c, d, walls_set, branch_mirrors, visited, min_covera
                         rows = {r for r, c in all_path}
                         cols = {c for r, c in all_path}
                         if len(rows) >= min_coverage and len(cols) >= min_coverage:
-                            exits = [(ref_exit_edge, ref_exit_pos), info]
-                            return (all_path, all_mirrors, exits)
+                            return (all_path, all_mirrors,
+                                    [(ref_exit_edge, ref_exit_pos), info])
                     continue
-
                 if (sr2, sc2) in walls_set:
                     continue
-
                 str_visited = pre | ref_cells
                 strt = _build_path(sr2, sc2, d, walls_set, str_n, str_visited, [], 3)
                 if not strt:
                     continue
                 str_cells, str_mirrors, str_exit_edge, str_exit_pos = strt
-
-                # Check exits are different
                 if ref_exit_edge == str_exit_edge and ref_exit_pos == str_exit_pos:
                     continue
-
                 all_path = pre | ref_cells | str_cells
                 all_mirrors = [(sr, sc, split_type)] + ref_mirrors + str_mirrors
-
                 rows = {r for r, c in all_path}
                 cols = {c for r, c in all_path}
                 if len(rows) >= min_coverage and len(cols) >= min_coverage:
-                    exits = [(ref_exit_edge, ref_exit_pos), (str_exit_edge, str_exit_pos)]
-                    return (all_path, all_mirrors, exits)
-
+                    return (all_path, all_mirrors,
+                            [(ref_exit_edge, ref_exit_pos), (str_exit_edge, str_exit_pos)])
     return None
 
 
@@ -374,7 +307,6 @@ def _build_splitter_path(r, c, d, walls_set, branch_mirrors, visited, min_covera
 # =============================================
 
 def find_gem_candidates(beam_path, occupied, walls_set):
-    """Find all cells adjacent to the beam path that could hold a gem."""
     candidates = set()
     for r, c in beam_path:
         for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
@@ -392,22 +324,17 @@ def find_gem_candidates(beam_path, occupied, walls_set):
 # =============================================
 
 def generate_puzzle(difficulty='expert', use_splitter=False):
-    """Generate a puzzle: walls first, path determines target.
-
-    Difficulty controls:
-    - mirror_range: total mirrors in the intended path (some become fixed)
-    - wall_range: how many walls (fewer = harder, more wrong options)
-    - fixed_range: how many mirrors to pre-place (adds complexity)
-    - min_required: minimum PLAYER-placed pieces (after accounting for fixed)
-    """
+    """Generate a puzzle with quality filters for solution count and solver complexity."""
     cfg = {
-        'medium': {'mirror_range': (3, 4), 'wall_range': (4, 6), 'fixed_range': (1, 1), 'min_required': 3},
-        'hard':   {'mirror_range': (4, 6), 'wall_range': (4, 7), 'fixed_range': (1, 1), 'min_required': 4},
-        'expert': {'mirror_range': (5, 7), 'wall_range': (4, 6), 'fixed_range': (1, 2), 'min_required': 4},
+        'hard':   {'mirror_range': (4, 6), 'wall_range': (4, 7), 'fixed_range': (1, 1), 'min_required': 3,
+                   'max_solutions': 5, 'min_nodes': 40},
+        'expert': {'mirror_range': (5, 7), 'wall_range': (4, 6), 'fixed_range': (1, 2), 'min_required': 4,
+                   'max_solutions': 3, 'min_nodes': 80},
     }[difficulty]
 
     _fail_reasons = {'walls': 0, 'path': 0, 'verify': 0, 'fixed': 0,
-                      'min_low': 0, 'min_high': 0, 'gem': 0}
+                     'min_low': 0, 'min_high': 0, 'too_many_solutions': 0,
+                     'too_easy_solve': 0, 'gem': 0}
 
     for attempt in range(300):
         # 1. Pick source
@@ -416,25 +343,20 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
         source = {'edge': src_edge, 'pos': src_pos}
         entry_r, entry_c, entry_d = get_entry(source)
 
-        # 2. Place walls (maze-like, respecting entry)
+        # 2. Place walls
         num_walls = random.randint(*cfg['wall_range'])
-        if num_walls == 0:
-            wall_list = []
-        else:
-            wall_list = place_walls_structured(num_walls, entry_r, entry_c, entry_d)
-            if wall_list is None:
-                _fail_reasons['walls'] += 1
-                continue
+        wall_list = place_walls_structured(num_walls, entry_r, entry_c, entry_d)
+        if wall_list is None:
+            _fail_reasons['walls'] += 1
+            continue
         walls_set = set(wall_list)
         walls = [{'r': r, 'c': c} for r, c in wall_list]
 
-        # 3. Build beam path through the constrained grid
+        # 3. Build beam path
         if use_splitter:
             branch_mirrors = random.randint(1, 3)
-            result = _build_splitter_path(
-                entry_r, entry_c, entry_d, walls_set,
-                branch_mirrors, set(), min_coverage=4
-            )
+            result = _build_splitter_path(entry_r, entry_c, entry_d, walls_set,
+                                          branch_mirrors, set(), min_coverage=4)
             if not result:
                 _fail_reasons['path'] += 1
                 continue
@@ -445,10 +367,8 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
                 continue
         else:
             num_mirrors = random.randint(*cfg['mirror_range'])
-            result = _build_path(
-                entry_r, entry_c, entry_d, walls_set,
-                num_mirrors, set(), [], min_coverage=4
-            )
+            result = _build_path(entry_r, entry_c, entry_d, walls_set,
+                                 num_mirrors, set(), [], min_coverage=4)
             if not result:
                 _fail_reasons['path'] += 1
                 continue
@@ -458,7 +378,7 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
                 continue
             targets = [{'edge': exit_edge, 'pos': exit_pos}]
 
-        # 4. Verify intended solution works
+        # 4. Verify intended solution
         grid = make_empty_grid()
         for wr, wc in wall_list:
             grid[wr][wc] = 'wall'
@@ -468,16 +388,12 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
             _fail_reasons['verify'] += 1
             continue
 
-        # 5. Select fixed pieces (pre-placed mirrors from the solution)
-        #    Fixed pieces alone must NOT hit any targets (would make puzzle trivial)
+        # 5. Select fixed pieces
         num_fixed = random.randint(*cfg['fixed_range'])
         fixed = []
         if num_fixed > 0 and len(mirrors) > num_fixed + 1:
             pick_count = min(num_fixed, len(mirrors) - 1)
             target_set = {(t['edge'], t['pos']) for t in targets}
-
-            # Pre-filter: find which individual mirrors are safe (don't route
-            # the beam to any target on their own). Only combine safe mirrors.
             safe_indices = []
             for mi in range(len(mirrors)):
                 test_grid = make_empty_grid()
@@ -488,18 +404,13 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
                 exits, _ = simulate(test_grid, source)
                 if not (exits & target_set):
                     safe_indices.append(mi)
-
             if len(safe_indices) < pick_count:
-                continue  # not enough safe mirrors to pick from
-
-            # Try random combinations of safe mirrors
+                continue
             fixed_ok = False
             for _ in range(20):
                 chosen = random.sample(safe_indices, pick_count)
                 candidate_fixed = [{'r': mirrors[i][0], 'c': mirrors[i][1],
                                     'type': mirrors[i][2]} for i in chosen]
-
-                # Verify the combination together doesn't hit targets
                 if pick_count > 1:
                     test_grid = make_empty_grid()
                     for wr, wc in wall_list:
@@ -509,37 +420,40 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
                     exits, _ = simulate(test_grid, source)
                     if exits & target_set:
                         continue
-
                 fixed = candidate_fixed
                 fixed_ok = True
                 break
-
             if not fixed_ok:
                 _fail_reasons['fixed'] += 1
                 continue
 
-        # 6. Build puzzle and verify minimum ADDITIONAL pieces with full solver
-        #    Fixed pieces are already on the grid (handled by make_grid via 'fixed')
+        # 6. Solver verification + quality filters
         has_split = any(t in ('split', 'split_fwd', 'split_bck') for _, _, t in mirrors)
         inv_temp = {'fwd': 8, 'bck': 8}
         if has_split:
             inv_temp['split'] = 3
         puzzle = {
-            'source': source,
-            'targets': targets,
-            'walls': walls,
-            'fixed': fixed,
-            'par': 8,
-            'inventory': inv_temp,
+            'source': source, 'targets': targets, 'walls': walls,
+            'fixed': fixed, 'par': 8, 'inventory': inv_temp,
             'difficulty': difficulty,
         }
 
+        # Quick min check first (cheap)
         min_pieces = validate_solve(puzzle)
         if min_pieces < 0 or min_pieces < cfg['min_required']:
             _fail_reasons['min_low'] += 1
             continue
         if min_pieces > 7:
             _fail_reasons['min_high'] += 1
+            continue
+
+        # Full quality stats (solution count + node count)
+        _, node_count, solution_count = solve_with_stats(puzzle)
+        if solution_count > cfg['max_solutions']:
+            _fail_reasons['too_many_solutions'] += 1
+            continue
+        if node_count < cfg['min_nodes']:
+            _fail_reasons['too_easy_solve'] += 1
             continue
 
         par = min_pieces + 1
@@ -549,12 +463,13 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
         puzzle['par'] = par
         puzzle['inventory'] = inv
         puzzle['_min'] = min_pieces
+        puzzle['_nodes'] = node_count
+        puzzle['_sols'] = solution_count
 
-        # 7. Place gem — required, must be optional (reachable but not on main path)
+        # 7. Place gem
         occupied = {(r, c) for r, c, _ in mirrors}
         gem_candidates = find_gem_candidates(path_cells, occupied, walls_set)
         random.shuffle(gem_candidates)
-
         placed_gem = False
         for gem_r, gem_c in gem_candidates[:8]:
             puzzle['gem'] = {'r': gem_r, 'c': gem_c}
@@ -565,7 +480,6 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
                 continue
             placed_gem = True
             break
-
         if not placed_gem:
             if 'gem' in puzzle:
                 del puzzle['gem']
@@ -579,7 +493,6 @@ def generate_puzzle(difficulty='expert', use_splitter=False):
 
 
 def puzzle_hash(puzzle):
-    """Generate a short hash ID for a puzzle based on its structure."""
     key = json.dumps({
         'source': puzzle['source'],
         'targets': puzzle['targets'],
@@ -594,7 +507,7 @@ def main():
     if seed is not None:
         random.seed(seed)
 
-    print(f'Generating {count} puzzle(s) [walls-first + path-determined targets]...')
+    print(f'Generating {count} puzzle(s) [walls-first + quality filters]...')
     print('---')
 
     puzzles = []
@@ -607,25 +520,24 @@ def main():
         attempts += 1
         t1 = time.time()
 
-        # Difficulty mix: 20% medium, 45% hard, 35% expert
+        # Difficulty mix: 55% hard, 45% expert
         r = random.random()
-        diff = 'medium' if r < 0.2 else ('hard' if r < 0.65 else 'expert')
+        diff = 'hard' if r < 0.55 else 'expert'
 
-        # 25% splitter puzzles (splitters have lower success rate)
-        use_splitter = random.random() < 0.25
+        # 55% splitter puzzles
+        use_splitter = random.random() < 0.55
         puzzle = generate_puzzle(diff, use_splitter=use_splitter)
 
         elapsed = time.time() - t1
-
         if puzzle and isinstance(puzzle, dict) and 'source' in puzzle:
             fail_reasons = puzzle.pop('_fail_reasons', {})
             min_p = puzzle.pop('_min')
+            nodes = puzzle.get('_nodes', 0)
+            sols = puzzle.get('_sols', 0)
             h = puzzle_hash(puzzle)
-
             if h in seen_hashes:
                 print(f'  Attempt {attempts}: DUPLICATE (hash={h}), skipping [{elapsed:.2f}s]')
                 continue
-
             seen_hashes.add(h)
             puzzle['id'] = h
             puzzles.append(puzzle)
@@ -637,7 +549,7 @@ def main():
             pdiff = puzzle.get('difficulty', '?')
             print(f'  Puzzle {len(puzzles)}: {pdiff} par={puzzle["par"]}, min={min_p}, '
                   f'targets={targets}, splits={splits}, walls={nwalls}, fixed={nfixed}, '
-                  f'gem={has_gem}, id={h} [{elapsed:.2f}s]')
+                  f'gem={has_gem}, sols={sols}, nodes={nodes}, id={h} [{elapsed:.2f}s]')
         else:
             ptype = 'splitter' if use_splitter else 'mirror'
             reasons = puzzle if isinstance(puzzle, dict) else {}
@@ -648,12 +560,10 @@ def main():
     total = time.time() - t0
     print(f'---')
     print(f'Generated {len(puzzles)}/{count} puzzles ({total:.1f}s)')
-
     save_puzzles(puzzles)
 
 
 def fixed_hits_target(puzzle):
-    """Check if fixed pieces alone route the beam to any target."""
     if not puzzle.get('fixed'):
         return False
     grid = [[None] * GRID for _ in range(GRID)]
@@ -667,33 +577,26 @@ def fixed_hits_target(puzzle):
 
 
 def patch():
-    """Load existing puzzles, keep good ones, replace bad ones."""
     seed = int(sys.argv[2]) if len(sys.argv) > 2 else None
     if seed is not None:
         random.seed(seed)
-
     json_path = Path(__file__).parent / 'puzzles.json'
     existing = json.loads(json_path.read_text())
     total = len(existing)
-
     print(f'Patching {total} existing puzzles...')
     print('---')
-
     kept = 0
     replaced = 0
     puzzles = []
     seen_hashes = set()
-
     for i, p in enumerate(existing):
         h = puzzle_hash(p)
         if fixed_hits_target(p):
-            # Bad puzzle — needs replacement
-            print(f'  Puzzle {i+1} [{h}]: REPLACING (fixed hits target)')
+            print(f'  Puzzle {i+1} [{h}]: REPLACING')
             replacement = None
             for _ in range(50):
-                r = random.random()
                 diff = p.get('difficulty', 'hard')
-                use_splitter = any(f.get('type') in ('split', 'split_fwd', 'split_bck') for f in p.get('fixed', []))
+                use_splitter = len(p.get('targets', [])) > 1
                 candidate = generate_puzzle(diff, use_splitter=use_splitter)
                 if candidate and isinstance(candidate, dict) and 'source' in candidate:
                     candidate.pop('_fail_reasons', None)
@@ -703,38 +606,32 @@ def patch():
                         candidate['id'] = ch
                         replacement = candidate
                         break
-
             if replacement:
                 seen_hashes.add(puzzle_hash(replacement))
                 puzzles.append(replacement)
                 replaced += 1
-                rh = replacement['id']
-                print(f'           -> {replacement["difficulty"]} par={replacement["par"]}, id={rh}')
             else:
-                # Couldn't replace — keep original as fallback
                 seen_hashes.add(h)
                 puzzles.append(p)
                 kept += 1
-                print(f'           -> KEPT (no replacement found)')
         else:
             seen_hashes.add(h)
             puzzles.append(p)
             kept += 1
-
     print(f'---')
     print(f'Kept {kept}, replaced {replaced} of {total} puzzles')
-
     save_puzzles(puzzles)
 
 
 def save_puzzles(puzzles):
-    """Write puzzles to both JSON and JS files."""
+    """Write puzzles to both JSON (with debug stats) and JS (production, no stats) files."""
     json_path = Path(__file__).parent / 'puzzles.json'
     json_path.write_text(json.dumps(puzzles, indent=2))
     print(f'Saved JSON to {json_path}')
 
+    clean = [{k: v for k, v in p.items() if not k.startswith('_')} for p in puzzles]
     js_path = Path(__file__).parent / 'puzzles.js'
-    compact = json.dumps(puzzles, separators=(',', ':'))
+    compact = json.dumps(clean, separators=(',', ':'))
     js_content = f"""// ============================================
 // Beamlab — Puzzle Data & Daily Selection
 // Auto-generated by generate.py — do not edit manually
@@ -784,8 +681,8 @@ def _generate_one_puzzle(args):
     random.seed(seed_val)
     for _ in range(50):
         r = random.random()
-        diff = 'medium' if r < 0.2 else ('hard' if r < 0.65 else 'expert')
-        use_splitter = random.random() < 0.25
+        diff = 'hard' if r < 0.55 else 'expert'
+        use_splitter = random.random() < 0.55
         candidate = generate_puzzle(diff, use_splitter=use_splitter)
         if candidate and isinstance(candidate, dict) and 'source' in candidate:
             candidate.pop('_fail_reasons', None)
@@ -799,7 +696,14 @@ def regenerate_future():
     """Keep past/today puzzles, regenerate future ones with updated mechanics."""
     from datetime import date
     from multiprocessing import Pool, cpu_count
-    seed = int(sys.argv[2]) if len(sys.argv) > 2 else 42
+    seed = 42
+    for arg in sys.argv[1:]:
+        if not arg.startswith('-'):
+            try:
+                seed = int(arg)
+                break
+            except ValueError:
+                pass
     random.seed(seed)
 
     json_path = Path(__file__).parent / 'puzzles.json'
@@ -809,7 +713,10 @@ def regenerate_future():
     epoch = date(2026, 3, 17)
     today = date.today()
     days_passed = (today - epoch).days
-    cutoff = max(0, days_passed)  # keep indices 0..cutoff (inclusive)
+    if '--all' in sys.argv:
+        cutoff = -1
+    else:
+        cutoff = max(0, days_passed)
 
     num_to_gen = total - cutoff - 1
     cores = cpu_count()
@@ -817,9 +724,7 @@ def regenerate_future():
     print('---')
     sys.stdout.flush()
 
-    # Generate unique seeds for each puzzle worker
     worker_args = [(i, seed + i * 7919) for i in range(cutoff + 1, total)]
-
     results = {}
     with Pool(cores) as pool:
         for idx, puzzle in pool.imap_unordered(_generate_one_puzzle, worker_args):
@@ -828,11 +733,9 @@ def regenerate_future():
             print(f'  Puzzle {idx + 1}: {status}')
             sys.stdout.flush()
 
-    # Assemble in order
     puzzles = existing[:cutoff + 1]
     seen_hashes = {puzzle_hash(p) for p in puzzles}
     regenerated = 0
-
     for i in range(cutoff + 1, total):
         p = results.get(i)
         if p and puzzle_hash(p) not in seen_hashes:
@@ -841,7 +744,6 @@ def regenerate_future():
             regenerated += 1
         else:
             puzzles.append(existing[i])
-
     print(f'---')
     print(f'Kept {cutoff + 1}, regenerated {regenerated} of {total} puzzles')
     save_puzzles(puzzles)

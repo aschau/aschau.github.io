@@ -87,8 +87,15 @@ def make_grid(puzzle):
 
 
 def get_candidate_cells(puzzle):
-    """Get cells worth placing pieces on — beam path + neighbors + target approach."""
+    """Get cells worth placing pieces on.
+
+    On open grids (few walls), uses all empty cells since multi-hop solutions
+    may use cells far from the initial beam path. On constrained grids,
+    narrows to beam path + neighbors + target approach for speed.
+    """
     grid = make_grid(puzzle)
+    num_walls = sum(1 for r in range(GRID) for c in range(GRID) if grid[r][c] == 'wall')
+
     _, beam_cells = simulate(grid, puzzle['source'])
 
     expanded = set(beam_cells)
@@ -155,7 +162,9 @@ def solve(puzzle):
     return -1
 
 
-def _backtrack(grid, puzzle, cells, types, start, left, target_set, inv_remaining):
+def _backtrack(grid, puzzle, cells, types, start, left, target_set, inv_remaining, counter=None):
+    if counter is not None:
+        counter[0] += 1
     if left == 0:
         return hits_all(grid, puzzle)
     if len(cells) - start < left:
@@ -181,13 +190,47 @@ def _backtrack(grid, puzzle, cells, types, start, left, target_set, inv_remainin
                 continue
             grid[r][c] = t
             inv_remaining[ik] -= 1
-            if _backtrack(grid, puzzle, cells, types, i + 1, left - 1, target_set, inv_remaining):
+            if _backtrack(grid, puzzle, cells, types, i + 1, left - 1, target_set, inv_remaining, counter):
                 grid[r][c] = None
                 inv_remaining[ik] += 1
                 return True
             inv_remaining[ik] += 1
             grid[r][c] = None
     return False
+
+
+def solve_with_stats(puzzle):
+    """Find minimum pieces and return (min_pieces, node_count, solution_count).
+
+    node_count: total backtrack nodes explored (higher = harder for humans).
+    solution_count: distinct min-piece solutions found (fewer = harder).
+    Returns (-1, node_count, 0) if unsolvable.
+    """
+    grid = make_grid(puzzle)
+    if hits_all(grid, puzzle):
+        return 0, 0, 1
+
+    inv = puzzle['inventory']
+    types = []
+    if inv.get('fwd', 0) > 0: types.append('fwd')
+    if inv.get('bck', 0) > 0: types.append('bck')
+    if inv.get('split', 0) > 0:
+        types.append('split_fwd')
+        types.append('split_bck')
+
+    candidates = get_candidate_cells(puzzle)
+    target_set = {(t['edge'], t['pos']) for t in puzzle['targets']}
+    total_inv = sum(inv.get(t, 0) for t in ['fwd', 'bck', 'split'])
+    max_search = min(total_inv, puzzle.get('par', 99) + 2, 7)
+    inv_remaining = {k: inv.get(k, 0) for k in ['fwd', 'bck', 'split']}
+    counter = [0]
+
+    for num in range(1, max_search + 1):
+        if _backtrack(grid, puzzle, candidates, types, 0, num, target_set, inv_remaining, counter):
+            solutions = find_all_min_solutions(puzzle, num, max_solutions=10, time_limit=1.0)
+            return num, counter[0], len(solutions)
+
+    return -1, counter[0], 0
 
 
 def solve_with_known_solution(puzzle, solution_mirrors):
@@ -402,7 +445,67 @@ def _find_all(grid, puzzle, cells, types, start, left, current, solutions, max_s
             grid[r][c] = None
 
 
+def _validate_one(args):
+    """Validate a single puzzle (worker function for multiprocessing)."""
+    i, p = args
+    t1 = time.time()
+    result, node_count, solution_count = solve_with_stats(p)
+
+    targets = len(p['targets'])
+    split = p['inventory'].get('split', 0)
+    par = p['par']
+    has_gem = 'gem' in p
+    pid = p.get('id', '?')
+    puzzle_issues = []
+
+    if result == -1:
+        status = 'UNSOLVABLE'
+        puzzle_issues.append('unsolvable')
+    elif result + 1 != par:
+        status = f'PAR MISMATCH (min={result}, par={par}, expected par={result + 1})'
+        puzzle_issues.append(f'par should be {result + 1}')
+    else:
+        status = 'OK'
+
+    fixed_status = ''
+    if p.get('fixed') and status == 'OK':
+        fixed_grid = [[None] * GRID for _ in range(GRID)]
+        for w in p['walls']:
+            fixed_grid[w['r']][w['c']] = 'wall'
+        for f in p['fixed']:
+            fixed_grid[f['r']][f['c']] = f['type']
+        fixed_exits, _ = simulate(fixed_grid, p['source'])
+        target_set_check = {(t['edge'], t['pos']) for t in p['targets']}
+        hits = fixed_exits & target_set_check
+        if hits:
+            fixed_status = f' | FIXED HITS {len(hits)} TARGET(S)'
+            puzzle_issues.append(f'fixed pieces alone hit {len(hits)} target(s) — too easy')
+
+    gem_status = ''
+    if not has_gem:
+        gem_status = ' | NO GEM'
+        puzzle_issues.append('missing gem')
+    elif status == 'OK':
+        gem_min = solve_with_gem(p, par + 2)
+        if gem_min == -1:
+            gem_status = ' | GEM UNREACHABLE'
+            puzzle_issues.append('gem unreachable')
+        else:
+            gem_status = f' | gem in {gem_min}'
+            if gem_min == result:
+                gem_status += ' (on main path — not optional)'
+                puzzle_issues.append('gem is on main path, not optional')
+
+    elapsed = time.time() - t1
+    complexity = f' | nodes={node_count}, sols={solution_count}'
+    line = f'  Puzzle {i+1:>2} [{pid}] (par={par}, targets={targets}, splits={split}): {status}{fixed_status}{gem_status}{complexity} [{elapsed:.2f}s]'
+
+    return (i, line, puzzle_issues)
+
+
 def main():
+    from multiprocessing import Pool, cpu_count
+
     json_path = Path(__file__).parent / 'puzzles.json'
     puzzles = json.loads(json_path.read_text())
     output_path = Path(__file__).parent / 'validation_results.txt'
@@ -414,68 +517,29 @@ def main():
         sys.stdout.flush()
         lines.append(msg)
 
+    cores = cpu_count()
     out('Beamlab Puzzle Validator')
-    out(f'Puzzles: {len(puzzles)}')
+    out(f'Puzzles: {len(puzzles)}, using {cores} cores')
     out('---')
 
-    issues = []
     t0 = time.time()
 
-    for i, p in enumerate(puzzles):
-        t1 = time.time()
-        result = solve(p)
+    # Run validation in parallel
+    worker_args = [(i, p) for i, p in enumerate(puzzles)]
+    results = {}
+    with Pool(cores) as pool:
+        for idx, line, puzzle_issues in pool.imap_unordered(_validate_one, worker_args):
+            results[idx] = (line, puzzle_issues)
+            print(f'\r  Validated {len(results)}/{len(puzzles)}...', end='', flush=True)
+    print()
 
-        targets = len(p['targets'])
-        split = p['inventory'].get('split', 0)
-        par = p['par']
-        has_gem = 'gem' in p
-        pid = p.get('id', '?')
-
-        if result == -1:
-            status = 'UNSOLVABLE'
-            issues.append((i + 1, 'unsolvable'))
-        elif result + 1 != par:
-            # par should be min + 1 (golf-style: player can always beat par)
-            status = f'PAR MISMATCH (min={result}, par={par}, expected par={result + 1})'
-            issues.append((i + 1, f'par should be {result + 1}'))
-        else:
-            status = 'OK'
-
-        # Check that fixed pieces alone don't hit any targets
-        fixed_status = ''
-        if p.get('fixed') and status == 'OK':
-            fixed_grid = [[None] * GRID for _ in range(GRID)]
-            for w in p['walls']:
-                fixed_grid[w['r']][w['c']] = 'wall'
-            for f in p['fixed']:
-                fixed_grid[f['r']][f['c']] = f['type']
-            fixed_exits, _ = simulate(fixed_grid, p['source'])
-            target_set_check = {(t['edge'], t['pos']) for t in p['targets']}
-            hits = fixed_exits & target_set_check
-            if hits:
-                fixed_status = f' | FIXED HITS {len(hits)} TARGET(S)'
-                issues.append((i + 1, f'fixed pieces alone hit {len(hits)} target(s) — too easy'))
-
-        gem_status = ''
-        if not has_gem:
-            gem_status = ' | NO GEM'
-            issues.append((i + 1, 'missing gem'))
-        elif status == 'OK':
-            # Verify gem is reachable (solvable while collecting gem)
-            gem_min = solve_with_gem(p, par + 2)
-            if gem_min == -1:
-                gem_status = ' | GEM UNREACHABLE'
-                issues.append((i + 1, 'gem unreachable'))
-            else:
-                gem_status = f' | gem in {gem_min}'
-                # Verify puzzle is also solvable WITHOUT going through gem
-                # (gem should be optional — a bonus detour)
-                if gem_min == result:
-                    gem_status += ' (on main path — not optional)'
-                    issues.append((i + 1, 'gem is on main path, not optional'))
-
-        elapsed = time.time() - t1
-        out(f'  Puzzle {i+1:>2} [{pid}] (par={par}, targets={targets}, splits={split}): {status}{fixed_status}{gem_status} [{elapsed:.2f}s]')
+    # Output in order
+    issues = []
+    for i in range(len(puzzles)):
+        line, puzzle_issues = results[i]
+        out(line)
+        for issue in puzzle_issues:
+            issues.append((i + 1, issue))
 
     total = time.time() - t0
     out('---')

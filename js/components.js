@@ -242,6 +242,15 @@
 
     function loadNext(i) {
       if (i >= scripts.length) {
+        // Activate tab from URL hash (e.g. #GamesTools) and sync hash on tab click
+        var hash = window.location.hash;
+        if (hash) {
+          var tab = document.querySelector('[data-toggle="list"][href="' + hash + '"]');
+          if (tab) $(tab).tab("show");
+        }
+        $('[data-toggle="list"]').on("shown.bs.tab", function (e) {
+          history.replaceState(null, null, e.target.getAttribute("href"));
+        });
         if (callback) callback();
         return;
       }

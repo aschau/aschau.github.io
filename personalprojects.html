@@ -12,12 +12,12 @@
     <link rel="apple-touch-icon" href="img/favicon-apple.png">
 
     <title>Andrew Chau | Personal Projects</title>
-    <meta name="description" content="Personal and indie projects by Andrew Chau — Co-founder of Friend Castle, Engineer and Technical Producer on Waxheart, daily puzzle games Beamlab and Parsed, the evolution of this portfolio website from college project to AI-powered development, plus award-winning college game projects built in Unity and Python.">
+    <meta name="description" content="Personal and indie projects by Andrew Chau — Co-founder of Friend Castle, Engineer and Technical Producer on Waxheart, Claude Developer Misery Index, SnapLayout room planner, daily puzzle games Beamlab and Parsed, portfolio evolution from college to AI-powered development, plus award-winning college game projects.">
     <link rel="canonical" href="https://raggedydoc.com/personalprojects.html">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Andrew Chau | Personal Projects">
-    <meta property="og:description" content="Co-founder of Friend Castle, Engineer on Waxheart, daily puzzle games Beamlab and Parsed, portfolio evolution from college to AI-powered development, plus award-winning college game projects.">
+    <meta property="og:description" content="Co-founder of Friend Castle, Engineer on Waxheart, Claude Developer Misery Index, SnapLayout room planner, daily puzzle games Beamlab and Parsed, plus award-winning college game projects.">
     <meta property="og:url" content="https://raggedydoc.com/personalprojects.html">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://raggedydoc.com/img/about-me/me.JPG">
@@ -25,7 +25,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Andrew Chau | Personal Projects">
-    <meta name="twitter:description" content="Co-founder of Friend Castle, Engineer on Waxheart, daily puzzle games Beamlab and Parsed, portfolio evolution from college to AI-powered development, plus award-winning college game projects.">
+    <meta name="twitter:description" content="Co-founder of Friend Castle, Engineer on Waxheart, Claude Developer Misery Index, SnapLayout room planner, daily puzzle games Beamlab and Parsed, plus award-winning college game projects.">
     <meta name="twitter:image" content="https://raggedydoc.com/img/about-me/me.JPG">
 
   </head>
@@ -232,6 +232,57 @@
             <div class="card-deck mr-2 my-4">
               <div class="card text-white bg-dark mb-4">
                 <div class="card-body">
+                  <h5 class="card-title">Claude Developer Misery Index</h5>
+                  <img src="tools/misery-index/og-image.png" class="img-fluid rounded mb-3" alt="Claude Developer Misery Index dashboard">
+                  <p class="card-text">
+                    A real-time dashboard tracking how miserable developers are when Claude AI goes down. Combines official Anthropic status page data, incident history, and Bluesky social chatter into a single 0-10 misery score.
+                  </p>
+                  <p class="card-text"><b>How it started:</b></p>
+                  <ul class="text-white">
+                    <li>Simple status page scraper with a numeric score</li>
+                    <li>Reddit as the social signal source (blocked from cloud IPs)</li>
+                  </ul>
+                  <p class="card-text"><b>Where it is now:</b></p>
+                  <ul class="text-white">
+                    <li>Three data sources — status page, incidents, and Bluesky authenticated API</li>
+                    <li>Multi-layer post filtering to avoid false positives (exclusion patterns, signal tiering, proximity checks)</li>
+                    <li>GitHub Action runs every 15 minutes, pushes data to an orphan branch</li>
+                    <li>History chart with time range toggles (24h / 3d / 7d)</li>
+                    <li>Light/dark theme with misery-level visual escalation (screen shake at apocalypse level)</li>
+                  </ul>
+                  <a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary mr-2 mb-2">View Misery Index</a>
+                </div>
+              </div>
+              <div class="w-100 d-none d-sm-block d-xl-none"></div>
+              <div class="card text-white bg-dark mb-4">
+                <div class="card-body">
+                  <h5 class="card-title">SnapLayout</h5>
+                  <img src="tools/snaplayout/og-image.png" class="img-fluid rounded mb-3" alt="SnapLayout room layout planner">
+                  <p class="card-text">
+                    A free, mobile-friendly room layout planner. Import a floorplan image (or draw rooms from scratch), set the scale, and drag and drop furniture with real-world dimensions. No sign-up required.
+                  </p>
+                  <p class="card-text"><b>How it started:</b></p>
+                  <ul class="text-white">
+                    <li>Basic canvas with draggable furniture rectangles</li>
+                    <li>Simple image import for floorplan backgrounds</li>
+                  </ul>
+                  <p class="card-text"><b>Where it is now:</b></p>
+                  <ul class="text-white">
+                    <li>Scale calibration — draw a line between known points and enter the real distance</li>
+                    <li>Wall drawing tool for creating rooms from scratch</li>
+                    <li>Furniture library across 6 categories with real dimensions (in/ft/cm/m)</li>
+                    <li>Z-ordering, undo/redo, keyboard shortcuts, snap-to-grid</li>
+                    <li>Export to PNG at 2x resolution</li>
+                    <li>Auto-saves to localStorage</li>
+                  </ul>
+                  <a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary mr-2 mb-2">Open SnapLayout</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-deck mr-2 my-4">
+              <div class="card text-white bg-dark mb-4">
+                <div class="card-body">
                   <h5 class="card-title">Beamlab</h5>
                   <img src="games/beamlab/og-image.png" class="img-fluid rounded mb-3" alt="Beamlab daily laser puzzle game">
                   <p class="card-text">
@@ -292,33 +343,6 @@
                     <li>Daily streaks, shareable results, and walkthrough replays</li>
                   </ul>
                   <a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary mr-2 mb-2">Play Parsed</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="container my-4">
-              <div class="card text-white bg-dark">
-                <div class="card-body">
-                  <h5 class="card-title">SnapLayout</h5>
-                  <img src="tools/snaplayout/og-image.png" class="img-fluid rounded mb-3" alt="SnapLayout room layout planner">
-                  <p class="card-text">
-                    A free, mobile-friendly room layout planner. Import a floorplan image (or draw rooms from scratch), set the scale, and drag and drop furniture with real-world dimensions. No sign-up required.
-                  </p>
-                  <p class="card-text"><b>How it started:</b></p>
-                  <ul class="text-white">
-                    <li>Basic canvas with draggable furniture rectangles</li>
-                    <li>Simple image import for floorplan backgrounds</li>
-                  </ul>
-                  <p class="card-text"><b>Where it is now:</b></p>
-                  <ul class="text-white">
-                    <li>Scale calibration — draw a line between known points and enter the real distance</li>
-                    <li>Wall drawing tool for creating rooms from scratch</li>
-                    <li>Furniture library across 6 categories with real dimensions (in/ft/cm/m)</li>
-                    <li>Z-ordering, undo/redo, keyboard shortcuts, snap-to-grid</li>
-                    <li>Export to PNG at 2x resolution</li>
-                    <li>Auto-saves to localStorage</li>
-                  </ul>
-                  <a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary mr-2 mb-2">Open SnapLayout</a>
                 </div>
               </div>
             </div>

@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var DATA_URL_REMOTE = "https://raw.githubusercontent.com/aschau/raggedydoc.com/misery-data/current.json";
+  var DATA_URL_REMOTE = "https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/current.json";
   var DATA_URL_LOCAL = "data/current.json";
   var STATUS_API = "https://status.claude.com/api/v2/summary.json";
   var THEME_KEY = "misery_theme";

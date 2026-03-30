@@ -48,7 +48,7 @@
   }
 
   var lastHistory = null;
-  var lastRedditData = null;
+  var lastSocialData = null;
   var lastIncidents = null;
   var rangeHours = 24;
 
@@ -235,42 +235,40 @@
     });
   }
 
-  function renderReddit(redditData) {
-    var postCount = document.getElementById("reddit-post-count");
-    var commentCount = document.getElementById("reddit-comment-count");
-    var postsList = document.getElementById("reddit-posts");
+  function renderSocial(socialData) {
+    var postCount = document.getElementById("social-post-count");
+    var commentCount = document.getElementById("social-comment-count");
+    var postsList = document.getElementById("social-posts");
 
-    if (!redditData) {
+    if (!socialData) {
       postCount.textContent = "?";
       commentCount.textContent = "?";
       return;
     }
 
-    postCount.textContent = redditData.recentPosts || 0;
-    commentCount.textContent = redditData.recentComments || 0;
+    postCount.textContent = socialData.recentPosts || 0;
+    commentCount.textContent = socialData.recentComments || 0;
 
     postsList.innerHTML = "";
-    if (redditData.topPosts && redditData.topPosts.length > 0) {
-      redditData.topPosts.slice(0, 8).forEach(function (post) {
+    if (socialData.topPosts && socialData.topPosts.length > 0) {
+      socialData.topPosts.slice(0, 8).forEach(function (post) {
         var el = document.createElement("div");
-        el.className = "reddit-post";
+        el.className = "social-post";
         var scoreText = post.score != null ? post.score : "--";
-        var meta = "r/" + escapeHtml(post.subreddit || "?");
+        var meta = "@" + escapeHtml(post.author || "?");
         if (post.created) meta += " \u00b7 " + timeAgo(post.created);
-        var megaBadge = post.isMegathread ? '<span class="megathread-badge">MEGATHREAD</span> ' : '';
-        el.innerHTML = '<span class="reddit-post-score">' + scoreText + ' \u25b2</span>' +
-                       '<div class="reddit-post-body">' +
-                         megaBadge +
+        el.innerHTML = '<span class="social-post-score">' + scoreText + ' \u2665</span>' +
+                       '<div class="social-post-body">' +
                          '<a href="' + sanitizeUrl(post.url) + '" target="_blank" rel="noopener noreferrer">' +
-                         escapeHtml(truncate(post.title, 80)) + '</a>' +
-                         '<span class="reddit-post-meta">' + meta + '</span>' +
+                         escapeHtml(truncate(post.title, 100)) + '</a>' +
+                         '<span class="social-post-meta">' + meta + '</span>' +
                        '</div>';
         postsList.appendChild(el);
       });
     }
 
-    if (!redditData.topPosts || redditData.topPosts.length === 0) {
-      postsList.innerHTML = '<div class="reddit-post" style="color:var(--color-text-soft)">No recent complaint posts found</div>';
+    if (!socialData.topPosts || socialData.topPosts.length === 0) {
+      postsList.innerHTML = '<div class="social-post" style="color:var(--color-text-soft)">No recent complaint posts found</div>';
     }
   }
 
@@ -430,11 +428,11 @@
       var statusData = liveStatus || data.status || null;
       var incidents = liveIncidents || data.incidents || [];
 
-      lastRedditData = data.reddit || null;
+      lastSocialData = data.social || null;
       lastIncidents = incidents;
 
       renderStatus(statusData);
-      renderReddit(lastRedditData);
+      renderSocial(lastSocialData);
       renderIncidents(lastIncidents);
       setMiseryLevel(data.miseryIndex != null ? data.miseryIndex : 0);
       renderHistory(data.history || []);
@@ -455,11 +453,11 @@
       ]
     };
 
-    lastRedditData = { recentPosts: 0, recentComments: 0, topPosts: [] };
+    lastSocialData = { recentPosts: 0, recentComments: 0, topPosts: [] };
     lastIncidents = liveIncidents || [];
 
     renderStatus(statusData);
-    renderReddit(lastRedditData);
+    renderSocial(lastSocialData);
     renderIncidents(lastIncidents);
     setMiseryLevel(0);
     renderHistory([]);

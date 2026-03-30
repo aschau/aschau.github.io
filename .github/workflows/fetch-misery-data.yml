@@ -27,12 +27,15 @@ jobs:
             echo '{"history":[]}' > tools/misery-index/data/current.json
 
       - name: Fetch misery data
+        env:
+          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
+          BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
         run: node .github/scripts/fetch-misery-data.js
 
       - name: Validate data before pushing
         id: validate
         run: |
-          POSTS=$(python3 -c "import json; d=json.load(open('tools/misery-index/data/current.json')); print(d['reddit']['recentPosts'])" 2>/dev/null || echo "0")
+          POSTS=$(python3 -c "import json; d=json.load(open('tools/misery-index/data/current.json')); print(d.get('social',{}).get('recentPosts',0))" 2>/dev/null || echo "0")
           STATUS=$(python3 -c "import json; d=json.load(open('tools/misery-index/data/current.json')); print(d.get('status',{}).get('status',{}).get('indicator','unknown'))" 2>/dev/null || echo "unknown")
           if [ "$POSTS" = "0" ] && [ "$STATUS" = "unknown" ]; then
             echo "Both Reddit and status fetches failed — skipping push"
@@ -54,7 +57,7 @@ jobs:
           cp /tmp/current.json current.json
           git add current.json
           MISERY=$(python3 -c "import json; print(json.load(open('current.json'))['miseryIndex'])" 2>/dev/null || echo "?")
-          POSTS=$(python3 -c "import json; print(json.load(open('current.json'))['reddit']['recentPosts'])" 2>/dev/null || echo "?")
+          POSTS=$(python3 -c "import json; print(json.load(open('current.json')).get('social',{}).get('recentPosts',0))" 2>/dev/null || echo "?")
           STATUS=$(python3 -c "import json; print(json.load(open('current.json')).get('status',{}).get('status',{}).get('description','unknown'))" 2>/dev/null || echo "?")
-          git commit -m "misery: ${MISERY}/10 | ${STATUS} | ${POSTS} reddit posts (status.claude.com + reddit public JSON)"
+          git commit -m "misery: ${MISERY}/10 | ${STATUS} | ${POSTS} bluesky posts (status.claude.com + bsky)"
           git push origin misery-data --force

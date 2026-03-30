@@ -17,24 +17,16 @@ The official status page tells you *if* Claude is down. The Misery Index tells y
 ### Anthropic Incidents
 - **Endpoint**: `https://status.claude.com/api/v2/incidents.json`
 - **Data**: incident name, status (investigating/identified/monitoring/resolved/postmortem), impact level, timestamped updates with descriptions
-- **Window**: Last 3 days, up to 10 incidents, with the 3 most recent updates per incident
+- **Window**: Last 7 days, up to 10 incidents, with the 3 most recent updates per incident
 - **Role**: Provides context and timeline for recent issues. Shown on the dashboard alongside current status.
 
-### Reddit (Public JSON Endpoints)
-- **No authentication required** — uses Reddit's public `.json` suffix endpoints (~10 requests/min rate limit)
-- **Search endpoint**: `https://www.reddit.com/search.json?q=...&sort=new&t=day` — global search for outage/degradation keywords
-- **Subreddit endpoints**: `https://www.reddit.com/r/{sub}/new.json` — targeted scan of r/ClaudeAI, r/anthropic
-- **Search queries**: `"claude down"`, `"claude outage"`, `"claude not working"`, `"claude broken"`, `"claude error"`, `"claude overloaded"`, `"claude slow"`, `"claude nerfed"`, `"claude rate limit"`, `"claude unusable"`, `"claude token limit"`, `"claude usage limit"`, `"claude message limit"`
-- **Complaint keywords** (for subreddit scanning): down, outage, error, broken, not working, overloaded, slow, 500, unavailable, rate limit, token limit, nerfed, degraded, worse, unusable, usage limit, message limit, throttl, capped
-- **False positive filter**: search results are post-filtered to require "claude" or "anthropic" in the title
-- **Role**: Human suffering signal. Reddit lights up before status pages update. Also captures degradation complaints (rate limits, token limits, usage caps, quality regressions) that the status page doesn't reflect.
-
-### Reddit Megathreads
-- **Endpoint**: `https://www.reddit.com/r/ClaudeAI/search.json?q=megathread&sort=new&restrict_sr=on&t=month`
-- Searches for complaint aggregation posts (megathreads) by keyword matching: title must contain a megathread keyword (megathread, mega thread, weekly thread, discussion thread) AND a relevant topic (performance, bug, limit, usage, outage, issue, error, down)
-- Includes threads created within the last week, or stickied (ongoing) threads
-- Comment counts from megathreads feed into the comment amplifier — a megathread with 300+ comments is strong signal
-- Megathreads are shown with a "MEGATHREAD" badge in the Reddit section and sorted to the top
+### Bluesky (Authenticated API)
+- **Auth**: Session-based via `com.atproto.server.createSession` — requires `BSKY_HANDLE` + `BSKY_APP_PASSWORD` (free app password, no approval process)
+- **Search endpoint**: `app.bsky.feed.searchPosts` on `bsky.social` — searches for outage/degradation keywords
+- **Search queries**: "claude down", "claude outage", "claude not working", "claude broken", "claude error", "claude slow", "claude rate limit", "claude unusable", "claude overloaded", "anthropic down", "anthropic outage"
+- **False positive filter**: post text must contain "claude" or "anthropic"
+- **Role**: Human suffering signal. Social media lights up before status pages update. Also captures degradation complaints (rate limits, token limits, quality regressions) that the status page doesn't reflect.
+- **Why not Reddit?**: Reddit rejected our API application and blocks unauthenticated requests from cloud IPs (GitHub Actions). Bluesky has a free, open API with no approval process.
 
 ### Live Frontend Fetches
 - The frontend also attempts direct fetches to `status.claude.com` on page load for both status and incidents

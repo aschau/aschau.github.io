@@ -134,13 +134,19 @@
     <p>
       The Claude Developer Misery Index measures how much developers are suffering during Claude AI
       outages and degradations. It combines the official <a href="https://status.claude.com" target="_blank" rel="noopener noreferrer">Anthropic status page</a>,
-      recent incident history, and real-time complaint volume from <a href="https://reddit.com/r/ClaudeAI" target="_blank" rel="noopener noreferrer">Reddit</a>
+      recent incident history, and real-time complaint volume from <a href="https://bsky.app" target="_blank" rel="noopener noreferrer">Bluesky</a>
       to produce a single score from 0 (bliss) to 10 (apocalypse).
     </p>
     <p>
       Status pages are notoriously slow to update. By the time it officially says "Investigating,"
-      Reddit has already posted fifteen "is it just me?" threads. The Misery Index captures that gap —
+      social media has already posted fifteen "is it just me?" threads. The Misery Index captures that gap —
       and the uncomfortable truth about how dependent we've all become on AI to write our code.
+    </p>
+    <p>
+      We originally wanted to use Reddit for the chatter data, but Reddit rejected our API application
+      within minutes. So we moved to Bluesky, which has a free, open API with no approval process.
+      The irony of getting rejected by one platform while building a dependency tracker for another
+      is not lost on us.
     </p>
 
     <h2>Data sources</h2>
@@ -149,9 +155,9 @@
       (none, minor, major, critical) and per-component status for claude.ai, the API, Claude Code, and more.
     </p>
     <p>
-      <strong>Reddit</strong> — the human suffering layer. Searches for posts containing phrases like
-      "Claude is down," "Claude outage," and "Claude not working" across r/ClaudeAI, r/anthropic, and
-      the broader site. Post volume and comment depth both contribute to the score.
+      <strong>Bluesky</strong> — the human suffering layer. Searches for posts containing phrases like
+      "Claude is down," "Claude outage," and "Claude not working." Post volume and reply depth
+      both contribute to the score.
     </p>
 
     <h2>The formula</h2>
@@ -169,7 +175,7 @@
       <tr><td>+ per degraded component</td><td>+0.5 each (max +2)</td></tr>
     </table>
 
-    <p><strong>2. Reddit post volume (0–4 points)</strong></p>
+    <p><strong>2. Bluesky post volume (0–4 points)</strong></p>
     <table class="formula-table">
       <tr><th>Posts (24h)</th><th>Points</th></tr>
       <tr><td>0</td><td>0</td></tr>
@@ -180,9 +186,9 @@
       <tr><td>20+</td><td>+4</td></tr>
     </table>
 
-    <p><strong>3. Comment amplifier (0–2 points)</strong></p>
+    <p><strong>3. Reply amplifier (0–2 points)</strong></p>
     <table class="formula-table">
-      <tr><th>Comments (24h)</th><th>Points</th></tr>
+      <tr><th>Replies (24h)</th><th>Points</th></tr>
       <tr><td>0–4</td><td>0</td></tr>
       <tr><td>5–19</td><td>+0.5</td></tr>
       <tr><td>20–49</td><td>+1</td></tr>
@@ -192,7 +198,7 @@
 
     <p>
       The status page carries the most weight because confirmed outages are the most reliable signal.
-      Reddit volume is secondary — it's noisy, but it's fast. Comments amplify rather than dominate,
+      Social volume is secondary — it's noisy, but it's fast. Comments amplify rather than dominate,
       because a single viral complaint thread isn't the same as twenty independent reports.
     </p>
 
@@ -206,12 +212,12 @@
     <div class="level-row">
       <span class="level-dot" style="background: #eab308;"></span>
       <span class="level-name" style="color: #eab308;">MINOR GRUMBLING (1–3)</span>
-      <span class="level-desc">A few Reddit posts. Probably fine.</span>
+      <span class="level-desc">A few posts. Probably fine.</span>
     </div>
     <div class="level-row">
       <span class="level-dot" style="background: #f97316;"></span>
       <span class="level-name" style="color: #f97316;">GROWING UNREST (3–5)</span>
-      <span class="level-desc">The subreddit is heating up.</span>
+      <span class="level-desc">The complaints are picking up.</span>
     </div>
     <div class="level-row">
       <span class="level-dot" style="background: #ef4444;"></span>
@@ -236,13 +242,13 @@
 
     <h2>Limitations</h2>
     <p>
-      This is a fun side project, not an SLA monitor. Reddit keyword matching is imperfect — some
-      posts are about slowness rather than outages, and some genuine complaints use different phrasing.
+      This is a fun side project, not an SLA monitor. Keyword matching is imperfect — some
+      posts are about general slowness rather than outages, and some genuine complaints use different phrasing.
       The 15-minute polling interval means short blips might be missed entirely.
     </p>
     <p>
       The index also doesn't distinguish between "Claude is down for everyone" and "Claude is slow
-      for some users." Both generate Reddit posts, but the severity is very different. Use the
+      for some users." Both generate social posts, but the severity is very different. Use the
       <a href="https://status.claude.com" target="_blank" rel="noopener noreferrer">official status page</a>
       for actual incident tracking.
     </p>

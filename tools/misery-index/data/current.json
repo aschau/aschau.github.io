@@ -1,13 +1,13 @@
 {
-  "lastUpdated": "2026-03-30T12:44:41.706Z",
-  "miseryIndex": 4,
+  "lastUpdated": "2026-03-30T14:28:29.323Z",
+  "miseryIndex": 3.5,
   "status": {
     "page": {
       "id": "tymt9n04zgry",
       "name": "Claude",
       "url": "https://status.claude.com",
       "time_zone": "Etc/UTC",
-      "updated_at": "2026-03-30T10:58:42.168Z"
+      "updated_at": "2026-03-30T13:29:11.900Z"
     },
     "components": [
       {
@@ -93,73 +93,89 @@
       "description": "All Systems Operational"
     }
   },
-  "reddit": {
-    "recentPosts": 6,
-    "recentComments": 373,
+  "social": {
+    "recentPosts": 12,
+    "recentComments": 6,
     "topPosts": [
       {
-        "title": "Claude Usage Limits Discussion Megathread Ongoing (sort this by New!)",
-        "subreddit": "ClaudeAI",
-        "score": 276,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1s7fcjf/claude_usage_limits_discussion_megathread_ongoing/",
-        "created": "2026-03-30T03:15:36.000Z",
-        "isMegathread": true
-      },
-      {
-        "title": "Claude Performance and Bugs Megathread Ongoing (Sort this by New!)",
-        "subreddit": "ClaudeAI",
+        "title": "Crazy times. After spending hours to manually fix the headers of a corrupted VHDX file (power outage this morning caught...",
+        "author": "roman-d-mueller.ch",
         "score": 2,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1s7f72l/claude_performance_and_bugs_megathread_ongoing/",
-        "created": "2026-03-30T03:07:59.000Z",
-        "isMegathread": true
+        "url": "https://bsky.app/profile/did:plc:dddxrvoskpfncknbdmcisf75/post/3mia4uf37b22t",
+        "created": "2026-03-29T21:49:16.252Z",
+        "source": "bluesky"
       },
       {
-        "title": "How to stop hitting the Claude usage limit and work all day. These are the 8 secrets that will cut your Claude costs and token usage by as much as 90%",
-        "subreddit": "ThinkingDeeplyAI",
-        "score": 13,
-        "url": "https://reddit.com/r/ThinkingDeeplyAI/comments/1s7hhkc/how_to_stop_hitting_the_claude_usage_limit_and/",
-        "created": "2026-03-30T05:08:53.000Z",
-        "isMegathread": false
-      },
-      {
-        "title": "r/ClaudeAI List of Ongoing Megathreads",
-        "subreddit": "ClaudeAI",
-        "score": 6,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1s7fepn/rclaudeai_list_of_ongoing_megathreads/",
-        "created": "2026-03-30T03:18:44.000Z",
-        "isMegathread": false
-      },
-      {
-        "title": "Les haineux d'antigravity qui ne jurent que par Claude Code, vous êtes où ?",
-        "subreddit": "GoogleAntigravityIDE",
+        "title": "claudeのrate limit最近全然達していないんだけど、実験が足りない？？",
+        "author": "otaks.bsky.social",
         "score": 2,
-        "url": "https://reddit.com/r/GoogleAntigravityIDE/comments/1s7oc8l/les_haineux_dantigravity_qui_ne_jurent_que_par/",
-        "created": "2026-03-30T11:51:04.000Z",
-        "isMegathread": false
+        "url": "https://bsky.app/profile/did:plc:vjq26psrzdo7uwijjtw3ewzt/post/3mibr2wqmlc2q",
+        "created": "2026-03-30T13:23:33.162Z",
+        "source": "bluesky"
       },
       {
-        "title": "ClaudeWatch - tour Claude usage limits — one glance away in the menu bar",
-        "subreddit": "ClaudeAI",
+        "title": "Claudeのrate limitに達したので花見でもするか…🌸",
+        "author": "moskomule.bsky.social",
+        "score": 2,
+        "url": "https://bsky.app/profile/did:plc:p4dbvk3agpixojujui2janjp/post/3miavzkedm22l",
+        "created": "2026-03-30T05:19:34.957Z",
+        "source": "bluesky"
+      },
+      {
+        "title": "Hitting the Claude usage limit is the new pomodoro technique.",
+        "author": "thegagne.bsky.social",
+        "score": 2,
+        "url": "https://bsky.app/profile/did:plc:ou5yikuvxth6wpfn4xadadqi/post/3mi7ecquf522m",
+        "created": "2026-03-29T14:29:56.256Z",
+        "source": "bluesky"
+      },
+      {
+        "title": "I pay 130,000 won every month for Claude Max X5... Usually, it was hard to hit the limit just by chatting. But since I s...",
+        "author": "foxthebarefoot.bsky.social",
+        "score": 2,
+        "url": "https://bsky.app/profile/did:plc:vbhp46kb64h44h6z4x6ulpkc/post/3miasoc3n4k2l",
+        "created": "2026-03-30T04:19:35.158Z",
+        "source": "bluesky"
+      },
+      {
+        "title": "When technology reporter Alex Heath has a scoop, he sits down at his computer and speaks into a microphone. He’s not tal...",
+        "author": "crystal159.bsky.social",
         "score": 1,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1s7lvdv/claudewatch_tour_claude_usage_limits_one_glance/",
-        "created": "2026-03-30T09:36:15.000Z",
-        "isMegathread": false
+        "url": "https://bsky.app/profile/did:plc:ici2lxcvn3sv3digmghhe7fr/post/3mi7eqjevys25",
+        "created": "2026-03-29T14:37:38.557Z",
+        "source": "bluesky"
       },
       {
-        "title": "start collecting data on what your claude usage limits actually mean",
-        "subreddit": "ClaudeCode",
-        "score": 1,
-        "url": "https://reddit.com/r/ClaudeCode/comments/1s7ft31/start_collecting_data_on_what_your_claude_usage/",
-        "created": "2026-03-30T03:39:14.000Z",
-        "isMegathread": false
-      },
-      {
-        "title": "Claude è impossibile da usare",
-        "subreddit": "ClaudeAI",
+        "title": "The issue is what happens when Claude code cannot fix an issue when production is down and you have no knowledge of the ...",
+        "author": "hamzahamud.com",
         "score": 0,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1s6xak5/claude_è_impossibile_da_usare/",
-        "created": "2026-03-29T14:57:57.000Z",
-        "isMegathread": false
+        "url": "https://bsky.app/profile/did:plc:h2vhfeimy27br5u3al2fhtuh/post/3miab7nwzak2b",
+        "created": "2026-03-29T23:07:11.553Z",
+        "source": "bluesky"
+      },
+      {
+        "title": "CLAUDE 🤖 🟠  Most production systems have worse safety architecture than your editorial pipeline. That's not flattery. ...",
+        "author": "decisionleader.bsky.social",
+        "score": 0,
+        "url": "https://bsky.app/profile/did:plc:62ib33mwd55myr34ke7jm7jt/post/3mi7gdlh6ky2l",
+        "created": "2026-03-29T15:06:11.258Z",
+        "source": "bluesky"
+      },
+      {
+        "title": "Assuming this is a bug in claude code Went to bed at ~30% usage for the week. Rebooted, resumed session, and after an ho...",
+        "author": "nxjosh.bsky.social",
+        "score": 0,
+        "url": "https://bsky.app/profile/did:plc:gxvom3tu6zlx53hj2tac3l4t/post/3mi7xctglit25",
+        "created": "2026-03-29T20:10:00.054Z",
+        "source": "bluesky"
+      },
+      {
+        "title": "Been doing this for months. Any PRD/Spec/Implementation/Bug + Security hunts includes Claude + Codex, much better thorou...",
+        "author": "infosecbot.bsky.social",
+        "score": 0,
+        "url": "https://bsky.app/profile/did:plc:54lvxus5zpnvtmtukgcga24s/post/3mia6byj37g24",
+        "created": "2026-03-29T22:14:47.856Z",
+        "source": "bluesky"
       }
     ]
   },
@@ -208,6 +224,196 @@
           "createdAt": "2026-03-28T13:01:10.468Z"
         }
       ]
+    },
+    {
+      "name": "Elevated error rates on Opus 4.6",
+      "status": "postmortem",
+      "impact": "major",
+      "createdAt": "2026-03-27T06:59:38.345Z",
+      "updatedAt": "2026-03-27T18:00:30.187Z",
+      "url": "https://stspg.io/jchxyv3sp1hv",
+      "updates": [
+        {
+          "status": "postmortem",
+          "body": "On March 26–27, 2026, customers experienced elevated error rates when using Claude Opus 4.6 and Claude Sonnet 4.6. The issue was caused by a networking performance degradation within our infrastructure that disrupted communication between components of our serving stack. We resolved the incident by migrating the affected workloads to healthy infrastructure, restoring normal service by 9:30 AM PT on March 27.",
+          "createdAt": "2026-03-27T17:36:52.273Z"
+        },
+        {
+          "status": "resolved",
+          "body": "This incident has been mitigated as of 9:30 PT / 16:30 UTC.",
+          "createdAt": "2026-03-27T16:46:24.919Z"
+        },
+        {
+          "status": "monitoring",
+          "body": "As of 6:40 PT / 13:40 UTC our error rate has returned to the baseline. We are still monitoring the current situation.",
+          "createdAt": "2026-03-27T13:46:20.620Z"
+        }
+      ]
+    },
+    {
+      "name": "Elevated connection reset errors in Cowork",
+      "status": "resolved",
+      "impact": "minor",
+      "createdAt": "2026-03-25T14:33:53.402Z",
+      "updatedAt": "2026-03-27T15:05:30.573Z",
+      "url": "https://stspg.io/5zt95qbyf06z",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-03-27T15:05:30.558Z"
+        },
+        {
+          "status": "investigating",
+          "body": "We are continuing to investigate connection errors which occur during Claude Cowork sessions. This issue can be resolved by restarting the Claude Desktop application.",
+          "createdAt": "2026-03-25T16:56:52.571Z"
+        },
+        {
+          "status": "investigating",
+          "body": "We are currently investigating this issue.",
+          "createdAt": "2026-03-25T14:33:53.436Z"
+        }
+      ]
+    },
+    {
+      "name": "Elevated errors on Claude Opus 4.6 and Sonnet 4.6",
+      "status": "resolved",
+      "impact": "major",
+      "createdAt": "2026-03-26T21:56:24.142Z",
+      "updatedAt": "2026-03-27T00:49:30.599Z",
+      "url": "https://stspg.io/y9rm3rvqbfzx",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-03-27T00:49:30.584Z"
+        },
+        {
+          "status": "identified",
+          "body": "We have identified an issue resulting in a low rate of errors on requests to Claude Opus 4.6 and Sonnet 4.6, we are continuing to work to fully resolve this issue and will provide additional updates.",
+          "createdAt": "2026-03-26T23:06:49.415Z"
+        },
+        {
+          "status": "investigating",
+          "body": "We are currently investigating an issue resulting in elevated errors on requests to Claude Opus 4.6 and Sonnet 4.6. We will provide an update as soon as possible.",
+          "createdAt": "2026-03-26T21:56:24.270Z"
+        }
+      ]
+    },
+    {
+      "name": "Elevated errors for MCP calls",
+      "status": "resolved",
+      "impact": "major",
+      "createdAt": "2026-03-26T22:25:40.025Z",
+      "updatedAt": "2026-03-26T22:41:19.168Z",
+      "url": "https://stspg.io/n5zljwcyfpr7",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-03-26T22:41:19.148Z"
+        },
+        {
+          "status": "investigating",
+          "body": "We are currently investigating an issue resulting in elevated errors for some MCP calls. We will provide an update as soon as possible.",
+          "createdAt": "2026-03-26T22:25:40.078Z"
+        }
+      ]
+    },
+    {
+      "name": "Elevated errors on Claude Opus 4.6",
+      "status": "resolved",
+      "impact": "major",
+      "createdAt": "2026-03-25T15:03:59.956Z",
+      "updatedAt": "2026-03-26T00:14:30.323Z",
+      "url": "https://stspg.io/dv1mb1z3pwj2",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-03-26T00:14:30.309Z"
+        },
+        {
+          "status": "monitoring",
+          "body": "The issue has been mitigated. We are monitoring.",
+          "createdAt": "2026-03-25T20:06:06.503Z"
+        },
+        {
+          "status": "investigating",
+          "body": "We are currently investigating this issue.",
+          "createdAt": "2026-03-25T20:01:53.633Z"
+        }
+      ]
+    },
+    {
+      "name": "Elevated Errors on claude.ai",
+      "status": "resolved",
+      "impact": "none",
+      "createdAt": "2026-03-25T13:45:25.537Z",
+      "updatedAt": "2026-03-25T15:45:56.734Z",
+      "url": "https://stspg.io/pjj05p7lrfxg",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-03-25T15:43:20.034Z"
+        },
+        {
+          "status": "monitoring",
+          "body": "We are currently seeing recovery, and our engineers are working to ensure no further recurrences. We will provide an update as soon as possible.",
+          "createdAt": "2026-03-25T15:27:34.777Z"
+        },
+        {
+          "status": "identified",
+          "body": "The issue has been identified and a fix is being implemented.",
+          "createdAt": "2026-03-25T14:33:40.128Z"
+        }
+      ]
+    },
+    {
+      "name": "Elevated errors on Claude Opus 4.6",
+      "status": "resolved",
+      "impact": "minor",
+      "createdAt": "2026-03-25T09:35:42.331Z",
+      "updatedAt": "2026-03-25T13:10:09.722Z",
+      "url": "https://stspg.io/vxw2q92fdnx2",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-03-25T13:10:09.706Z"
+        },
+        {
+          "status": "monitoring",
+          "body": "A fix has been implemented and we are monitoring the results.",
+          "createdAt": "2026-03-25T10:06:03.049Z"
+        },
+        {
+          "status": "investigating",
+          "body": "We are currently investigating this issue.",
+          "createdAt": "2026-03-25T09:35:42.464Z"
+        }
+      ]
+    },
+    {
+      "name": "Elevated errors on Claude.ai [retroactive]",
+      "status": "resolved",
+      "impact": "minor",
+      "createdAt": "2026-03-23T17:03:37.232Z",
+      "updatedAt": "2026-03-23T17:10:14.715Z",
+      "url": "https://stspg.io/v3pzmj9jkzhd",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-03-23T17:10:14.701Z"
+        },
+        {
+          "status": "investigating",
+          "body": "Between 9:10 PT / 16:10 UTC and 9:26 PT / 16:26 UTC users saw an elevated rate of errors on Claude.ai\n\nThe Claude API was unaffected.",
+          "createdAt": "2026-03-23T17:03:37.327Z"
+        }
+      ]
     }
   ],
   "history": [
@@ -252,6 +458,76 @@
       "statusIndicator": "none",
       "postCount": 6,
       "commentCount": 373
+    },
+    {
+      "timestamp": "2026-03-30T13:32:27.393Z",
+      "miseryIndex": 0,
+      "statusIndicator": "none",
+      "postCount": 0,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-03-30T14:07:54.363Z",
+      "miseryIndex": 0,
+      "statusIndicator": "none",
+      "postCount": 0,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-03-30T14:11:09.448Z",
+      "miseryIndex": 5.5,
+      "statusIndicator": "none",
+      "postCount": 49,
+      "commentCount": 52
+    },
+    {
+      "timestamp": "2026-03-30T14:14:56.902Z",
+      "miseryIndex": 0,
+      "statusIndicator": "none",
+      "postCount": 0,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-03-30T14:16:17.844Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 10
+    },
+    {
+      "timestamp": "2026-03-30T14:18:46.306Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 30,
+      "commentCount": 12
+    },
+    {
+      "timestamp": "2026-03-30T14:20:24.552Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-03-30T14:22:49.978Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-03-30T14:27:00.896Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 12,
+      "commentCount": 6
+    },
+    {
+      "timestamp": "2026-03-30T14:28:29.323Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 12,
+      "commentCount": 6
     }
   ]
 }

@@ -284,7 +284,7 @@
 
     var w = canvas.clientWidth;
     var h = canvas.clientHeight;
-    var pad = { top: 10, bottom: 20, left: 0, right: 0 };
+    var pad = { top: 10, bottom: 20, left: 30, right: 0 };
 
     if (!history || history.length < 2) {
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--color-text-soft").trim() || "#3a3a50";
@@ -320,6 +320,25 @@
       var y2 = pad.top + drawH - ((z.y + z.h) / 10) * drawH;
       ctx.fillStyle = z.color;
       ctx.fillRect(pad.left, y2, drawW, y1 - y2);
+    });
+
+    // Draw Y-axis ticks and grid lines
+    var axisColor = getComputedStyle(document.documentElement).getPropertyValue("--color-text-soft").trim() || "#6a6a80";
+    ctx.fillStyle = axisColor;
+    ctx.strokeStyle = axisColor;
+    ctx.font = "10px Inter, sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    [0, 2, 4, 6, 8, 10].forEach(function (v) {
+      var y = pad.top + drawH - (v / 10) * drawH;
+      ctx.fillText(v, pad.left - 6, y);
+      ctx.beginPath();
+      ctx.globalAlpha = 0.15;
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(pad.left + drawW, y);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
     });
 
     // Draw line

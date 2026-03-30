@@ -16,6 +16,21 @@ Real-time dashboard tracking Claude AI outage and degradation sentiment by combi
 
 Note: Reddit API access was requested and rejected. Bluesky provides similar developer chatter signal with a free, open API.
 
+## Bluesky Post Filtering (Human-Level Analysis)
+
+Posts go through a multi-layer filter to avoid red herrings:
+
+1. **AI context gate**: Posts mentioning "claude" (without "anthropic") must also contain AI context words (api, llm, sonnet, opus, etc.) to filter out people named Claude
+2. **Exclusion layer**: Posts matching false-positive patterns are rejected immediately:
+   - Past tense / historical ("was down", "remember when", "last week")
+   - Positive sentiment ("fixed the bug", "works great", "love claude")
+   - Dependency humor / memes ("addicted", "withdrawal", "forgot how to code")
+   - Competitive switching ("switched to", "gave up on") — opinion, not outage
+   - Generic hot takes ("worse than", "sucks", "terrible")
+3. **Signal strength**: Two tiers of complaint signals, checked within 80 chars of "claude"/"anthropic":
+   - **Strong** (counts alone): "is down", "outage", "not working", "stopped working", "keeps crashing", HTTP errors, etc.
+   - **Weak** (needs corroboration): "rate limit", "so slow", "broken", "bug" — must have 2+ distinct weak signals OR explicit frustration emoji/language (wtf, ugh, 😡, etc.)
+
 ## Misery Index Calculation (0-10)
 
 - Status page indicator: none=0, minor=+2, major=+4, critical=+6

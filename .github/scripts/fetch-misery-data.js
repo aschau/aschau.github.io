@@ -9,28 +9,16 @@ const DATA_FILE = path.join(__dirname, "../../tools/misery-index/data/current.js
 const MAX_HISTORY = 672; // 7 days at 15-min intervals
 const USER_AGENT = "MiseryIndex/1.0 (https://raggedydoc.com/misery)";
 
-// Complaint keywords for filtering posts
-const COMPLAINT_KEYWORDS = [
-  "down", "outage", "error", "broken", "not working", "overloaded",
-  "slow", "500", "unavailable", "rate limit", "token limit",
-  "nerfed", "degraded", "worse", "unusable", "usage limit",
-  "message limit", "throttl", "capped"
-];
-
-// Search queries for Bluesky — focused on complaints, not general discussion
+// Search queries for Bluesky — focused on active outage/degradation, not general discussion
 const SEARCH_QUERIES = [
   "claude is down", "claude outage", "claude not working",
   "claude broken", "claude rate limit", "claude usage limit",
   "claude overloaded", "claude unusable", "anthropic outage",
-  "claude down again", "claude so slow", "claude bug",
-  "claude limit", "claude frustrat", "can't use claude",
-  "claude keeps", "claude won't", "gave up on claude",
-  "switched from claude", "claude sucks", "claude worse",
-  "#claudedown", "#claudeai outage", "#claudeai limit",
-  "#claudeai down", "#anthropic outage",
-  "#claude down", "#claude limit", "#claude bug",
-  "@anthropic.com down", "@anthropic.com outage",
-  "@anthropic.com limit", "@anthropic.com broken"
+  "claude down again", "claude so slow", "can't use claude",
+  "claude keeps crashing", "claude keeps failing",
+  "#claudedown", "#claudeai outage", "#claudeai down",
+  "#anthropic outage",
+  "@anthropic.com down", "@anthropic.com outage"
 ];
 
 // ── Bluesky API (authenticated) ──────────────────────────────
@@ -134,33 +122,83 @@ async function searchBluesky() {
         if (!hasContext) return;
       }
 
-      // Must express a complaint, outage, or dependency sentiment — strict matching
-      var COMPLAINT_SIGNALS = [
+      // ── Outage/degradation signals (strong — actively experiencing a problem NOW) ──
+      var STRONG_SIGNALS = [
         "is down", "went down", "goes down", "going down",
-        "outage", "broken", "not working", "unusable", "unavailable",
-        "rate limit", "token limit", "usage limit", "message limit", "limit reached",
-        "hit the limit", "hit my limit", "out of messages", "throttl", "capped",
-        "overloaded", "nerfed", "degraded", "bug", "buggy",
+        "outage", "not working", "unavailable",
         "can't use", "cant use", "won't work", "doesn't work", "stopped working",
-        "keeps crashing", "keeps failing", "keeps breaking",
-        "frustrated", "annoying", "painful", "miserable", "suffering", "struggling",
-        "sucks", "worse", "terrible", "garbage", "useless",
-        "dependent", "dependency", "addicted", "withdrawal", "lost without",
-        "forgot how", "can't code", "cant code", "without claude",
-        "gave up", "switched to", "switching to", "going back to",
-        "come back", "please fix", "is it just me"
+        "keeps crashing", "keeps failing",
+        "overloaded", "500 error", "502", "503", "504",
+        "please fix", "is it just me"
       ];
-      // Complaint signal must appear within 100 chars of "claude" or "anthropic"
-      var hasComplaint = COMPLAINT_SIGNALS.some(function (w) {
+
+      // ── Degradation signals (weaker — could be normal grumbling, needs backup) ──
+      var WEAK_SIGNALS = [
+        "rate limit", "token limit", "usage limit", "message limit",
+        "limit reached", "hit the limit", "hit my limit", "out of messages",
+        "throttl", "capped", "degraded", "so slow", "unusable", "broken",
+        "nerfed", "bug", "buggy"
+      ];
+
+      // ── False-positive exclusions — skip posts matching these patterns ──
+      var EXCLUSIONS = [
+        // Past tense / historical — not about a current issue
+        "was down", "were down", "was broken", "was unusable",
+        "remember when", "last week", "last month", "yesterday",
+        "used to be", "months ago", "back when",
+        // Positive sentiment that happens to contain complaint words
+        "fixed the bug", "fixed a bug", "found the bug", "helped me",
+        "love claude", "claude is great", "claude is amazing",
+        "impressed", "works great", "working great", "working well",
+        "back up", "is back", "working again", "resolved",
+        // Dependency humor / memes (not actual complaints about current issues)
+        "addicted", "withdrawal", "forgot how to code", "lost without",
+        "can't code without", "dependent on", "dependency on",
+        // Competitive switching (opinion, not outage)
+        "switched to", "switching to", "going back to", "gave up on",
+        "switched from", "moved to",
+        // Generic hot takes / opinion pieces
+        "worse than", "better than", "compared to",
+        "sucks", "terrible", "garbage", "useless"
+      ];
+
+      // Check exclusions first — if any match near "claude", skip this post
+      var isExcluded = EXCLUSIONS.some(function (w) {
         var idx = text.indexOf(w);
         while (idx !== -1) {
-          var nearby = text.substring(Math.max(0, idx - 100), idx + w.length + 100);
+          var nearby = text.substring(Math.max(0, idx - 60), idx + w.length + 60);
           if (nearby.includes("claude") || nearby.includes("anthropic")) return true;
           idx = text.indexOf(w, idx + 1);
         }
         return false;
       });
-      if (!hasComplaint) return;
+      if (isExcluded) return;
+
+      // Check for strong signal within 80 chars of "claude" or "anthropic"
+      function hasSignalNearby(signals, radius) {
+        return signals.some(function (w) {
+          var idx = text.indexOf(w);
+          while (idx !== -1) {
+            var nearby = text.substring(Math.max(0, idx - radius), idx + w.length + radius);
+            if (nearby.includes("claude") || nearby.includes("anthropic")) return true;
+            idx = text.indexOf(w, idx + 1);
+          }
+          return false;
+        });
+      }
+
+      var hasStrong = hasSignalNearby(STRONG_SIGNALS, 80);
+      var hasWeak = hasSignalNearby(WEAK_SIGNALS, 80);
+
+      // Strong signal alone is enough. Weak signal needs at least 2 weak signals
+      // or 1 weak signal + explicit frustration language to count.
+      if (!hasStrong) {
+        if (!hasWeak) return;
+        // Count how many distinct weak signals appear
+        var weakCount = WEAK_SIGNALS.filter(function (w) { return text.includes(w); }).length;
+        var hasFrustration = /\b(wtf|omg|ugh|smh|seriously|annoying|frustrat|painful|😡|🤬|💀)\b/i.test(text);
+        if (weakCount < 2 && !hasFrustration) return;
+      }
 
       allPosts.push({
         title: truncateText(post.record?.text || "", 120),

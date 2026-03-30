@@ -694,6 +694,7 @@ body {
   font-size: 0.65rem;
   color: var(--color-text-soft);
   margin-top: 0.3rem;
+  padding-left: 30px;
 }
 
 /* ── Footer ──────────────────────────────────────────────── */

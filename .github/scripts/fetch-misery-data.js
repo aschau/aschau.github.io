@@ -266,17 +266,17 @@ function calculateMisery(statusData, postCount, commentCount) {
   }
 
   // Social post volume contribution (0-4)
-  if (postCount >= 20) score += 4;
-  else if (postCount >= 10) score += 3;
-  else if (postCount >= 5) score += 2;
-  else if (postCount >= 2) score += 1;
+  if (postCount >= 50) score += 4;
+  else if (postCount >= 30) score += 3;
+  else if (postCount >= 15) score += 2;
+  else if (postCount >= 5) score += 1;
   else if (postCount >= 1) score += 0.5;
 
   // Comment/reply volume as amplifier (0-2)
-  if (commentCount >= 100) score += 2;
-  else if (commentCount >= 50) score += 1.5;
-  else if (commentCount >= 20) score += 1;
-  else if (commentCount >= 5) score += 0.5;
+  if (commentCount >= 150) score += 2;
+  else if (commentCount >= 75) score += 1.5;
+  else if (commentCount >= 30) score += 1;
+  else if (commentCount >= 10) score += 0.5;
 
   return Math.min(Math.round(score * 10) / 10, 10);
 }

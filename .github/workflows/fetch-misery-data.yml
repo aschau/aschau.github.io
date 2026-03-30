@@ -38,7 +38,7 @@ jobs:
           POSTS=$(python3 -c "import json; d=json.load(open('tools/misery-index/data/current.json')); print(d.get('social',{}).get('recentPosts',0))" 2>/dev/null || echo "0")
           STATUS=$(python3 -c "import json; d=json.load(open('tools/misery-index/data/current.json')); print(d.get('status',{}).get('status',{}).get('indicator','unknown'))" 2>/dev/null || echo "unknown")
           if [ "$POSTS" = "0" ] && [ "$STATUS" = "unknown" ]; then
-            echo "Both Reddit and status fetches failed — skipping push"
+            echo "Both Bluesky and status fetches failed — skipping push"
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"

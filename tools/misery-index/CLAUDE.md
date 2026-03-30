@@ -20,8 +20,8 @@ Note: Reddit API access was requested and rejected. Bluesky provides similar dev
 
 - Status page indicator: none=0, minor=+2, major=+4, critical=+6
 - Degraded components: +0.5 each (max +2)
-- Social posts (24h): 1=+0.5, 2-4=+1, 5-9=+2, 10-19=+3, 20+=+4
-- Reply volume: 5-19=+0.5, 20-49=+1, 50-99=+1.5, 100+=+2
+- Social posts (24h): 1-4=+0.5, 5-14=+1, 15-29=+2, 30-49=+3, 50+=+4
+- Reply volume: 10-29=+0.5, 30-74=+1, 75-149=+1.5, 150+=+2
 
 ## Misery Levels
 

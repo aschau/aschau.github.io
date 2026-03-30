@@ -75,7 +75,7 @@
       "Scattered reports. Developers are starting to remember that Stack Overflow exists."
     ],
     moderate: [
-      "The subreddit is heating up. Developers are realizing how dependent they've become.",
+      "The timeline is heating up. Developers are realizing how dependent they've become.",
       "Multiple developers spotted opening a competitor's tab. The betrayal arc begins.",
       "Productivity is plummeting. Turns out the AI was doing more heavy lifting than anyone admitted.",
       "Developers worldwide are having an existential crisis about their own coding abilities."

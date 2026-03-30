@@ -7,7 +7,9 @@ const path = require("path");
 
 const DATA_FILE = path.join(__dirname, "../../tools/misery-index/data/current.json");
 const MAX_HISTORY = 672; // 7 days at 15-min intervals
-const USER_AGENT = "MiseryIndex/1.0 (https://aschau.github.io/tools/misery-index/)";
+// Reddit requires a descriptive User-Agent following their bot format, otherwise
+// it returns 403 from cloud IPs (GitHub Actions, AWS, etc.)
+const USER_AGENT = "web:misery-index:v1.0 (by /u/RaggedyDocTV)";
 
 // Complaint keywords for filtering subreddit posts
 const COMPLAINT_KEYWORDS = [

@@ -2065,23 +2065,23 @@
     function restoreSolution() {
         // Try in-memory winningSolution first, then localStorage, then solutionOrder
         var solution = winningSolution;
-        if (!solution || solution.length !== movableTokens.length) {
+        if (!isValidArrangement(solution)) {
             // Fallback: reload from localStorage
             var data = loadData();
             var today = archiveMode ? loadArchiveState() : (data.today || {});
-            if (today.winningSolution && today.winningSolution.length === movableTokens.length) {
+            if (isValidArrangement(today.winningSolution)) {
                 solution = today.winningSolution;
                 winningSolution = solution;
             }
         }
-        if (!solution || solution.length !== movableTokens.length) {
+        if (!isValidArrangement(solution)) {
             // Last resort: use the solution order from puzzle data
             if (solutionOrder && solutionOrder.length === movableTokens.length) {
                 solution = solutionOrder;
                 winningSolution = solution;
             }
         }
-        if (!solution || solution.length !== movableTokens.length) return;
+        if (!isValidArrangement(solution)) return;
 
         for (var i = 0; i < movableTokens.length; i++) {
             movableTokens[i].t = solution[i];
@@ -2180,25 +2180,38 @@
         return {};
     }
 
+    function isValidArrangement(arr) {
+        if (!arr || arr.length !== movableTokens.length) return false;
+        // Verify the arrangement is a permutation of solutionOrder (same token pool)
+        var expected = solutionOrder.slice().sort();
+        var actual = arr.slice().sort();
+        for (var i = 0; i < expected.length; i++) {
+            if (expected[i] !== actual[i]) return false;
+        }
+        return true;
+    }
+
     function restoreState() {
         if (debugMode) return false; // Don't restore in debug mode
         if (archiveMode) return restoreArchiveState();
 
         var data = loadData();
         if (!data.today || data.today.date !== getTodayKey()) return false;
+        // Verify saved state is for the current puzzle (guards against stale data)
+        if (data.today.puzzleNumber && data.today.puzzleNumber !== puzzleNumber) return false;
 
         // If already solved today, restore the winning solution so state can't be reset by revisiting
         var arrangementToRestore = data.today.everSolved && data.today.winningSolution
             ? data.today.winningSolution
             : data.today.arrangement;
 
-        if (arrangementToRestore && arrangementToRestore.length === movableTokens.length) {
-            for (var i = 0; i < movableTokens.length; i++) {
-                movableTokens[i].t = arrangementToRestore[i];
-            }
+        if (!isValidArrangement(arrangementToRestore)) return false;
+
+        for (var i = 0; i < movableTokens.length; i++) {
+            movableTokens[i].t = arrangementToRestore[i];
         }
 
-        if (data.today.initialScramble) {
+        if (data.today.initialScramble && isValidArrangement(data.today.initialScramble)) {
             initialScramble = data.today.initialScramble;
         }
 
@@ -2215,19 +2228,19 @@
 
     function restoreArchiveState() {
         var state = loadArchiveState();
-        if (!state.puzzleNumber) return false;
+        if (!state.puzzleNumber || state.puzzleNumber !== archivePuzzleNumber) return false;
 
         var arrangementToRestore = state.everSolved && state.winningSolution
             ? state.winningSolution
             : state.arrangement;
 
-        if (arrangementToRestore && arrangementToRestore.length === movableTokens.length) {
-            for (var i = 0; i < movableTokens.length; i++) {
-                movableTokens[i].t = arrangementToRestore[i];
-            }
+        if (!isValidArrangement(arrangementToRestore)) return false;
+
+        for (var i = 0; i < movableTokens.length; i++) {
+            movableTokens[i].t = arrangementToRestore[i];
         }
 
-        if (state.initialScramble) {
+        if (state.initialScramble && isValidArrangement(state.initialScramble)) {
             initialScramble = state.initialScramble;
         }
 

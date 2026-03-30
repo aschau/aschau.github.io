@@ -100,6 +100,13 @@ Total comments across complaint posts — measures depth of engagement, not just
 
 Each level has a pool of sarcastic commentary strings that rotate randomly on each page load.
 
+### Time Range Toggle
+A global toggle (24h / 3d / 7d) in the timeline section filters time-sensitive sections:
+- **Chart**: shows history for the selected window
+- **Incidents**: filters by `createdAt` timestamp
+
+The misery score and Reddit data are always based on the last 24 hours (the Action's search window). The gauge shows "Based on the last 24 hours" to make this clear. The toggle only affects the historical context sections below it.
+
 ### Colorblind Safety
 The scale uses blue → yellow → orange → red → purple rather than the traditional green → red. Blue is clearly distinct from red/orange/yellow across all common forms of colorblindness (deuteranopia, protanopia, tritanopia). Text labels ("ALL CLEAR", "FULL MELTDOWN", etc.) provide redundant non-color differentiation.
 

@@ -48,6 +48,9 @@
   }
 
   var lastHistory = null;
+  var lastRedditData = null;
+  var lastIncidents = null;
+  var rangeHours = 24;
 
   // ── Misery levels ──────────────────────────────────────────
   var LEVELS = [
@@ -185,14 +188,23 @@
 
   function renderIncidents(incidents) {
     var list = document.getElementById("incidents-list");
+    var title = document.getElementById("incidents-title");
+    var rangeLabel = rangeHours <= 24 ? "24h" : rangeHours <= 72 ? "3 days" : "7 days";
+    if (title) title.textContent = "Recent Incidents (" + rangeLabel + ")";
 
-    if (!incidents || incidents.length === 0) {
-      list.innerHTML = '<div class="incidents-empty">No incidents in the last 3 days. Smooth sailing.</div>';
+    // Filter incidents to selected range
+    var cutoff = Date.now() - rangeHours * 60 * 60 * 1000;
+    var filtered = (incidents || []).filter(function (inc) {
+      return new Date(inc.createdAt || inc.created_at).getTime() >= cutoff;
+    });
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="incidents-empty">No incidents in the last ' + rangeLabel + '. Smooth sailing.</div>';
       return;
     }
 
     list.innerHTML = "";
-    incidents.forEach(function (inc) {
+    filtered.forEach(function (inc) {
       var el = document.createElement("div");
       el.className = "incident";
 
@@ -238,7 +250,7 @@
     commentCount.textContent = redditData.recentComments || 0;
 
     postsList.innerHTML = "";
-    if (redditData.topPosts) {
+    if (redditData.topPosts && redditData.topPosts.length > 0) {
       redditData.topPosts.slice(0, 8).forEach(function (post) {
         var el = document.createElement("div");
         el.className = "reddit-post";
@@ -284,9 +296,9 @@
       return;
     }
 
-    // 48h window
+    // Filter to selected time window
     var now = Date.now();
-    var cutoff = now - 48 * 60 * 60 * 1000;
+    var cutoff = now - rangeHours * 60 * 60 * 1000;
     var points = history.filter(function (p) { return new Date(p.timestamp).getTime() >= cutoff; });
     if (points.length < 2) points = history.slice(-10);
 
@@ -418,9 +430,12 @@
       var statusData = liveStatus || data.status || null;
       var incidents = liveIncidents || data.incidents || [];
 
+      lastRedditData = data.reddit || null;
+      lastIncidents = incidents;
+
       renderStatus(statusData);
-      renderReddit(data.reddit || null);
-      renderIncidents(incidents);
+      renderReddit(lastRedditData);
+      renderIncidents(lastIncidents);
       setMiseryLevel(data.miseryIndex != null ? data.miseryIndex : 0);
       renderHistory(data.history || []);
 
@@ -440,13 +455,28 @@
       ]
     };
 
+    lastRedditData = { recentPosts: 0, recentComments: 0, topPosts: [] };
+    lastIncidents = liveIncidents || [];
+
     renderStatus(statusData);
-    renderReddit({ recentPosts: 0, recentComments: 0, topPosts: [] });
-    renderIncidents(liveIncidents || []);
+    renderReddit(lastRedditData);
+    renderIncidents(lastIncidents);
     setMiseryLevel(0);
     renderHistory([]);
     document.getElementById("last-updated").textContent = "demo mode — set up GitHub Action for live data";
   }
+
+  // ── Global Time Range Toggle ────────────────────────────────
+  var timeRangeBtns = document.querySelectorAll(".time-range-btn");
+  timeRangeBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      timeRangeBtns.forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      rangeHours = parseInt(btn.getAttribute("data-hours"), 10);
+      if (lastHistory) renderHistory(lastHistory);
+      if (lastIncidents) renderIncidents(lastIncidents);
+    });
+  });
 
   // ── Init ───────────────────────────────────────────────────
   initTheme();

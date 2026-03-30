@@ -197,9 +197,7 @@ body {
   transition: color 0.8s, text-shadow 0.8s;
 }
 
-@media (max-width: 480px) {
-  .title-line { display: block; }
-}
+.title-line { display: block; }
 
 .site-subtitle {
   font-size: 0.85rem;
@@ -300,6 +298,39 @@ body {
   border-radius: 2px;
   background: linear-gradient(90deg, var(--calm), var(--mild), var(--moderate), var(--severe), var(--apocalypse));
   opacity: 0.5;
+}
+
+.gauge-window {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-text-soft);
+  margin-top: 0.5rem;
+  letter-spacing: 0.03em;
+}
+
+.time-range-btn {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--color-text-soft);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.time-range-btn:hover {
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+}
+
+.time-range-btn.active {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
 }
 
 /* ── Cards ────────────────────────────────────────────────── */
@@ -498,6 +529,31 @@ body {
   vertical-align: middle;
 }
 
+/* ── Timeline Controls ────────────────────────────────────── */
+.timeline-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.timeline-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  line-height: 1;
+}
+
+.time-range-toggle {
+  display: flex;
+  gap: 0.25rem;
+  line-height: 1;
+}
+
 /* ── Incidents ────────────────────────────────────────────── */
 .incidents-card {
   margin-bottom: 1.5rem;
@@ -623,6 +679,7 @@ body {
 .history-card {
   margin-bottom: 1.5rem;
 }
+
 
 #history-chart {
   width: 100%;

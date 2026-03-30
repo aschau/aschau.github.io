@@ -74,6 +74,7 @@
         <span class="scale-bar"></span>
         <span>10</span>
       </div>
+      <div class="gauge-window">Based on the last 24 hours</div>
     </section>
 
     <!-- Status Cards -->
@@ -110,10 +111,20 @@
       </section>
     </div>
 
+    <!-- Timeline Controls -->
+    <div class="timeline-controls">
+      <span class="timeline-label">Timeline</span>
+      <div class="time-range-toggle" id="time-range-toggle">
+        <button class="time-range-btn active" data-hours="24">24h</button>
+        <button class="time-range-btn" data-hours="72">3d</button>
+        <button class="time-range-btn" data-hours="168">7d</button>
+      </div>
+    </div>
+
     <!-- Recent Incidents -->
     <section class="card incidents-card" id="incidents-card">
       <h2 class="card-title">
-        <a href="https://status.claude.com" target="_blank" rel="noopener noreferrer" class="card-title-link">Recent Incidents (3 days)</a>
+        <a href="https://status.claude.com" target="_blank" rel="noopener noreferrer" class="card-title-link" id="incidents-title">Recent Incidents (24h)</a>
       </h2>
       <div class="incidents-list" id="incidents-list">
         <div class="incidents-empty">Loading...</div>
@@ -127,7 +138,7 @@
 
     <!-- History Chart -->
     <section class="card history-card">
-      <h2 class="card-title">Misery Over Time (48h)</h2>
+      <h2 class="card-title">Misery Over Time</h2>
       <canvas id="history-chart" height="120"></canvas>
       <div class="chart-labels">
         <span id="chart-label-start">--</span>

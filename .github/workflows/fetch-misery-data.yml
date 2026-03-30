@@ -29,15 +29,26 @@ jobs:
       - name: Fetch misery data
         run: node .github/scripts/fetch-misery-data.js
 
+      - name: Validate data before pushing
+        id: validate
+        run: |
+          POSTS=$(python3 -c "import json; d=json.load(open('tools/misery-index/data/current.json')); print(d['reddit']['recentPosts'])" 2>/dev/null || echo "0")
+          STATUS=$(python3 -c "import json; d=json.load(open('tools/misery-index/data/current.json')); print(d.get('status',{}).get('status',{}).get('indicator','unknown'))" 2>/dev/null || echo "unknown")
+          if [ "$POSTS" = "0" ] && [ "$STATUS" = "unknown" ]; then
+            echo "Both Reddit and status fetches failed — skipping push"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Push to data branch
+        if: steps.validate.outputs.skip != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Save the data file
           cp tools/misery-index/data/current.json /tmp/current.json
 
-          # Create orphan branch with only the data file
           git checkout --orphan misery-data
           git rm -rf .
           cp /tmp/current.json current.json

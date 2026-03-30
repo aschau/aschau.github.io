@@ -46,6 +46,7 @@
     let selectedMirrorType = 'fwd';
     let winningSolution = null;  // saved board state from first solve
     let firstSolveScore = null;  // piece count from first solve (for sharing)
+    let pendingWinModal = false; // true while win modal delay is active (blocks placement)
 
     // --- DOM refs ---
     const gridContainer = document.getElementById('grid-container');
@@ -565,7 +566,8 @@
             updateButtons();
 
             if (!wasSolved) {
-                setTimeout(function () { showWinModal(); }, 600);
+                pendingWinModal = true;
+                setTimeout(function () { pendingWinModal = false; showWinModal(); }, 600);
             }
         }
     }
@@ -892,6 +894,7 @@
     }
 
     function placePiece(r, c) {
+        if (pendingWinModal) return;
         let type = selectedMirrorType;
         var ik = invKey(type);
         if (inventory[ik] <= 0) {
@@ -917,6 +920,7 @@
     }
 
     function rotatePiece(r, c) {
+        if (pendingWinModal) return;
         const oldType = grid[r][c];
         var newType;
 
@@ -945,6 +949,7 @@
     }
 
     function removePiece(r, c) {
+        if (pendingWinModal) return;
         if (!isPiece(grid[r][c])) return;
         if (fixedCells.has(r + ',' + c)) return;
 
@@ -962,6 +967,7 @@
     }
 
     function undo() {
+        if (pendingWinModal) return;
         if (moveHistory.length === 0) return;
         solved = false;
         const move = moveHistory.pop();

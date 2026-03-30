@@ -20,7 +20,7 @@ Run: `python generate.py --regenerate-future [seed]`. Keeps served puzzles (date
 Run: `python generate.py --regenerate-future --all [seed]`. Regenerates ALL puzzles (ignores served cutoff).
 - Walls-first approach: place walls → pick source → build beam path via backtracking → target = beam exit
 - Solver finds minimum pieces, sets par = min + 1
-- 1-2 mirrors selected as fixed pieces. Gem placed adjacent to beam path (must be optional).
+- 1 mirror selected as fixed in hard mode; 1-2 in expert mode. Gem placed adjacent to beam path (must be optional).
 - **Fixed piece constraint**: fixed pieces alone must NOT route the beam to any target. Each mirror is individually tested for safety before selection. This prevents trivially easy puzzles where the player only needs 1-2 placements.
 - **Quality filters**: after solving, puzzles are rejected if they have too many distinct solutions (`max_solutions`) or too few solver backtrack nodes (`min_nodes`). This ensures puzzles are hard to stumble into and require real thought.
 - **More walls = harder puzzles**: walls block shortcut solutions the solver would otherwise find. Hard uses 4-7 walls, expert uses 4-6 walls.
@@ -37,5 +37,8 @@ Run: `python validate.py`. Uses multiprocessing for fast validation (~1s for 365
 - 💎 only shown if gem was collected on the (only) solve attempt
 
 ## Persistence
-`localStorage` key `beamlab_data`: board state, bestScore, firstSolveScore, gemEverCollected, winningSolution, stats, streaks. After first solve, board stays interactive for replay — score/stats frozen to first solve. `firstSolveScore` variable (like Parsed's `firstSolveSwaps`) holds exact piece count from first solve for sharing, avoiding stale `countPiecesUsed()` fallback. "Restore" button appears to snap back to winning arrangement.
+`localStorage` key `beamlab_data`: board state, bestScore, firstSolveScore, gemEverCollected, winningSolution, stats, streaks. After first solve, board stays interactive for replay — score/stats frozen to first solve. `firstSolveScore` variable (like Parsed's `firstSolveSwaps`) holds exact piece count from first solve for sharing, avoiding stale `countPiecesUsed()` fallback. "Restore" button appears to snap back to winning arrangement (with localStorage fallback if in-memory `winningSolution` is lost on page reload).
 Theme in `beamlab_theme`. Username in `beamlab_username`.
+
+## Win Animation Guard
+A `pendingWinModal` flag blocks all board modifications (place, rotate, remove, undo) during the 600ms delay between solving and the win modal appearing. This prevents the user from placing extra pieces before seeing their score, which would cause a mismatch between the gameplay piece counter (showing current state) and the win modal (showing frozen first-solve score).

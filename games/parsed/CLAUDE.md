@@ -54,6 +54,15 @@ Run: `python verify_puzzles.py`. Checks: structural validity, interpreter execut
 - Theme emoji extracted from shareResult (spoiler-free — answer values stripped)
 - Score labels: Genius (-3), Hacker (-2), Optimized (-1), Compiled (0), Verbose (+1), Spaghetti (+2+)
 
+## Archive
+- Archive modal lists all past puzzles with emoji + solved checkmarks. Today's cell links to `./`.
+- URL param `?day=N` loads puzzle N as an archive puzzle (1-based, must be < today's number).
+- Archive state stored separately: `parsed_archive_N` per puzzle, `parsed_archive_solved` index.
+- "Back to today's puzzle" banner shown in archive mode, links to `./` (full page reload).
+
 ## Persistence
 `localStorage` key `parsed_data`: board state, winningSolution, firstSolveSwaps, stats, streaks. `SAVE_VERSION` = 4 — bump when format changes. After first solve, board stays interactive for replay — score/stats frozen to first solve. "Restore" button appears to snap back to winning arrangement.
 Theme in `parsed_theme`. Username in `parsed_username`. Auto-run toggle in `parsed_autorun`.
+
+## State Restore Validation
+On restore, arrangements are validated with `isValidArrangement()`: checks array length matches movable token count AND that values are a valid permutation of `solutionOrder`. Both `restoreState()` and `restoreArchiveState()` also verify stored `puzzleNumber` matches the currently loaded puzzle. Invalid state falls back to a fresh scramble.

@@ -1,8 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <rect width="32" height="32" rx="6" fill="#0d1117"/>
-  <text x="4" y="22" font-family="monospace" font-size="20" font-weight="bold" fill="#2ea043">{</text>
-  <text x="18" y="22" font-family="monospace" font-size="20" font-weight="bold" fill="#2ea043">}</text>
-  <path d="M13 10l6 0" stroke="#58a6ff" stroke-width="2" stroke-linecap="round"/>
-  <path d="M10.5 12.5l-2 2 2 2" stroke="#58a6ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <path d="M21.5 12.5l2 2-2 2" stroke="#58a6ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Left brace as path for consistency -->
+  <path d="M10 7 Q7 7 7 10 L7 13.5 Q7 16 5 16 Q7 16 7 18.5 L7 22 Q7 25 10 25" fill="none" stroke="#2ea043" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Right brace -->
+  <path d="M22 7 Q25 7 25 10 L25 13.5 Q25 16 27 16 Q25 16 25 18.5 L25 22 Q25 25 22 25" fill="none" stroke="#2ea043" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Swap arrows -->
+  <path d="M13 13 L19 13" stroke="#58a6ff" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M17 11 L19 13 L17 15" fill="none" stroke="#58a6ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M19 19 L13 19" stroke="#58a6ff" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M15 17 L13 19 L15 21" fill="none" stroke="#58a6ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

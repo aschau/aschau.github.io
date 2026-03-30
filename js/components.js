@@ -19,7 +19,8 @@
       { href: "games/parsed/index.html", label: "Parsed", desc: "Daily code puzzle" }
     ]},
     { label: "Tools", dropdown: [
-      { href: "tools/snaplayout/index.html", label: "SnapLayout", desc: "Room layout planner" }
+      { href: "tools/snaplayout/index.html", label: "SnapLayout", desc: "Room layout planner" },
+      { href: "tools/misery-index/index.html", label: "Misery Index", desc: "Claude developer misery tracker" }
     ]}
   ];
 

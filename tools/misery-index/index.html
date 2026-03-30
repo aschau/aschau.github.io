@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Developer Misery Index | Outage Tracker</title>
+  <meta name="description" content="Real-time Claude Developer Misery Index tracking Claude AI outages via Reddit complaints and official status data.">
+  <meta name="keywords" content="Claude, AI, outage, status, developer, misery index, Anthropic">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://aschau.github.io/tools/misery-index/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Claude Developer Misery Index">
+  <meta property="og:description" content="How miserable are Claude developers right now? Real-time outage sentiment tracker.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aschau.github.io/tools/misery-index/">
+  <meta property="og:image" content="https://aschau.github.io/tools/misery-index/og-image.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Claude Developer Misery Index">
+  <meta name="twitter:description" content="How miserable are Claude developers right now? Real-time outage sentiment tracker.">
+  <meta name="twitter:image" content="https://aschau.github.io/tools/misery-index/og-image.png">
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Claude Developer Misery Index",
+    "description": "Real-time Claude Developer Misery Index tracking Claude AI outages via Reddit complaints and official status data.",
+    "url": "https://aschau.github.io/tools/misery-index/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0" }
+  }
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="scanlines"></div>
+
+  <header class="header">
+    <div class="header-buttons">
+      <a href="about.html" class="icon-btn about-btn" aria-label="How it works">?</a>
+      <button class="icon-btn" id="theme-btn" aria-label="Toggle theme">&#9790;</button>
+    </div>
+    <div class="header-inner">
+      <h1 class="site-title"><span class="title-line">CLAUDE DEVELOPER</span> <span class="title-line">MISERY INDEX</span></h1>
+      <p class="site-subtitle">The AI dependency thermometer</p>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Big Gauge -->
+    <section class="gauge-section">
+      <div class="gauge-container">
+        <svg class="gauge-ring" viewBox="0 0 200 200">
+          <circle class="gauge-bg" cx="100" cy="100" r="88" />
+          <circle class="gauge-fill" cx="100" cy="100" r="88" />
+        </svg>
+        <div class="gauge-inner">
+          <div class="gauge-value" id="gauge-value">--</div>
+          <div class="gauge-label" id="gauge-label">LOADING</div>
+        </div>
+      </div>
+      <div class="gauge-scale">
+        <span>0</span>
+        <span class="scale-bar"></span>
+        <span>10</span>
+      </div>
+    </section>
+
+    <!-- Status Cards -->
+    <div class="cards">
+      <!-- Official Status -->
+      <section class="card" id="status-card">
+        <h2 class="card-title">
+          <span class="status-dot" id="status-dot"></span>
+          <a href="https://status.claude.com" target="_blank" rel="noopener noreferrer" class="card-title-link">Official Status</a>
+        </h2>
+        <div class="status-description" id="status-description">Checking...</div>
+        <div class="status-components" id="status-components"></div>
+      </section>
+
+      <!-- Reddit Sentiment -->
+      <section class="card" id="reddit-card">
+        <h2 class="card-title">
+          <svg class="reddit-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
+          </svg>
+          <a href="https://reddit.com/r/ClaudeAI" target="_blank" rel="noopener noreferrer" class="card-title-link">Reddit Chatter</a>
+        </h2>
+        <div class="reddit-stats">
+          <div class="reddit-stat">
+            <span class="reddit-stat-value" id="reddit-post-count">--</span>
+            <span class="reddit-stat-label">posts (24h)</span>
+          </div>
+          <div class="reddit-stat">
+            <span class="reddit-stat-value" id="reddit-comment-count">--</span>
+            <span class="reddit-stat-label">comments (24h)</span>
+          </div>
+        </div>
+        <div class="reddit-posts" id="reddit-posts"></div>
+      </section>
+    </div>
+
+    <!-- Recent Incidents -->
+    <section class="card incidents-card" id="incidents-card">
+      <h2 class="card-title">
+        <a href="https://status.claude.com" target="_blank" rel="noopener noreferrer" class="card-title-link">Recent Incidents (3 days)</a>
+      </h2>
+      <div class="incidents-list" id="incidents-list">
+        <div class="incidents-empty">Loading...</div>
+      </div>
+    </section>
+
+    <!-- Commentary -->
+    <section class="commentary" id="commentary">
+      <p id="commentary-text">Analyzing developer suffering levels...</p>
+    </section>
+
+    <!-- History Chart -->
+    <section class="card history-card">
+      <h2 class="card-title">Misery Over Time (48h)</h2>
+      <canvas id="history-chart" height="120"></canvas>
+      <div class="chart-labels">
+        <span id="chart-label-start">--</span>
+        <span id="chart-label-end">Now</span>
+      </div>
+    </section>
+
+    <!-- Footer Info -->
+    <div class="info-footer">
+      <p>Data refreshed every 15 minutes via GitHub Actions.</p>
+      <p>Last updated: <span id="last-updated">--</span></p>
+      <p class="info-muted">Sources: <a href="https://status.claude.com" target="_blank" rel="noopener noreferrer">status.claude.com</a> &middot; <a href="https://reddit.com/r/ClaudeAI" target="_blank" rel="noopener noreferrer">r/ClaudeAI</a></p>
+    </div>
+
+    <div class="vibe-note">
+      <p>This dashboard was vibe coded with Claude — because of course it was. If something looks broken, feel free to <a href="https://reddit.com/r/ClaudeAI" target="_blank" rel="noopener noreferrer">complain on Reddit</a> and contribute to the very index you're reading. We're all in this codependent relationship together.</p>
+      <p>Actual bugs? <a href="https://github.com/aschau/aschau.github.io/issues" target="_blank" rel="noopener noreferrer">Let me know on GitHub.</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="https://aschau.github.io" target="_blank" rel="noopener noreferrer">Made by Andrew Chau</a>
+      <span class="footer-dot">&middot;</span>
+      <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee &#9749;</a>
+      <span class="footer-dot">&middot;</span>
+      <a href="https://github.com/aschau/aschau.github.io/issues" target="_blank" rel="noopener noreferrer">Report an issue</a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

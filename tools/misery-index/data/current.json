@@ -1,0 +1,257 @@
+{
+  "lastUpdated": "2026-03-30T12:44:41.706Z",
+  "miseryIndex": 4,
+  "status": {
+    "page": {
+      "id": "tymt9n04zgry",
+      "name": "Claude",
+      "url": "https://status.claude.com",
+      "time_zone": "Etc/UTC",
+      "updated_at": "2026-03-30T10:58:42.168Z"
+    },
+    "components": [
+      {
+        "id": "rwppv331jlwc",
+        "name": "claude.ai",
+        "status": "operational",
+        "created_at": "2023-07-11T17:52:24.275Z",
+        "updated_at": "2026-03-29T04:44:46.886Z",
+        "position": 1,
+        "description": null,
+        "showcase": true,
+        "start_date": "2023-07-11",
+        "group_id": null,
+        "page_id": "tymt9n04zgry",
+        "group": false,
+        "only_show_if_degraded": false
+      },
+      {
+        "id": "0qbwn08sd68x",
+        "name": "platform.claude.com (formerly console.anthropic.com)",
+        "status": "operational",
+        "created_at": "2023-07-11T17:52:49.982Z",
+        "updated_at": "2026-03-28T14:53:01.672Z",
+        "position": 2,
+        "description": null,
+        "showcase": true,
+        "start_date": "2023-07-11",
+        "group_id": null,
+        "page_id": "tymt9n04zgry",
+        "group": false,
+        "only_show_if_degraded": false
+      },
+      {
+        "id": "k8w3r06qmzrp",
+        "name": "Claude API (api.anthropic.com)",
+        "status": "operational",
+        "created_at": "2023-07-11T17:53:10.880Z",
+        "updated_at": "2026-03-28T14:53:01.688Z",
+        "position": 3,
+        "description": null,
+        "showcase": true,
+        "start_date": "2023-07-11",
+        "group_id": null,
+        "page_id": "tymt9n04zgry",
+        "group": false,
+        "only_show_if_degraded": false
+      },
+      {
+        "id": "yyzkbfz2thpt",
+        "name": "Claude Code",
+        "status": "operational",
+        "created_at": "2025-05-22T21:35:29.822Z",
+        "updated_at": "2026-03-28T14:53:01.704Z",
+        "position": 5,
+        "description": null,
+        "showcase": true,
+        "start_date": "2025-02-06",
+        "group_id": null,
+        "page_id": "tymt9n04zgry",
+        "group": false,
+        "only_show_if_degraded": false
+      },
+      {
+        "id": "0scnb50nvy53",
+        "name": "Claude for Government",
+        "status": "operational",
+        "created_at": "2026-02-17T23:24:51.249Z",
+        "updated_at": "2026-03-27T11:04:15.334Z",
+        "position": 6,
+        "description": null,
+        "showcase": true,
+        "start_date": "2026-02-17",
+        "group_id": null,
+        "page_id": "tymt9n04zgry",
+        "group": false,
+        "only_show_if_degraded": false
+      }
+    ],
+    "incidents": [],
+    "scheduled_maintenances": [],
+    "status": {
+      "indicator": "none",
+      "description": "All Systems Operational"
+    }
+  },
+  "reddit": {
+    "recentPosts": 6,
+    "recentComments": 373,
+    "topPosts": [
+      {
+        "title": "Claude Usage Limits Discussion Megathread Ongoing (sort this by New!)",
+        "subreddit": "ClaudeAI",
+        "score": 276,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1s7fcjf/claude_usage_limits_discussion_megathread_ongoing/",
+        "created": "2026-03-30T03:15:36.000Z",
+        "isMegathread": true
+      },
+      {
+        "title": "Claude Performance and Bugs Megathread Ongoing (Sort this by New!)",
+        "subreddit": "ClaudeAI",
+        "score": 2,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1s7f72l/claude_performance_and_bugs_megathread_ongoing/",
+        "created": "2026-03-30T03:07:59.000Z",
+        "isMegathread": true
+      },
+      {
+        "title": "How to stop hitting the Claude usage limit and work all day. These are the 8 secrets that will cut your Claude costs and token usage by as much as 90%",
+        "subreddit": "ThinkingDeeplyAI",
+        "score": 13,
+        "url": "https://reddit.com/r/ThinkingDeeplyAI/comments/1s7hhkc/how_to_stop_hitting_the_claude_usage_limit_and/",
+        "created": "2026-03-30T05:08:53.000Z",
+        "isMegathread": false
+      },
+      {
+        "title": "r/ClaudeAI List of Ongoing Megathreads",
+        "subreddit": "ClaudeAI",
+        "score": 6,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1s7fepn/rclaudeai_list_of_ongoing_megathreads/",
+        "created": "2026-03-30T03:18:44.000Z",
+        "isMegathread": false
+      },
+      {
+        "title": "Les haineux d'antigravity qui ne jurent que par Claude Code, vous êtes où ?",
+        "subreddit": "GoogleAntigravityIDE",
+        "score": 2,
+        "url": "https://reddit.com/r/GoogleAntigravityIDE/comments/1s7oc8l/les_haineux_dantigravity_qui_ne_jurent_que_par/",
+        "created": "2026-03-30T11:51:04.000Z",
+        "isMegathread": false
+      },
+      {
+        "title": "ClaudeWatch - tour Claude usage limits — one glance away in the menu bar",
+        "subreddit": "ClaudeAI",
+        "score": 1,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1s7lvdv/claudewatch_tour_claude_usage_limits_one_glance/",
+        "created": "2026-03-30T09:36:15.000Z",
+        "isMegathread": false
+      },
+      {
+        "title": "start collecting data on what your claude usage limits actually mean",
+        "subreddit": "ClaudeCode",
+        "score": 1,
+        "url": "https://reddit.com/r/ClaudeCode/comments/1s7ft31/start_collecting_data_on_what_your_claude_usage/",
+        "created": "2026-03-30T03:39:14.000Z",
+        "isMegathread": false
+      },
+      {
+        "title": "Claude è impossibile da usare",
+        "subreddit": "ClaudeAI",
+        "score": 0,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1s6xak5/claude_è_impossibile_da_usare/",
+        "created": "2026-03-29T14:57:57.000Z",
+        "isMegathread": false
+      }
+    ]
+  },
+  "incidents": [
+    {
+      "name": "Dispatch sessions not responding in Claude Desktop",
+      "status": "resolved",
+      "impact": "major",
+      "createdAt": "2026-03-29T00:53:21.503Z",
+      "updatedAt": "2026-03-29T04:44:46.932Z",
+      "url": "https://stspg.io/jvrqr2005k9r",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "The issue affecting Dispatch has been resolved. We fixed an underlying issue that prevent the agent from sending responses to user messages. Please update to Claude desktop app 1.1.9493. We apologize for any inconvenience caused.",
+          "createdAt": "2026-03-29T04:44:46.917Z"
+        },
+        {
+          "status": "identified",
+          "body": "We've identified an issue in the latest Claude Desktop release (Claude 1.1.9310) where Dispatch sessions stop responding. Messages sent to Dispatch are received and processed, but replies do not appear in the conversation. We have identified the cause and are working on a fix. As a workaround, you can continue using standard Cowork sessions, which are unaffected.",
+          "createdAt": "2026-03-29T00:53:21.624Z"
+        }
+      ]
+    },
+    {
+      "name": "Elevated errors on Opus 4.6 Fast Mode",
+      "status": "resolved",
+      "impact": "minor",
+      "createdAt": "2026-03-28T13:01:10.335Z",
+      "updatedAt": "2026-03-28T14:53:01.749Z",
+      "url": "https://stspg.io/9fjhg6m0v771",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-03-28T14:53:01.733Z"
+        },
+        {
+          "status": "monitoring",
+          "body": "A fix has been implemented and we are monitoring the results.",
+          "createdAt": "2026-03-28T13:55:19.120Z"
+        },
+        {
+          "status": "investigating",
+          "body": "We are currently investigating this issue.",
+          "createdAt": "2026-03-28T13:01:10.468Z"
+        }
+      ]
+    }
+  ],
+  "history": [
+    {
+      "timestamp": "2026-03-30T12:19:59.584Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 24
+    },
+    {
+      "timestamp": "2026-03-30T12:24:53.830Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 24
+    },
+    {
+      "timestamp": "2026-03-30T12:28:03.245Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 9,
+      "commentCount": 672
+    },
+    {
+      "timestamp": "2026-03-30T12:42:37.166Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 9,
+      "commentCount": 390
+    },
+    {
+      "timestamp": "2026-03-30T12:43:40.295Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 7,
+      "commentCount": 390
+    },
+    {
+      "timestamp": "2026-03-30T12:44:41.706Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 373
+    }
+  ]
+}

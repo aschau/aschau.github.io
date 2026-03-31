@@ -872,29 +872,7 @@ body.misery-apocalypse .gauge-container {
   75% { transform: translate(-1px, -1px); }
 }
 
-/* Pulsing background for apocalypse */
-body.misery-apocalypse {
-  animation: bg-pulse 2s ease-in-out infinite;
-}
-
-@keyframes bg-pulse {
-  0%, 100% { background: var(--color-bg-gradient); }
-  50% { background: linear-gradient(135deg, #12060f 0%, #1a0a1e 50%, #12060f 100%); }
-}
-
-html.light-theme body.misery-apocalypse,
-html:not(.dark-theme) body.misery-apocalypse {
-  animation: bg-pulse-light 2s ease-in-out infinite;
-}
-
-html.dark-theme body.misery-apocalypse {
-  animation: bg-pulse 2s ease-in-out infinite;
-}
-
-@keyframes bg-pulse-light {
-  0%, 100% { background: var(--color-bg-gradient); }
-  50% { background: linear-gradient(135deg, #f0e6f0 0%, #e8d8f0 50%, #f0e6f0 100%); }
-}
+/* Apocalypse — shake only, no pulsing background */
 
 /* Pulsing border glow on cards when severe+ */
 body.misery-severe .card,

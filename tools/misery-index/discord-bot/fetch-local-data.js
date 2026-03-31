@@ -221,22 +221,20 @@ async function main() {
       statusScore += Math.min(bad.length * 0.5, 2);
     }
   }
-  if (bskyPosts >= 50) bskyScore = 4;
-  else if (bskyPosts >= 30) bskyScore = 3;
-  else if (bskyPosts >= 15) bskyScore = 2;
-  else if (bskyPosts >= 5) bskyScore = 1;
-  else if (bskyPosts >= 1) bskyScore = 0.5;
-  if (bskyComments >= 150) bskyReplyScore = 2;
-  else if (bskyComments >= 75) bskyReplyScore = 1.5;
-  else if (bskyComments >= 30) bskyReplyScore = 1;
-  else if (bskyComments >= 10) bskyReplyScore = 0.5;
   var megathreads = redditPosts.filter(function (p) { return p.isMegathread; }).length;
   var effectiveReddit = redditPosts.length + (megathreads * 4);
-  if (effectiveReddit >= 20) redditScore = 3;
-  else if (effectiveReddit >= 10) redditScore = 2;
-  else if (effectiveReddit >= 5) redditScore = 1.5;
+  if (effectiveReddit >= 30) redditScore = 5;
+  else if (effectiveReddit >= 20) redditScore = 4;
+  else if (effectiveReddit >= 10) redditScore = 3;
+  else if (effectiveReddit >= 5) redditScore = 2;
   else if (effectiveReddit >= 3) redditScore = 1;
   else if (effectiveReddit >= 1) redditScore = 0.5;
+  if (bskyPosts >= 30) bskyScore = 2;
+  else if (bskyPosts >= 15) bskyScore = 1.5;
+  else if (bskyPosts >= 5) bskyScore = 1;
+  else if (bskyPosts >= 1) bskyScore = 0.5;
+  if (bskyComments >= 75) bskyReplyScore = 1;
+  else if (bskyComments >= 30) bskyReplyScore = 0.5;
 
   data.miseryIndex = Math.min(Math.round((statusScore + bskyScore + bskyReplyScore + redditScore) * 10) / 10, 10);
   data.breakdown = { status: statusScore, bluesky: bskyScore + bskyReplyScore, reddit: redditScore };

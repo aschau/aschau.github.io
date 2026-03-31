@@ -185,42 +185,42 @@
       <tr><td>+ per degraded component</td><td>+0.5 each (max +2)</td></tr>
     </table>
 
-    <p><strong>2. Reddit post volume (0–3 points)</strong></p>
+    <p><strong>2. Reddit (0–5 points) — primary social signal</strong></p>
+    <p class="formula-note">Active megathreads count as 5 posts each. Only counted if data is fresh (&lt;30 min).</p>
     <table class="formula-table">
-      <tr><th>Posts (24h)</th><th>Points</th></tr>
+      <tr><th>Effective posts</th><th>Points</th></tr>
       <tr><td>0</td><td>0</td></tr>
       <tr><td>1–2</td><td>+0.5</td></tr>
       <tr><td>3–4</td><td>+1</td></tr>
-      <tr><td>5–9</td><td>+1.5</td></tr>
-      <tr><td>10–19</td><td>+2</td></tr>
-      <tr><td>20+</td><td>+3</td></tr>
+      <tr><td>5–9</td><td>+2</td></tr>
+      <tr><td>10–19</td><td>+3</td></tr>
+      <tr><td>20–29</td><td>+4</td></tr>
+      <tr><td>30+</td><td>+5</td></tr>
     </table>
 
-    <p><strong>3. Bluesky post volume (0–4 points)</strong></p>
+    <p><strong>3. Bluesky post volume (0–2 points) — secondary signal</strong></p>
     <table class="formula-table">
       <tr><th>Posts (24h)</th><th>Points</th></tr>
       <tr><td>0</td><td>0</td></tr>
       <tr><td>1–4</td><td>+0.5</td></tr>
       <tr><td>5–14</td><td>+1</td></tr>
-      <tr><td>15–29</td><td>+2</td></tr>
-      <tr><td>30–49</td><td>+3</td></tr>
-      <tr><td>50+</td><td>+4</td></tr>
+      <tr><td>15–29</td><td>+1.5</td></tr>
+      <tr><td>30+</td><td>+2</td></tr>
     </table>
 
-    <p><strong>4. Bluesky reply amplifier (0–2 points)</strong></p>
+    <p><strong>4. Bluesky reply amplifier (0–1 point)</strong></p>
     <table class="formula-table">
-      <tr><th>Replies (24h)</th><th>Points</th></tr>
-      <tr><td>0–9</td><td>0</td></tr>
-      <tr><td>10–29</td><td>+0.5</td></tr>
-      <tr><td>30–74</td><td>+1</td></tr>
-      <tr><td>75–149</td><td>+1.5</td></tr>
-      <tr><td>150+</td><td>+2</td></tr>
+      <tr><th>Total replies</th><th>Points</th></tr>
+      <tr><td>0–29</td><td>0</td></tr>
+      <tr><td>30–74</td><td>+0.5</td></tr>
+      <tr><td>75+</td><td>+1</td></tr>
     </table>
 
     <p>
       The status page carries the most weight because confirmed outages are the most reliable signal.
-      Reddit is weighted higher than Bluesky because r/ClaudeAI is a focused developer community with
-      higher-quality signal. Bluesky provides broader coverage but is noisier.
+      Reddit is the primary social signal — r/ClaudeAI is a focused developer community where outage
+      discussion concentrates. Active megathreads with hundreds of comments are weighted heavily.
+      Bluesky provides supplementary coverage but with lower volume and more noise.
     </p>
 
     <h2>Misery levels</h2>

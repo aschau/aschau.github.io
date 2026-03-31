@@ -305,33 +305,30 @@ function calculateMisery(statusData, bskyPosts, bskyComments, redditData) {
     }
   }
 
-  // Bluesky post volume contribution (0-4)
-  if (bskyPosts >= 50) score += 4;
-  else if (bskyPosts >= 30) score += 3;
-  else if (bskyPosts >= 15) score += 2;
-  else if (bskyPosts >= 5) score += 1;
-  else if (bskyPosts >= 1) score += 0.5;
-
-  // Bluesky comment/reply volume as amplifier (0-2)
-  if (bskyComments >= 150) score += 2;
-  else if (bskyComments >= 75) score += 1.5;
-  else if (bskyComments >= 30) score += 1;
-  else if (bskyComments >= 10) score += 0.5;
-
-  // Reddit contribution — only if data is fresh (0-3)
+  // Reddit contribution — only if data is fresh (0-5, primary social signal)
   if (redditData && redditData.lastFetched) {
     var redditAge = Date.now() - new Date(redditData.lastFetched).getTime();
     if (redditAge < REDDIT_STALE_MS) {
-      // Count megathreads as 5 posts each for scoring
       var megathreads = (redditData.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
-      var rPosts = (redditData.recentPosts || 0) + (megathreads * 4); // each mega = 5 effective posts (1 real + 4 bonus)
-      if (rPosts >= 20) score += 3;
-      else if (rPosts >= 10) score += 2;
-      else if (rPosts >= 5) score += 1.5;
+      var rPosts = (redditData.recentPosts || 0) + (megathreads * 4);
+      if (rPosts >= 30) score += 5;
+      else if (rPosts >= 20) score += 4;
+      else if (rPosts >= 10) score += 3;
+      else if (rPosts >= 5) score += 2;
       else if (rPosts >= 3) score += 1;
       else if (rPosts >= 1) score += 0.5;
     }
   }
+
+  // Bluesky post volume (0-2, secondary signal)
+  if (bskyPosts >= 30) score += 2;
+  else if (bskyPosts >= 15) score += 1.5;
+  else if (bskyPosts >= 5) score += 1;
+  else if (bskyPosts >= 1) score += 0.5;
+
+  // Bluesky reply amplifier (0-1)
+  if (bskyComments >= 75) score += 1;
+  else if (bskyComments >= 30) score += 0.5;
 
   return Math.min(Math.round(score * 10) / 10, 10);
 }

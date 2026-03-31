@@ -143,6 +143,22 @@
     document.getElementById("commentary-text").textContent = pickRandom(COMMENTARY[level.key]);
   }
 
+  function renderBreakdown(breakdown) {
+    if (!breakdown) return;
+    var total = (breakdown.status || 0) + (breakdown.reddit || 0) + (breakdown.bluesky || 0);
+    var max = 10; // score is capped at 10
+
+    function pct(v) { return Math.max((v / max) * 100, v > 0 ? 2 : 0) + "%"; }
+
+    document.getElementById("breakdown-status").style.width = pct(breakdown.status);
+    document.getElementById("breakdown-reddit").style.width = pct(breakdown.reddit);
+    document.getElementById("breakdown-bluesky").style.width = pct(breakdown.bluesky);
+
+    document.getElementById("breakdown-status-val").textContent = "+" + (breakdown.status || 0);
+    document.getElementById("breakdown-reddit-val").textContent = "+" + (breakdown.reddit || 0);
+    document.getElementById("breakdown-bluesky-val").textContent = "+" + (breakdown.bluesky || 0);
+  }
+
   function renderStatus(statusData) {
     var dot = document.getElementById("status-dot");
     var desc = document.getElementById("status-description");
@@ -520,6 +536,7 @@
       renderReddit(data.reddit || null);
       renderIncidents(lastIncidents);
       setMiseryLevel(data.miseryIndex != null ? data.miseryIndex : 0);
+      renderBreakdown(data.breakdown || null);
       renderHistory(data.history || []);
 
       if (data.lastUpdated) {

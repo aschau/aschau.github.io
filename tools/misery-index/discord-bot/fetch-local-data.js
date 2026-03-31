@@ -203,7 +203,48 @@ async function main() {
   };
   console.log("  Reddit: " + redditPosts.length + " posts, " + commentCount + " comments");
 
+  // Recalculate misery with all sources
+  var bskyPosts = data.social ? data.social.recentPosts : 0;
+  var bskyComments = data.social ? data.social.recentComments : 0;
+  var statusScore = 0;
+  var bskyScore = 0;
+  var bskyReplyScore = 0;
+  var redditScore = 0;
+
+  if (data.status && data.status.status) {
+    var indicator = data.status.status.indicator;
+    if (indicator === "minor") statusScore = 2;
+    else if (indicator === "major") statusScore = 4;
+    else if (indicator === "critical") statusScore = 6;
+    if (data.status.components) {
+      var bad = data.status.components.filter(function (c) { return c.status !== "operational"; });
+      statusScore += Math.min(bad.length * 0.5, 2);
+    }
+  }
+  if (bskyPosts >= 50) bskyScore = 4;
+  else if (bskyPosts >= 30) bskyScore = 3;
+  else if (bskyPosts >= 15) bskyScore = 2;
+  else if (bskyPosts >= 5) bskyScore = 1;
+  else if (bskyPosts >= 1) bskyScore = 0.5;
+  if (bskyComments >= 150) bskyReplyScore = 2;
+  else if (bskyComments >= 75) bskyReplyScore = 1.5;
+  else if (bskyComments >= 30) bskyReplyScore = 1;
+  else if (bskyComments >= 10) bskyReplyScore = 0.5;
+  var megathreads = redditPosts.filter(function (p) { return p.isMegathread; }).length;
+  var effectiveReddit = redditPosts.length + (megathreads * 4);
+  if (effectiveReddit >= 20) redditScore = 3;
+  else if (effectiveReddit >= 10) redditScore = 2;
+  else if (effectiveReddit >= 5) redditScore = 1.5;
+  else if (effectiveReddit >= 3) redditScore = 1;
+  else if (effectiveReddit >= 1) redditScore = 0.5;
+
+  data.miseryIndex = Math.min(Math.round((statusScore + bskyScore + bskyReplyScore + redditScore) * 10) / 10, 10);
+  data.breakdown = { status: statusScore, bluesky: bskyScore + bskyReplyScore, reddit: redditScore };
   data.lastUpdated = now;
+
+  console.log("  Misery: " + data.miseryIndex + "/10");
+  console.log("    Status: +" + statusScore + " | Bluesky: +" + (bskyScore + bskyReplyScore) + " | Reddit: +" + redditScore);
+  console.log("    Megathreads: " + megathreads + " (" + effectiveReddit + " effective posts)");
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
   console.log("\nWritten to " + DATA_FILE);
 }

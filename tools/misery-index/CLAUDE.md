@@ -32,11 +32,12 @@ Posts go through a multi-layer filter to avoid red herrings:
 
 ## Misery Index Calculation (0-10)
 
-- Status page indicator: none=0, minor=+2, major=+4, critical=+6
-- Degraded components: +0.5 each (max +2)
-- Reddit posts (24h, if fresh <30m): 1-2=+0.5, 3-4=+1, 5-9=+1.5, 10-19=+2, 20+=+3
+- Status page indicator: none=0, minor=+2, major=+4, critical=+6 (max +8 with degraded components)
+- Reddit posts (megathreads count as 5x): 1-2=+0.5, 3-4=+1, 5-9=+1.5, 10-19=+2, 20+=+3
 - Bluesky posts (24h): 1-4=+0.5, 5-14=+1, 15-29=+2, 30-49=+3, 50+=+4
 - Bluesky reply volume: 10-29=+0.5, 30-74=+1, 75-149=+1.5, 150+=+2
+- Score breakdown (status/reddit/bluesky) stored in `current.json` and visualized on dashboard
+- Bot recalculates score after pushing Reddit data; Action calculates from Bluesky + status only
 
 ## Misery Levels
 

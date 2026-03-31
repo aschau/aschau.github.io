@@ -686,6 +686,53 @@ body {
   border-left: 2px solid var(--glass-border);
 }
 
+/* ── Score Breakdown ─────────────────────────────────────── */
+.breakdown {
+  max-width: 320px;
+  margin: 0 auto 0.5rem;
+  padding: 0 1rem;
+}
+
+.breakdown-bar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--glass-bg);
+  gap: 1px;
+}
+
+.breakdown-segment {
+  transition: width 0.6s ease;
+  min-width: 0;
+}
+
+.breakdown-status { background: var(--severe); }
+.breakdown-reddit { background: #FF4500; }
+.breakdown-bluesky { background: #0085FF; }
+
+.breakdown-labels {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.4rem;
+  font-size: 0.6rem;
+  color: var(--color-text-soft);
+}
+
+.breakdown-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.breakdown-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 /* ── Commentary ──────────────────────────────────────────── */
 .commentary {
   text-align: center;

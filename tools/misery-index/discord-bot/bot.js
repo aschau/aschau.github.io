@@ -6,6 +6,9 @@ var DATA_URL = "https://raw.githubusercontent.com/aschau/aschau.github.io/misery
 var CONTENTS_API = "https://api.github.com/repos/aschau/aschau.github.io/contents/current.json?ref=misery-data";
 var WORKFLOW_URL = "https://api.github.com/repos/aschau/aschau.github.io/actions/workflows/fetch-misery-data.yml/dispatches";
 var DASHBOARD_URL = "https://raggedydoc.com/tools/misery-index/";
+var OG_IMAGE = "https://raggedydoc.com/tools/misery-index/og-image.png";
+var SITE_URL = "https://raggedydoc.com";
+var BOT_AUTHOR = { name: "raggedydoc.com", url: SITE_URL, iconURL: "https://raggedydoc.com/img/favicon.png" };
 var POLL_INTERVAL = 15 * 60 * 1000; // 15 minutes
 var REDDIT_USER_AGENT = "MiseryBot/1.0 (by u/raggedydoc)";
 
@@ -214,6 +217,64 @@ async function fetchReddit() {
   return allPosts;
 }
 
+// ── Misery Calculation (mirrors fetch-misery-data.js) ────────
+function calculateMisery(data, redditData) {
+  var statusScore = 0;
+  var bskyScore = 0;
+  var bskyReplyScore = 0;
+  var redditScore = 0;
+
+  // Status page (0-8)
+  if (data.status && data.status.status) {
+    var indicator = data.status.status.indicator;
+    if (indicator === "minor") statusScore += 2;
+    else if (indicator === "major") statusScore += 4;
+    else if (indicator === "critical") statusScore += 6;
+
+    if (data.status.components) {
+      var bad = data.status.components.filter(function (c) { return c.status !== "operational"; });
+      statusScore += Math.min(bad.length * 0.5, 2);
+    }
+  }
+
+  // Bluesky posts (0-4)
+  var bskyPosts = data.social ? data.social.recentPosts : 0;
+  if (bskyPosts >= 50) bskyScore = 4;
+  else if (bskyPosts >= 30) bskyScore = 3;
+  else if (bskyPosts >= 15) bskyScore = 2;
+  else if (bskyPosts >= 5) bskyScore = 1;
+  else if (bskyPosts >= 1) bskyScore = 0.5;
+
+  // Bluesky replies (0-2)
+  var bskyComments = data.social ? data.social.recentComments : 0;
+  if (bskyComments >= 150) bskyReplyScore = 2;
+  else if (bskyComments >= 75) bskyReplyScore = 1.5;
+  else if (bskyComments >= 30) bskyReplyScore = 1;
+  else if (bskyComments >= 10) bskyReplyScore = 0.5;
+
+  // Reddit (0-3) — megathreads count as 5x
+  if (redditData) {
+    var megathreads = (redditData.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
+    var rPosts = (redditData.recentPosts || 0) + (megathreads * 4);
+    if (rPosts >= 20) redditScore = 3;
+    else if (rPosts >= 10) redditScore = 2;
+    else if (rPosts >= 5) redditScore = 1.5;
+    else if (rPosts >= 3) redditScore = 1;
+    else if (rPosts >= 1) redditScore = 0.5;
+  }
+
+  var total = Math.min(Math.round((statusScore + bskyScore + bskyReplyScore + redditScore) * 10) / 10, 10);
+
+  return {
+    total: total,
+    breakdown: {
+      status: statusScore,
+      bluesky: bskyScore + bskyReplyScore,
+      reddit: redditScore
+    }
+  };
+}
+
 // ── Push Reddit Data to GitHub ──────────────────────────────
 async function pushRedditData(redditPosts) {
   // Get current file SHA from the misery-data branch
@@ -251,6 +312,11 @@ async function pushRedditData(redditPosts) {
         };
       })
   };
+
+  // Recalculate misery score with Reddit included
+  var result = calculateMisery(existing, existing.reddit);
+  existing.miseryIndex = result.total;
+  existing.breakdown = result.breakdown;
 
   // Push updated file
   var updateRes = await fetch("https://api.github.com/repos/aschau/aschau.github.io/contents/current.json", {
@@ -292,11 +358,18 @@ function buildThermometer(score) {
 }
 
 // ── Embeds ──────────────────────────────────────────────────
+function baseEmbed(data) {
+  return new EmbedBuilder()
+    .setAuthor(BOT_AUTHOR)
+    .setFooter({ text: "Claude Developer Misery Index" })
+    .setTimestamp(new Date(data.lastUpdated));
+}
+
 function buildMiseryEmbed(data) {
   var level = getLevel(data.miseryIndex);
   var status = data.status && data.status.status ? data.status.status.description : "Unknown";
-  var posts = data.social ? data.social.recentPosts : 0;
-  var replies = data.social ? data.social.recentComments : 0;
+  var bskyPosts = data.social ? data.social.recentPosts : 0;
+  var bskyReplies = data.social ? data.social.recentComments : 0;
 
   var reddit = data.reddit || {};
   var redditPosts = reddit.recentPosts || 0;
@@ -307,17 +380,20 @@ function buildMiseryEmbed(data) {
   }
 
   var description = buildThermometer(data.miseryIndex) +
-    "\n\n" +
-    "\uD83D\uDCE1 **Status:** " + status + "\n" +
-    "\uD83D\uDCAC **Bluesky:** " + posts + " posts, " + replies + " replies (24h)\n" +
-    "\uD83D\uDFE0 **Reddit:** " + redditPosts + " posts (24h)" + redditStale;
+    "\n\u200B";
 
-  return new EmbedBuilder()
+  return baseEmbed(data)
     .setTitle(level.emoji + "  " + level.label)
+    .setURL(DASHBOARD_URL)
     .setDescription(description)
     .setColor(level.color)
-    .setFooter({ text: "Claude Developer Misery Index \u2022 " + DASHBOARD_URL })
-    .setTimestamp(new Date(data.lastUpdated));
+    .setThumbnail(OG_IMAGE)
+    .addFields(
+      { name: "\uD83D\uDCE1 Status", value: status, inline: true },
+      { name: "\uD83D\uDFE0 Reddit", value: redditPosts + " posts" + redditStale, inline: true },
+      { name: "\uD83E\uDD4B Bluesky", value: bskyPosts + " posts, " + bskyReplies + " replies", inline: true },
+      { name: "\u200B", value: "[View Dashboard](" + DASHBOARD_URL + ") \u2022 [Methodology](" + DASHBOARD_URL + "about.html) \u2022 [raggedydoc.com](" + SITE_URL + ")", inline: false }
+    );
 }
 
 function buildAlertEmbed(data, oldLabel, newLabel) {
@@ -328,86 +404,97 @@ function buildAlertEmbed(data, oldLabel, newLabel) {
   }
   var arrow = data.miseryIndex > previousScore ? "\u2B06\uFE0F" : "\u2B07\uFE0F";
   var status = data.status && data.status.status ? data.status.status.description : "Unknown";
-  var posts = data.social ? data.social.recentPosts : 0;
+  var reddit = data.reddit || {};
+  var redditPosts = reddit.recentPosts || 0;
+  var bskyPosts = data.social ? data.social.recentPosts : 0;
 
   var description = arrow + " " + (oldLevel ? oldLevel.emoji : "\u26AA") + " **" + oldLabel + "** \u2192 " + level.emoji + " **" + newLabel + "**" +
     "\n\n" +
     buildThermometer(data.miseryIndex) +
-    "\n\n" +
-    "\uD83D\uDCE1 **Status:** " + status + "\n" +
-    "\uD83D\uDCAC **Bluesky:** " + posts + " complaint posts (24h)";
+    "\n\u200B";
 
-  return new EmbedBuilder()
+  return baseEmbed(data)
     .setTitle("\uD83D\uDEA8 Misery Level Change")
+    .setURL(DASHBOARD_URL)
     .setDescription(description)
     .setColor(level.color)
-    .setFooter({ text: "Claude Developer Misery Index \u2022 " + DASHBOARD_URL })
-    .setTimestamp(new Date(data.lastUpdated));
+    .setThumbnail(OG_IMAGE)
+    .addFields(
+      { name: "\uD83D\uDCE1 Status", value: status, inline: true },
+      { name: "\uD83D\uDFE0 Reddit", value: redditPosts + " posts", inline: true },
+      { name: "\uD83E\uDD4B Bluesky", value: bskyPosts + " posts", inline: true },
+      { name: "\u200B", value: "[View Dashboard](" + DASHBOARD_URL + ")", inline: false }
+    );
 }
 
 function buildIncidentsEmbed(data) {
   var incidents = data.incidents || [];
-  var embed = new EmbedBuilder()
+  var embed = baseEmbed(data)
     .setTitle("\uD83D\uDCC3 Recent Incidents")
-    .setColor(0x546E7A)
-    .setFooter({ text: "Claude Developer Misery Index \u2022 " + DASHBOARD_URL })
-    .setTimestamp(new Date(data.lastUpdated));
+    .setURL("https://status.claude.com")
+    .setColor(0x546E7A);
 
   if (incidents.length === 0) {
-    embed.setDescription("\u2705 No recent incidents. Smooth sailing.");
+    embed.setDescription("\u2705 No recent incidents. Smooth sailing.\n\u200B");
+    embed.addFields({ name: "\u200B", value: "[Status Page](https://status.claude.com) \u2022 [Dashboard](" + DASHBOARD_URL + ")", inline: false });
     return embed;
   }
 
   var impactEmoji = { critical: "\uD83D\uDD34", major: "\uD83D\uDFE0", minor: "\uD83D\uDFE1", none: "\u26AA" };
   var statusEmoji = { resolved: "\u2705", monitoring: "\uD83D\uDC41\uFE0F", investigating: "\uD83D\uDD0D", identified: "\uD83D\uDCCC", postmortem: "\uD83D\uDCDD" };
 
-  var lines = incidents.slice(0, 5).map(function (inc) {
+  incidents.slice(0, 5).forEach(function (inc) {
     var emoji = impactEmoji[inc.impact] || "\u26AA";
     var sEmoji = statusEmoji[inc.status] || "\u2753";
     var created = inc.createdAt ? timeAgo(inc.createdAt) : "";
     var updated = inc.updatedAt ? timeAgo(inc.updatedAt) : "";
 
-    var line = emoji + " **" + inc.name + "**";
-    if (inc.url) line = emoji + " [**" + inc.name + "**](" + inc.url + ")";
-    line += "\n" + sEmoji + " " + (inc.status || "unknown");
-    if (created) line += " \u00b7 " + created;
-    if (updated && updated !== created) line += " \u00b7 updated " + updated;
+    var title = emoji + " " + inc.name;
+    var value = sEmoji + " " + (inc.status || "unknown");
+    if (created) value += " \u00b7 " + created;
+    if (updated && updated !== created) value += " \u00b7 updated " + updated;
 
     var latestUpdate = inc.updates && inc.updates.length > 0 ? inc.updates[0] : null;
     if (latestUpdate && latestUpdate.body) {
-      line += "\n> " + truncate(latestUpdate.body, 150).replace(/\n/g, " ");
+      value += "\n> " + truncate(latestUpdate.body, 150).replace(/\n/g, " ");
     }
+    if (inc.url) value += "\n[View on Status Page](" + inc.url + ")";
 
-    return line;
+    embed.addFields({ name: title, value: value });
   });
 
-  embed.setDescription(lines.join("\n\n"));
+  embed.addFields({ name: "\u200B", value: "[Status Page](https://status.claude.com) \u2022 [Dashboard](" + DASHBOARD_URL + ")", inline: false });
   return embed;
 }
 
 function buildSocialEmbed(data) {
   var social = data.social || {};
   var posts = social.topPosts || [];
-  var embed = new EmbedBuilder()
-    .setTitle("Bluesky Chatter (24h)")
-    .setColor(0x0085FF)
-    .setFooter({ text: social.recentPosts + " posts, " + social.recentComments + " replies" })
-    .setTimestamp(new Date(data.lastUpdated));
+  var embed = baseEmbed(data)
+    .setTitle("\uD83E\uDD4B Bluesky Chatter (24h)")
+    .setURL("https://bsky.app/search?q=claude+outage")
+    .setColor(0x0085FF);
 
   if (posts.length === 0) {
-    embed.setDescription("No recent complaint posts found.");
+    embed.setDescription("No recent complaint posts found on Bluesky.\n\u200B");
+    embed.addFields({ name: "\u200B", value: "[Dashboard](" + DASHBOARD_URL + ") \u2022 [raggedydoc.com](" + SITE_URL + ")", inline: false });
     return embed;
   }
 
-  var lines = posts.slice(0, 5).map(function (post, i) {
+  embed.setDescription("**" + (social.recentPosts || 0) + " posts** \u2022 **" + (social.recentComments || 0) + " total replies**\n\u200B");
+
+  posts.slice(0, 5).forEach(function (post) {
     var score = post.score != null ? post.score : 0;
     var author = post.author || "unknown";
-    var title = truncate(post.title, 80);
+    var title = truncate(post.title, 60);
     var url = post.url || "#";
-    return (i + 1) + ". " + score + " \u2665 — [" + title + "](" + url + ")\n   @" + author;
+    embed.addFields({
+      name: score + " \u2665 \u2014 @" + author,
+      value: "[" + title + "](" + url + ")"
+    });
   });
 
-  embed.setDescription(lines.join("\n\n"));
+  embed.addFields({ name: "\u200B", value: "[Dashboard](" + DASHBOARD_URL + ") \u2022 [raggedydoc.com](" + SITE_URL + ")", inline: false });
   return embed;
 }
 
@@ -418,32 +505,39 @@ function buildRedditEmbed(data) {
   var staleMin = Math.round(staleMs / 60000);
   var staleNote = staleMin > 30 ? " \u26A0\uFE0F stale (" + staleMin + "m ago)" : "";
 
-  var embed = new EmbedBuilder()
-    .setTitle("Reddit Chatter (24h)" + staleNote)
-    .setColor(0xFF4500)
-    .setFooter({ text: (reddit.recentPosts || 0) + " posts, " + (reddit.recentComments || 0) + " comments" })
-    .setTimestamp(reddit.lastFetched ? new Date(reddit.lastFetched) : new Date());
+  var embed = baseEmbed(data)
+    .setTitle("\uD83D\uDFE0 Reddit Chatter" + staleNote)
+    .setURL("https://www.reddit.com/r/ClaudeAI/")
+    .setColor(0xFF4500);
 
   if (!reddit.lastFetched) {
-    embed.setDescription("No Reddit data yet. Bot needs to run a poll cycle first.");
+    embed.setDescription("No Reddit data yet. Bot needs to run a poll cycle first.\n\u200B");
+    embed.addFields({ name: "\u200B", value: "[Dashboard](" + DASHBOARD_URL + ")", inline: false });
     return embed;
   }
 
   if (posts.length === 0) {
-    embed.setDescription("No recent complaint posts found on Reddit.");
+    embed.setDescription("No recent complaint posts found on Reddit.\n\u200B");
+    embed.addFields({ name: "\u200B", value: "[Dashboard](" + DASHBOARD_URL + ") \u2022 [r/ClaudeAI](https://www.reddit.com/r/ClaudeAI/)", inline: false });
     return embed;
   }
 
-  var lines = posts.slice(0, 5).map(function (post, i) {
+  embed.setDescription("**" + (reddit.recentPosts || 0) + " posts** \u2022 **" + (reddit.recentComments || 0) + " total comments**\n\u200B");
+
+  posts.slice(0, 5).forEach(function (post) {
     var score = post.score != null ? post.score : 0;
     var sub = post.subreddit ? "r/" + post.subreddit : "";
-    var title = truncate(post.title, 80);
+    var title = truncate(post.title, 60);
     var url = post.url || "#";
-    var mega = post.isMegathread ? " \uD83D\uDFE3 `MEGATHREAD`" : "";
-    return (i + 1) + ". " + score + " \u2B06 — [" + title + "](" + url + ")" + mega + "\n   " + sub + " \u00B7 u/" + (post.author || "unknown") + " \u00B7 " + (post.numComments || 0) + " comments";
+    var mega = post.isMegathread ? " \uD83D\uDFE3 `MEGA`" : "";
+    var comments = post.numComments || 0;
+    embed.addFields({
+      name: score + " \u2B06 \u2014 " + sub + mega,
+      value: "[" + title + "](" + url + ")\n" + comments + " comments \u2022 u/" + (post.author || "unknown")
+    });
   });
 
-  embed.setDescription(lines.join("\n\n"));
+  embed.addFields({ name: "\u200B", value: "[Dashboard](" + DASHBOARD_URL + ") \u2022 [r/ClaudeAI](https://www.reddit.com/r/ClaudeAI/) \u2022 [raggedydoc.com](" + SITE_URL + ")", inline: false });
   return embed;
 }
 

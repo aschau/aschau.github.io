@@ -76,6 +76,6 @@ The frontend automatically uses the local file on `localhost` instead of fetchin
 |-------|-------|-------------|
 | 0-1 | ALL CLEAR | Blue |
 | 1-3 | MINOR GRUMBLING | Yellow |
-| 3-5 | GROWING UNREST | Orange |
-| 5-7 | FULL MELTDOWN | Red |
-| 7-10 | APOCALYPSE | Purple |
+| 3-6 | GROWING UNREST | Orange |
+| 6-8 | FULL MELTDOWN | Red |
+| 8-10 | APOCALYPSE | Purple |

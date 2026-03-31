@@ -235,16 +235,17 @@
                   <h5 class="card-title">Claude Developer Misery Index</h5>
                   <img src="tools/misery-index/og-image.png" class="img-fluid rounded mb-3" alt="Claude Developer Misery Index dashboard">
                   <p class="card-text">
-                    A real-time dashboard tracking how miserable developers are when Claude AI goes down. Combines official Anthropic status page data, incident history, and Bluesky social chatter into a single 0-10 misery score.
+                    A real-time dashboard tracking how miserable developers are when Claude AI goes down. Combines official Anthropic status page data, incident history, Reddit and Bluesky social chatter into a single 0-10 misery score.
                   </p>
                   <p class="card-text"><b>How it started:</b></p>
                   <ul class="text-white">
                     <li>Simple status page scraper with a numeric score</li>
-                    <li>Reddit as the social signal source (blocked from cloud IPs)</li>
+                    <li>Single social signal source with basic keyword matching</li>
                   </ul>
                   <p class="card-text"><b>Where it is now:</b></p>
                   <ul class="text-white">
-                    <li>Three data sources — status page, incidents, and Bluesky authenticated API</li>
+                    <li>Four data sources — status page, incidents, Reddit, and Bluesky</li>
+                    <li>Discord bot that fetches Reddit, triggers GitHub Actions, and alerts on level changes</li>
                     <li>Multi-layer post filtering to avoid false positives (exclusion patterns, signal tiering, proximity checks)</li>
                     <li>GitHub Action runs every 15 minutes, pushes data to an orphan branch</li>
                     <li>History chart with time range toggles (24h / 3d / 7d)</li>

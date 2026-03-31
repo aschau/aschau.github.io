@@ -312,10 +312,11 @@
         var meta = "u/" + escapeHtml(post.author || "?");
         if (sub) meta = sub + " \u00b7 " + meta;
         if (post.created) meta += " \u00b7 " + timeAgo(post.created);
+        var megaBadge = post.isMegathread ? '<span class="megathread-badge">MEGATHREAD</span>' : '';
         el.innerHTML = '<span class="social-post-score">' + scoreText + ' \u2B06</span>' +
                        '<div class="social-post-body">' +
                          '<a href="' + sanitizeUrl(post.url) + '" target="_blank" rel="noopener noreferrer">' +
-                         escapeHtml(truncate(post.title, 100)) + '</a>' +
+                         escapeHtml(truncate(post.title, 100)) + '</a>' + megaBadge +
                          '<span class="social-post-meta">' + meta + '</span>' +
                        '</div>';
         postsList.appendChild(el);
@@ -447,16 +448,24 @@
   var INCIDENTS_API = "https://status.claude.com/api/v2/incidents.json";
 
   function fetchData() {
-    // Fetch committed JSON data — try remote first, fall back to local
-    var dataPromise = fetch(DATA_URL_REMOTE).then(function (r) {
-      if (!r.ok) throw new Error("Remote data not found");
-      return r.json();
-    }).catch(function () {
-      return fetch(DATA_URL_LOCAL).then(function (r) {
-        if (!r.ok) throw new Error("Local data not found");
-        return r.json();
-      });
-    }).catch(function () { return null; });
+    var isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      || window.location.protocol === "file:";
+
+    // Local dev: use local data file directly; production: try remote first
+    var dataPromise = isLocal
+      ? fetch(DATA_URL_LOCAL).then(function (r) {
+          if (!r.ok) throw new Error("Local data not found");
+          return r.json();
+        }).catch(function () { return null; })
+      : fetch(DATA_URL_REMOTE).then(function (r) {
+          if (!r.ok) throw new Error("Remote data not found");
+          return r.json();
+        }).catch(function () {
+          return fetch(DATA_URL_LOCAL).then(function (r) {
+            if (!r.ok) throw new Error("Local data not found");
+            return r.json();
+          });
+        }).catch(function () { return null; });
 
     // Also try live status fetch (may fail due to CORS in local dev)
     var statusPromise = fetch(STATUS_API).then(function (r) {

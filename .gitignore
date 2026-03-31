@@ -23,5 +23,8 @@ __pycache__/
 tools/misery-index/discord-bot/node_modules/
 tools/misery-index/discord-bot/.env
 
+# Misery index local test data (live data served from misery-data branch)
+tools/misery-index/data/current.json
+
 # Private / unreleased projects
 _private/

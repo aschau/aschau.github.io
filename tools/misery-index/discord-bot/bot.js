@@ -12,6 +12,7 @@ var REDDIT_USER_AGENT = "MiseryBot/1.0 (by u/raggedydoc)";
 // r/ClaudeAI is Claude-specific so we can search more broadly there
 // r/ChatGPT occasionally has Claude outage threads — one focused query
 var REDDIT_SEARCHES = [
+  { sub: "ClaudeAI", q: "megathread", t: "month" },
   { sub: "ClaudeAI", q: "down OR outage OR broken OR error", t: "week" },
   { sub: "ClaudeAI", q: "rate limit OR slow OR overloaded OR unusable", t: "week" },
   { sub: "ClaudeAI", q: "not working OR crashing OR degraded OR bug", t: "week" },
@@ -168,11 +169,21 @@ async function fetchReddit() {
       seenIds.add(post.id);
 
       if (post.created_utc * 1000 < cutoff) return;
-      if (!filterRedditPost(post, search.sub)) return;
 
-      // For week-old posts, only include if still getting engagement (comments)
+      // Detect official megathreads by title keywords + stickied status
+      var title = (post.title || "").toLowerCase();
+      var MEGA_KEYWORDS = ["megathread", "mega thread", "weekly thread", "discussion thread"];
+      var MEGA_TOPICS = ["performance", "bug", "limit", "usage", "outage", "issue", "error", "down"];
+      var hasMegaKeyword = MEGA_KEYWORDS.some(function (kw) { return title.includes(kw); });
+      var hasMegaTopic = MEGA_TOPICS.some(function (t) { return title.includes(t); });
+      var isMegathread = (hasMegaKeyword && hasMegaTopic) || post.stickied;
+
+      // Megathreads skip the complaint filter — they're aggregation posts
+      if (!isMegathread && !filterRedditPost(post, search.sub)) return;
+
+      // For older posts, keep megathreads and high-engagement posts
       var ageHours = (Date.now() - post.created_utc * 1000) / 3600000;
-      if (ageHours > 24 && (post.num_comments || 0) < 5) return;
+      if (ageHours > 24 && !isMegathread && (post.num_comments || 0) < 5) return;
 
       allPosts.push({
         title: truncate(post.title, 120),
@@ -182,7 +193,8 @@ async function fetchReddit() {
         url: "https://reddit.com" + post.permalink,
         created: new Date(post.created_utc * 1000).toISOString(),
         subreddit: post.subreddit,
-        source: "reddit"
+        source: "reddit",
+        isMegathread: isMegathread
       });
     });
 
@@ -226,7 +238,8 @@ async function pushRedditData(redditPosts) {
       .map(function (p) {
         return {
           title: p.title, author: p.author, score: p.score,
-          url: p.url, created: p.created, subreddit: p.subreddit, source: p.source
+          url: p.url, created: p.created, subreddit: p.subreddit,
+          source: p.source, isMegathread: p.isMegathread || false
         };
       })
   };
@@ -418,7 +431,8 @@ function buildRedditEmbed(data) {
     var sub = post.subreddit ? "r/" + post.subreddit : "";
     var title = truncate(post.title, 80);
     var url = post.url || "#";
-    return (i + 1) + ". " + score + " \u2B06 — [" + title + "](" + url + ")\n   " + sub + " \u00B7 u/" + (post.author || "unknown");
+    var mega = post.isMegathread ? " \uD83D\uDFE3 `MEGATHREAD`" : "";
+    return (i + 1) + ". " + score + " \u2B06 — [" + title + "](" + url + ")" + mega + "\n   " + sub + " \u00B7 u/" + (post.author || "unknown") + " \u00B7 " + (post.numComments || 0) + " comments";
   });
 
   embed.setDescription(lines.join("\n\n"));

@@ -3,10 +3,18 @@ const { Client, GatewayIntentBits, EmbedBuilder, REST, Routes, SlashCommandBuild
 
 // ── Config ──────────────────────────────────────────────────
 var DATA_URL = "https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/current.json";
+var CONTENTS_API = "https://api.github.com/repos/aschau/aschau.github.io/contents/current.json?ref=misery-data";
 var WORKFLOW_URL = "https://api.github.com/repos/aschau/aschau.github.io/actions/workflows/fetch-misery-data.yml/dispatches";
 var DASHBOARD_URL = "https://raggedydoc.com/tools/misery-index/";
 var POLL_INTERVAL = 15 * 60 * 1000; // 15 minutes
-var POST_DISPATCH_WAIT = 60 * 1000; // 60 seconds for Action to complete
+var REDDIT_USER_AGENT = "MiseryBot/1.0 (by u/raggedydoc)";
+
+var REDDIT_SUBREDDITS = ["ClaudeAI"];
+var REDDIT_SEARCH_QUERIES = [
+  "claude down OR outage OR broken",
+  "claude \"not working\" OR unusable OR overloaded",
+  "claude \"rate limit\" OR error OR slow"
+];
 
 // ── Misery Levels ───────────────────────────────────────────
 var LEVELS = [
@@ -68,6 +76,184 @@ async function triggerWorkflow() {
   return true;
 }
 
+// ── Reddit Fetching ─────────────────────────────────────────
+async function redditSearch(query, subreddit) {
+  var url = "https://www.reddit.com/r/" + subreddit + "/search.json?q=" +
+    encodeURIComponent(query) + "&sort=new&t=day&restrict_sr=on&limit=25";
+  try {
+    var res = await fetch(url, {
+      headers: { "User-Agent": REDDIT_USER_AGENT }
+    });
+    if (!res.ok) {
+      console.error("Reddit search failed (" + res.status + "): r/" + subreddit + " q=" + query);
+      return [];
+    }
+    var data = await res.json();
+    return (data.data && data.data.children) || [];
+  } catch (e) {
+    console.error("Reddit search error:", e.message);
+    return [];
+  }
+}
+
+function filterRedditPost(post) {
+  var text = (post.title + " " + (post.selftext || "")).toLowerCase();
+
+  // Must mention Claude or Anthropic
+  var hasClaude = text.includes("claude");
+  var hasAnthropic = text.includes("anthropic");
+  if (!hasClaude && !hasAnthropic) return false;
+
+  // AI context check (same as Bluesky)
+  var AI_CONTEXT = ["ai", "api", "llm", "chatbot", "model", "token", "prompt", "code",
+    "sonnet", "opus", "haiku", "anthropic", "claude.ai", "cursor",
+    "copilot", "chatgpt", "openai", "gemini", "developer", "programming",
+    "agentic", "context window", "rate limit", "usage limit"];
+  if (hasClaude && !hasAnthropic) {
+    if (!AI_CONTEXT.some(function (w) { return text.includes(w); })) return false;
+  }
+
+  // Exclusions
+  var EXCLUSIONS = [
+    "was down", "were down", "was broken", "was unusable",
+    "remember when", "last week", "last month", "yesterday",
+    "used to be", "months ago", "back when",
+    "fixed the bug", "fixed a bug", "helped me",
+    "love claude", "claude is great", "claude is amazing",
+    "works great", "working great", "working well",
+    "back up", "is back", "working again", "resolved",
+    "addicted", "withdrawal", "forgot how to code", "lost without",
+    "switched to", "switching to", "going back to", "gave up on",
+    "worse than", "better than", "compared to",
+    "sucks", "terrible", "garbage", "useless"
+  ];
+  if (EXCLUSIONS.some(function (w) { return text.includes(w); })) return false;
+
+  // Strong signals
+  var STRONG = [
+    "is down", "went down", "goes down", "going down",
+    "outage", "not working", "unavailable",
+    "can't use", "cant use", "won't work", "doesn't work", "stopped working",
+    "keeps crashing", "keeps failing",
+    "overloaded", "500 error", "502", "503", "504",
+    "please fix", "is it just me"
+  ];
+
+  // Weak signals
+  var WEAK = [
+    "rate limit", "token limit", "usage limit", "message limit",
+    "limit reached", "hit the limit", "out of messages",
+    "throttl", "capped", "degraded", "so slow", "unusable", "broken",
+    "nerfed", "bug", "buggy"
+  ];
+
+  var hasStrong = STRONG.some(function (w) { return text.includes(w); });
+  if (hasStrong) return true;
+
+  var weakCount = WEAK.filter(function (w) { return text.includes(w); }).length;
+  var hasFrustration = /\b(wtf|omg|ugh|smh|seriously|annoying|frustrat|painful)\b/i.test(text);
+  return weakCount >= 2 || (weakCount >= 1 && hasFrustration);
+}
+
+async function fetchReddit() {
+  var dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  var seenIds = new Set();
+  var allPosts = [];
+
+  for (var s = 0; s < REDDIT_SUBREDDITS.length; s++) {
+    for (var q = 0; q < REDDIT_SEARCH_QUERIES.length; q++) {
+      var results = await redditSearch(REDDIT_SEARCH_QUERIES[q], REDDIT_SUBREDDITS[s]);
+
+      results.forEach(function (child) {
+        var post = child.data;
+        if (!post || seenIds.has(post.id)) return;
+        seenIds.add(post.id);
+
+        if (post.created_utc * 1000 < dayAgo) return;
+        if (!filterRedditPost(post)) return;
+
+        allPosts.push({
+          title: truncate(post.title, 120),
+          author: post.author || "unknown",
+          score: post.score || 0,
+          numComments: post.num_comments || 0,
+          url: "https://reddit.com" + post.permalink,
+          created: new Date(post.created_utc * 1000).toISOString(),
+          subreddit: post.subreddit,
+          source: "reddit"
+        });
+      });
+
+      // Pause to avoid Reddit rate limiting
+      await new Promise(function (r) { setTimeout(r, 2000); });
+    }
+  }
+
+  console.log("  Reddit: " + allPosts.length + " posts found");
+  return allPosts;
+}
+
+// ── Push Reddit Data to GitHub ──────────────────────────────
+async function pushRedditData(redditPosts) {
+  // Get current file SHA from the misery-data branch
+  var shaRes = await fetch(CONTENTS_API, {
+    headers: {
+      "Authorization": "Bearer " + process.env.GITHUB_PAT,
+      "Accept": "application/vnd.github.v3+json",
+      "User-Agent": "MiseryDiscordBot/1.0",
+    }
+  });
+  if (!shaRes.ok) {
+    console.error("Failed to get file SHA:", shaRes.status);
+    return;
+  }
+  var shaData = await shaRes.json();
+  var fileSha = shaData.sha;
+
+  // Decode the existing content
+  var existing = JSON.parse(Buffer.from(shaData.content, "base64").toString("utf-8"));
+
+  // Update reddit section
+  var commentCount = redditPosts.reduce(function (sum, p) { return sum + (p.numComments || 0); }, 0);
+  existing.reddit = {
+    lastFetched: new Date().toISOString(),
+    recentPosts: redditPosts.length,
+    recentComments: commentCount,
+    topPosts: redditPosts
+      .sort(function (a, b) { return b.score - a.score; })
+      .slice(0, 10)
+      .map(function (p) {
+        return {
+          title: p.title, author: p.author, score: p.score,
+          url: p.url, created: p.created, subreddit: p.subreddit, source: p.source
+        };
+      })
+  };
+
+  // Push updated file
+  var updateRes = await fetch("https://api.github.com/repos/aschau/aschau.github.io/contents/current.json", {
+    method: "PUT",
+    headers: {
+      "Authorization": "Bearer " + process.env.GITHUB_PAT,
+      "Accept": "application/vnd.github.v3+json",
+      "User-Agent": "MiseryDiscordBot/1.0",
+    },
+    body: JSON.stringify({
+      message: "bot: reddit " + redditPosts.length + " posts",
+      content: Buffer.from(JSON.stringify(existing, null, 2)).toString("base64"),
+      sha: fileSha,
+      branch: "misery-data"
+    })
+  });
+
+  if (!updateRes.ok) {
+    var errText = await updateRes.text();
+    console.error("Failed to push reddit data (" + updateRes.status + "): " + errText);
+  } else {
+    console.log("  Reddit data pushed to misery-data branch");
+  }
+}
+
 // ── Thermometer ─────────────────────────────────────────────
 function buildThermometer(score) {
   var filled = Math.round(score);
@@ -90,10 +276,19 @@ function buildMiseryEmbed(data) {
   var posts = data.social ? data.social.recentPosts : 0;
   var replies = data.social ? data.social.recentComments : 0;
 
+  var reddit = data.reddit || {};
+  var redditPosts = reddit.recentPosts || 0;
+  var redditStale = "";
+  if (reddit.lastFetched) {
+    var redditAge = Math.round((Date.now() - new Date(reddit.lastFetched).getTime()) / 60000);
+    if (redditAge > 30) redditStale = " \u26A0\uFE0F " + redditAge + "m ago";
+  }
+
   var description = buildThermometer(data.miseryIndex) +
     "\n\n" +
     "\uD83D\uDCE1 **Status:** " + status + "\n" +
-    "\uD83D\uDCAC **Bluesky Posts:** " + posts + " posts, " + replies + " replies (24h)";
+    "\uD83D\uDCAC **Bluesky:** " + posts + " posts, " + replies + " replies (24h)\n" +
+    "\uD83D\uDFE0 **Reddit:** " + redditPosts + " posts (24h)" + redditStale;
 
   return new EmbedBuilder()
     .setTitle(level.emoji + "  " + level.label)
@@ -181,21 +376,76 @@ function buildSocialEmbed(data) {
   return embed;
 }
 
+function buildRedditEmbed(data) {
+  var reddit = data.reddit || {};
+  var posts = reddit.topPosts || [];
+  var staleMs = reddit.lastFetched ? Date.now() - new Date(reddit.lastFetched).getTime() : Infinity;
+  var staleMin = Math.round(staleMs / 60000);
+  var staleNote = staleMin > 30 ? " \u26A0\uFE0F stale (" + staleMin + "m ago)" : "";
+
+  var embed = new EmbedBuilder()
+    .setTitle("Reddit Chatter (24h)" + staleNote)
+    .setColor(0xFF4500)
+    .setFooter({ text: (reddit.recentPosts || 0) + " posts, " + (reddit.recentComments || 0) + " comments" })
+    .setTimestamp(reddit.lastFetched ? new Date(reddit.lastFetched) : new Date());
+
+  if (!reddit.lastFetched) {
+    embed.setDescription("No Reddit data yet. Bot needs to run a poll cycle first.");
+    return embed;
+  }
+
+  if (posts.length === 0) {
+    embed.setDescription("No recent complaint posts found on Reddit.");
+    return embed;
+  }
+
+  var lines = posts.slice(0, 5).map(function (post, i) {
+    var score = post.score != null ? post.score : 0;
+    var sub = post.subreddit ? "r/" + post.subreddit : "";
+    var title = truncate(post.title, 80);
+    var url = post.url || "#";
+    return (i + 1) + ". " + score + " \u2B06 — [" + title + "](" + url + ")\n   " + sub + " \u00B7 u/" + (post.author || "unknown");
+  });
+
+  embed.setDescription(lines.join("\n\n"));
+  return embed;
+}
+
 // ── Poll Loop ───────────────────────────────────────────────
 async function pollAndAlert(client) {
   console.log("[" + new Date().toISOString() + "] Polling...");
 
-  // Trigger the workflow
+  // Fetch Reddit from local machine (runs in parallel with Action)
+  var redditPosts = [];
+  try {
+    redditPosts = await fetchReddit();
+  } catch (e) {
+    console.error("Reddit fetch error:", e.message);
+  }
+
+  // Trigger the GitHub Action (Bluesky + status)
   try {
     await triggerWorkflow();
   } catch (e) {
     console.error("Workflow trigger error:", e.message);
   }
 
-  // Wait for Action to complete
-  await new Promise(function (r) { setTimeout(r, POST_DISPATCH_WAIT); });
+  // Wait for Action to complete (90s to be safe)
+  console.log("  Waiting 90s for Action to finish...");
+  await new Promise(function (r) { setTimeout(r, 90 * 1000); });
 
-  // Fetch fresh data
+  // Push Reddit data AFTER Action finishes (so it doesn't get overwritten)
+  console.log("  Pushing Reddit data...");
+  try {
+    await pushRedditData(redditPosts);
+  } catch (e) {
+    console.error("Reddit push error:", e.message);
+  }
+
+  // Brief pause for GitHub CDN to propagate
+  await new Promise(function (r) { setTimeout(r, 5000); });
+
+  // Fetch fresh data (now includes both Bluesky from Action + Reddit from our push)
   var data;
   try {
     data = await fetchData();
@@ -239,6 +489,9 @@ var commands = [
   new SlashCommandBuilder()
     .setName("social")
     .setDescription("Top Bluesky complaint posts about Claude (24h)"),
+  new SlashCommandBuilder()
+    .setName("reddit")
+    .setDescription("Top Reddit complaint posts about Claude (24h)"),
 ];
 
 async function registerCommands(clientId) {
@@ -279,6 +532,9 @@ async function handleCommand(interaction) {
   }
   if (interaction.commandName === "social") {
     return interaction.editReply({ embeds: [buildSocialEmbed(data)] });
+  }
+  if (interaction.commandName === "reddit") {
+    return interaction.editReply({ embeds: [buildRedditEmbed(data)] });
   }
 }
 

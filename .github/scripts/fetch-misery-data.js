@@ -285,7 +285,9 @@ async function getRecentIncidents() {
 }
 
 // ── Misery Calculation ───────────────────────────────────────
-function calculateMisery(statusData, postCount, commentCount) {
+var REDDIT_STALE_MS = 30 * 60 * 1000; // 30 minutes
+
+function calculateMisery(statusData, bskyPosts, bskyComments, redditData) {
   let score = 0;
 
   // Status page contribution (0-8)
@@ -303,18 +305,31 @@ function calculateMisery(statusData, postCount, commentCount) {
     }
   }
 
-  // Social post volume contribution (0-4)
-  if (postCount >= 50) score += 4;
-  else if (postCount >= 30) score += 3;
-  else if (postCount >= 15) score += 2;
-  else if (postCount >= 5) score += 1;
-  else if (postCount >= 1) score += 0.5;
+  // Bluesky post volume contribution (0-4)
+  if (bskyPosts >= 50) score += 4;
+  else if (bskyPosts >= 30) score += 3;
+  else if (bskyPosts >= 15) score += 2;
+  else if (bskyPosts >= 5) score += 1;
+  else if (bskyPosts >= 1) score += 0.5;
 
-  // Comment/reply volume as amplifier (0-2)
-  if (commentCount >= 150) score += 2;
-  else if (commentCount >= 75) score += 1.5;
-  else if (commentCount >= 30) score += 1;
-  else if (commentCount >= 10) score += 0.5;
+  // Bluesky comment/reply volume as amplifier (0-2)
+  if (bskyComments >= 150) score += 2;
+  else if (bskyComments >= 75) score += 1.5;
+  else if (bskyComments >= 30) score += 1;
+  else if (bskyComments >= 10) score += 0.5;
+
+  // Reddit contribution — only if data is fresh (0-3)
+  if (redditData && redditData.lastFetched) {
+    var redditAge = Date.now() - new Date(redditData.lastFetched).getTime();
+    if (redditAge < REDDIT_STALE_MS) {
+      var rPosts = redditData.recentPosts || 0;
+      if (rPosts >= 20) score += 3;
+      else if (rPosts >= 10) score += 2;
+      else if (rPosts >= 5) score += 1.5;
+      else if (rPosts >= 3) score += 1;
+      else if (rPosts >= 1) score += 0.5;
+    }
+  }
 
   return Math.min(Math.round(score * 10) / 10, 10);
 }
@@ -344,11 +359,18 @@ async function main() {
 
   const postCount = posts.length;
   const commentCount = posts.reduce(function (sum, p) { return sum + (p.numComments || 0); }, 0);
-  const miseryIndex = calculateMisery(statusData, postCount, commentCount);
+
+  // Preserve Reddit data from existing file (written by Discord bot)
+  const redditData = existing.reddit || null;
+  const miseryIndex = calculateMisery(statusData, postCount, commentCount, redditData);
 
   console.log(`Status: ${statusData?.status?.description || "unknown"}`);
   console.log(`Incidents (7d): ${incidents.length}`);
   console.log(`Bluesky: ${postCount} posts, ${commentCount} replies`);
+  if (redditData) {
+    var redditAge = Math.round((Date.now() - new Date(redditData.lastFetched).getTime()) / 60000);
+    console.log(`Reddit: ${redditData.recentPosts} posts (${redditAge}m old)`);
+  }
   console.log(`Misery Index: ${miseryIndex}`);
 
   // Build output — sort by score
@@ -386,6 +408,7 @@ async function main() {
       recentComments: commentCount,
       topPosts: topPosts
     },
+    reddit: redditData,
     incidents: incidents,
     history: existing.history
   };

@@ -89,13 +89,35 @@
         <div class="status-components" id="status-components"></div>
       </section>
 
-      <!-- Social Chatter -->
+      <!-- Reddit Chatter -->
+      <section class="card" id="reddit-card">
+        <h2 class="card-title">
+          <svg class="social-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M14.238 15.348c.085.084.085.221 0 .306-.465.462-1.194.687-2.231.687l-.008-.002-.008.002c-1.036 0-1.766-.225-2.231-.688-.085-.084-.085-.221 0-.305.084-.084.222-.084.307 0 .379.377 1.008.561 1.924.561l.008.002.008-.002c.915 0 1.544-.184 1.924-.561.085-.084.223-.084.307 0zm-3.44-2.418c0-.507-.414-.919-.922-.919-.509 0-.922.412-.922.919 0 .506.414.918.922.918.508 0 .922-.412.922-.918zm4.04-.919c-.509 0-.922.412-.922.919 0 .506.414.918.922.918.508 0 .922-.412.922-.918 0-.507-.414-.919-.922-.919zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.8 11.333c.02.14.03.282.03.426 0 2.178-2.536 3.948-5.663 3.948-3.127 0-5.663-1.77-5.663-3.948 0-.144.01-.286.03-.426A1.467 1.467 0 015.333 12 1.467 1.467 0 018.1 11.167a7.008 7.008 0 013.9-1.167c0-.003.847-3.982.847-3.982l2.727.66A1.04 1.04 0 0116.667 6a1.042 1.042 0 01-1.04 1.042c-.003 0-.72-.174-.72-.174l-.614 2.907a6.97 6.97 0 013.607 1.165 1.467 1.467 0 012.9 1.393z"/>
+          </svg>
+          <a href="https://www.reddit.com/r/ClaudeAI/search/?q=claude+down&t=day&sort=new" target="_blank" rel="noopener noreferrer" class="card-title-link">Reddit Chatter</a>
+          <span class="reddit-stale-badge" id="reddit-stale-badge"></span>
+        </h2>
+        <div class="social-stats">
+          <div class="social-stat">
+            <span class="social-stat-value" id="reddit-post-count">--</span>
+            <span class="social-stat-label">posts (24h)</span>
+          </div>
+          <div class="social-stat">
+            <span class="social-stat-value" id="reddit-comment-count">--</span>
+            <span class="social-stat-label">comments (24h)</span>
+          </div>
+        </div>
+        <div class="social-posts" id="reddit-posts"></div>
+      </section>
+
+      <!-- Bluesky Chatter -->
       <section class="card" id="social-card">
         <h2 class="card-title">
           <svg class="social-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
           </svg>
-          <a href="https://bsky.app/search?q=claude+outage" target="_blank" rel="noopener noreferrer" class="card-title-link">Social Chatter</a>
+          <a href="https://bsky.app/search?q=claude+outage" target="_blank" rel="noopener noreferrer" class="card-title-link">Bluesky Chatter</a>
         </h2>
         <div class="social-stats">
           <div class="social-stat">

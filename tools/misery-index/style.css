@@ -484,6 +484,16 @@ body {
 
 .social-post:last-child { border-bottom: none; }
 
+.reddit-stale-badge {
+  font-size: 0.6rem;
+  color: var(--moderate);
+  background: rgba(249, 115, 22, 0.15);
+  padding: 0.1em 0.5em;
+  border-radius: 4px;
+  margin-left: 0.5em;
+  vertical-align: middle;
+}
+
 .social-post-score {
   font-family: var(--font-mono);
   font-size: 0.65rem;

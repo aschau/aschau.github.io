@@ -179,8 +179,9 @@
                           c.status === "partial_outage" ? "var(--moderate)" :
                           c.status === "major_outage" ? "var(--severe)" : "var(--text-dim)";
 
+        var displayName = c.name.replace(/\s*\(formerly[^)]*\)/gi, "");
         row.innerHTML = '<span><span class="status-component-indicator" style="background:' + statusColor + '"></span>' +
-                        c.name + '</span><span>' + c.status.replace(/_/g, " ") + '</span>';
+                        displayName + '</span><span>' + c.status.replace(/_/g, " ") + '</span>';
         components.appendChild(row);
       });
     }
@@ -269,6 +270,60 @@
 
     if (!socialData.topPosts || socialData.topPosts.length === 0) {
       postsList.innerHTML = '<div class="social-post" style="color:var(--color-text-soft)">No recent complaint posts found</div>';
+    }
+  }
+
+  function renderReddit(redditData) {
+    var postCount = document.getElementById("reddit-post-count");
+    var commentCount = document.getElementById("reddit-comment-count");
+    var postsList = document.getElementById("reddit-posts");
+    var staleBadge = document.getElementById("reddit-stale-badge");
+
+    if (!redditData || !redditData.lastFetched) {
+      postCount.textContent = "--";
+      commentCount.textContent = "--";
+      if (staleBadge) staleBadge.textContent = "awaiting bot";
+      postsList.innerHTML = '<div class="social-post" style="color:var(--color-text-soft)">Reddit data is provided by the Discord bot — no data yet</div>';
+      return;
+    }
+
+    postCount.textContent = redditData.recentPosts || 0;
+    commentCount.textContent = redditData.recentComments || 0;
+
+    // Show stale badge if data is older than 30 min
+    var ageMs = Date.now() - new Date(redditData.lastFetched).getTime();
+    var ageMin = Math.round(ageMs / 60000);
+    if (staleBadge) {
+      if (ageMin > 30) {
+        staleBadge.textContent = timeAgo(redditData.lastFetched);
+        staleBadge.style.display = "inline";
+      } else {
+        staleBadge.style.display = "none";
+      }
+    }
+
+    postsList.innerHTML = "";
+    if (redditData.topPosts && redditData.topPosts.length > 0) {
+      redditData.topPosts.slice(0, 8).forEach(function (post) {
+        var el = document.createElement("div");
+        el.className = "social-post";
+        var scoreText = post.score != null ? post.score : "--";
+        var sub = post.subreddit ? "r/" + escapeHtml(post.subreddit) : "";
+        var meta = "u/" + escapeHtml(post.author || "?");
+        if (sub) meta = sub + " \u00b7 " + meta;
+        if (post.created) meta += " \u00b7 " + timeAgo(post.created);
+        el.innerHTML = '<span class="social-post-score">' + scoreText + ' \u2B06</span>' +
+                       '<div class="social-post-body">' +
+                         '<a href="' + sanitizeUrl(post.url) + '" target="_blank" rel="noopener noreferrer">' +
+                         escapeHtml(truncate(post.title, 100)) + '</a>' +
+                         '<span class="social-post-meta">' + meta + '</span>' +
+                       '</div>';
+        postsList.appendChild(el);
+      });
+    }
+
+    if (!redditData.topPosts || redditData.topPosts.length === 0) {
+      postsList.innerHTML = '<div class="social-post" style="color:var(--color-text-soft)">No recent complaint posts found on Reddit</div>';
     }
   }
 
@@ -452,6 +507,7 @@
 
       renderStatus(statusData);
       renderSocial(lastSocialData);
+      renderReddit(data.reddit || null);
       renderIncidents(lastIncidents);
       setMiseryLevel(data.miseryIndex != null ? data.miseryIndex : 0);
       renderHistory(data.history || []);
@@ -477,6 +533,7 @@
 
     renderStatus(statusData);
     renderSocial(lastSocialData);
+    renderReddit(null);
     renderIncidents(lastIncidents);
     setMiseryLevel(0);
     renderHistory([]);

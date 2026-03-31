@@ -214,7 +214,11 @@ async function fetchReddit() {
     await new Promise(function (r) { setTimeout(r, 2000); });
   }
 
-  console.log("  Reddit: " + allPosts.length + " posts found");
+  var megas = allPosts.filter(function (p) { return p.isMegathread; }).length;
+  console.log("  Reddit: " + allPosts.length + " posts found (" + megas + " megathreads)");
+  allPosts.forEach(function (p) {
+    console.log("    " + (p.isMegathread ? "[MEGA] " : "") + p.title.substring(0, 70) + " (" + p.numComments + " comments)");
+  });
   return allPosts;
 }
 

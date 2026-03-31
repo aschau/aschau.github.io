@@ -115,7 +115,7 @@ function filterRedditPost(post, subreddit) {
     "was down", "were down", "was broken", "was unusable",
     "remember when", "last week", "last month", "yesterday",
     "used to be", "months ago", "back when",
-    "fixed the bug", "fixed a bug", "helped me",
+    "fixed the bug", "fixed a bug", "found the bug", "helped me",
     "love claude", "claude is great", "claude is amazing",
     "works great", "working great", "working well",
     "back up", "is back", "working again", "resolved",
@@ -125,6 +125,13 @@ function filterRedditPost(post, subreddit) {
     "sucks", "terrible", "garbage", "useless"
   ];
   if (EXCLUSIONS.some(function (w) { return text.includes(w); })) return false;
+
+  // Skip showcase / project posts — not complaints
+  var titleLower = (post.title || "").toLowerCase();
+  var SHOWCASE = ["i built", "i made", "i created", "introducing", "announcing",
+    "check out", "open source", "open-source", "new tool", "new project",
+    "released", "launching", "just shipped", "show r/"];
+  if (SHOWCASE.some(function (w) { return titleLower.includes(w); })) return false;
 
   // Strong signals
   var STRONG = [
@@ -178,11 +185,12 @@ async function fetchReddit() {
       var hasMegaTopic = MEGA_TOPICS.some(function (t) { return title.includes(t); });
       var isMegathread = (hasMegaKeyword && hasMegaTopic) || post.stickied;
 
-      // Megathreads skip the complaint filter — they're aggregation posts
+      // Megathreads skip the complaint filter
       if (!isMegathread && !filterRedditPost(post, search.sub)) return;
 
-      // For older posts, keep megathreads and high-engagement posts
+      // For older posts: megathreads need at least 1 comment, regular posts need 5
       var ageHours = (Date.now() - post.created_utc * 1000) / 3600000;
+      if (ageHours > 24 && isMegathread && (post.num_comments || 0) < 1) return;
       if (ageHours > 24 && !isMegathread && (post.num_comments || 0) < 5) return;
 
       allPosts.push({

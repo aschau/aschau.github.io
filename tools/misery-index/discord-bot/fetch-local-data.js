@@ -1,10 +1,14 @@
-// Quick test: fetch Reddit data and write it into local current.json
-// Run: node tools/misery-index/discord-bot/test-reddit.js
+// Fetch all live data (status, incidents, Bluesky from remote + Reddit locally)
+// and write to local current.json for dev testing.
+// Run: node tools/misery-index/discord-bot/fetch-local-data.js
 
 var fs = require("fs");
 var path = require("path");
 
 var DATA_FILE = path.join(__dirname, "../data/current.json");
+var REMOTE_DATA = "https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/current.json";
+var STATUS_API = "https://status.claude.com/api/v2/summary.json";
+var INCIDENTS_API = "https://status.claude.com/api/v2/incidents.json";
 var REDDIT_USER_AGENT = "MiseryBot/1.0 (by u/raggedydoc)";
 
 var REDDIT_SEARCHES = [
@@ -61,6 +65,11 @@ function filterRedditPost(post, subreddit) {
     if (!text.includes("claude") && !text.includes("anthropic")) return false;
   }
   if (EXCLUSIONS.some(function (w) { return text.includes(w); })) return false;
+  var titleLower = (post.title || "").toLowerCase();
+  var SHOWCASE = ["i built", "i made", "i created", "introducing", "announcing",
+    "check out", "open source", "open-source", "new tool", "new project",
+    "released", "launching", "just shipped", "show r/"];
+  if (SHOWCASE.some(function (w) { return titleLower.includes(w); })) return false;
   var hasStrong = STRONG.some(function (w) { return text.includes(w); });
   if (hasStrong) return true;
   var weakCount = WEAK.filter(function (w) { return text.includes(w); }).length;
@@ -79,7 +88,13 @@ async function redditSearch(query, subreddit, timeRange) {
   } catch (e) { console.error("  ERROR:", e.message); return []; }
 }
 
-async function main() {
+async function fetchJSON(url) {
+  var res = await fetch(url, { headers: { "User-Agent": REDDIT_USER_AGENT } });
+  if (!res.ok) throw new Error(url + " returned " + res.status);
+  return res.json();
+}
+
+async function fetchReddit() {
   var dayAgo = Date.now() - 24 * 60 * 60 * 1000;
   var weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
   var monthAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
@@ -88,7 +103,7 @@ async function main() {
 
   for (var i = 0; i < REDDIT_SEARCHES.length; i++) {
     var search = REDDIT_SEARCHES[i];
-    console.log("Searching r/" + search.sub + ": " + search.q + " (t=" + search.t + ")");
+    console.log("  r/" + search.sub + ": " + search.q + " (t=" + search.t + ")");
     var results = await redditSearch(search.q, search.sub, search.t);
     var cutoff = search.t === "month" ? monthAgo : search.t === "week" ? weekAgo : dayAgo;
 
@@ -106,6 +121,7 @@ async function main() {
       if (!isMegathread && !filterRedditPost(post, search.sub)) return;
 
       var ageHours = (Date.now() - post.created_utc * 1000) / 3600000;
+      if (ageHours > 24 && isMegathread && (post.num_comments || 0) < 1) return;
       if (ageHours > 24 && !isMegathread && (post.num_comments || 0) < 5) return;
 
       allPosts.push({
@@ -120,25 +136,76 @@ async function main() {
         isMegathread: isMegathread
       });
 
-      console.log("  " + (isMegathread ? "[MEGA] " : "") + post.title.substring(0, 80) + " (" + post.num_comments + " comments, " + post.score + " score)");
+      console.log("    " + (isMegathread ? "[MEGA] " : "") + post.title.substring(0, 80) + " (" + post.num_comments + " comments)");
     });
 
     await new Promise(function (r) { setTimeout(r, 2000); });
   }
 
-  console.log("\nTotal: " + allPosts.length + " posts");
+  return allPosts;
+}
 
-  // Write into local current.json
-  var existing = JSON.parse(fs.readFileSync(DATA_FILE, "utf-8"));
-  var commentCount = allPosts.reduce(function (sum, p) { return sum + (p.numComments || 0); }, 0);
-  existing.reddit = {
-    lastFetched: new Date().toISOString(),
-    recentPosts: allPosts.length,
+async function main() {
+  var now = new Date().toISOString();
+
+  // 1. Pull remote data as base (has Bluesky + history)
+  console.log("Fetching remote data...");
+  var data;
+  try {
+    data = await fetchJSON(REMOTE_DATA + "?t=" + Date.now());
+    console.log("  Remote: misery " + data.miseryIndex + "/10, " + (data.social ? data.social.recentPosts : 0) + " Bluesky posts");
+  } catch (e) {
+    console.log("  Remote unavailable (" + e.message + "), starting fresh");
+    data = { history: [] };
+  }
+
+  // 2. Fetch live status
+  console.log("Fetching status...");
+  try {
+    data.status = await fetchJSON(STATUS_API);
+    console.log("  Status: " + (data.status.status ? data.status.status.description : "unknown"));
+  } catch (e) {
+    console.log("  Status fetch failed: " + e.message);
+  }
+
+  // 3. Fetch live incidents
+  console.log("Fetching incidents...");
+  try {
+    var incData = await fetchJSON(INCIDENTS_API);
+    var sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    data.incidents = (incData.incidents || [])
+      .filter(function (inc) { return new Date(inc.created_at).getTime() >= sevenDaysAgo; })
+      .slice(0, 10)
+      .map(function (inc) {
+        return {
+          name: inc.name, status: inc.status, impact: inc.impact,
+          createdAt: inc.created_at, updatedAt: inc.updated_at,
+          url: inc.shortlink || ("https://status.claude.com/incidents/" + inc.id),
+          updates: (inc.incident_updates || []).slice(0, 3).map(function (u) {
+            return { status: u.status, body: u.body, createdAt: u.created_at };
+          })
+        };
+      });
+    console.log("  Incidents: " + data.incidents.length);
+  } catch (e) {
+    console.log("  Incidents fetch failed: " + e.message);
+  }
+
+  // 4. Fetch Reddit
+  console.log("Fetching Reddit...");
+  var redditPosts = await fetchReddit();
+  var commentCount = redditPosts.reduce(function (sum, p) { return sum + (p.numComments || 0); }, 0);
+  data.reddit = {
+    lastFetched: now,
+    recentPosts: redditPosts.length,
     recentComments: commentCount,
-    topPosts: allPosts.sort(function (a, b) { return b.score - a.score; }).slice(0, 10)
+    topPosts: redditPosts.sort(function (a, b) { return b.score - a.score; }).slice(0, 10)
   };
-  fs.writeFileSync(DATA_FILE, JSON.stringify(existing, null, 2));
-  console.log("Written to " + DATA_FILE);
+  console.log("  Reddit: " + redditPosts.length + " posts, " + commentCount + " comments");
+
+  data.lastUpdated = now;
+  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+  console.log("\nWritten to " + DATA_FILE);
 }
 
 main();

@@ -341,6 +341,10 @@ body {
   margin-bottom: 1.5rem;
 }
 
+#reddit-card {
+  grid-column: 1 / -1;
+}
+
 @media (max-width: 600px) {
   .cards { grid-template-columns: 1fr; }
   .gauge-container { width: 180px; height: 180px; }
@@ -486,17 +490,18 @@ body {
 .social-post:last-child { border-bottom: none; }
 
 .megathread-badge {
-  display: inline-block;
-  font-size: 0.55rem;
+  display: block;
+  font-size: 0.5rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
-  color: #e9d5ff;
-  background: rgba(168, 85, 247, 0.3);
-  border: 1px solid rgba(168, 85, 247, 0.5);
-  padding: 0.1em 0.5em;
-  border-radius: 4px;
-  margin-left: 0.4em;
-  vertical-align: middle;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c4b5fd;
+  background: rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+  margin-bottom: 0.15em;
+  width: fit-content;
 }
 
 .reddit-stale-badge {

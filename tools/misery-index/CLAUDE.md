@@ -59,11 +59,14 @@ Posts go through a multi-layer filter to avoid red herrings:
 
 - `index.html` — page shell, meta tags, structure
 - `style.css` — light/dark theme, glassmorphism, misery-level transitions, sticky footer
-- `app.js` — data fetching, rendering, gauge, incidents, social chatter, history chart, theme toggle
+- `app.js` — data fetching, rendering, gauge, incidents, Reddit/Bluesky chatter, history chart, theme toggle
 - `about.html` — public-facing methodology explainer
 - `og-image.html` — 1200x630 social preview (screenshot to generate og-image.png)
-- `favicon.svg` — custom SVG favicon (purple gauge with M)
-- `data/current.json` — local placeholder; live data on `misery-data` branch
+- `favicon.svg` — SVG favicon (robot + gauge)
+- `data/current.json` — gitignored local test data; live data on `misery-data` branch
+- `data/.gitkeep` — keeps the data directory in git
 - `TDD.md` — full technical design document
+- `discord-bot/` — Discord bot for Reddit fetching, alerts, and slash commands (see its own CLAUDE.md)
+- `discord-bot/fetch-local-data.js` — fetches all live data into local current.json for dev testing
 - `.github/workflows/fetch-misery-data.yml` — Action workflow
-- `.github/scripts/fetch-misery-data.js` — Node.js fetch/calculate/write script
+- `.github/scripts/fetch-misery-data.js` — Node.js fetch/calculate/write script (Bluesky + status + preserves Reddit)

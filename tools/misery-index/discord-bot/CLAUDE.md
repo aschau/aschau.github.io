@@ -60,6 +60,16 @@ npm start
 - If the GitHub Action dispatch fails, still fetches data (the cron schedule is a fallback)
 - Reddit data is preserved across Action runs — if the bot goes down, existing Reddit data stays but is marked stale
 
+## Local Development
+
+Fetch all live data (status, incidents, Bluesky, Reddit) into `data/current.json` for local testing:
+
+```bash
+node tools/misery-index/discord-bot/fetch-local-data.js
+```
+
+The frontend automatically uses the local file on `localhost` instead of fetching from the remote `misery-data` branch.
+
 ## Misery Levels
 
 | Range | Level | Embed Color |

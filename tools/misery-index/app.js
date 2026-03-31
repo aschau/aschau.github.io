@@ -312,11 +312,12 @@
         var meta = "u/" + escapeHtml(post.author || "?");
         if (sub) meta = sub + " \u00b7 " + meta;
         if (post.created) meta += " \u00b7 " + timeAgo(post.created);
-        var megaBadge = post.isMegathread ? '<span class="megathread-badge">MEGATHREAD</span>' : '';
+        var megaBadge = post.isMegathread ? '<span class="megathread-badge">megathread</span>' : '';
         el.innerHTML = '<span class="social-post-score">' + scoreText + ' \u2B06</span>' +
                        '<div class="social-post-body">' +
+                         megaBadge +
                          '<a href="' + sanitizeUrl(post.url) + '" target="_blank" rel="noopener noreferrer">' +
-                         escapeHtml(truncate(post.title, 100)) + '</a>' + megaBadge +
+                         escapeHtml(truncate(post.title, 100)) + '</a>' +
                          '<span class="social-post-meta">' + meta + '</span>' +
                        '</div>';
         postsList.appendChild(el);

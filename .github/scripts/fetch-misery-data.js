@@ -322,7 +322,9 @@ function calculateMisery(statusData, bskyPosts, bskyComments, redditData) {
   if (redditData && redditData.lastFetched) {
     var redditAge = Date.now() - new Date(redditData.lastFetched).getTime();
     if (redditAge < REDDIT_STALE_MS) {
-      var rPosts = redditData.recentPosts || 0;
+      // Count megathreads as 5 posts each for scoring
+      var megathreads = (redditData.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
+      var rPosts = (redditData.recentPosts || 0) + (megathreads * 4); // each mega = 5 effective posts (1 real + 4 bonus)
       if (rPosts >= 20) score += 3;
       else if (rPosts >= 10) score += 2;
       else if (rPosts >= 5) score += 1.5;

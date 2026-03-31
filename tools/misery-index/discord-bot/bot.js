@@ -165,13 +165,14 @@ function filterRedditPost(post, subreddit) {
 async function fetchReddit() {
   var dayAgo = Date.now() - 24 * 60 * 60 * 1000;
   var weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  var monthAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
   var seenIds = new Set();
   var allPosts = [];
 
   for (var i = 0; i < REDDIT_SEARCHES.length; i++) {
     var search = REDDIT_SEARCHES[i];
     var results = await redditSearch(search.q, search.sub, search.t);
-    var cutoff = search.t === "week" ? weekAgo : dayAgo;
+    var cutoff = search.t === "month" ? monthAgo : search.t === "week" ? weekAgo : dayAgo;
 
     results.forEach(function (child) {
       var post = child.data;

@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#16213e"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="ringWarn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="needle" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowStrong">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <radialGradient id="innerGlow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="url(#bg)"/>
+
+  <!-- Subtle inner glow -->
+  <circle cx="256" cy="256" r="256" fill="url(#innerGlow)"/>
+
+  <!-- Outer ring border (subtle) -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#2a2a4a" stroke-width="2" opacity="0.4"/>
+
+  <!-- Gauge track (background arc) -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#2a2a4a" stroke-width="28" stroke-linecap="round"
+    stroke-dasharray="848" stroke-dashoffset="212" transform="rotate(135 256 256)"/>
+
+  <!-- Gauge fill — purple main section -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="url(#ring)" stroke-width="28" stroke-linecap="round"
+    stroke-dasharray="848" stroke-dashoffset="340" transform="rotate(135 256 256)" filter="url(#glow)"/>
+
+  <!-- Gauge fill — red/orange danger zone at the top end -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="url(#ringWarn)" stroke-width="28" stroke-linecap="round"
+    stroke-dasharray="120 728" stroke-dashoffset="212" transform="rotate(135 256 256)" filter="url(#glow)" opacity="0.85"/>
+
+  <!-- Gauge tick marks — thicker, brighter -->
+  <g stroke="#7c7c9a" stroke-width="3" stroke-linecap="round">
+    <line x1="256" y1="68" x2="256" y2="96" transform="rotate(-135 256 256)"/>
+    <line x1="256" y1="74" x2="256" y2="90" transform="rotate(-101.25 256 256)"/>
+    <line x1="256" y1="68" x2="256" y2="96" transform="rotate(-67.5 256 256)"/>
+    <line x1="256" y1="74" x2="256" y2="90" transform="rotate(-33.75 256 256)"/>
+    <line x1="256" y1="68" x2="256" y2="96" transform="rotate(0 256 256)"/>
+    <line x1="256" y1="74" x2="256" y2="90" transform="rotate(33.75 256 256)"/>
+    <line x1="256" y1="68" x2="256" y2="96" transform="rotate(67.5 256 256)"/>
+    <line x1="256" y1="74" x2="256" y2="90" transform="rotate(101.25 256 256)"/>
+    <line x1="256" y1="68" x2="256" y2="96" transform="rotate(135 256 256)"/>
+  </g>
+
+  <!-- Scale labels -->
+  <text x="112" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#6a6a8a" font-weight="bold">0</text>
+  <text x="400" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#6a6a8a" font-weight="bold">10</text>
+
+  <!-- Needle — silver, pointing toward ~8/10, no center dot -->
+  <g transform="rotate(95 256 256)">
+    <polygon points="252,260 260,260 257,105 255,105" fill="url(#needle)" filter="url(#glow)"/>
+  </g>
+
+  <!-- Center hub — clean dark circle -->
+  <circle cx="256" cy="256" r="14" fill="#2a2a4a" stroke="#4a4a6a" stroke-width="2"/>
+
+  <!-- "M" letter — larger, glowing -->
+  <text x="256" y="348" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="110" fill="#a855f7" filter="url(#glowStrong)">M</text>
+
+  <!-- Subtle outer ring decoration -->
+  <circle cx="256" cy="256" r="240" fill="none" stroke="#7c3aed" stroke-width="1.5" opacity="0.2"/>
+  <circle cx="256" cy="256" r="246" fill="none" stroke="#7c3aed" stroke-width="0.5" opacity="0.1"/>
+</svg>

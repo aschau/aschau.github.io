@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head><title>Convert Bot Icon to PNG</title></head>
+<body style="background:#222;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;color:#fff">
+  <canvas id="canvas" width="512" height="512" style="border:1px solid #444;border-radius:8px"></canvas>
+  <button onclick="download()" style="margin-top:20px;padding:12px 24px;font-size:16px;background:#7c3aed;color:#fff;border:none;border-radius:6px;cursor:pointer">Download PNG</button>
+  <script>
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    var img = new Image();
+    img.onload = function () {
+      ctx.drawImage(img, 0, 0, 512, 512);
+    };
+    img.src = "bot-icon.svg";
+
+    function download() {
+      var a = document.createElement("a");
+      a.download = "bot-icon.png";
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    }
+  </script>
+</body>
+</html>

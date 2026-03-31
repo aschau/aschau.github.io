@@ -19,5 +19,9 @@ games/parsed/scene_configs.txt
 *.pyc
 __pycache__/
 
+# Discord bot
+tools/misery-index/discord-bot/node_modules/
+tools/misery-index/discord-bot/.env
+
 # Private / unreleased projects
 _private/

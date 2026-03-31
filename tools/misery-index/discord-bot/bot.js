@@ -326,27 +326,40 @@ function buildAlertEmbed(data, oldLabel, newLabel) {
 function buildIncidentsEmbed(data) {
   var incidents = data.incidents || [];
   var embed = new EmbedBuilder()
-    .setTitle("Recent Incidents")
+    .setTitle("\uD83D\uDCC3 Recent Incidents")
     .setColor(0x546E7A)
-    .setFooter({ text: "Claude Developer Misery Index" })
+    .setFooter({ text: "Claude Developer Misery Index \u2022 " + DASHBOARD_URL })
     .setTimestamp(new Date(data.lastUpdated));
 
   if (incidents.length === 0) {
-    embed.setDescription("No recent incidents. Smooth sailing.");
+    embed.setDescription("\u2705 No recent incidents. Smooth sailing.");
     return embed;
   }
 
-  incidents.slice(0, 5).forEach(function (inc) {
-    var impactBadge = inc.impact ? "[" + inc.impact.toUpperCase() + "] " : "";
+  var impactEmoji = { critical: "\uD83D\uDD34", major: "\uD83D\uDFE0", minor: "\uD83D\uDFE1", none: "\u26AA" };
+  var statusEmoji = { resolved: "\u2705", monitoring: "\uD83D\uDC41\uFE0F", investigating: "\uD83D\uDD0D", identified: "\uD83D\uDCCC", postmortem: "\uD83D\uDCDD" };
+
+  var lines = incidents.slice(0, 5).map(function (inc) {
+    var emoji = impactEmoji[inc.impact] || "\u26AA";
+    var sEmoji = statusEmoji[inc.status] || "\u2753";
+    var created = inc.createdAt ? timeAgo(inc.createdAt) : "";
+    var updated = inc.updatedAt ? timeAgo(inc.updatedAt) : "";
+
+    var line = emoji + " **" + inc.name + "**";
+    if (inc.url) line = emoji + " [**" + inc.name + "**](" + inc.url + ")";
+    line += "\n" + sEmoji + " " + (inc.status || "unknown");
+    if (created) line += " \u00b7 " + created;
+    if (updated && updated !== created) line += " \u00b7 updated " + updated;
+
     var latestUpdate = inc.updates && inc.updates.length > 0 ? inc.updates[0] : null;
-    var value = "Status: " + (inc.status || "unknown");
     if (latestUpdate && latestUpdate.body) {
-      value += "\n" + truncate(latestUpdate.body, 200);
+      line += "\n> " + truncate(latestUpdate.body, 150).replace(/\n/g, " ");
     }
-    if (inc.url) value += "\n[View](" + inc.url + ")";
-    embed.addFields({ name: impactBadge + inc.name, value: value });
+
+    return line;
   });
 
+  embed.setDescription(lines.join("\n\n"));
   return embed;
 }
 

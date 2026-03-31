@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
+const { Client, GatewayIntentBits, EmbedBuilder, REST, Routes, SlashCommandBuilder } = require("discord.js");
 
 // ── Config ──────────────────────────────────────────────────
 var DATA_URL = "https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/current.json";
@@ -228,71 +228,80 @@ async function pollAndAlert(client) {
   lastData = data;
 }
 
+// ── Slash Command Definitions ───────────────────────────────
+var commands = [
+  new SlashCommandBuilder()
+    .setName("misery")
+    .setDescription("Current Claude Developer Misery Index score"),
+  new SlashCommandBuilder()
+    .setName("incidents")
+    .setDescription("Recent Claude incidents from the status page"),
+  new SlashCommandBuilder()
+    .setName("social")
+    .setDescription("Top Bluesky complaint posts about Claude (24h)"),
+];
+
+async function registerCommands(clientId) {
+  var rest = new REST().setToken(process.env.DISCORD_TOKEN);
+  try {
+    console.log("Registering slash commands...");
+    await rest.put(Routes.applicationCommands(clientId), {
+      body: commands.map(function (c) { return c.toJSON(); }),
+    });
+    console.log("Slash commands registered");
+  } catch (e) {
+    console.error("Failed to register commands:", e.message);
+  }
+}
+
 // ── Command Handlers ────────────────────────────────────────
-async function handleMisery(message) {
-  var data = lastData;
-  if (!data) {
-    try {
-      data = await fetchData();
-      lastData = data;
-    } catch (e) {
-      return message.reply("Couldn't fetch misery data: " + e.message);
-    }
-  }
-  return message.reply({ embeds: [buildMiseryEmbed(data)] });
+async function getData() {
+  if (lastData) return lastData;
+  var data = await fetchData();
+  lastData = data;
+  return data;
 }
 
-async function handleIncidents(message) {
-  var data = lastData;
-  if (!data) {
-    try {
-      data = await fetchData();
-      lastData = data;
-    } catch (e) {
-      return message.reply("Couldn't fetch misery data: " + e.message);
-    }
+async function handleCommand(interaction) {
+  await interaction.deferReply();
+  var data;
+  try {
+    data = await getData();
+  } catch (e) {
+    return interaction.editReply("Couldn't fetch misery data: " + e.message);
   }
-  return message.reply({ embeds: [buildIncidentsEmbed(data)] });
-}
 
-async function handleSocial(message) {
-  var data = lastData;
-  if (!data) {
-    try {
-      data = await fetchData();
-      lastData = data;
-    } catch (e) {
-      return message.reply("Couldn't fetch misery data: " + e.message);
-    }
+  if (interaction.commandName === "misery") {
+    return interaction.editReply({ embeds: [buildMiseryEmbed(data)] });
   }
-  return message.reply({ embeds: [buildSocialEmbed(data)] });
+  if (interaction.commandName === "incidents") {
+    return interaction.editReply({ embeds: [buildIncidentsEmbed(data)] });
+  }
+  if (interaction.commandName === "social") {
+    return interaction.editReply({ embeds: [buildSocialEmbed(data)] });
+  }
 }
 
 // ── Client Setup ────────────────────────────────────────────
 var client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
+  intents: [GatewayIntentBits.Guilds],
 });
 
-client.once("ready", function () {
+client.once("ready", async function () {
   console.log("Logged in as " + client.user.tag);
   console.log("Alert channel: " + process.env.DISCORD_CHANNEL_ID);
   console.log("Poll interval: " + (POLL_INTERVAL / 60000) + " minutes");
+
+  await registerCommands(client.user.id);
 
   // Initial poll, then every POLL_INTERVAL
   pollAndAlert(client);
   setInterval(function () { pollAndAlert(client); }, POLL_INTERVAL);
 });
 
-client.on("messageCreate", async function (message) {
-  if (message.author.bot) return;
-
-  if (message.content === "!misery") return handleMisery(message);
-  if (message.content === "!incidents") return handleIncidents(message);
-  if (message.content === "!social") return handleSocial(message);
+client.on("interactionCreate", async function (interaction) {
+  if (!interaction.isChatInputCommand()) return;
+  handleCommand(interaction);
 });
 
 // ── Graceful Shutdown ───────────────────────────────────────

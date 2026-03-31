@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About | Claude Developer Misery Index</title>
-  <meta name="description" content="How the Developer Misery Index works — methodology, data sources, and scoring.">
+  <meta name="description" content="How the Developer Misery Index works — methodology, data sources (status page, Reddit, Bluesky), and scoring formula.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://raggedydoc.com/tools/misery-index/about.html">
 
   <!-- Open Graph -->
   <meta property="og:title" content="About | Claude Developer Misery Index">
-  <meta property="og:description" content="How the Developer Misery Index works — methodology, data sources, and scoring.">
+  <meta property="og:description" content="How the Developer Misery Index works — methodology, data sources (status page, Reddit, Bluesky), and scoring formula.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://raggedydoc.com/tools/misery-index/about.html">
   <meta property="og:image" content="https://raggedydoc.com/tools/misery-index/og-image.png">
@@ -18,7 +18,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="About | Claude Developer Misery Index">
-  <meta name="twitter:description" content="How the Developer Misery Index works — methodology, data sources, and scoring.">
+  <meta name="twitter:description" content="How the Developer Misery Index works — methodology, data sources (status page, Reddit, Bluesky), and scoring formula.">
   <meta name="twitter:image" content="https://raggedydoc.com/tools/misery-index/og-image.png">
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -143,10 +143,10 @@
       and the uncomfortable truth about how dependent we've all become on AI to write our code.
     </p>
     <p>
-      We originally wanted to use Reddit for the chatter data, but Reddit rejected our API application
-      within minutes. So we moved to Bluesky, which has a free, open API with no approval process.
-      The irony of getting rejected by one platform while building a dependency tracker for another
-      is not lost on us.
+      We originally wanted to use Reddit for the chatter data, but Reddit blocks API access from cloud IPs
+      (like GitHub Actions). So we built a separate service that fetches Reddit data and pushes it
+      alongside the Bluesky results collected by the GitHub Action.
+      Bluesky has a free, open API with no approval process and runs from the cloud just fine.
     </p>
 
     <h2>Data sources</h2>
@@ -155,14 +155,22 @@
       (none, minor, major, critical) and per-component status for claude.ai, the API, Claude Code, and more.
     </p>
     <p>
-      <strong>Bluesky</strong> — the human suffering layer. Searches for posts containing phrases like
-      "Claude is down," "Claude outage," and "Claude not working." Post volume and reply depth
-      both contribute to the score.
+      <strong>Reddit</strong> — the primary social signal. Searches r/ClaudeAI (and occasionally r/ChatGPT)
+      for outage and degradation posts. Weighted higher than Bluesky because r/ClaudeAI has concentrated
+      developer discussion with better signal-to-noise for outage complaints. Posts older than 24h are
+      only included if they have 5+ comments (catches active megathreads).
+    </p>
+    <p>
+      <strong>Bluesky</strong> — the secondary social signal. Searches for posts containing phrases like
+      "Claude is down," "Claude outage," and "Claude not working." Uses multi-layer filtering to avoid
+      false positives: exclusion patterns for past-tense, positive sentiment, and dependency humor;
+      signal tiering (strong outage signals count alone, weak signals need corroboration).
+      Post volume and reply depth both contribute to the score.
     </p>
 
     <h2>The formula</h2>
     <p>
-      The Misery Index is the sum of three components, capped at 10.
+      The Misery Index is the sum of four components, capped at 10.
     </p>
 
     <p><strong>1. Status page (0–8 points)</strong></p>
@@ -175,7 +183,18 @@
       <tr><td>+ per degraded component</td><td>+0.5 each (max +2)</td></tr>
     </table>
 
-    <p><strong>2. Bluesky post volume (0–4 points)</strong></p>
+    <p><strong>2. Reddit post volume (0–3 points)</strong></p>
+    <table class="formula-table">
+      <tr><th>Posts (24h)</th><th>Points</th></tr>
+      <tr><td>0</td><td>0</td></tr>
+      <tr><td>1–2</td><td>+0.5</td></tr>
+      <tr><td>3–4</td><td>+1</td></tr>
+      <tr><td>5–9</td><td>+1.5</td></tr>
+      <tr><td>10–19</td><td>+2</td></tr>
+      <tr><td>20+</td><td>+3</td></tr>
+    </table>
+
+    <p><strong>3. Bluesky post volume (0–4 points)</strong></p>
     <table class="formula-table">
       <tr><th>Posts (24h)</th><th>Points</th></tr>
       <tr><td>0</td><td>0</td></tr>
@@ -186,7 +205,7 @@
       <tr><td>50+</td><td>+4</td></tr>
     </table>
 
-    <p><strong>3. Reply amplifier (0–2 points)</strong></p>
+    <p><strong>4. Bluesky reply amplifier (0–2 points)</strong></p>
     <table class="formula-table">
       <tr><th>Replies (24h)</th><th>Points</th></tr>
       <tr><td>0–9</td><td>0</td></tr>
@@ -198,8 +217,8 @@
 
     <p>
       The status page carries the most weight because confirmed outages are the most reliable signal.
-      Social volume is secondary — it's noisy, but it's fast. Comments amplify rather than dominate,
-      because a single viral complaint thread isn't the same as twenty independent reports.
+      Reddit is weighted higher than Bluesky because r/ClaudeAI is a focused developer community with
+      higher-quality signal. Bluesky provides broader coverage but is noisier.
     </p>
 
     <h2>Misery levels</h2>

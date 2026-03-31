@@ -38,20 +38,27 @@ npm install
 npm start
 ```
 
-## Commands
+## Commands (Slash)
 
 | Command | Description |
 |---------|-------------|
-| `!misery` | Current misery score, status, and post counts |
-| `!incidents` | Recent Claude incidents (up to 5) |
-| `!social` | Top Bluesky complaint posts (up to 5) |
+| `/misery` | Current misery score, thermometer, status, and post counts |
+| `/incidents` | Recent Claude incidents with timestamps and emoji indicators |
+| `/social` | Top Bluesky complaint posts (up to 5) |
+| `/reddit` | Top Reddit complaint posts (up to 5, with stale indicator) |
 
 ## Behavior
 
-- Polls every 15 minutes: triggers the GitHub Action, waits 60s, fetches fresh data
+- Polls every 15 minutes:
+  1. Fetches Reddit (r/ClaudeAI, r/ChatGPT) — bot handles this since Reddit blocks cloud IPs
+  2. Triggers the GitHub Action (Bluesky + status page)
+  3. Waits 90s for Action to complete
+  4. Pushes Reddit data to `misery-data` branch via GitHub Contents API
+  5. Fetches combined `current.json` and checks for level changes
 - Posts an alert embed to the configured channel when the misery level changes (e.g. ALL CLEAR → GROWING UNREST)
 - First poll on startup is silent (sets baseline, no alert)
 - If the GitHub Action dispatch fails, still fetches data (the cron schedule is a fallback)
+- Reddit data is preserved across Action runs — if the bot goes down, existing Reddit data stays but is marked stale
 
 ## Misery Levels
 

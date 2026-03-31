@@ -12,9 +12,8 @@ Real-time dashboard tracking Claude AI outage and degradation sentiment by combi
 
 1. **Anthropic Status Page** (`status.claude.com/api/v2/summary.json`) — official component status
 2. **Anthropic Incidents** (`status.claude.com/api/v2/incidents.json`) — last 7 days of incidents with updates
-3. **Bluesky** (authenticated API) — searches for Claude outage/degradation/limit posts. Requires `BSKY_HANDLE` and `BSKY_APP_PASSWORD` GitHub secrets.
-
-Note: Reddit API access was requested and rejected. Bluesky provides similar developer chatter signal with a free, open API.
+3. **Bluesky** (authenticated API via GitHub Action) — searches for Claude outage/degradation/limit posts. Requires `BSKY_HANDLE` and `BSKY_APP_PASSWORD` GitHub secrets.
+4. **Reddit** (via Discord bot) — searches r/ClaudeAI and r/ChatGPT. Reddit blocks cloud IPs, so this runs from the Discord bot and pushes data to the `misery-data` branch. The Action preserves Reddit data across runs; it goes stale (displayed but not scored) after 30 minutes.
 
 ## Bluesky Post Filtering (Human-Level Analysis)
 
@@ -35,8 +34,9 @@ Posts go through a multi-layer filter to avoid red herrings:
 
 - Status page indicator: none=0, minor=+2, major=+4, critical=+6
 - Degraded components: +0.5 each (max +2)
-- Social posts (24h): 1-4=+0.5, 5-14=+1, 15-29=+2, 30-49=+3, 50+=+4
-- Reply volume: 10-29=+0.5, 30-74=+1, 75-149=+1.5, 150+=+2
+- Reddit posts (24h, if fresh <30m): 1-2=+0.5, 3-4=+1, 5-9=+1.5, 10-19=+2, 20+=+3
+- Bluesky posts (24h): 1-4=+0.5, 5-14=+1, 15-29=+2, 30-49=+3, 50+=+4
+- Bluesky reply volume: 10-29=+0.5, 30-74=+1, 75-149=+1.5, 150+=+2
 
 ## Misery Levels
 

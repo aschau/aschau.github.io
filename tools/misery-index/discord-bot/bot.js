@@ -9,11 +9,13 @@ var DASHBOARD_URL = "https://raggedydoc.com/tools/misery-index/";
 var POLL_INTERVAL = 15 * 60 * 1000; // 15 minutes
 var REDDIT_USER_AGENT = "MiseryBot/1.0 (by u/raggedydoc)";
 
-var REDDIT_SUBREDDITS = ["ClaudeAI"];
-var REDDIT_SEARCH_QUERIES = [
-  "claude down OR outage OR broken",
-  "claude \"not working\" OR unusable OR overloaded",
-  "claude \"rate limit\" OR error OR slow"
+// r/ClaudeAI is Claude-specific so we can search more broadly there
+// r/ChatGPT occasionally has Claude outage threads — one focused query
+var REDDIT_SEARCHES = [
+  { sub: "ClaudeAI", q: "down OR outage OR broken OR error", t: "week" },
+  { sub: "ClaudeAI", q: "rate limit OR slow OR overloaded OR unusable", t: "week" },
+  { sub: "ClaudeAI", q: "not working OR crashing OR degraded OR bug", t: "week" },
+  { sub: "ChatGPT", q: "claude down OR claude outage", t: "day" }
 ];
 
 // ── Misery Levels ───────────────────────────────────────────
@@ -77,9 +79,9 @@ async function triggerWorkflow() {
 }
 
 // ── Reddit Fetching ─────────────────────────────────────────
-async function redditSearch(query, subreddit) {
+async function redditSearch(query, subreddit, timeRange) {
   var url = "https://www.reddit.com/r/" + subreddit + "/search.json?q=" +
-    encodeURIComponent(query) + "&sort=new&t=day&restrict_sr=on&limit=25";
+    encodeURIComponent(query) + "&sort=new&t=" + (timeRange || "day") + "&restrict_sr=on&limit=25";
   try {
     var res = await fetch(url, {
       headers: { "User-Agent": REDDIT_USER_AGENT }
@@ -96,21 +98,15 @@ async function redditSearch(query, subreddit) {
   }
 }
 
-function filterRedditPost(post) {
+function filterRedditPost(post, subreddit) {
   var text = (post.title + " " + (post.selftext || "")).toLowerCase();
+  var isClaudeSub = subreddit === "ClaudeAI";
 
-  // Must mention Claude or Anthropic
-  var hasClaude = text.includes("claude");
-  var hasAnthropic = text.includes("anthropic");
-  if (!hasClaude && !hasAnthropic) return false;
-
-  // AI context check (same as Bluesky)
-  var AI_CONTEXT = ["ai", "api", "llm", "chatbot", "model", "token", "prompt", "code",
-    "sonnet", "opus", "haiku", "anthropic", "claude.ai", "cursor",
-    "copilot", "chatgpt", "openai", "gemini", "developer", "programming",
-    "agentic", "context window", "rate limit", "usage limit"];
-  if (hasClaude && !hasAnthropic) {
-    if (!AI_CONTEXT.some(function (w) { return text.includes(w); })) return false;
+  // For non-Claude subreddits, must mention Claude or Anthropic
+  if (!isClaudeSub) {
+    var hasClaude = text.includes("claude");
+    var hasAnthropic = text.includes("anthropic");
+    if (!hasClaude && !hasAnthropic) return false;
   }
 
   // Exclusions
@@ -157,36 +153,41 @@ function filterRedditPost(post) {
 
 async function fetchReddit() {
   var dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  var weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
   var seenIds = new Set();
   var allPosts = [];
 
-  for (var s = 0; s < REDDIT_SUBREDDITS.length; s++) {
-    for (var q = 0; q < REDDIT_SEARCH_QUERIES.length; q++) {
-      var results = await redditSearch(REDDIT_SEARCH_QUERIES[q], REDDIT_SUBREDDITS[s]);
+  for (var i = 0; i < REDDIT_SEARCHES.length; i++) {
+    var search = REDDIT_SEARCHES[i];
+    var results = await redditSearch(search.q, search.sub, search.t);
+    var cutoff = search.t === "week" ? weekAgo : dayAgo;
 
-      results.forEach(function (child) {
-        var post = child.data;
-        if (!post || seenIds.has(post.id)) return;
-        seenIds.add(post.id);
+    results.forEach(function (child) {
+      var post = child.data;
+      if (!post || seenIds.has(post.id)) return;
+      seenIds.add(post.id);
 
-        if (post.created_utc * 1000 < dayAgo) return;
-        if (!filterRedditPost(post)) return;
+      if (post.created_utc * 1000 < cutoff) return;
+      if (!filterRedditPost(post, search.sub)) return;
 
-        allPosts.push({
-          title: truncate(post.title, 120),
-          author: post.author || "unknown",
-          score: post.score || 0,
-          numComments: post.num_comments || 0,
-          url: "https://reddit.com" + post.permalink,
-          created: new Date(post.created_utc * 1000).toISOString(),
-          subreddit: post.subreddit,
-          source: "reddit"
-        });
+      // For week-old posts, only include if still getting engagement (comments)
+      var ageHours = (Date.now() - post.created_utc * 1000) / 3600000;
+      if (ageHours > 24 && (post.num_comments || 0) < 5) return;
+
+      allPosts.push({
+        title: truncate(post.title, 120),
+        author: post.author || "unknown",
+        score: post.score || 0,
+        numComments: post.num_comments || 0,
+        url: "https://reddit.com" + post.permalink,
+        created: new Date(post.created_utc * 1000).toISOString(),
+        subreddit: post.subreddit,
+        source: "reddit"
       });
+    });
 
-      // Pause to avoid Reddit rate limiting
-      await new Promise(function (r) { setTimeout(r, 2000); });
-    }
+    // Pause to avoid Reddit rate limiting
+    await new Promise(function (r) { setTimeout(r, 2000); });
   }
 
   console.log("  Reddit: " + allPosts.length + " posts found");
@@ -428,7 +429,7 @@ function buildRedditEmbed(data) {
 async function pollAndAlert(client) {
   console.log("[" + new Date().toISOString() + "] Polling...");
 
-  // Fetch Reddit from local machine (runs in parallel with Action)
+  // Fetch Reddit (not available from cloud IPs, so the bot handles it)
   var redditPosts = [];
   try {
     redditPosts = await fetchReddit();

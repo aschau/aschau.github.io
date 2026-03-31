@@ -56,8 +56,8 @@
   var LEVELS = [
     { max: 1,  key: "calm",       label: "ALL CLEAR",        dot: "operational" },
     { max: 3,  key: "mild",       label: "MINOR GRUMBLING",  dot: "operational" },
-    { max: 5,  key: "moderate",   label: "GROWING UNREST",   dot: "degraded"    },
-    { max: 7,  key: "severe",     label: "FULL MELTDOWN",    dot: "major"       },
+    { max: 6,  key: "moderate",   label: "GROWING UNREST",   dot: "degraded"    },
+    { max: 8,  key: "severe",     label: "FULL MELTDOWN",    dot: "major"       },
     { max: 10, key: "apocalypse", label: "APOCALYPSE",       dot: "major"       }
   ];
 

@@ -45,9 +45,9 @@ Posts go through a multi-layer filter to avoid red herrings:
 |-------|-------|--------|
 | 0-1 | ALL CLEAR | Blue, calm |
 | 1-3 | MINOR GRUMBLING | Yellow, slight pulse |
-| 3-5 | GROWING UNREST | Orange, moderate pulse |
-| 5-7 | FULL MELTDOWN | Red, shaking gauge |
-| 7-10 | APOCALYPSE | Purple, screen shake + pulse |
+| 3-6 | GROWING UNREST | Orange, moderate pulse |
+| 6-8 | FULL MELTDOWN | Red, shaking gauge |
+| 8-10 | APOCALYPSE | Purple, screen shake |
 
 ## Setup
 

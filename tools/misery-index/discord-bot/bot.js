@@ -26,8 +26,8 @@ var REDDIT_SEARCHES = [
 var LEVELS = [
   { max: 1,  label: "ALL CLEAR",       color: 0x4FC3F7, emoji: "\uD83D\uDD35" },
   { max: 3,  label: "MINOR GRUMBLING", color: 0xFFD54F, emoji: "\uD83D\uDFE1" },
-  { max: 5,  label: "GROWING UNREST",  color: 0xFFA726, emoji: "\uD83D\uDFE0" },
-  { max: 7,  label: "FULL MELTDOWN",   color: 0xEF5350, emoji: "\uD83D\uDD34" },
+  { max: 6,  label: "GROWING UNREST",  color: 0xFFA726, emoji: "\uD83D\uDFE0" },
+  { max: 8,  label: "FULL MELTDOWN",   color: 0xEF5350, emoji: "\uD83D\uDD34" },
   { max: 10, label: "APOCALYPSE",      color: 0xAB47BC, emoji: "\uD83D\uDFE3" },
 ];
 

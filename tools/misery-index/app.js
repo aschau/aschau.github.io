@@ -357,7 +357,8 @@
 
     var w = canvas.clientWidth;
     var h = canvas.clientHeight;
-    var pad = { top: 10, bottom: 20, left: 30, right: 0 };
+    var isMobile = window.innerWidth <= 600;
+    var pad = { top: 10, bottom: 20, left: isMobile ? 24 : 30, right: 0 };
 
     if (!history || history.length < 2) {
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--color-text-soft").trim() || "#3a3a50";
@@ -474,7 +475,7 @@
           if (!r.ok) throw new Error("Local data not found");
           return r.json();
         }).catch(function () { return null; })
-      : fetch(DATA_URL_REMOTE).then(function (r) {
+      : fetch(DATA_URL_REMOTE + "?t=" + Date.now()).then(function (r) {
           if (!r.ok) throw new Error("Remote data not found");
           return r.json();
         }).catch(function () {

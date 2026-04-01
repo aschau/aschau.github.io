@@ -394,7 +394,7 @@ function buildMiseryEmbed(data) {
     .addFields(
       { name: "\uD83D\uDCE1 Status", value: status, inline: true },
       { name: "\uD83D\uDFE0 Reddit", value: redditPosts + " posts" + redditStale, inline: true },
-      { name: "\uD83E\uDD4B Bluesky", value: bskyPosts + " posts, " + bskyReplies + " replies", inline: true },
+      { name: "\uD83E\uDD8B Bluesky", value: bskyPosts + " posts, " + bskyReplies + " replies", inline: true },
       { name: "\u200B", value: "[View Dashboard](" + DASHBOARD_URL + ") \u2022 [Methodology](" + DASHBOARD_URL + "about.html) \u2022 [raggedydoc.com](" + SITE_URL + ")", inline: false }
     );
 }
@@ -425,7 +425,7 @@ function buildAlertEmbed(data, oldLabel, newLabel) {
     .addFields(
       { name: "\uD83D\uDCE1 Status", value: status, inline: true },
       { name: "\uD83D\uDFE0 Reddit", value: redditPosts + " posts", inline: true },
-      { name: "\uD83E\uDD4B Bluesky", value: bskyPosts + " posts", inline: true },
+      { name: "\uD83E\uDD8B Bluesky", value: bskyPosts + " posts", inline: true },
       { name: "\u200B", value: "[View Dashboard](" + DASHBOARD_URL + ")", inline: false }
     );
 }
@@ -474,7 +474,7 @@ function buildSocialEmbed(data) {
   var social = data.social || {};
   var posts = social.topPosts || [];
   var embed = baseEmbed(data)
-    .setTitle("\uD83E\uDD4B Bluesky Chatter (24h)")
+    .setTitle("\uD83E\uDD8B Bluesky Chatter (24h)")
     .setURL("https://bsky.app/search?q=claude+outage")
     .setColor(0x0085FF);
 

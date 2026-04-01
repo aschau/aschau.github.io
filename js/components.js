@@ -195,8 +195,8 @@
   }).join("\n                ");
 
   var navbarHtml =
-    '<nav class="navbar fixed-top navbar-expand-sm navbar-dark">' +
-    '  <a class="navbar-brand link" href="' + basePath + 'index.html">Andrew Steven Chau | Portfolio</a>' +
+    '<nav class="navbar fixed-top navbar-expand-lg navbar-dark">' +
+    '  <a class="navbar-brand link" href="' + basePath + 'index.html">Andrew Steven Chau</a>' +
     '  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-content">' +
     '    <span class="navbar-toggler-icon"></span>' +
     "  </button>" +

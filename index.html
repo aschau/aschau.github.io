@@ -193,7 +193,7 @@
         var walkUp = -512;
 
         function isMobile() {
-          return window.innerWidth <= 767;
+          return window.innerWidth <= 1024;
         }
 
         // No jacket for early career (UCI through Trigger, indices 0-3)
@@ -240,6 +240,28 @@
           character.addEventListener('transitionend', onDone);
         }
 
+        function clampDetailCard(entry) {
+          if (isMobile()) return; // mobile/tablet uses static positioning
+          var detail = entry.querySelector('.timeline-detail');
+          if (!detail || detail.style.display === 'none') return;
+          // Reset to default centered position first
+          detail.style.left = '50%';
+          detail.style.right = '';
+          detail.style.transform = 'translateX(-50%)';
+          // Check if it overflows the viewport
+          var rect = detail.getBoundingClientRect();
+          var pad = 12;
+          if (rect.left < pad) {
+            // Overflows left — pin to left edge of viewport
+            var offset = pad - rect.left;
+            detail.style.left = 'calc(50% + ' + offset + 'px)';
+          } else if (rect.right > window.innerWidth - pad) {
+            // Overflows right — shift left
+            var offset = rect.right - (window.innerWidth - pad);
+            detail.style.left = 'calc(50% - ' + offset + 'px)';
+          }
+        }
+
         entries.forEach(function(entry) {
           entry.addEventListener('click', function(e) {
             if (e.target.closest('.timeline-detail')) return;
@@ -250,6 +272,8 @@
               buildDetail(entry);
               moveCharTo(entry);
               entry.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+              // Clamp detail card within viewport
+              requestAnimationFrame(function() { clampDetailCard(entry); });
             }
           });
         });
@@ -280,11 +304,29 @@
           buildDetail(startEntry);
           updateJacket(startEntry);
           // Wait for full layout (fonts, CSS, images) before positioning
-          if (document.readyState === 'complete') {
+          function initPositions() {
             positionCharAtStart();
-          } else {
-            window.addEventListener('load', positionCharAtStart);
+            clampDetailCard(startEntry);
           }
+          if (document.readyState === 'complete') {
+            initPositions();
+          } else {
+            window.addEventListener('load', initPositions);
+          }
+          // Reposition on resize/orientation change
+          window.addEventListener('resize', function() {
+            var active = document.querySelector('.timeline-entry.active');
+            if (active) {
+              // Clear both axes so moveCharTo can set the correct one
+              character.style.transition = 'none';
+              character.style.left = '';
+              character.style.top = '';
+              moveCharTo(active);
+              clampDetailCard(active);
+              setTimeout(function() { character.style.transition = ''; }, 50);
+            }
+          });
+
           // Reposition after loading screen fades (it can cause layout shifts)
           var loadingEl = document.getElementById('loading-screen');
           if (loadingEl) {

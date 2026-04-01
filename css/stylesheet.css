@@ -67,6 +67,7 @@
 html{
 	position: relative;
 	min-height: 100%;
+	overflow-x: hidden;
 }
 a {
 	text-decoration: none;
@@ -74,6 +75,7 @@ a {
 body
 {
 	margin: 0;
+	overflow-x: hidden;
 }
 
 /* Shared page body background */
@@ -274,6 +276,10 @@ body
 }
 
 /* Footer */
+#footer-placeholder {
+	margin-top: auto;
+	width: 100%;
+}
 .site-footer {
 	background: rgba(255,255,255,0.04);
 	backdrop-filter: blur(var(--glass-blur));
@@ -360,8 +366,7 @@ body
 	50% { opacity: 0; }
 }
 
-@media (max-width: 767px) {
-	/* Navbar brand — prevent wrapping on narrow screens */
+@media (max-width: 480px) {
 	.navbar-brand {
 		font-size: 0.85rem;
 		max-width: calc(100% - 60px);
@@ -369,7 +374,9 @@ body
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
+}
 
+@media (max-width: 1024px) {
 	/* Hero */
 	.hero-name {
 		font-size: 2.5rem;
@@ -891,7 +898,39 @@ body
 /* === Career timeline === */
 .timeline-container {
 	padding: 1rem 0 0;
+	padding-bottom: 200px; /* space for absolutely-positioned detail cards */
 	width: 100%;
+}
+
+@media (max-width: 1024px) {
+	.timeline-container {
+		padding-bottom: 1rem; /* detail is static on mobile/tablet, no extra padding needed */
+	}
+}
+
+@media (min-width: 1025px) and (max-width: 1200px) {
+	.timeline-entry {
+		min-width: 0;
+		flex: 1;
+		padding: 0 0.2rem;
+	}
+	.timeline-company {
+		font-size: 0.8rem;
+		word-break: break-word;
+		white-space: normal;
+	}
+	.timeline-date {
+		font-size: 0.5rem;
+	}
+	.timeline {
+		padding: 1.5rem 0.5rem 7rem;
+	}
+	.timeline-detail {
+		width: 300px;
+	}
+	.timeline-container {
+		padding-bottom: 260px;
+	}
 }
 /* Pixel character walking along timeline */
 .timeline-character {
@@ -1041,6 +1080,7 @@ body
 	transform: translateX(-50%);
 	margin-top: 12px;
 	width: 340px;
+	max-width: 90vw;
 	background: rgba(10,10,30,0.95);
 	backdrop-filter: blur(var(--glass-blur));
 	-webkit-backdrop-filter: blur(var(--glass-blur));
@@ -1056,11 +1096,7 @@ body
 	display: block;
 	animation: timelinePop 0.25s ease forwards;
 }
-/* Keep edge popups on screen */
-.timeline-entry:first-child .timeline-detail {
-	left: 0;
-	transform: none;
-}
+/* Detail card positioning handled by JS for edge entries */
 .timeline-detail p {
 	margin: 0 0 8px;
 	color: rgba(200,210,255,0.85);
@@ -1121,8 +1157,8 @@ body
 	to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* Mobile: vertical centered timeline */
-@media (max-width: 767px) {
+/* Mobile/tablet: vertical centered timeline */
+@media (max-width: 1024px) {
 	.timeline-container {
 		overflow-x: visible;
 		padding: 1rem;

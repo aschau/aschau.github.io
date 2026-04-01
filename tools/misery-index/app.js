@@ -408,7 +408,7 @@
     var w = canvas.clientWidth;
     var h = canvas.clientHeight;
     var isMobile = window.innerWidth <= 600;
-    var pad = { top: 10, bottom: 20, left: isMobile ? 24 : 30, right: 0 };
+    var pad = { top: 10, bottom: 32, left: isMobile ? 24 : 30, right: 0 };
 
     if (!history || history.length < 2) {
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--color-text-soft").trim() || "#3a3a50";
@@ -423,9 +423,6 @@
     var cutoff = now - rangeHours * 60 * 60 * 1000;
     var points = history.filter(function (p) { return new Date(p.timestamp).getTime() >= cutoff; });
     if (points.length < 2) points = history.slice(-10);
-
-    var startLabel = document.getElementById("chart-label-start");
-    startLabel.textContent = formatTime(points[0].timestamp);
 
     var drawW = w - pad.left - pad.right;
     var drawH = h - pad.top - pad.bottom;
@@ -464,6 +461,27 @@
       ctx.stroke();
       ctx.globalAlpha = 1;
     });
+
+    // Draw X-axis time labels
+    var xTickCount = isMobile ? 3 : 5;
+    var tStart = new Date(points[0].timestamp).getTime();
+    var tEnd = new Date(points[points.length - 1].timestamp).getTime();
+    var xFmt = isMobile
+      ? { hour: "2-digit", minute: "2-digit" }
+      : { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" };
+    ctx.fillStyle = axisColor;
+    ctx.font = "10px Inter, sans-serif";
+    ctx.textBaseline = "top";
+    for (var ti = 0; ti < xTickCount; ti++) {
+      var frac = ti / (xTickCount - 1);
+      var tx = pad.left + frac * drawW;
+      var tVal = new Date(tStart + frac * (tEnd - tStart));
+      var label = tVal.toLocaleString(undefined, xFmt);
+      if (ti === 0) ctx.textAlign = "left";
+      else if (ti === xTickCount - 1) ctx.textAlign = "right";
+      else ctx.textAlign = "center";
+      ctx.fillText(label, tx, pad.top + drawH + 4);
+    }
 
     // Draw line
     ctx.beginPath();

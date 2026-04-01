@@ -350,7 +350,6 @@ body {
   .gauge-container { width: 180px; height: 180px; }
   .gauge-value { font-size: 2.8rem; }
   .main { padding: 1.5rem 0.75rem 2rem; }
-  .chart-labels { padding-left: 24px; }
 }
 
 .card {
@@ -806,15 +805,6 @@ body {
   #history-chart { height: 100px; }
 }
 
-.chart-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--color-text-soft);
-  margin-top: 0.3rem;
-  padding-left: 30px;
-}
 
 /* ── Footer ──────────────────────────────────────────────── */
 .info-footer {

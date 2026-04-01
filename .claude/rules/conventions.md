@@ -15,3 +15,6 @@ paths:
 - Nav links use relative paths from `components.js` src, not absolute paths (absolute breaks `file://`).
 - Past tense for previous roles, present tense for current (Blizzard, Friend Castle, Waxheart).
 - "Friend Castle" (two words), "Waxheart" (one word, lowercase h), "macOS", "Unity".
+- Always use "Andrew Steven Chau" (not "Andrew Chau") for SEO differentiation.
+- Domain is `raggedydoc.com` — use in all canonical/OG/meta tags. The GitHub raw URL (`raw.githubusercontent.com/aschau/aschau.github.io/...`) is the repo name, not the domain — don't replace it.
+- Mobile breakpoint: 1024px. Navbar collapses at 992px (`expand-lg`).

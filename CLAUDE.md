@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Static portfolio website (GitHub Pages) for Andrew Chau at `aschau.github.io`. Plain HTML/CSS/JS, no build system.
+Static portfolio website (GitHub Pages) for Andrew Steven Chau at `raggedydoc.com` (repo: `aschau.github.io`). Plain HTML/CSS/JS, no build system. Always use "Andrew Steven Chau" (not "Andrew Chau") for SEO differentiation.
 
 ## Development
 

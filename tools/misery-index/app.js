@@ -329,12 +329,25 @@
         if (sub) meta = sub + " \u00b7 " + meta;
         if (post.created) meta += " \u00b7 " + timeAgo(post.created);
         var megaBadge = post.isMegathread ? '<span class="megathread-badge">megathread</span>' : '';
+        var commentsHtml = '';
+        if (post.topComments && post.topComments.length > 0) {
+          commentsHtml = '<div class="top-comments">';
+          post.topComments.forEach(function (c) {
+            commentsHtml += '<div class="top-comment">' +
+              '<span class="top-comment-score">' + c.score + ' \u2B06</span>' +
+              '<span class="top-comment-body">' + escapeHtml(truncate(c.body, 120)) + '</span>' +
+              '<span class="top-comment-author">u/' + escapeHtml(c.author) + '</span>' +
+              '</div>';
+          });
+          commentsHtml += '</div>';
+        }
         el.innerHTML = '<span class="social-post-score">' + scoreText + ' \u2B06</span>' +
                        '<div class="social-post-body">' +
                          megaBadge +
                          '<a href="' + sanitizeUrl(post.url) + '" target="_blank" rel="noopener noreferrer">' +
                          escapeHtml(truncate(post.title, 100)) + '</a>' +
                          '<span class="social-post-meta">' + meta + '</span>' +
+                         commentsHtml +
                        '</div>';
         postsList.appendChild(el);
       });

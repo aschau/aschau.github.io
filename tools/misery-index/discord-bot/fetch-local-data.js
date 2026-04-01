@@ -130,6 +130,7 @@ async function fetchReddit() {
         score: post.score || 0,
         numComments: post.num_comments || 0,
         url: "https://reddit.com" + post.permalink,
+        permalink: post.permalink,
         created: new Date(post.created_utc * 1000).toISOString(),
         subreddit: post.subreddit,
         source: "reddit",
@@ -140,6 +141,35 @@ async function fetchReddit() {
     });
 
     await new Promise(function (r) { setTimeout(r, 2000); });
+  }
+
+  // Fetch top comments for megathreads and high-engagement posts
+  for (var j = 0; j < allPosts.length; j++) {
+    var p = allPosts[j];
+    if (p.isMegathread || p.numComments >= 10) {
+      console.log("    Fetching comments for: " + p.title.substring(0, 50) + "...");
+      try {
+        var url = "https://www.reddit.com" + p.permalink + ".json?sort=top&limit=5";
+        var cRes = await fetch(url, { headers: { "User-Agent": REDDIT_USER_AGENT } });
+        if (cRes.ok) {
+          var cData = await cRes.json();
+          var comments = (cData[1] && cData[1].data && cData[1].data.children) || [];
+          p.topComments = comments
+            .filter(function (c) { return c.kind === "t1" && c.data && c.data.score >= 5; })
+            .slice(0, 3)
+            .map(function (c) {
+              return {
+                author: c.data.author || "unknown",
+                score: c.data.score || 0,
+                body: truncate(c.data.body || "", 150),
+                created: new Date((c.data.created_utc || 0) * 1000).toISOString()
+              };
+            });
+          console.log("      " + p.topComments.length + " top comments");
+        }
+      } catch (e) { console.log("      Comment fetch failed:", e.message); }
+      await new Promise(function (r) { setTimeout(r, 2000); });
+    }
   }
 
   return allPosts;

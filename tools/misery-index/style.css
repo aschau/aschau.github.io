@@ -505,6 +505,42 @@ body {
   width: fit-content;
 }
 
+.top-comments {
+  margin-top: 0.3rem;
+  padding-left: 0.2rem;
+  border-left: 2px solid rgba(255, 69, 0, 0.2);
+}
+
+.top-comment {
+  display: flex;
+  gap: 0.4rem;
+  align-items: baseline;
+  font-size: 0.65rem;
+  color: var(--color-text-soft);
+  padding: 0.2rem 0 0.2rem 0.4rem;
+}
+
+.top-comment-score {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: #FF4500;
+  flex-shrink: 0;
+  min-width: 2.5em;
+  text-align: right;
+}
+
+.top-comment-body {
+  flex: 1;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.top-comment-author {
+  font-size: 0.55rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
 .reddit-stale-badge {
   font-size: 0.6rem;
   color: var(--moderate);

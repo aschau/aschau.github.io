@@ -102,6 +102,33 @@ async function redditSearch(query, subreddit, timeRange) {
   }
 }
 
+async function fetchTopComments(permalink, limit) {
+  try {
+    var url = "https://www.reddit.com" + permalink + ".json?sort=top&limit=" + (limit || 5);
+    var res = await fetch(url, {
+      headers: { "User-Agent": REDDIT_USER_AGENT }
+    });
+    if (!res.ok) return [];
+    var data = await res.json();
+    // Reddit returns [post, comments] — comments are in data[1]
+    var comments = (data[1] && data[1].data && data[1].data.children) || [];
+    return comments
+      .filter(function (c) { return c.kind === "t1" && c.data && c.data.score >= 5; })
+      .slice(0, limit || 5)
+      .map(function (c) {
+        return {
+          author: c.data.author || "unknown",
+          score: c.data.score || 0,
+          body: truncate(c.data.body || "", 150),
+          created: new Date((c.data.created_utc || 0) * 1000).toISOString()
+        };
+      });
+  } catch (e) {
+    console.error("Comment fetch error:", e.message);
+    return [];
+  }
+}
+
 function filterRedditPost(post, subreddit) {
   var text = (post.title + " " + (post.selftext || "")).toLowerCase();
   var isClaudeSub = subreddit === "ClaudeAI";
@@ -203,6 +230,7 @@ async function fetchReddit() {
         score: post.score || 0,
         numComments: post.num_comments || 0,
         url: "https://reddit.com" + post.permalink,
+        permalink: post.permalink,
         created: new Date(post.created_utc * 1000).toISOString(),
         subreddit: post.subreddit,
         source: "reddit",
@@ -216,9 +244,19 @@ async function fetchReddit() {
 
   var megas = allPosts.filter(function (p) { return p.isMegathread; }).length;
   console.log("  Reddit: " + allPosts.length + " posts found (" + megas + " megathreads)");
-  allPosts.forEach(function (p) {
-    console.log("    " + (p.isMegathread ? "[MEGA] " : "") + p.title.substring(0, 70) + " (" + p.numComments + " comments)");
-  });
+
+  // Fetch top comments for megathreads and high-engagement posts
+  for (var j = 0; j < allPosts.length; j++) {
+    var post = allPosts[j];
+    if (post.isMegathread || post.numComments >= 10) {
+      console.log("    Fetching comments for: " + post.title.substring(0, 50) + "...");
+      post.topComments = await fetchTopComments(post.permalink, 3);
+      console.log("      " + post.topComments.length + " top comments found");
+      await new Promise(function (r) { setTimeout(r, 2000); });
+    }
+    console.log("    " + (post.isMegathread ? "[MEGA] " : "") + post.title.substring(0, 70) + " (" + post.numComments + " comments" + (post.topComments ? ", " + post.topComments.length + " highlighted" : "") + ")");
+  }
+
   return allPosts;
 }
 
@@ -308,11 +346,13 @@ async function pushRedditData(redditPosts) {
       .sort(function (a, b) { return b.score - a.score; })
       .slice(0, 10)
       .map(function (p) {
-        return {
+        var post = {
           title: p.title, author: p.author, score: p.score,
           url: p.url, created: p.created, subreddit: p.subreddit,
           source: p.source, isMegathread: p.isMegathread || false
         };
+        if (p.topComments && p.topComments.length > 0) post.topComments = p.topComments;
+        return post;
       })
   };
 
@@ -534,9 +574,20 @@ function buildRedditEmbed(data) {
     var url = post.url || "#";
     var mega = post.isMegathread ? " \uD83D\uDFE3 `MEGA`" : "";
     var comments = post.numComments || 0;
+
+    var value = "[" + title + "](" + url + ")\n" + comments + " comments \u2022 u/" + (post.author || "unknown");
+
+    // Show top comments for megathreads and high-engagement posts
+    if (post.topComments && post.topComments.length > 0) {
+      value += "\n";
+      post.topComments.slice(0, 2).forEach(function (c) {
+        value += "\n> \uD83D\uDD25 **" + c.score + "** \u2022 u/" + c.author + "\n> " + c.body.replace(/\n/g, " ");
+      });
+    }
+
     embed.addFields({
       name: score + " \u2B06 \u2014 " + sub + mega,
-      value: "[" + title + "](" + url + ")\n" + comments + " comments \u2022 u/" + (post.author || "unknown")
+      value: value
     });
   });
 

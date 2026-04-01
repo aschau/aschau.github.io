@@ -5,7 +5,7 @@ Real-time dashboard tracking Claude AI outage and degradation sentiment by combi
 ## Architecture
 
 - **Frontend**: `index.html` + `style.css` + `app.js` — self-contained, no build system, light/dark mode
-- **Data pipeline**: GitHub Action (`.github/workflows/fetch-misery-data.yml`) runs every 15 minutes, executes `.github/scripts/fetch-misery-data.js` which fetches all sources, calculates misery index, and force-pushes to `misery-data` orphan branch
+- **Data pipeline**: Discord bot (primary) fetches all sources every 15 min, calculates score, pushes unified `current.json` to `misery-data` orphan branch. GitHub Action (fallback) runs on cron when bot is offline — handles Bluesky + status only.
 - **Live fallback**: Frontend fetches from `misery-data` branch, falls back to local `data/current.json`, and also fetches `status.claude.com` live for real-time status/incidents
 
 ## Data Sources

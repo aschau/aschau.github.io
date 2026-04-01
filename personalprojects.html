@@ -245,9 +245,9 @@
                   <p class="card-text"><b>Where it is now:</b></p>
                   <ul class="text-white">
                     <li>Four data sources — status page, incidents, Reddit, and Bluesky</li>
-                    <li>Discord bot that fetches Reddit, triggers GitHub Actions, and alerts on level changes</li>
+                    <li>Discord bot fetches all sources (Reddit, Bluesky, status page), calculates score, and alerts on level changes</li>
                     <li>Multi-layer post filtering to avoid false positives (exclusion patterns, signal tiering, proximity checks)</li>
-                    <li>GitHub Action runs every 15 minutes, pushes data to an orphan branch</li>
+                    <li>Data refreshed every 15 minutes, pushed to an orphan branch</li>
                     <li>History chart with time range toggles (24h / 3d / 7d)</li>
                     <li>Light/dark theme with misery-level visual escalation (screen shake at apocalypse level)</li>
                   </ul>

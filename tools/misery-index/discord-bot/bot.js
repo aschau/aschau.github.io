@@ -11,6 +11,19 @@ var SITE_URL = "https://raggedydoc.com";
 var BOT_AUTHOR = { name: "raggedydoc.com", url: SITE_URL, iconURL: "https://raggedydoc.com/img/favicon.png" };
 var POLL_INTERVAL = 15 * 60 * 1000; // 15 minutes
 var REDDIT_USER_AGENT = "MiseryBot/1.0 (by u/raggedydoc)";
+var BSKY_USER_AGENT = "MiseryBot/1.0 (https://raggedydoc.com/misery)";
+
+// Bluesky search queries
+var BSKY_QUERIES = [
+  "claude is down", "claude outage", "claude not working",
+  "claude broken", "claude rate limit", "claude usage limit",
+  "claude overloaded", "claude unusable", "anthropic outage",
+  "claude down again", "claude so slow", "can't use claude",
+  "claude keeps crashing", "claude keeps failing",
+  "#claudedown", "#claudeai outage", "#claudeai down",
+  "#anthropic outage",
+  "@anthropic.com down", "@anthropic.com outage"
+];
 
 // r/ClaudeAI is Claude-specific so we can search more broadly there
 // r/ChatGPT occasionally has Claude outage threads — one focused query
@@ -260,7 +273,160 @@ async function fetchReddit() {
   return allPosts;
 }
 
-// ── Misery Calculation (mirrors fetch-misery-data.js) ────────
+// ── Bluesky Fetching ────────────────────────────────────────
+var bskyToken = null;
+
+async function bskyLogin() {
+  var handle = process.env.BSKY_HANDLE;
+  var password = process.env.BSKY_APP_PASSWORD;
+  if (!handle || !password) {
+    console.log("  No Bluesky credentials — skipping");
+    return false;
+  }
+  try {
+    var res = await fetch("https://bsky.social/xrpc/com.atproto.server.createSession", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "User-Agent": BSKY_USER_AGENT },
+      body: JSON.stringify({ identifier: handle, password: password })
+    });
+    if (!res.ok) { console.error("  Bluesky login failed:", res.status); return false; }
+    var data = await res.json();
+    bskyToken = data.accessJwt;
+    console.log("  Bluesky authenticated as " + data.handle);
+    return true;
+  } catch (e) { console.error("  Bluesky login error:", e.message); return false; }
+}
+
+async function bskySearch(query) {
+  if (!bskyToken) return [];
+  try {
+    var url = "https://bsky.social/xrpc/app.bsky.feed.searchPosts?q=" + encodeURIComponent(query) + "&limit=30&sort=latest";
+    var res = await fetch(url, {
+      headers: { "Authorization": "Bearer " + bskyToken, "User-Agent": BSKY_USER_AGENT }
+    });
+    if (!res.ok) return [];
+    var data = await res.json();
+    return data.posts || [];
+  } catch (e) { return []; }
+}
+
+function bskyPostUrl(uri) {
+  var parts = uri.replace("at://", "").split("/");
+  if (parts.length >= 3) return "https://bsky.app/profile/" + parts[0] + "/post/" + parts[2];
+  return "https://bsky.app";
+}
+
+async function fetchBluesky() {
+  var loggedIn = await bskyLogin();
+  if (!loggedIn) return [];
+
+  var dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  var seenUris = new Set();
+  var allPosts = [];
+
+  for (var i = 0; i < BSKY_QUERIES.length; i++) {
+    var results = await bskySearch(BSKY_QUERIES[i]);
+
+    results.forEach(function (post) {
+      if (seenUris.has(post.uri)) return;
+      seenUris.add(post.uri);
+
+      var createdAt = new Date(post.indexedAt || (post.record && post.record.createdAt)).getTime();
+      if (createdAt < dayAgo) return;
+
+      var text = ((post.record && post.record.text) || "").toLowerCase();
+      var hasAnthropic = text.includes("anthropic");
+      var hasClaude = text.includes("claude");
+      if (!hasClaude && !hasAnthropic) return;
+
+      // AI context check
+      var AI_CONTEXT = ["ai", "api", "llm", "chatbot", "model", "token", "prompt", "code",
+        "coding", "sonnet", "opus", "haiku", "anthropic", "claude.ai", "cursor",
+        "copilot", "chatgpt", "openai", "gemini", "developer", "programming",
+        "vibe cod", "agentic", "context window", "rate limit", "usage limit"];
+      if (hasClaude && !hasAnthropic) {
+        if (!AI_CONTEXT.some(function (w) { return text.includes(w); })) return;
+      }
+
+      // Exclusions
+      var EXCLUSIONS = [
+        "was down", "were down", "was broken", "was unusable",
+        "remember when", "last week", "last month", "yesterday",
+        "used to be", "months ago", "back when",
+        "fixed the bug", "fixed a bug", "found the bug", "helped me",
+        "love claude", "claude is great", "claude is amazing",
+        "impressed", "works great", "working great", "working well",
+        "back up", "is back", "working again", "resolved",
+        "addicted", "withdrawal", "forgot how to code", "lost without",
+        "can't code without", "dependent on", "dependency on",
+        "switched to", "switching to", "going back to", "gave up on",
+        "switched from", "moved to",
+        "worse than", "better than", "compared to",
+        "sucks", "terrible", "garbage", "useless"
+      ];
+      var isExcluded = EXCLUSIONS.some(function (w) {
+        var idx = text.indexOf(w);
+        while (idx !== -1) {
+          var nearby = text.substring(Math.max(0, idx - 60), idx + w.length + 60);
+          if (nearby.includes("claude") || nearby.includes("anthropic")) return true;
+          idx = text.indexOf(w, idx + 1);
+        }
+        return false;
+      });
+      if (isExcluded) return;
+
+      // Signal checks
+      var STRONG = ["is down", "went down", "goes down", "going down",
+        "outage", "not working", "unavailable",
+        "can't use", "cant use", "won't work", "doesn't work", "stopped working",
+        "keeps crashing", "keeps failing",
+        "overloaded", "500 error", "502", "503", "504",
+        "please fix", "is it just me"];
+      var WEAK = ["rate limit", "token limit", "usage limit", "message limit",
+        "limit reached", "hit the limit", "hit my limit", "out of messages",
+        "throttl", "capped", "degraded", "so slow", "unusable", "broken",
+        "nerfed", "bug", "buggy"];
+
+      function hasSignalNearby(signals, radius) {
+        return signals.some(function (w) {
+          var idx = text.indexOf(w);
+          while (idx !== -1) {
+            var nearby = text.substring(Math.max(0, idx - radius), idx + w.length + radius);
+            if (nearby.includes("claude") || nearby.includes("anthropic")) return true;
+            idx = text.indexOf(w, idx + 1);
+          }
+          return false;
+        });
+      }
+
+      var hasStrong = hasSignalNearby(STRONG, 80);
+      var hasWeak = hasSignalNearby(WEAK, 80);
+      if (!hasStrong) {
+        if (!hasWeak) return;
+        var weakCount = WEAK.filter(function (w) { return text.includes(w); }).length;
+        var hasFrustration = /\b(wtf|omg|ugh|smh|seriously|annoying|frustrat|painful)\b/i.test(text);
+        if (weakCount < 2 && !hasFrustration) return;
+      }
+
+      allPosts.push({
+        title: truncate((post.record && post.record.text) || "", 120),
+        author: (post.author && post.author.handle) || "unknown",
+        score: post.likeCount || 0,
+        numComments: post.replyCount || 0,
+        url: bskyPostUrl(post.uri),
+        created: post.indexedAt || (post.record && post.record.createdAt) || new Date().toISOString(),
+        source: "bluesky"
+      });
+    });
+
+    await new Promise(function (r) { setTimeout(r, 500); });
+  }
+
+  console.log("  Bluesky: " + allPosts.length + " posts found");
+  return allPosts;
+}
+
+// ── Misery Calculation ──────────────────────────────────────
 function calculateMisery(data, redditData) {
   var statusScore = 0;
   var bskyScore = 0;
@@ -595,48 +761,167 @@ function buildRedditEmbed(data) {
   return embed;
 }
 
+// ── Status + Incidents Fetching ──────────────────────────────
+async function fetchStatus() {
+  try {
+    var res = await fetch("https://status.claude.com/api/v2/summary.json", {
+      headers: { "User-Agent": BSKY_USER_AGENT }
+    });
+    if (!res.ok) throw new Error("Status fetch failed: " + res.status);
+    return await res.json();
+  } catch (e) { console.error("  Status fetch error:", e.message); return null; }
+}
+
+async function fetchIncidents() {
+  try {
+    var res = await fetch("https://status.claude.com/api/v2/incidents.json", {
+      headers: { "User-Agent": BSKY_USER_AGENT }
+    });
+    if (!res.ok) throw new Error("Incidents fetch failed: " + res.status);
+    var data = await res.json();
+    var sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    return (data.incidents || [])
+      .filter(function (inc) { return new Date(inc.created_at).getTime() >= sevenDaysAgo; })
+      .slice(0, 10)
+      .map(function (inc) {
+        return {
+          name: inc.name, status: inc.status, impact: inc.impact,
+          createdAt: inc.created_at, updatedAt: inc.updated_at,
+          url: inc.shortlink || ("https://status.claude.com/incidents/" + inc.id),
+          updates: (inc.incident_updates || []).slice(0, 3).map(function (u) {
+            return { status: u.status, body: u.body, createdAt: u.created_at };
+          })
+        };
+      });
+  } catch (e) { console.error("  Incidents fetch error:", e.message); return []; }
+}
+
+// ── Push All Data to GitHub ─────────────────────────────────
+async function pushFullData(statusData, incidents, redditPosts, bskyPosts) {
+  // Get current file from misery-data branch
+  var shaRes = await fetch(CONTENTS_API, {
+    headers: {
+      "Authorization": "Bearer " + process.env.GITHUB_PAT,
+      "Accept": "application/vnd.github.v3+json",
+      "User-Agent": "MiseryDiscordBot/1.0",
+    }
+  });
+  if (!shaRes.ok) {
+    console.error("  Failed to get file SHA:", shaRes.status);
+    return;
+  }
+  var shaData = await shaRes.json();
+  var fileSha = shaData.sha;
+  var existing = JSON.parse(Buffer.from(shaData.content, "base64").toString("utf-8"));
+
+  var now = new Date().toISOString();
+
+  // Update status
+  if (statusData) existing.status = statusData;
+
+  // Update incidents
+  if (incidents.length > 0) existing.incidents = incidents;
+
+  // Update Bluesky (preserve existing if fetch returned 0)
+  if (bskyPosts.length > 0) {
+    var bskyCommentCount = bskyPosts.reduce(function (sum, p) { return sum + (p.numComments || 0); }, 0);
+    existing.social = {
+      recentPosts: bskyPosts.length,
+      recentComments: bskyCommentCount,
+      topPosts: bskyPosts.sort(function (a, b) { return b.score - a.score; }).slice(0, 10)
+    };
+  }
+
+  // Update Reddit (preserve existing if fetch returned 0 — likely rate limited)
+  if (redditPosts.length > 0) {
+    var redditCommentCount = redditPosts.reduce(function (sum, p) { return sum + (p.numComments || 0); }, 0);
+    existing.reddit = {
+      lastFetched: now,
+      recentPosts: redditPosts.length,
+      recentComments: redditCommentCount,
+      topPosts: redditPosts.sort(function (a, b) { return b.score - a.score; }).slice(0, 10).map(function (p) {
+        var post = {
+          title: p.title, author: p.author, score: p.score,
+          url: p.url, created: p.created, subreddit: p.subreddit,
+          source: p.source, isMegathread: p.isMegathread || false
+        };
+        if (p.topComments && p.topComments.length > 0) post.topComments = p.topComments;
+        return post;
+      })
+    };
+  }
+
+  // Recalculate misery score
+  var result = calculateMisery(existing, existing.reddit);
+  existing.miseryIndex = result.total;
+  existing.breakdown = result.breakdown;
+  existing.lastUpdated = now;
+
+  // Append to history
+  if (!Array.isArray(existing.history)) existing.history = [];
+  existing.history.push({
+    timestamp: now,
+    miseryIndex: result.total,
+    statusIndicator: (statusData && statusData.status) ? statusData.status.indicator : "unknown",
+    postCount: bskyPosts.length,
+    commentCount: bskyPosts.reduce(function (sum, p) { return sum + (p.numComments || 0); }, 0)
+  });
+  if (existing.history.length > 672) existing.history = existing.history.slice(-672);
+
+  // Push
+  var updateRes = await fetch("https://api.github.com/repos/aschau/aschau.github.io/contents/current.json", {
+    method: "PUT",
+    headers: {
+      "Authorization": "Bearer " + process.env.GITHUB_PAT,
+      "Accept": "application/vnd.github.v3+json",
+      "User-Agent": "MiseryDiscordBot/1.0",
+    },
+    body: JSON.stringify({
+      message: "bot: misery " + result.total + "/10 | r:" + redditPosts.length + " b:" + bskyPosts.length,
+      content: Buffer.from(JSON.stringify(existing, null, 2)).toString("base64"),
+      sha: fileSha,
+      branch: "misery-data"
+    })
+  });
+
+  if (!updateRes.ok) {
+    var errText = await updateRes.text();
+    console.error("  Failed to push data (" + updateRes.status + "): " + errText);
+  } else {
+    console.log("  Data pushed to misery-data branch");
+  }
+
+  return existing;
+}
+
 // ── Poll Loop ───────────────────────────────────────────────
 async function pollAndAlert(client) {
   console.log("[" + new Date().toISOString() + "] Polling...");
 
-  // Fetch Reddit (not available from cloud IPs, so the bot handles it)
+  // Fetch all sources
   var redditPosts = [];
-  try {
-    redditPosts = await fetchReddit();
-  } catch (e) {
-    console.error("Reddit fetch error:", e.message);
-  }
+  var bskyPosts = [];
+  var statusData = null;
+  var incidents = [];
 
-  // Trigger the GitHub Action (Bluesky + status)
-  try {
-    await triggerWorkflow();
-  } catch (e) {
-    console.error("Workflow trigger error:", e.message);
-  }
+  try { redditPosts = await fetchReddit(); } catch (e) { console.error("Reddit error:", e.message); }
+  try { bskyPosts = await fetchBluesky(); } catch (e) { console.error("Bluesky error:", e.message); }
+  try { statusData = await fetchStatus(); } catch (e) { console.error("Status error:", e.message); }
+  try { incidents = await fetchIncidents(); } catch (e) { console.error("Incidents error:", e.message); }
 
-  // Wait for Action to complete (90s to be safe)
-  console.log("  Waiting 90s for Action to finish...");
-  await new Promise(function (r) { setTimeout(r, 90 * 1000); });
+  console.log("  Status: " + (statusData && statusData.status ? statusData.status.description : "unknown"));
 
-  // Push Reddit data AFTER Action finishes (so it doesn't get overwritten)
-  console.log("  Pushing Reddit data...");
-  try {
-    await pushRedditData(redditPosts);
-  } catch (e) {
-    console.error("Reddit push error:", e.message);
-  }
-
-  // Brief pause for GitHub CDN to propagate
-  await new Promise(function (r) { setTimeout(r, 5000); });
-
-  // Fetch fresh data (now includes both Bluesky from Action + Reddit from our push)
+  // Push unified data
   var data;
   try {
-    data = await fetchData();
+    data = await pushFullData(statusData, incidents, redditPosts, bskyPosts);
   } catch (e) {
-    console.error("Data fetch error:", e.message);
-    return;
+    console.error("Push error:", e.message);
+    // Fall back to fetching whatever's on the branch
+    try { data = await fetchData(); } catch (e2) { console.error("Fetch fallback error:", e2.message); return; }
   }
+
+  if (!data) return;
 
   var newLevel = getLevel(data.miseryIndex);
   console.log("  Misery: " + data.miseryIndex + "/10 (" + newLevel.label + ")");

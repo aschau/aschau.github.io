@@ -105,9 +105,12 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   position: relative;
   transition: background 0.3s, color 0.3s;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Scanline overlay */
@@ -211,6 +214,7 @@ body {
   max-width: 720px;
   margin: 0 auto;
   padding: 2rem 1rem 2rem;
+  flex: 1;
 }
 
 /* ── Gauge ────────────────────────────────────────────────── */

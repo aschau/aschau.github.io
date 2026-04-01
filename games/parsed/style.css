@@ -62,6 +62,7 @@ body {
     background-attachment: fixed;
     color: var(--color-text);
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
     -webkit-tap-highlight-color: transparent;
@@ -75,6 +76,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-height: 100dvh;
     padding: 0 16px;
 }
 

@@ -143,10 +143,47 @@
     document.getElementById("commentary-text").textContent = pickRandom(COMMENTARY[level.key]);
   }
 
+  function computeBreakdown(data) {
+    var statusScore = 0;
+    var bskyScore = 0;
+    var redditScore = 0;
+
+    if (data.status && data.status.status) {
+      var ind = data.status.status.indicator;
+      if (ind === "minor") statusScore += 2;
+      else if (ind === "major") statusScore += 4;
+      else if (ind === "critical") statusScore += 6;
+      if (data.status.components) {
+        var bad = data.status.components.filter(function (c) { return c.status !== "operational"; });
+        statusScore += Math.min(bad.length * 0.5, 2);
+      }
+    }
+    var bskyPosts = data.social ? data.social.recentPosts : 0;
+    var bskyComments = data.social ? data.social.recentComments : 0;
+    if (bskyPosts >= 30) bskyScore += 2;
+    else if (bskyPosts >= 15) bskyScore += 1.5;
+    else if (bskyPosts >= 5) bskyScore += 1;
+    else if (bskyPosts >= 1) bskyScore += 0.5;
+    if (bskyComments >= 75) bskyScore += 1;
+    else if (bskyComments >= 30) bskyScore += 0.5;
+
+    if (data.reddit && data.reddit.lastFetched) {
+      var megas = (data.reddit.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
+      var rPosts = (data.reddit.recentPosts || 0) + (megas * 4);
+      if (rPosts >= 30) redditScore = 5;
+      else if (rPosts >= 20) redditScore = 4;
+      else if (rPosts >= 10) redditScore = 3;
+      else if (rPosts >= 5) redditScore = 2;
+      else if (rPosts >= 3) redditScore = 1;
+      else if (rPosts >= 1) redditScore = 0.5;
+    }
+
+    return { status: statusScore, bluesky: bskyScore, reddit: redditScore };
+  }
+
   function renderBreakdown(breakdown) {
     if (!breakdown) return;
-    var total = (breakdown.status || 0) + (breakdown.reddit || 0) + (breakdown.bluesky || 0);
-    var max = 10; // score is capped at 10
+    var max = 10;
 
     function pct(v) { return Math.max((v / max) * 100, v > 0 ? 2 : 0) + "%"; }
 
@@ -550,7 +587,7 @@
       renderReddit(data.reddit || null);
       renderIncidents(lastIncidents);
       setMiseryLevel(data.miseryIndex != null ? data.miseryIndex : 0);
-      renderBreakdown(data.breakdown || null);
+      renderBreakdown(data.breakdown || computeBreakdown(data));
       renderHistory(data.history || []);
 
       if (data.lastUpdated) {

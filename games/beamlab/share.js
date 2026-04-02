@@ -40,7 +40,7 @@ function generateShareText(puzzleNumber, piecesUsed, par, streak, gotGem, totalG
         lines.push('\uD83D\uDD25 ' + streak + ' day streak');
     }
 
-    lines.push('https://raggedydoc.com/games/beamlab');
+    lines.push('https://www.raggedydoc.com/games/beamlab');
 
     return lines.join('\n');
 }

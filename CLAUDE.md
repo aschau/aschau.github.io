@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Static portfolio website (GitHub Pages) for Andrew Steven Chau at `raggedydoc.com` (repo: `aschau.github.io`). Plain HTML/CSS/JS, no build system. Always use "Andrew Steven Chau" (not "Andrew Chau") for SEO differentiation.
+Static portfolio website (GitHub Pages) for Andrew Steven Chau at `www.raggedydoc.com` (repo: `aschau.github.io`). Plain HTML/CSS/JS, no build system. Always use "Andrew Steven Chau" (not "Andrew Chau") for SEO differentiation.
 
 ## Development
 
@@ -17,7 +17,7 @@ Static portfolio website (GitHub Pages) for Andrew Steven Chau at `raggedydoc.co
 - **Responsive**: Mobile breakpoint at 1024px (covers all iPads in portrait). Tablet landscape (1025-1200px) has compressed timeline. Navbar `expand-lg` (collapses to hamburger under 992px).
 - **Timeline**: Career timeline on `index.html`. Detail cards clamped within viewport via JS. Character sprite repositions on resize/rotation.
 - **Character sprite**: LPC spritesheets (64x64 frames). Jacket/no-jacket variants. CC-BY-SA 3.0.
-- **SEO**: Per-page meta tags, OG/Twitter cards, `sitemap.xml`, `robots.txt`, JSON-LD on aboutMe. Domain is `raggedydoc.com`.
+- **SEO**: Per-page meta tags, OG/Twitter cards, `sitemap.xml`, `robots.txt`, JSON-LD on aboutMe. Domain is `www.raggedydoc.com`.
 
 ## Conventions
 

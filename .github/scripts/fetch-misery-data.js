@@ -7,7 +7,7 @@ const path = require("path");
 
 const DATA_FILE = path.join(__dirname, "../../tools/misery-index/data/current.json");
 const MAX_HISTORY = 672; // 7 days at 15-min intervals
-const USER_AGENT = "MiseryIndex/1.0 (https://raggedydoc.com/misery)";
+const USER_AGENT = "MiseryIndex/1.0 (https://www.raggedydoc.com/misery)";
 
 // Search queries for Bluesky — focused on active outage/degradation, not general discussion
 const SEARCH_QUERIES = [

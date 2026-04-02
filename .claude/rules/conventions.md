@@ -16,6 +16,6 @@ paths:
 - Past tense for previous roles, present tense for current (Blizzard, Friend Castle, Waxheart).
 - "Friend Castle" (two words), "Waxheart" (one word, lowercase h), "macOS", "Unity".
 - Always use "Andrew Steven Chau" (not "Andrew Chau") for SEO differentiation.
-- Domain is `raggedydoc.com` — use in all canonical/OG/meta tags. The GitHub raw URL (`raw.githubusercontent.com/aschau/aschau.github.io/...`) is the repo name, not the domain — don't replace it.
+- Domain is `www.raggedydoc.com` — use in all canonical/OG/meta tags. The GitHub raw URL (`raw.githubusercontent.com/aschau/aschau.github.io/...`) is the repo name, not the domain — don't replace it.
 - Mobile breakpoint: 1024px. Navbar collapses at 992px (`expand-lg`).
 - Always use `min-height: 100dvh` after `min-height: 100vh` as a progressive enhancement. Plain `100vh` causes a gap on mobile when the browser address bar hides (it uses the largest viewport height, not the dynamic one).

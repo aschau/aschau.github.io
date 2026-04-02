@@ -36,7 +36,7 @@ function generateShareText(puzzleNumber, swaps, par, shareResult, streak, userna
         lines.push('\uD83D\uDD25 ' + streak + ' day streak');
     }
 
-    var url = 'https://raggedydoc.com/games/parsed';
+    var url = 'https://www.raggedydoc.com/games/parsed';
     if (isArchive) url += '?day=' + puzzleNumber;
     lines.push(url);
 

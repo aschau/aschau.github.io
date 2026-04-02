@@ -5,13 +5,13 @@ const { Client, GatewayIntentBits, EmbedBuilder, REST, Routes, SlashCommandBuild
 var DATA_URL = "https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/current.json";
 var CONTENTS_API = "https://api.github.com/repos/aschau/aschau.github.io/contents/current.json?ref=misery-data";
 var WORKFLOW_URL = "https://api.github.com/repos/aschau/aschau.github.io/actions/workflows/fetch-misery-data.yml/dispatches";
-var DASHBOARD_URL = "https://raggedydoc.com/tools/misery-index/";
-var OG_IMAGE = "https://raggedydoc.com/tools/misery-index/og-image.png";
-var SITE_URL = "https://raggedydoc.com";
-var BOT_AUTHOR = { name: "raggedydoc.com", url: SITE_URL, iconURL: "https://raggedydoc.com/img/favicon.png" };
+var DASHBOARD_URL = "https://www.raggedydoc.com/tools/misery-index/";
+var OG_IMAGE = "https://www.raggedydoc.com/tools/misery-index/og-image.png";
+var SITE_URL = "https://www.raggedydoc.com";
+var BOT_AUTHOR = { name: "raggedydoc.com", url: SITE_URL, iconURL: "https://www.raggedydoc.com/img/favicon.png" };
 var POLL_INTERVAL = 15 * 60 * 1000; // 15 minutes
 var REDDIT_USER_AGENT = "MiseryBot/1.0 (by u/raggedydoc)";
-var BSKY_USER_AGENT = "MiseryBot/1.0 (https://raggedydoc.com/misery)";
+var BSKY_USER_AGENT = "MiseryBot/1.0 (https://www.raggedydoc.com/misery)";
 
 // Bluesky search queries
 var BSKY_QUERIES = [

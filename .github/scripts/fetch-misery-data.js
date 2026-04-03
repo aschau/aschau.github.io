@@ -530,7 +530,21 @@ function generateRssFeeds(data) {
   console.log("RSS feed written to", FEED_FILE);
 
   // ── Official Only feed ──────────────────────────────────────
-  var officialScore = data.breakdown ? data.breakdown.status : 0;
+  // Compute status-only score (same logic as calculateMisery, status portion only)
+  var officialScore = 0;
+  if (data.status && data.status.status) {
+    var indicator = data.status.status.indicator;
+    if (indicator === "minor") officialScore += 2;
+    else if (indicator === "major") officialScore += 4;
+    else if (indicator === "critical") officialScore += 6;
+    if (data.status.components) {
+      var badComps = data.status.components.filter(function (c) {
+        return c.status !== "operational" &&
+          c.name !== "Visit https://status.claude.com for more information";
+      });
+      officialScore += Math.min(badComps.length * 0.5, 2);
+    }
+  }
   var officialLevel = getLevel(officialScore);
   var officialItems = [];
 

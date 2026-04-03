@@ -217,18 +217,21 @@ function filterRedditPost(post, subreddit) {
   var isUserCode = /\b(my |i |we |our )(code|app|script|pipeline|project|build|setup)\b/.test(text)
     && !(/\bclaude.*(broke|broken|bug|crash)/i.test(text));
 
+  // Strip negated signals ("not a bug", "isn't broken", etc.)
+  var negated = text.replace(/\b(not a|not the|not an|isn't|isnt|is not|no |this is not|this isn't)\s*\w*\s*(bug|broken|error|outage|slow|degraded|unusable|unavailable)\b/gi, "");
+
   // Strong outage → pass immediately
-  if (STRONG_OUTAGE.some(function (w) { return text.includes(w); })) return "outage";
+  if (STRONG_OUTAGE.some(function (w) { return negated.includes(w); })) return "outage";
 
   // Usage frustration → separate category
   // Single usage signal is enough if the post has community agreement (upvotes) or frustration
-  var usageCount = USAGE_SIGNALS.filter(function (w) { return text.includes(w); }).length;
+  var usageCount = USAGE_SIGNALS.filter(function (w) { return negated.includes(w); }).length;
   if (usageCount >= 1 && (hasFrustration || (post.score || 0) >= 5)) return "usage";
   if (usageCount >= 2) return "usage";
 
   // Weak outage signals — skip if it's about user's own code
   if (!isUserCode) {
-    var weakCount = WEAK_OUTAGE.filter(function (w) { return text.includes(w); }).length;
+    var weakCount = WEAK_OUTAGE.filter(function (w) { return negated.includes(w); }).length;
     if (weakCount >= 2 || (weakCount >= 1 && hasFrustration)) return "outage";
   }
 

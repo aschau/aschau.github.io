@@ -50,7 +50,13 @@
   var lastHistory = null;
   var lastSocialData = null;
   var lastIncidents = null;
+  var lastData = null;
   var rangeHours = 24;
+  var FILTER_KEY = "misery_product_filter";
+  var productFilter = localStorage.getItem(FILTER_KEY) || "all";
+
+  // API component names as they appear on status.claude.com
+  var API_COMPONENT_NAMES = ["claude api", "api"];
 
   // ── Misery levels ──────────────────────────────────────────
   var LEVELS = [
@@ -149,13 +155,29 @@
     var redditScore = 0;
 
     if (data.status && data.status.status) {
-      var ind = data.status.status.indicator;
-      if (ind === "minor") statusScore += 2;
-      else if (ind === "major") statusScore += 4;
-      else if (ind === "critical") statusScore += 6;
-      if (data.status.components) {
-        var bad = data.status.components.filter(function (c) { return c.status !== "operational"; });
-        statusScore += Math.min(bad.length * 0.5, 2);
+      var components = filterComponents(data.status.components);
+      if (productFilter === "api") {
+        // API-only: score based on API component status directly
+        var apiComp = components && components[0];
+        if (apiComp) {
+          var st = apiComp.status;
+          if (st === "degraded_performance") statusScore += 2;
+          else if (st === "partial_outage") statusScore += 4;
+          else if (st === "major_outage") statusScore += 6;
+        }
+        // Also add system-level indicator if it's major/critical (affects API too)
+        var ind = data.status.status.indicator;
+        if (ind === "critical") statusScore = Math.max(statusScore, 6);
+        else if (ind === "major") statusScore = Math.max(statusScore, 4);
+      } else {
+        var ind = data.status.status.indicator;
+        if (ind === "minor") statusScore += 2;
+        else if (ind === "major") statusScore += 4;
+        else if (ind === "critical") statusScore += 6;
+        if (components) {
+          var bad = components.filter(function (c) { return c.status !== "operational"; });
+          statusScore += Math.min(bad.length * 0.5, 2);
+        }
       }
     }
     var bskyPosts = data.social ? data.social.recentPosts : 0;
@@ -219,9 +241,10 @@
     // Components
     if (statusData.components) {
       components.innerHTML = "";
-      var shown = statusData.components.filter(function (c) {
+      var allComps = statusData.components.filter(function (c) {
         return c.name !== "Visit https://status.claude.com for more information";
-      }).slice(0, 5);
+      });
+      var shown = productFilter === "api" ? allComps.filter(isApiComponent) : allComps.slice(0, 5);
 
       shown.forEach(function (c) {
         var row = document.createElement("div");
@@ -530,6 +553,16 @@
     return str.length > len ? str.slice(0, len) + "..." : str;
   }
 
+  function isApiComponent(component) {
+    var name = (component.name || "").toLowerCase().replace(/\s*\(formerly[^)]*\)/gi, "");
+    return API_COMPONENT_NAMES.some(function (n) { return name === n || name.indexOf(n) !== -1; });
+  }
+
+  function filterComponents(components) {
+    if (productFilter === "all" || !components) return components;
+    return components.filter(isApiComponent);
+  }
+
   // ── Data Fetching ──────────────────────────────────────────
   var INCIDENTS_API = "https://status.claude.com/api/v2/incidents.json";
 
@@ -599,14 +632,16 @@
 
       lastSocialData = data.social || null;
       lastIncidents = incidents;
+      lastData = {
+        status: statusData,
+        social: lastSocialData,
+        reddit: data.reddit || null,
+        miseryIndex: data.miseryIndex != null ? data.miseryIndex : 0,
+        breakdown: data.breakdown || null,
+        history: data.history || []
+      };
 
-      renderStatus(statusData);
-      renderSocial(lastSocialData);
-      renderReddit(data.reddit || null);
-      renderIncidents(lastIncidents);
-      setMiseryLevel(data.miseryIndex != null ? data.miseryIndex : 0);
-      renderBreakdown(data.breakdown || computeBreakdown(data));
-      renderHistory(data.history || []);
+      renderWithFilter();
 
       if (data.lastUpdated) {
         document.getElementById("last-updated").textContent = timeAgo(data.lastUpdated);
@@ -626,15 +661,64 @@
 
     lastSocialData = { recentPosts: 0, recentComments: 0, topPosts: [] };
     lastIncidents = liveIncidents || [];
+    lastData = {
+      status: statusData,
+      social: lastSocialData,
+      reddit: null,
+      miseryIndex: 0,
+      breakdown: null,
+      history: []
+    };
 
-    renderStatus(statusData);
-    renderSocial(lastSocialData);
-    renderReddit(null);
-    renderIncidents(lastIncidents);
-    setMiseryLevel(0);
-    renderHistory([]);
+    renderWithFilter();
     document.getElementById("last-updated").textContent = "demo mode — set up GitHub Action for live data";
   }
+
+  // ── Render with current filter ─────────────────────────────
+  function renderWithFilter() {
+    if (!lastData) return;
+    renderStatus(lastData.status);
+    renderSocial(lastSocialData);
+    renderReddit(lastData.reddit);
+    renderIncidents(lastIncidents);
+
+    // Recalculate breakdown with filter
+    var breakdown = computeBreakdown({ status: lastData.status, social: lastSocialData, reddit: lastData.reddit });
+    var displayIndex = productFilter === "api"
+      ? Math.min(breakdown.status + breakdown.bluesky + breakdown.reddit, 10)
+      : lastData.miseryIndex;
+
+    setMiseryLevel(displayIndex);
+    renderBreakdown(breakdown);
+    renderHistory(lastData.history);
+
+    if (lastData.status) {
+      // Update gauge window text for filter
+      var windowEl = document.querySelector(".gauge-window");
+      if (windowEl) {
+        windowEl.textContent = productFilter === "api"
+          ? "Claude API \u2014 based on the last 24 hours"
+          : "Based on the last 24 hours";
+      }
+    }
+  }
+
+  // ── Product Filter Toggle ─────────────────────────────────
+  var filterBtns = document.querySelectorAll(".product-filter-btn");
+  filterBtns.forEach(function (btn) {
+    if (btn.getAttribute("data-filter") === productFilter) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+    btn.addEventListener("click", function () {
+      filterBtns.forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      productFilter = btn.getAttribute("data-filter");
+      localStorage.setItem(FILTER_KEY, productFilter);
+      renderWithFilter();
+    });
+  });
 
   // ── Global Time Range Toggle ────────────────────────────────
   var timeRangeBtns = document.querySelectorAll(".time-range-btn");

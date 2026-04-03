@@ -312,6 +312,44 @@ body {
   letter-spacing: 0.03em;
 }
 
+/* ── Product Filter ──────────────────────────────────────── */
+.product-filter {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+}
+
+.product-filter-btn {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--color-text-soft);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.product-filter-btn:hover {
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+}
+
+.product-filter-btn.active {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+
+/* ── RSS Button ─────────────────────────────────────────── */
+.rss-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
 .time-range-btn {
   font-family: var(--font-mono);
   font-size: 0.7rem;

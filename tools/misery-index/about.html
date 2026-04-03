@@ -261,6 +261,26 @@
       adjust what window all sections display.
     </p>
 
+    <h2>Product filter</h2>
+    <p>
+      Use the <strong>All Products / API Only</strong> toggle below the gauge to focus on Claude API
+      reliability separately from the chat product. In API mode, the status score reflects only
+      the Claude API component status, so you can track API-specific outages without noise from
+      claude.ai or Claude Code issues.
+    </p>
+    <p>
+      Social signals (Reddit and Bluesky) remain unfiltered in API mode since complaint posts
+      rarely distinguish between the API and chat product. The status page component is the most
+      reliable product-specific signal.
+    </p>
+
+    <h2>RSS feed</h2>
+    <p>
+      Subscribe to the <a href="https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed.xml" target="_blank" rel="noopener noreferrer">RSS feed</a>
+      to get misery score updates and incident alerts in your feed reader. The feed updates every
+      15 minutes and includes the current misery score, API status, and recent incidents.
+    </p>
+
     <h2>Limitations</h2>
     <p>
       This is a fun side project, not an SLA monitor. Keyword matching is imperfect — some

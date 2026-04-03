@@ -25,6 +25,8 @@ tools/misery-index/discord-bot/.env
 
 # Misery index local test data (live data served from misery-data branch)
 tools/misery-index/data/current.json
+tools/misery-index/data/feed.xml
+tools/misery-index/data/feed-official.xml
 
 # Private / unreleased projects
 _private/

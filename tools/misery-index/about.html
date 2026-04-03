@@ -51,6 +51,13 @@
       line-height: 1.7;
       margin-bottom: 0.75rem;
     }
+    .about-content ul {
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+      line-height: 1.7;
+      margin-bottom: 0.75rem;
+      padding-left: 1.5rem;
+    }
     .about-content a {
       color: var(--color-text);
       text-decoration: none;
@@ -259,6 +266,29 @@
     <p>
       History is preserved for 7 days. Use the time toggle (24h / 3d / 7d) below the gauge to
       adjust what window all sections display.
+    </p>
+
+    <h2>Source filter</h2>
+    <p>
+      Use the <strong>All Sources / Official Only</strong> toggle below the gauge to switch between
+      the full misery score and one based solely on the official Anthropic status page. In
+      "Official Only" mode, the social chatter cards (Reddit and Bluesky) are hidden entirely and
+      the breakdown bar shows only the status page score. The status card expands to full width for
+      a cleaner layout focused on confirmed outage data.
+    </p>
+
+    <h2>RSS feeds</h2>
+    <p>
+      Two RSS feeds are available, matching the source filter modes. Both update every 15 minutes
+      and include recent incidents alongside the current score.
+    </p>
+    <ul>
+      <li><a href="https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed.xml" target="_blank" rel="noopener noreferrer">All Sources</a> — full misery score including social chatter</li>
+      <li><a href="https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed-official.xml" target="_blank" rel="noopener noreferrer">Official Only</a> — score based on Anthropic status page only</li>
+    </ul>
+    <p>
+      The RSS button in the header automatically switches between feeds based on your current
+      source filter selection.
     </p>
 
     <h2>Limitations</h2>

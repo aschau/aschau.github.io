@@ -50,7 +50,11 @@
   var lastHistory = null;
   var lastSocialData = null;
   var lastIncidents = null;
+  var lastData = null;
   var rangeHours = 24;
+  var FILTER_KEY = "misery_source_filter";
+  var sourceFilter = localStorage.getItem(FILTER_KEY) || "all";
+
 
   // ── Misery levels ──────────────────────────────────────────
   var LEVELS = [
@@ -154,28 +158,34 @@
       else if (ind === "major") statusScore += 4;
       else if (ind === "critical") statusScore += 6;
       if (data.status.components) {
-        var bad = data.status.components.filter(function (c) { return c.status !== "operational"; });
+        var bad = data.status.components.filter(function (c) {
+          return c.status !== "operational" &&
+            c.name !== "Visit https://status.claude.com for more information";
+        });
         statusScore += Math.min(bad.length * 0.5, 2);
       }
     }
-    var bskyPosts = data.social ? data.social.recentPosts : 0;
-    var bskyComments = data.social ? data.social.recentComments : 0;
-    if (bskyPosts >= 30) bskyScore += 2;
-    else if (bskyPosts >= 15) bskyScore += 1.5;
-    else if (bskyPosts >= 5) bskyScore += 1;
-    else if (bskyPosts >= 1) bskyScore += 0.5;
-    if (bskyComments >= 75) bskyScore += 1;
-    else if (bskyComments >= 30) bskyScore += 0.5;
 
-    if (data.reddit && data.reddit.lastFetched) {
-      var megas = (data.reddit.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
-      var rPosts = (data.reddit.recentPosts || 0) + (megas * 4);
-      if (rPosts >= 30) redditScore = 5;
-      else if (rPosts >= 20) redditScore = 4;
-      else if (rPosts >= 10) redditScore = 3;
-      else if (rPosts >= 5) redditScore = 2;
-      else if (rPosts >= 3) redditScore = 1;
-      else if (rPosts >= 1) redditScore = 0.5;
+    if (sourceFilter !== "official") {
+      var bskyPosts = data.social ? data.social.recentPosts : 0;
+      var bskyComments = data.social ? data.social.recentComments : 0;
+      if (bskyPosts >= 30) bskyScore += 2;
+      else if (bskyPosts >= 15) bskyScore += 1.5;
+      else if (bskyPosts >= 5) bskyScore += 1;
+      else if (bskyPosts >= 1) bskyScore += 0.5;
+      if (bskyComments >= 75) bskyScore += 1;
+      else if (bskyComments >= 30) bskyScore += 0.5;
+
+      if (data.reddit && data.reddit.lastFetched) {
+        var megas = (data.reddit.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
+        var rPosts = (data.reddit.recentPosts || 0) + (megas * 4);
+        if (rPosts >= 30) redditScore = 5;
+        else if (rPosts >= 20) redditScore = 4;
+        else if (rPosts >= 10) redditScore = 3;
+        else if (rPosts >= 5) redditScore = 2;
+        else if (rPosts >= 3) redditScore = 1;
+        else if (rPosts >= 1) redditScore = 0.5;
+      }
     }
 
     return { status: statusScore, bluesky: bskyScore, reddit: redditScore };
@@ -599,14 +609,16 @@
 
       lastSocialData = data.social || null;
       lastIncidents = incidents;
+      lastData = {
+        status: statusData,
+        social: lastSocialData,
+        reddit: data.reddit || null,
+        miseryIndex: data.miseryIndex != null ? data.miseryIndex : 0,
+        breakdown: data.breakdown || null,
+        history: data.history || []
+      };
 
-      renderStatus(statusData);
-      renderSocial(lastSocialData);
-      renderReddit(data.reddit || null);
-      renderIncidents(lastIncidents);
-      setMiseryLevel(data.miseryIndex != null ? data.miseryIndex : 0);
-      renderBreakdown(data.breakdown || computeBreakdown(data));
-      renderHistory(data.history || []);
+      renderWithFilter();
 
       if (data.lastUpdated) {
         document.getElementById("last-updated").textContent = timeAgo(data.lastUpdated);
@@ -626,15 +638,101 @@
 
     lastSocialData = { recentPosts: 0, recentComments: 0, topPosts: [] };
     lastIncidents = liveIncidents || [];
+    lastData = {
+      status: statusData,
+      social: lastSocialData,
+      reddit: null,
+      miseryIndex: 0,
+      breakdown: null,
+      history: []
+    };
 
-    renderStatus(statusData);
-    renderSocial(lastSocialData);
-    renderReddit(null);
-    renderIncidents(lastIncidents);
-    setMiseryLevel(0);
-    renderHistory([]);
+    renderWithFilter();
     document.getElementById("last-updated").textContent = "demo mode — set up GitHub Action for live data";
   }
+
+  // ── Render with current filter ─────────────────────────────
+  function renderWithFilter() {
+    if (!lastData) return;
+    var isOfficial = sourceFilter === "official";
+    var cardsEl = document.querySelector(".cards");
+    if (cardsEl) {
+      if (isOfficial) cardsEl.classList.add("official-only");
+      else cardsEl.classList.remove("official-only");
+    }
+
+    renderStatus(lastData.status);
+    renderIncidents(lastIncidents);
+
+    // Hide/show social sections
+    document.getElementById("social-card").style.display = isOfficial ? "none" : "";
+    document.getElementById("reddit-card").style.display = isOfficial ? "none" : "";
+
+    if (!isOfficial) {
+      renderSocial(lastSocialData);
+      renderReddit(lastData.reddit);
+    }
+
+    // Recalculate breakdown with filter
+    var breakdown = computeBreakdown({ status: lastData.status, social: lastSocialData, reddit: lastData.reddit });
+    var displayIndex = Math.min(breakdown.status + breakdown.bluesky + breakdown.reddit, 10);
+
+    setMiseryLevel(displayIndex);
+    renderBreakdown(breakdown);
+
+    // Hide social breakdown segments in official mode
+    document.getElementById("breakdown-reddit").style.display = isOfficial ? "none" : "";
+    document.getElementById("breakdown-bluesky").style.display = isOfficial ? "none" : "";
+    var labels = document.querySelectorAll(".breakdown-label");
+    if (labels.length >= 3) {
+      labels[1].style.display = isOfficial ? "none" : ""; // Reddit label
+      labels[2].style.display = isOfficial ? "none" : ""; // Bluesky label
+    }
+
+    renderHistory(lastData.history);
+
+    // Update gauge window text and RSS link for filter
+    var windowEl = document.querySelector(".gauge-window");
+    if (windowEl) {
+      windowEl.textContent = isOfficial
+        ? "Official status only \u2014 last 24 hours"
+        : "Based on the last 24 hours";
+    }
+    var rssLink = document.getElementById("rss-link");
+    if (rssLink) {
+      var feedLabel = isOfficial ? "Official Only" : "All Sources";
+      rssLink.href = isOfficial
+        ? "https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed-official.xml"
+        : "https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed.xml";
+      rssLink.title = "RSS Feed \u2014 " + feedLabel;
+      rssLink.setAttribute("aria-label", "RSS Feed \u2014 " + feedLabel);
+      var rssLabel = document.getElementById("rss-label");
+      if (rssLabel) rssLabel.textContent = isOfficial ? "STATUS" : "ALL";
+    }
+  }
+
+  // ── Product Filter Toggle ─────────────────────────────────
+  var filterBtns = document.querySelectorAll(".source-filter-btn");
+  filterBtns.forEach(function (btn) {
+    var isActive = btn.getAttribute("data-filter") === sourceFilter;
+    if (isActive) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+    btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+    btn.addEventListener("click", function () {
+      filterBtns.forEach(function (b) {
+        b.classList.remove("active");
+        b.setAttribute("aria-pressed", "false");
+      });
+      btn.classList.add("active");
+      btn.setAttribute("aria-pressed", "true");
+      sourceFilter = btn.getAttribute("data-filter");
+      localStorage.setItem(FILTER_KEY, sourceFilter);
+      renderWithFilter();
+    });
+  });
 
   // ── Global Time Range Toggle ────────────────────────────────
   var timeRangeBtns = document.querySelectorAll(".time-range-btn");

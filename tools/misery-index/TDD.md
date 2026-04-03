@@ -48,36 +48,39 @@ The index is a composite score from 0 (everything's fine) to 10 (digital apocaly
 
 **Plus**: +0.5 per degraded/outaged component (capped at +2). This catches partial outages where the top-level indicator hasn't escalated yet but individual services are struggling.
 
-### Reddit Volume Component (0–4 points)
+### Reddit Volume Component (0–5 points, primary social signal)
 
-Based on outage-related posts found in the last 24 hours:
+Based on outage-related posts found in the last 24 hours. Megathreads count as 5x a normal post.
 
 | Posts (24h) | Points |
 |-------------|--------|
 | 0 | 0 |
-| 1 | +0.5 |
-| 2–4 | +1 |
+| 1–2 | +0.5 |
+| 3–4 | +1 |
 | 5–9 | +2 |
 | 10–19 | +3 |
-| 20+ | +4 |
+| 20–29 | +4 |
+| 30+ | +5 |
 
-### Comment Amplifier (0–2 points)
+### Bluesky Component (0–2 points, secondary signal)
 
-Total comments across complaint posts — measures depth of engagement, not just post count:
+Post volume from Bluesky search (authenticated API, multi-layer filtering):
 
-| Comments (24h) | Points |
-|----------------|--------|
-| 0–4 | 0 |
-| 5–19 | +0.5 |
-| 20–49 | +1 |
-| 50–99 | +1.5 |
-| 100+ | +2 |
+| Posts (24h) | Points |
+|-------------|--------|
+| 0 | 0 |
+| 1–4 | +0.5 |
+| 5–14 | +1 |
+| 15–29 | +1.5 |
+| 30+ | +2 |
+
+Reply amplifier: 30–74 replies = +0.5, 75+ = +1
 
 ### Why This Formula
 
 - **Status page is weighted heaviest** because confirmed outages are the most reliable signal. A `critical` indicator alone gets you to 6/10.
-- **Reddit volume is secondary** because it's noisy — people complain about slow responses, billing, and feature requests too. The keyword filter helps but isn't perfect.
-- **Comments amplify rather than dominate** because a single viral complaint post with 200 comments isn't the same as 20 independent reports. But it does indicate widespread frustration.
+- **Reddit is the primary social signal** because it's where developer complaints concentrate. Megathreads (complaint aggregation posts) are weighted 5x to reflect their significance.
+- **Bluesky is secondary** because it's noisier and lower volume. Multi-layer filtering (AI context gate, exclusion patterns, signal strength tiers) reduces false positives.
 - **The cap is 10** because the index should saturate during genuine catastrophic outages, not creep above them.
 
 ## Misery Levels
@@ -97,7 +100,14 @@ A global toggle (24h / 3d / 7d) in the timeline section filters time-sensitive s
 - **Chart**: shows history for the selected window
 - **Incidents**: filters by `createdAt` timestamp
 
-The misery score and Reddit data are always based on the last 24 hours (the Action's search window). The gauge shows "Based on the last 24 hours" to make this clear. The toggle only affects the historical context sections below it.
+The misery score and social data are always based on the last 24 hours (the Action's search window). The gauge shows "Based on the last 24 hours" to make this clear. The toggle only affects the historical context sections below it.
+
+### Source Filter (All Sources / Official Only)
+A toggle below the gauge switches between two scoring modes:
+- **All Sources** (default): full misery score from status + Reddit + Bluesky
+- **Official Only**: score based solely on the Anthropic status page — social cards are hidden, breakdown bar shows only the status segment, status card goes full-width
+
+Stored in `localStorage` (`misery_source_filter`). The RSS button in the header dynamically switches between `feed.xml` (all) and `feed-official.xml` (official) based on the active filter.
 
 ### Colorblind Safety
 The scale uses blue → yellow → orange → red → purple rather than the traditional green → red. Blue is clearly distinct from red/orange/yellow across all common forms of colorblindness (deuteranopia, protanopia, tritanopia). Text labels ("ALL CLEAR", "FULL MELTDOWN", etc.) provide redundant non-color differentiation.
@@ -120,9 +130,10 @@ The scale uses blue → yellow → orange → red → purple rather than the tra
 ### Cards
 - Glassmorphism: `backdrop-filter: blur(12px)` with semi-transparent backgrounds
 - Border glow animation on severe+ levels
-- **Status card**: per-component breakdown with color-coded dots, links to status.claude.com
-- **Reddit card**: post/comment counts, top 8 posts with subreddit, score, and time ago, links to r/ClaudeAI
-- **Incidents card**: last 3 days of incidents with impact badges, status labels, and latest update text
+- **Status card**: per-component breakdown with color-coded dots, links to status.claude.com. Goes full-width in "Official Only" mode.
+- **Bluesky card**: post/reply counts, top complaint posts. Hidden in "Official Only" mode.
+- **Reddit card**: post/comment counts, top posts with subreddit, score, and time ago. Hidden in "Official Only" mode.
+- **Incidents card**: recent incidents with impact badges, status labels, and latest update text. Filtered by time range toggle.
 
 ### History Chart
 - Canvas-based sparkline (no external charting library)
@@ -157,12 +168,22 @@ The scale uses blue → yellow → orange → red → purple rather than the tra
 8. Append history entry (timestamp, index, status indicator, post/comment counts)
 9. Trim history to 672 entries (7 days at 15-min intervals)
 10. Write `current.json`
+11. Generate RSS feeds: `feed.xml` (all sources) and `feed-official.xml` (status only)
 
 ### Data Branch (`misery-data`)
-- Orphan branch containing a single file: `current.json`
+- Orphan branch containing `current.json`, `feed.xml`, and `feed-official.xml`
 - Force-pushed each run (single commit, no history buildup)
 - Frontend fetches from `https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/current.json`
-- Commit message includes live stats: `misery: 2/10 | All Systems Operational | 2 reddit posts (status.claude.com + reddit public JSON)`
+- Commit message includes live stats: `misery: 2/10 | All Systems Operational | 2 bluesky posts (status.claude.com + bsky)`
+
+### RSS Feeds
+Two RSS 2.0 feeds (with Atom self-link) generated alongside `current.json`:
+- **`feed.xml`**: full misery score with social chatter stats in the description
+- **`feed-official.xml`**: official status page score only, no social signals
+- GUIDs use `{type}-{date}-{level}` format so RSS readers only surface new items when the misery level changes on a given day
+- TTL: 15 minutes (matches polling interval)
+- Items: current score + up to 5 recent incidents
+- Autodiscovery via `<link rel="alternate">` in `index.html` `<head>` (both feeds)
 
 ## Data Schema (`current.json`)
 
@@ -237,6 +258,8 @@ No configuration required. The GitHub Action uses only public APIs:
 | `about.html` | Public-facing methodology explainer |
 | `og-image.html` | 1200x630 social preview card (screenshot to generate og-image.png) |
 | `data/current.json` | Local placeholder; live data served from `misery-data` branch via raw.githubusercontent.com |
+| `data/feed.xml` | Generated RSS feed (all sources); live on `misery-data` branch |
+| `data/feed-official.xml` | Generated RSS feed (official only); live on `misery-data` branch |
 | `.github/workflows/fetch-misery-data.yml` | Action schedule + commit logic |
 | `.github/scripts/fetch-misery-data.js` | Node.js fetch/calculate/write script |
 | `CLAUDE.md` | Dev reference for working on this tool |
@@ -249,9 +272,8 @@ No configuration required. The GitHub Action uses only public APIs:
 - **Public Reddit rate limits**: ~10 requests/min. The script uses 3-4 requests per run with 2-second pauses, well within limits.
 
 ## Future Considerations
-- **Hacker News**: Algolia HN Search API is free — could add as a third signal source
+- **Hacker News**: Algolia HN Search API is free — could add as another signal source
 - **Downdetector**: Aggressive bot protection, no public API — not currently feasible
 - **Historical incident correlation**: Tag known outages in history for context
 - **Notifications**: Browser push notifications when misery crosses a threshold
 - **Embeddable widget**: Compact badge version for READMEs or blog posts
-- **Reddit OAuth**: If API access becomes available again, could improve search quality and rate limits

@@ -52,11 +52,9 @@
   var lastIncidents = null;
   var lastData = null;
   var rangeHours = 24;
-  var FILTER_KEY = "misery_product_filter";
-  var productFilter = localStorage.getItem(FILTER_KEY) || "all";
+  var FILTER_KEY = "misery_source_filter";
+  var sourceFilter = localStorage.getItem(FILTER_KEY) || "all";
 
-  // API component names as they appear on status.claude.com
-  var API_COMPONENT_NAMES = ["claude api", "api"];
 
   // ── Misery levels ──────────────────────────────────────────
   var LEVELS = [
@@ -155,49 +153,39 @@
     var redditScore = 0;
 
     if (data.status && data.status.status) {
-      var components = filterComponents(data.status.components);
-      if (productFilter === "api") {
-        // API-only: score based on API component status directly
-        var apiComp = components && components[0];
-        if (apiComp) {
-          var st = apiComp.status;
-          if (st === "degraded_performance") statusScore += 2;
-          else if (st === "partial_outage") statusScore += 4;
-          else if (st === "major_outage") statusScore += 6;
-        }
-        // Also add system-level indicator if it's major/critical (affects API too)
-        var ind = data.status.status.indicator;
-        if (ind === "critical") statusScore = Math.max(statusScore, 6);
-        else if (ind === "major") statusScore = Math.max(statusScore, 4);
-      } else {
-        var ind = data.status.status.indicator;
-        if (ind === "minor") statusScore += 2;
-        else if (ind === "major") statusScore += 4;
-        else if (ind === "critical") statusScore += 6;
-        if (components) {
-          var bad = components.filter(function (c) { return c.status !== "operational"; });
-          statusScore += Math.min(bad.length * 0.5, 2);
-        }
+      var ind = data.status.status.indicator;
+      if (ind === "minor") statusScore += 2;
+      else if (ind === "major") statusScore += 4;
+      else if (ind === "critical") statusScore += 6;
+      if (data.status.components) {
+        var bad = data.status.components.filter(function (c) {
+          return c.status !== "operational" &&
+            c.name !== "Visit https://status.claude.com for more information";
+        });
+        statusScore += Math.min(bad.length * 0.5, 2);
       }
     }
-    var bskyPosts = data.social ? data.social.recentPosts : 0;
-    var bskyComments = data.social ? data.social.recentComments : 0;
-    if (bskyPosts >= 30) bskyScore += 2;
-    else if (bskyPosts >= 15) bskyScore += 1.5;
-    else if (bskyPosts >= 5) bskyScore += 1;
-    else if (bskyPosts >= 1) bskyScore += 0.5;
-    if (bskyComments >= 75) bskyScore += 1;
-    else if (bskyComments >= 30) bskyScore += 0.5;
 
-    if (data.reddit && data.reddit.lastFetched) {
-      var megas = (data.reddit.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
-      var rPosts = (data.reddit.recentPosts || 0) + (megas * 4);
-      if (rPosts >= 30) redditScore = 5;
-      else if (rPosts >= 20) redditScore = 4;
-      else if (rPosts >= 10) redditScore = 3;
-      else if (rPosts >= 5) redditScore = 2;
-      else if (rPosts >= 3) redditScore = 1;
-      else if (rPosts >= 1) redditScore = 0.5;
+    if (sourceFilter !== "official") {
+      var bskyPosts = data.social ? data.social.recentPosts : 0;
+      var bskyComments = data.social ? data.social.recentComments : 0;
+      if (bskyPosts >= 30) bskyScore += 2;
+      else if (bskyPosts >= 15) bskyScore += 1.5;
+      else if (bskyPosts >= 5) bskyScore += 1;
+      else if (bskyPosts >= 1) bskyScore += 0.5;
+      if (bskyComments >= 75) bskyScore += 1;
+      else if (bskyComments >= 30) bskyScore += 0.5;
+
+      if (data.reddit && data.reddit.lastFetched) {
+        var megas = (data.reddit.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
+        var rPosts = (data.reddit.recentPosts || 0) + (megas * 4);
+        if (rPosts >= 30) redditScore = 5;
+        else if (rPosts >= 20) redditScore = 4;
+        else if (rPosts >= 10) redditScore = 3;
+        else if (rPosts >= 5) redditScore = 2;
+        else if (rPosts >= 3) redditScore = 1;
+        else if (rPosts >= 1) redditScore = 0.5;
+      }
     }
 
     return { status: statusScore, bluesky: bskyScore, reddit: redditScore };
@@ -241,10 +229,9 @@
     // Components
     if (statusData.components) {
       components.innerHTML = "";
-      var allComps = statusData.components.filter(function (c) {
+      var shown = statusData.components.filter(function (c) {
         return c.name !== "Visit https://status.claude.com for more information";
-      });
-      var shown = productFilter === "api" ? allComps.filter(isApiComponent) : allComps.slice(0, 5);
+      }).slice(0, 5);
 
       shown.forEach(function (c) {
         var row = document.createElement("div");
@@ -553,16 +540,6 @@
     return str.length > len ? str.slice(0, len) + "..." : str;
   }
 
-  function isApiComponent(component) {
-    var name = (component.name || "").toLowerCase().replace(/\s*\(formerly[^)]*\)/gi, "");
-    return API_COMPONENT_NAMES.some(function (n) { return name === n || name.indexOf(n) !== -1; });
-  }
-
-  function filterComponents(components) {
-    if (productFilter === "all" || !components) return components;
-    return components.filter(isApiComponent);
-  }
-
   // ── Data Fetching ──────────────────────────────────────────
   var INCIDENTS_API = "https://status.claude.com/api/v2/incidents.json";
 
@@ -677,45 +654,82 @@
   // ── Render with current filter ─────────────────────────────
   function renderWithFilter() {
     if (!lastData) return;
+    var isOfficial = sourceFilter === "official";
+    var cardsEl = document.querySelector(".cards");
+    if (cardsEl) {
+      if (isOfficial) cardsEl.classList.add("official-only");
+      else cardsEl.classList.remove("official-only");
+    }
+
     renderStatus(lastData.status);
-    renderSocial(lastSocialData);
-    renderReddit(lastData.reddit);
     renderIncidents(lastIncidents);
+
+    // Hide/show social sections
+    document.getElementById("social-card").style.display = isOfficial ? "none" : "";
+    document.getElementById("reddit-card").style.display = isOfficial ? "none" : "";
+
+    if (!isOfficial) {
+      renderSocial(lastSocialData);
+      renderReddit(lastData.reddit);
+    }
 
     // Recalculate breakdown with filter
     var breakdown = computeBreakdown({ status: lastData.status, social: lastSocialData, reddit: lastData.reddit });
-    var displayIndex = productFilter === "api"
-      ? Math.min(breakdown.status + breakdown.bluesky + breakdown.reddit, 10)
-      : lastData.miseryIndex;
+    var displayIndex = Math.min(breakdown.status + breakdown.bluesky + breakdown.reddit, 10);
 
     setMiseryLevel(displayIndex);
     renderBreakdown(breakdown);
+
+    // Hide social breakdown segments in official mode
+    document.getElementById("breakdown-reddit").style.display = isOfficial ? "none" : "";
+    document.getElementById("breakdown-bluesky").style.display = isOfficial ? "none" : "";
+    var labels = document.querySelectorAll(".breakdown-label");
+    if (labels.length >= 3) {
+      labels[1].style.display = isOfficial ? "none" : ""; // Reddit label
+      labels[2].style.display = isOfficial ? "none" : ""; // Bluesky label
+    }
+
     renderHistory(lastData.history);
 
-    if (lastData.status) {
-      // Update gauge window text for filter
-      var windowEl = document.querySelector(".gauge-window");
-      if (windowEl) {
-        windowEl.textContent = productFilter === "api"
-          ? "Claude API \u2014 based on the last 24 hours"
-          : "Based on the last 24 hours";
-      }
+    // Update gauge window text and RSS link for filter
+    var windowEl = document.querySelector(".gauge-window");
+    if (windowEl) {
+      windowEl.textContent = isOfficial
+        ? "Official status only \u2014 last 24 hours"
+        : "Based on the last 24 hours";
+    }
+    var rssLink = document.getElementById("rss-link");
+    if (rssLink) {
+      var feedLabel = isOfficial ? "Official Only" : "All Sources";
+      rssLink.href = isOfficial
+        ? "https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed-official.xml"
+        : "https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed.xml";
+      rssLink.title = "RSS Feed \u2014 " + feedLabel;
+      rssLink.setAttribute("aria-label", "RSS Feed \u2014 " + feedLabel);
+      var rssLabel = document.getElementById("rss-label");
+      if (rssLabel) rssLabel.textContent = isOfficial ? "STATUS" : "ALL";
     }
   }
 
   // ── Product Filter Toggle ─────────────────────────────────
-  var filterBtns = document.querySelectorAll(".product-filter-btn");
+  var filterBtns = document.querySelectorAll(".source-filter-btn");
   filterBtns.forEach(function (btn) {
-    if (btn.getAttribute("data-filter") === productFilter) {
+    var isActive = btn.getAttribute("data-filter") === sourceFilter;
+    if (isActive) {
       btn.classList.add("active");
     } else {
       btn.classList.remove("active");
     }
+    btn.setAttribute("aria-pressed", isActive ? "true" : "false");
     btn.addEventListener("click", function () {
-      filterBtns.forEach(function (b) { b.classList.remove("active"); });
+      filterBtns.forEach(function (b) {
+        b.classList.remove("active");
+        b.setAttribute("aria-pressed", "false");
+      });
       btn.classList.add("active");
-      productFilter = btn.getAttribute("data-filter");
-      localStorage.setItem(FILTER_KEY, productFilter);
+      btn.setAttribute("aria-pressed", "true");
+      sourceFilter = btn.getAttribute("data-filter");
+      localStorage.setItem(FILTER_KEY, sourceFilter);
       renderWithFilter();
     });
   });

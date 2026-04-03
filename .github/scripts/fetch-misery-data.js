@@ -7,6 +7,7 @@ const path = require("path");
 
 const DATA_FILE = path.join(__dirname, "../../tools/misery-index/data/current.json");
 const FEED_FILE = path.join(__dirname, "../../tools/misery-index/data/feed.xml");
+const OFFICIAL_FEED_FILE = path.join(__dirname, "../../tools/misery-index/data/feed-official.xml");
 const MAX_HISTORY = 672; // 7 days at 15-min intervals
 const USER_AGENT = "MiseryIndex/1.0 (https://www.raggedydoc.com/misery)";
 
@@ -416,12 +417,12 @@ async function main() {
   fs.writeFileSync(DATA_FILE, JSON.stringify(output, null, 2));
   console.log("Data written to", DATA_FILE);
 
-  // Generate RSS feed
-  generateRssFeed(output);
+  // Generate RSS feeds (all sources + official only)
+  generateRssFeeds(output);
 }
 
 // ── RSS Feed Generation ─────────────────────────────────────
-function generateRssFeed(data) {
+function generateRssFeeds(data) {
   var LEVELS = [
     { max: 1, label: "ALL CLEAR" },
     { max: 3, label: "MINOR GRUMBLING" },
@@ -443,14 +444,57 @@ function generateRssFeed(data) {
               .replace(/"/g, "&quot;").replace(/'/g, "&apos;");
   }
 
+  function buildIncidentItems(incidents) {
+    var items = [];
+    (incidents || []).slice(0, 5).forEach(function (inc) {
+      var incDate = inc.updatedAt || inc.createdAt;
+      items.push(
+        "    <item>\n" +
+        "      <title>[" + escapeXml((inc.impact || "info").toUpperCase()) + "] " + escapeXml(inc.name) + "</title>\n" +
+        "      <link>" + escapeXml(inc.url || "https://status.claude.com") + "</link>\n" +
+        "      <guid isPermaLink=\"false\">incident-" + escapeXml(inc.url || inc.name) + "</guid>\n" +
+        "      <pubDate>" + new Date(incDate).toUTCString() + "</pubDate>\n" +
+        "      <description>" + escapeXml(
+          "Status: " + (inc.status || "unknown") + ". Impact: " + (inc.impact || "none") + "." +
+          (inc.updates && inc.updates[0] ? " Latest: " + inc.updates[0].body : "")
+        ) + "</description>\n" +
+        "      <category>incident</category>\n" +
+        "    </item>"
+      );
+    });
+    return items;
+  }
+
+  function buildFeed(opts) {
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n' +
+      '  <channel>\n' +
+      '    <title>' + escapeXml(opts.title) + '</title>\n' +
+      '    <link>https://www.raggedydoc.com/tools/misery-index/</link>\n' +
+      '    <description>' + escapeXml(opts.description) + '</description>\n' +
+      '    <language>en-us</language>\n' +
+      '    <lastBuildDate>' + new Date(opts.now).toUTCString() + '</lastBuildDate>\n' +
+      '    <ttl>15</ttl>\n' +
+      '    <atom:link href="' + opts.selfUrl + '" rel="self" type="application/rss+xml"/>\n' +
+      '    <image>\n' +
+      '      <url>https://www.raggedydoc.com/tools/misery-index/favicon.png</url>\n' +
+      '      <title>' + escapeXml(opts.title) + '</title>\n' +
+      '      <link>https://www.raggedydoc.com/tools/misery-index/</link>\n' +
+      '    </image>\n' +
+      opts.items.join("\n") + "\n" +
+      '  </channel>\n' +
+      '</rss>\n';
+  }
+
   var now = data.lastUpdated || new Date().toISOString();
-  var level = getLevel(data.miseryIndex);
+  var dateKey = now.slice(0, 10);
   var statusDesc = data.status && data.status.status ? data.status.status.description : "Unknown";
+  var incidentItems = buildIncidentItems(data.incidents);
 
-  // Build items: current score + recent incidents + API component status
-  var items = [];
+  // ── All Sources feed ────────────────────────────────────────
+  var allLevel = getLevel(data.miseryIndex);
+  var allItems = [];
 
-  // Current misery score item
   var apiStatus = "Unknown";
   if (data.status && data.status.components) {
     var apiComp = data.status.components.find(function (c) {
@@ -459,14 +503,14 @@ function generateRssFeed(data) {
     if (apiComp) apiStatus = apiComp.status.replace(/_/g, " ");
   }
 
-  items.push(
+  allItems.push(
     "    <item>\n" +
-    "      <title>Misery Index: " + escapeXml(data.miseryIndex.toFixed(1)) + "/10 — " + escapeXml(level) + "</title>\n" +
+    "      <title>Misery Index: " + escapeXml(data.miseryIndex.toFixed(1)) + "/10 — " + escapeXml(allLevel) + "</title>\n" +
     "      <link>https://www.raggedydoc.com/tools/misery-index/</link>\n" +
-    "      <guid isPermaLink=\"false\">misery-" + now + "</guid>\n" +
+    "      <guid isPermaLink=\"false\">misery-" + dateKey + "-" + escapeXml(allLevel) + "</guid>\n" +
     "      <pubDate>" + new Date(now).toUTCString() + "</pubDate>\n" +
     "      <description>" + escapeXml(
-      "Score: " + data.miseryIndex.toFixed(1) + "/10 (" + level + "). " +
+      "Score: " + data.miseryIndex.toFixed(1) + "/10 (" + allLevel + "). " +
       "Status: " + statusDesc + ". " +
       "API: " + apiStatus + ". " +
       "Bluesky: " + (data.social ? data.social.recentPosts : 0) + " posts. " +
@@ -476,46 +520,42 @@ function generateRssFeed(data) {
     "    </item>"
   );
 
-  // Recent incidents as items
-  (data.incidents || []).slice(0, 5).forEach(function (inc) {
-    var incDate = inc.updatedAt || inc.createdAt;
-    items.push(
-      "    <item>\n" +
-      "      <title>[" + escapeXml((inc.impact || "info").toUpperCase()) + "] " + escapeXml(inc.name) + "</title>\n" +
-      "      <link>" + escapeXml(inc.url || "https://status.claude.com") + "</link>\n" +
-      "      <guid isPermaLink=\"false\">incident-" + escapeXml(inc.url || inc.name) + "</guid>\n" +
-      "      <pubDate>" + new Date(incDate).toUTCString() + "</pubDate>\n" +
-      "      <description>" + escapeXml(
-        "Status: " + (inc.status || "unknown") + ". Impact: " + (inc.impact || "none") + "." +
-        (inc.updates && inc.updates[0] ? " Latest: " + inc.updates[0].body : "")
-      ) + "</description>\n" +
-      "      <category>incident</category>\n" +
-      "    </item>"
-    );
-  });
-
-  var feed =
-    '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n' +
-    '  <channel>\n' +
-    '    <title>Claude Developer Misery Index</title>\n' +
-    '    <link>https://www.raggedydoc.com/tools/misery-index/</link>\n' +
-    '    <description>Real-time Claude AI reliability tracking — misery score, API status, and incident alerts. Updated every 15 minutes.</description>\n' +
-    '    <language>en-us</language>\n' +
-    '    <lastBuildDate>' + new Date(now).toUTCString() + '</lastBuildDate>\n' +
-    '    <ttl>15</ttl>\n' +
-    '    <atom:link href="https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed.xml" rel="self" type="application/rss+xml"/>\n' +
-    '    <image>\n' +
-    '      <url>https://www.raggedydoc.com/tools/misery-index/favicon.png</url>\n' +
-    '      <title>Claude Developer Misery Index</title>\n' +
-    '      <link>https://www.raggedydoc.com/tools/misery-index/</link>\n' +
-    '    </image>\n' +
-    items.join("\n") + "\n" +
-    '  </channel>\n' +
-    '</rss>\n';
-
-  fs.writeFileSync(FEED_FILE, feed);
+  fs.writeFileSync(FEED_FILE, buildFeed({
+    title: "Claude Developer Misery Index",
+    description: "Real-time Claude AI reliability tracking — misery score, API status, and incident alerts. Updated every 15 minutes.",
+    selfUrl: "https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed.xml",
+    now: now,
+    items: allItems.concat(incidentItems)
+  }));
   console.log("RSS feed written to", FEED_FILE);
+
+  // ── Official Only feed ──────────────────────────────────────
+  var officialScore = data.breakdown ? data.breakdown.status : 0;
+  var officialLevel = getLevel(officialScore);
+  var officialItems = [];
+
+  officialItems.push(
+    "    <item>\n" +
+    "      <title>Official Status: " + escapeXml(officialScore.toFixed(1)) + "/10 — " + escapeXml(officialLevel) + "</title>\n" +
+    "      <link>https://www.raggedydoc.com/tools/misery-index/</link>\n" +
+    "      <guid isPermaLink=\"false\">official-" + dateKey + "-" + escapeXml(officialLevel) + "</guid>\n" +
+    "      <pubDate>" + new Date(now).toUTCString() + "</pubDate>\n" +
+    "      <description>" + escapeXml(
+      "Official score: " + officialScore.toFixed(1) + "/10 (" + officialLevel + "). " +
+      "Status: " + statusDesc + "."
+    ) + "</description>\n" +
+    "      <category>official-status</category>\n" +
+    "    </item>"
+  );
+
+  fs.writeFileSync(OFFICIAL_FEED_FILE, buildFeed({
+    title: "Claude Developer Misery Index — Official Only",
+    description: "Claude AI reliability based on official Anthropic status page only. No social chatter. Updated every 15 minutes.",
+    selfUrl: "https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed-official.xml",
+    now: now,
+    items: officialItems.concat(incidentItems)
+  }));
+  console.log("Official RSS feed written to", OFFICIAL_FEED_FILE);
 }
 
 main().catch(function (e) {

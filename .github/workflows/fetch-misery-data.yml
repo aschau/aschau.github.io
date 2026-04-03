@@ -52,13 +52,16 @@ jobs:
 
           cp tools/misery-index/data/current.json /tmp/current.json
           cp tools/misery-index/data/feed.xml /tmp/feed.xml 2>/dev/null || true
+          cp tools/misery-index/data/feed-official.xml /tmp/feed-official.xml 2>/dev/null || true
 
           git checkout --orphan misery-data
           git rm -rf .
           cp /tmp/current.json current.json
           [ -f /tmp/feed.xml ] && cp /tmp/feed.xml feed.xml
+          [ -f /tmp/feed-official.xml ] && cp /tmp/feed-official.xml feed-official.xml
           git add current.json
           git add feed.xml 2>/dev/null || true
+          git add feed-official.xml 2>/dev/null || true
           MISERY=$(python3 -c "import json; print(json.load(open('current.json'))['miseryIndex'])" 2>/dev/null || echo "?")
           POSTS=$(python3 -c "import json; print(json.load(open('current.json')).get('social',{}).get('recentPosts',0))" 2>/dev/null || echo "?")
           STATUS=$(python3 -c "import json; print(json.load(open('current.json')).get('status',{}).get('status',{}).get('description','unknown'))" 2>/dev/null || echo "?")

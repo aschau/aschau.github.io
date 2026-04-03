@@ -49,12 +49,31 @@ Posts go through a multi-layer filter to avoid red herrings:
 | 6-8 | FULL MELTDOWN | Red, shaking gauge |
 | 8-10 | APOCALYPSE | Purple, screen shake |
 
+## Post Categories (Outage vs Usage)
+
+All Reddit and Bluesky posts are classified into two categories:
+- **outage** (orange badge): strong signals (is down, not working, 500 errors) or corroborated weak outage signals (broken, degraded, bug)
+- **usage** (yellow badge): usage frustration (rate limits, token limits, usage caps) — needs frustration language, 5+ upvotes/likes, or 2+ usage keywords
+
+Posts can have multiple badges (e.g., megathread + usage). Category stored as `category` field on each post. Reddit counts in `reddit.outagePosts` / `reddit.usagePosts`.
+
+### Score Breakdown (dual bars)
+- **By Source**: Status + Reddit + Bluesky — where signals come from
+- **By Type**: Status + Outage + Usage — what kind of issue, aggregated across all social sources. Reddit and Bluesky scores are split by outage/usage ratio from post categories.
+
+### Filter pipeline
+- Exclusions: past tense, positive sentiment, memes, competitive switching
+- Showcase: "i built", "guide", "tutorial", "pipeline", "benchmark", "i gave", etc.
+- Meta/policy: "against tos", "follow-up on", "thoughts on", etc.
+- "My code broke" context: rejects weak outage signals when the user's own code is the subject
+- Megathreads bypass rejection but still get categorized by title keywords
+
 ## Source Filter (All Sources / Official Only)
 
 Frontend toggle below the gauge. Stored in localStorage (`misery_source_filter`). In "Official Only" mode:
 - Social cards (Reddit + Bluesky) are hidden, status card goes full-width (`.cards.official-only`)
 - Social scores zeroed in `computeBreakdown()` — only status page score contributes
-- Breakdown bar hides reddit/bluesky segments and labels
+- "By Type" breakdown bar hidden entirely, "By Source" hides reddit/bluesky segments
 - Gauge window text updates to "Official status only"
 - RSS button switches to `feed-official.xml`
 

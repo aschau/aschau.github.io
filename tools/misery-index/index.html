@@ -168,17 +168,33 @@
       </div>
     </section>
 
-    <!-- Score Breakdown -->
-    <div class="breakdown" id="breakdown">
+    <!-- Score Breakdown: by Source -->
+    <div class="breakdown" id="breakdown-source">
+      <div class="breakdown-heading">BY SOURCE</div>
       <div class="breakdown-bar">
-        <div class="breakdown-segment breakdown-status" id="breakdown-status" title="Status Page"></div>
-        <div class="breakdown-segment breakdown-reddit" id="breakdown-reddit" title="Reddit"></div>
-        <div class="breakdown-segment breakdown-bluesky" id="breakdown-bluesky" title="Bluesky"></div>
+        <div class="breakdown-segment breakdown-status" id="bd-src-status" title="Status Page"></div>
+        <div class="breakdown-segment breakdown-reddit" id="bd-src-reddit" title="Reddit"></div>
+        <div class="breakdown-segment breakdown-bluesky" id="bd-src-bluesky" title="Bluesky"></div>
       </div>
       <div class="breakdown-labels">
-        <span class="breakdown-label"><span class="breakdown-dot" style="background:var(--severe)"></span>Status <span id="breakdown-status-val">0</span></span>
-        <span class="breakdown-label"><span class="breakdown-dot" style="background:#FF4500"></span>Reddit <span id="breakdown-reddit-val">0</span></span>
-        <span class="breakdown-label"><span class="breakdown-dot" style="background:#0085FF"></span>Bluesky <span id="breakdown-bluesky-val">0</span></span>
+        <span class="breakdown-label"><span class="breakdown-dot" style="background:var(--severe)"></span>Status <span id="bd-src-status-val">0</span></span>
+        <span class="breakdown-label"><span class="breakdown-dot" style="background:#FF4500"></span>Reddit <span id="bd-src-reddit-val">0</span></span>
+        <span class="breakdown-label"><span class="breakdown-dot" style="background:#0085FF"></span>Bluesky <span id="bd-src-bluesky-val">0</span></span>
+      </div>
+    </div>
+
+    <!-- Score Breakdown: by Type -->
+    <div class="breakdown" id="breakdown-type">
+      <div class="breakdown-heading">BY TYPE</div>
+      <div class="breakdown-bar">
+        <div class="breakdown-segment breakdown-status" id="bd-type-status" title="Status Page"></div>
+        <div class="breakdown-segment breakdown-outage" id="bd-type-outage" title="Outage chatter"></div>
+        <div class="breakdown-segment breakdown-usage" id="bd-type-usage" title="Usage frustration"></div>
+      </div>
+      <div class="breakdown-labels">
+        <span class="breakdown-label"><span class="breakdown-dot" style="background:var(--severe)"></span>Status <span id="bd-type-status-val">0</span></span>
+        <span class="breakdown-label"><span class="breakdown-dot" style="background:#FF4500"></span>Outage <span id="bd-type-outage-val">0</span></span>
+        <span class="breakdown-label"><span class="breakdown-dot" style="background:var(--mild)"></span>Usage <span id="bd-type-usage-val">0</span></span>
       </div>
     </div>
 

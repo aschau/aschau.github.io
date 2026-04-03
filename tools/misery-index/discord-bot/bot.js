@@ -142,8 +142,10 @@ async function fetchTopComments(permalink, limit) {
   }
 }
 
+// Returns false (reject), "outage", or "usage" category string
 function filterRedditPost(post, subreddit) {
   var text = (post.title + " " + (post.selftext || "")).toLowerCase();
+  var titleLower = (post.title || "").toLowerCase();
   var isClaudeSub = subreddit === "ClaudeAI";
 
   // For non-Claude subreddits, must mention Claude or Anthropic
@@ -153,7 +155,7 @@ function filterRedditPost(post, subreddit) {
     if (!hasClaude && !hasAnthropic) return false;
   }
 
-  // Exclusions
+  // Exclusions — past tense, positive, memes, opinions
   var EXCLUSIONS = [
     "was down", "were down", "was broken", "was unusable",
     "remember when", "last week", "last month", "yesterday",
@@ -169,37 +171,68 @@ function filterRedditPost(post, subreddit) {
   ];
   if (EXCLUSIONS.some(function (w) { return text.includes(w); })) return false;
 
-  // Skip showcase / project posts — not complaints
-  var titleLower = (post.title || "").toLowerCase();
+  // Skip showcase / project / guide / non-complaint posts
   var SHOWCASE = ["i built", "i made", "i created", "introducing", "announcing",
     "check out", "open source", "open-source", "new tool", "new project",
-    "released", "launching", "just shipped", "show r/"];
+    "released", "launching", "just shipped", "show r/",
+    "tips", "guide", "tutorial", "how to use", "how i use",
+    "my setup", "my workflow", "pipeline", "changed how",
+    "i gave", "i tested", "i tried", "experiment", "benchmark",
+    "review", "comparison", "versus", "vs "];
   if (SHOWCASE.some(function (w) { return titleLower.includes(w); })) return false;
 
-  // Strong signals
-  var STRONG = [
+  // Skip meta / policy discussion posts
+  var META = ["against tos", "against the tos", "terms of service", "compliance",
+    "policy", "allowed to", "is it okay to", "is it ok to",
+    "follow-up on", "follow up on", "discussion about", "thoughts on"];
+  if (META.some(function (w) { return titleLower.includes(w); })) return false;
+
+  // ── Strong outage signals ──────────────────────────────────
+  var STRONG_OUTAGE = [
     "is down", "went down", "goes down", "going down",
-    "outage", "not working", "unavailable",
+    "outage", "not working",
     "can't use", "cant use", "won't work", "doesn't work", "stopped working",
     "keeps crashing", "keeps failing",
     "overloaded", "500 error", "502", "503", "504",
     "please fix", "is it just me"
   ];
 
-  // Weak signals
-  var WEAK = [
-    "rate limit", "token limit", "usage limit", "message limit",
-    "limit reached", "hit the limit", "out of messages",
-    "throttl", "capped", "degraded", "so slow", "unusable", "broken",
-    "nerfed", "bug", "buggy"
+  // ── Weak outage signals (need 2+ or frustration) ───────────
+  var WEAK_OUTAGE = [
+    "unavailable", "degraded", "so slow", "broken", "nerfed", "bug", "buggy"
   ];
 
-  var hasStrong = STRONG.some(function (w) { return text.includes(w); });
-  if (hasStrong) return true;
+  // ── Usage frustration signals ──────────────────────────────
+  var USAGE_SIGNALS = [
+    "rate limit", "token limit", "usage limit", "message limit",
+    "limit reached", "hit the limit", "out of messages",
+    "throttl", "capped", "usage cap", "daily limit",
+    "pro limit", "max limit", "too many requests"
+  ];
 
-  var weakCount = WEAK.filter(function (w) { return text.includes(w); }).length;
-  var hasFrustration = /\b(wtf|omg|ugh|smh|seriously|annoying|frustrat|painful)\b/i.test(text);
-  return weakCount >= 2 || (weakCount >= 1 && hasFrustration);
+  var hasFrustration = /\b(wtf|omg|ugh|smh|seriously|annoying|frustrat|painful|ridiculous|forcing|ruining|unusable|unbearable|fed up|absurd|insane|unacceptable|rethink|give up|giving up)\b/i.test(text)
+    || /[!?]{2,}/.test(post.title || "");
+
+  // Check for "my code broke" vs "Claude broke" — reject user-code context for weak signals
+  var isUserCode = /\b(my |i |we |our )(code|app|script|pipeline|project|build|setup)\b/.test(text)
+    && !(/\bclaude.*(broke|broken|bug|crash)/i.test(text));
+
+  // Strong outage → pass immediately
+  if (STRONG_OUTAGE.some(function (w) { return text.includes(w); })) return "outage";
+
+  // Usage frustration → separate category
+  // Single usage signal is enough if the post has community agreement (upvotes) or frustration
+  var usageCount = USAGE_SIGNALS.filter(function (w) { return text.includes(w); }).length;
+  if (usageCount >= 1 && (hasFrustration || (post.score || 0) >= 5)) return "usage";
+  if (usageCount >= 2) return "usage";
+
+  // Weak outage signals — skip if it's about user's own code
+  if (!isUserCode) {
+    var weakCount = WEAK_OUTAGE.filter(function (w) { return text.includes(w); }).length;
+    if (weakCount >= 2 || (weakCount >= 1 && hasFrustration)) return "outage";
+  }
+
+  return false;
 }
 
 async function fetchReddit() {
@@ -229,8 +262,16 @@ async function fetchReddit() {
       var hasMegaTopic = MEGA_TOPICS.some(function (t) { return title.includes(t); });
       var isMegathread = (hasMegaKeyword && hasMegaTopic) || post.stickied;
 
-      // Megathreads skip the complaint filter
-      if (!isMegathread && !filterRedditPost(post, search.sub)) return;
+      // Megathreads skip rejection but still get categorized
+      var category = filterRedditPost(post, search.sub);
+      if (!isMegathread && !category) return;
+      if (!category) {
+        // Categorize megathreads by title keywords
+        var titleText = (post.title || "").toLowerCase();
+        var isUsage = ["rate limit", "usage limit", "token limit", "message limit",
+          "throttl", "capped", "usage cap", "daily limit", "pro limit"].some(function (w) { return titleText.includes(w); });
+        category = isUsage ? "usage" : "outage";
+      }
 
       // For older posts: megathreads need at least 1 comment, regular posts need 5
       var ageHours = (Date.now() - post.created_utc * 1000) / 3600000;
@@ -247,7 +288,8 @@ async function fetchReddit() {
         created: new Date(post.created_utc * 1000).toISOString(),
         subreddit: post.subreddit,
         source: "reddit",
-        isMegathread: isMegathread
+        isMegathread: isMegathread,
+        category: category
       });
     });
 
@@ -376,16 +418,17 @@ async function fetchBluesky() {
       if (isExcluded) return;
 
       // Signal checks
-      var STRONG = ["is down", "went down", "goes down", "going down",
-        "outage", "not working", "unavailable",
+      var BSKY_STRONG_OUTAGE = ["is down", "went down", "goes down", "going down",
+        "outage", "not working",
         "can't use", "cant use", "won't work", "doesn't work", "stopped working",
         "keeps crashing", "keeps failing",
         "overloaded", "500 error", "502", "503", "504",
         "please fix", "is it just me"];
-      var WEAK = ["rate limit", "token limit", "usage limit", "message limit",
+      var BSKY_WEAK_OUTAGE = ["unavailable", "degraded", "so slow", "broken",
+        "nerfed", "bug", "buggy", "unusable"];
+      var BSKY_USAGE = ["rate limit", "token limit", "usage limit", "message limit",
         "limit reached", "hit the limit", "hit my limit", "out of messages",
-        "throttl", "capped", "degraded", "so slow", "unusable", "broken",
-        "nerfed", "bug", "buggy"];
+        "throttl", "capped", "usage cap", "daily limit", "pro limit"];
 
       function hasSignalNearby(signals, radius) {
         return signals.some(function (w) {
@@ -399,14 +442,20 @@ async function fetchBluesky() {
         });
       }
 
-      var hasStrong = hasSignalNearby(STRONG, 80);
-      var hasWeak = hasSignalNearby(WEAK, 80);
-      if (!hasStrong) {
-        if (!hasWeak) return;
-        var weakCount = WEAK.filter(function (w) { return text.includes(w); }).length;
-        var hasFrustration = /\b(wtf|omg|ugh|smh|seriously|annoying|frustrat|painful)\b/i.test(text);
-        if (weakCount < 2 && !hasFrustration) return;
+      var hasFrustration = /\b(wtf|omg|ugh|smh|seriously|annoying|frustrat|painful|ridiculous|forcing|ruining|unusable|unbearable|fed up|absurd|insane|unacceptable|rethink|give up|giving up)\b/i.test(text);
+      var bskyCategory = false;
+
+      if (hasSignalNearby(BSKY_STRONG_OUTAGE, 80)) {
+        bskyCategory = "outage";
+      } else if (hasSignalNearby(BSKY_USAGE, 80)) {
+        var usageCount = BSKY_USAGE.filter(function (w) { return text.includes(w); }).length;
+        if (usageCount >= 2 || hasFrustration || (post.likeCount || 0) >= 5) bskyCategory = "usage";
       }
+      if (!bskyCategory && hasSignalNearby(BSKY_WEAK_OUTAGE, 80)) {
+        var weakCount = BSKY_WEAK_OUTAGE.filter(function (w) { return text.includes(w); }).length;
+        if (weakCount >= 2 || hasFrustration) bskyCategory = "outage";
+      }
+      if (!bskyCategory) return;
 
       allPosts.push({
         title: truncate((post.record && post.record.text) || "", 120),
@@ -415,7 +464,8 @@ async function fetchBluesky() {
         numComments: post.replyCount || 0,
         url: bskyPostUrl(post.uri),
         created: post.indexedAt || (post.record && post.record.createdAt) || new Date().toISOString(),
-        source: "bluesky"
+        source: "bluesky",
+        category: bskyCategory
       });
     });
 
@@ -447,6 +497,8 @@ function calculateMisery(data, redditData) {
   }
 
   // Reddit (0-5) — primary social signal, megathreads count as 5x
+  var redditOutageScore = 0;
+  var redditUsageScore = 0;
   if (redditData) {
     var megathreads = (redditData.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
     var rPosts = (redditData.recentPosts || 0) + (megathreads * 4);
@@ -456,6 +508,17 @@ function calculateMisery(data, redditData) {
     else if (rPosts >= 5) redditScore = 2;
     else if (rPosts >= 3) redditScore = 1;
     else if (rPosts >= 1) redditScore = 0.5;
+
+    // Split by outage vs usage ratio
+    var outageN = redditData.outagePosts || 0;
+    var usageN = redditData.usagePosts || 0;
+    var totalN = outageN + usageN;
+    if (totalN > 0) {
+      redditOutageScore = Math.round(redditScore * (outageN / totalN) * 10) / 10;
+      redditUsageScore = Math.round(redditScore * (usageN / totalN) * 10) / 10;
+    } else {
+      redditOutageScore = redditScore;
+    }
   }
 
   // Bluesky posts (0-2) — secondary signal
@@ -477,7 +540,8 @@ function calculateMisery(data, redditData) {
     breakdown: {
       status: statusScore,
       bluesky: bskyScore + bskyReplyScore,
-      reddit: redditScore
+      redditOutage: redditOutageScore,
+      redditUsage: redditUsageScore
     }
   };
 }
@@ -504,9 +568,13 @@ async function pushRedditData(redditPosts) {
 
   // Update reddit section
   var commentCount = redditPosts.reduce(function (sum, p) { return sum + (p.numComments || 0); }, 0);
+  var outagePosts = redditPosts.filter(function (p) { return p.category === "outage"; }).length;
+  var usagePosts = redditPosts.filter(function (p) { return p.category === "usage"; }).length;
   existing.reddit = {
     lastFetched: new Date().toISOString(),
     recentPosts: redditPosts.length,
+    outagePosts: outagePosts,
+    usagePosts: usagePosts,
     recentComments: commentCount,
     topPosts: redditPosts
       .sort(function (a, b) { return b.score - a.score; })
@@ -515,7 +583,8 @@ async function pushRedditData(redditPosts) {
         var post = {
           title: p.title, author: p.author, score: p.score,
           url: p.url, created: p.created, subreddit: p.subreddit,
-          source: p.source, isMegathread: p.isMegathread || false
+          source: p.source, isMegathread: p.isMegathread || false,
+          category: p.category || "outage"
         };
         if (p.topComments && p.topComments.length > 0) post.topComments = p.topComments;
         return post;
@@ -835,15 +904,20 @@ async function pushFullData(statusData, incidents, redditPosts, bskyPosts) {
   // Update Reddit (preserve existing if fetch returned 0 — likely rate limited)
   if (redditPosts.length > 0) {
     var redditCommentCount = redditPosts.reduce(function (sum, p) { return sum + (p.numComments || 0); }, 0);
+    var redditOutage = redditPosts.filter(function (p) { return p.category === "outage"; }).length;
+    var redditUsage = redditPosts.filter(function (p) { return p.category === "usage"; }).length;
     existing.reddit = {
       lastFetched: now,
       recentPosts: redditPosts.length,
+      outagePosts: redditOutage,
+      usagePosts: redditUsage,
       recentComments: redditCommentCount,
       topPosts: redditPosts.sort(function (a, b) { return b.score - a.score; }).slice(0, 10).map(function (p) {
         var post = {
           title: p.title, author: p.author, score: p.score,
           url: p.url, created: p.created, subreddit: p.subreddit,
-          source: p.source, isMegathread: p.isMegathread || false
+          source: p.source, isMegathread: p.isMegathread || false,
+          category: p.category || "outage"
         };
         if (p.topComments && p.topComments.length > 0) post.topComments = p.topComments;
         return post;

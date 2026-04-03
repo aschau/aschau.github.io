@@ -150,7 +150,8 @@
   function computeBreakdown(data) {
     var statusScore = 0;
     var bskyScore = 0;
-    var redditScore = 0;
+    var redditOutageScore = 0;
+    var redditUsageScore = 0;
 
     if (data.status && data.status.status) {
       var ind = data.status.status.indicator;
@@ -179,31 +180,74 @@
       if (data.reddit && data.reddit.lastFetched) {
         var megas = (data.reddit.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
         var rPosts = (data.reddit.recentPosts || 0) + (megas * 4);
-        if (rPosts >= 30) redditScore = 5;
-        else if (rPosts >= 20) redditScore = 4;
-        else if (rPosts >= 10) redditScore = 3;
-        else if (rPosts >= 5) redditScore = 2;
-        else if (rPosts >= 3) redditScore = 1;
-        else if (rPosts >= 1) redditScore = 0.5;
+        var redditTotal = 0;
+        if (rPosts >= 30) redditTotal = 5;
+        else if (rPosts >= 20) redditTotal = 4;
+        else if (rPosts >= 10) redditTotal = 3;
+        else if (rPosts >= 5) redditTotal = 2;
+        else if (rPosts >= 3) redditTotal = 1;
+        else if (rPosts >= 1) redditTotal = 0.5;
+
+        // Split score by outage vs usage ratio
+        var outageN = data.reddit.outagePosts || 0;
+        var usageN = data.reddit.usagePosts || 0;
+        var totalN = outageN + usageN;
+        if (totalN > 0) {
+          redditOutageScore = Math.round(redditTotal * (outageN / totalN) * 10) / 10;
+          redditUsageScore = Math.round(redditTotal * (usageN / totalN) * 10) / 10;
+        } else {
+          redditOutageScore = redditTotal; // legacy data without categories
+        }
       }
     }
 
-    return { status: statusScore, bluesky: bskyScore, reddit: redditScore };
+    // Split bluesky by category from topPosts
+    var bskyOutageScore = bskyScore;
+    var bskyUsageScore = 0;
+    if (bskyScore > 0 && data.social && data.social.topPosts) {
+      var bskyOutN = 0, bskyUsN = 0;
+      data.social.topPosts.forEach(function (p) {
+        if (p.category === "usage") bskyUsN++;
+        else bskyOutN++;
+      });
+      var bskyTotN = bskyOutN + bskyUsN;
+      if (bskyTotN > 0 && bskyUsN > 0) {
+        bskyOutageScore = Math.round(bskyScore * (bskyOutN / bskyTotN) * 10) / 10;
+        bskyUsageScore = Math.round(bskyScore * (bskyUsN / bskyTotN) * 10) / 10;
+      }
+    }
+
+    // "By type" totals across all social sources
+    var totalOutage = redditOutageScore + bskyOutageScore;
+    var totalUsage = redditUsageScore + bskyUsageScore;
+
+    return {
+      status: statusScore,
+      bluesky: bskyScore,
+      reddit: redditOutageScore + redditUsageScore,
+      outage: totalOutage,
+      usage: totalUsage
+    };
   }
 
   function renderBreakdown(breakdown) {
     if (!breakdown) return;
     var max = 10;
-
     function pct(v) { return Math.max((v / max) * 100, v > 0 ? 2 : 0) + "%"; }
+    function set(id, width, val) {
+      document.getElementById(id).style.width = width;
+      document.getElementById(id + "-val").textContent = "+" + (val || 0);
+    }
 
-    document.getElementById("breakdown-status").style.width = pct(breakdown.status);
-    document.getElementById("breakdown-reddit").style.width = pct(breakdown.reddit);
-    document.getElementById("breakdown-bluesky").style.width = pct(breakdown.bluesky);
+    // By Source bar
+    set("bd-src-status", pct(breakdown.status), breakdown.status);
+    set("bd-src-reddit", pct(breakdown.reddit), breakdown.reddit);
+    set("bd-src-bluesky", pct(breakdown.bluesky), breakdown.bluesky);
 
-    document.getElementById("breakdown-status-val").textContent = "+" + (breakdown.status || 0);
-    document.getElementById("breakdown-reddit-val").textContent = "+" + (breakdown.reddit || 0);
-    document.getElementById("breakdown-bluesky-val").textContent = "+" + (breakdown.bluesky || 0);
+    // By Type bar
+    set("bd-type-status", pct(breakdown.status), breakdown.status);
+    set("bd-type-outage", pct(breakdown.outage), breakdown.outage);
+    set("bd-type-usage", pct(breakdown.usage), breakdown.usage);
   }
 
   function renderStatus(statusData) {
@@ -321,8 +365,13 @@
         var scoreText = post.score != null ? post.score : "--";
         var meta = "@" + escapeHtml(post.author || "?");
         if (post.created) meta += " \u00b7 " + timeAgo(post.created);
+        var bskyBadge = '';
+        if (post.category) {
+          bskyBadge = '<div class="post-badges"><span class="' + (post.category === "usage" ? "usage-badge" : "outage-badge") + '">' + post.category + '</span></div>';
+        }
         el.innerHTML = '<span class="social-post-score">' + scoreText + ' \u2665</span>' +
                        '<div class="social-post-body">' +
+                         bskyBadge +
                          '<a href="' + sanitizeUrl(post.url) + '" target="_blank" rel="noopener noreferrer">' +
                          escapeHtml(truncate(post.title, 100)) + '</a>' +
                          '<span class="social-post-meta">' + meta + '</span>' +
@@ -350,7 +399,10 @@
       return;
     }
 
-    postCount.textContent = redditData.recentPosts || 0;
+    var total = redditData.recentPosts || 0;
+    var outageCount = redditData.outagePosts || total;
+    var usageCount = redditData.usagePosts || 0;
+    postCount.textContent = total;
     commentCount.textContent = redditData.recentComments || 0;
 
     // Show stale badge if data is older than 30 min
@@ -375,7 +427,11 @@
         var meta = "u/" + escapeHtml(post.author || "?");
         if (sub) meta = sub + " \u00b7 " + meta;
         if (post.created) meta += " \u00b7 " + timeAgo(post.created);
-        var megaBadge = post.isMegathread ? '<span class="megathread-badge">megathread</span>' : '';
+        var badgeParts = [];
+        if (post.isMegathread) badgeParts.push('<span class="megathread-badge">megathread</span>');
+        if (post.category === "outage") badgeParts.push('<span class="outage-badge">outage</span>');
+        if (post.category === "usage") badgeParts.push('<span class="usage-badge">usage</span>');
+        var badges = badgeParts.length ? '<div class="post-badges">' + badgeParts.join('') + '</div>' : '';
         var commentsHtml = '';
         if (post.topComments && post.topComments.length > 0) {
           commentsHtml = '<div class="top-comments">';
@@ -390,7 +446,7 @@
         }
         el.innerHTML = '<span class="social-post-score">' + scoreText + ' \u2B06</span>' +
                        '<div class="social-post-body">' +
-                         megaBadge +
+                         badges +
                          '<a href="' + sanitizeUrl(post.url) + '" target="_blank" rel="noopener noreferrer">' +
                          escapeHtml(truncate(post.title, 100)) + '</a>' +
                          '<span class="social-post-meta">' + meta + '</span>' +
@@ -675,18 +731,19 @@
 
     // Recalculate breakdown with filter
     var breakdown = computeBreakdown({ status: lastData.status, social: lastSocialData, reddit: lastData.reddit });
-    var displayIndex = Math.min(breakdown.status + breakdown.bluesky + breakdown.reddit, 10);
+    var displayIndex = Math.min(breakdown.status + breakdown.reddit + breakdown.bluesky, 10);
 
     setMiseryLevel(displayIndex);
     renderBreakdown(breakdown);
 
-    // Hide social breakdown segments in official mode
-    document.getElementById("breakdown-reddit").style.display = isOfficial ? "none" : "";
-    document.getElementById("breakdown-bluesky").style.display = isOfficial ? "none" : "";
-    var labels = document.querySelectorAll(".breakdown-label");
-    if (labels.length >= 3) {
-      labels[1].style.display = isOfficial ? "none" : ""; // Reddit label
-      labels[2].style.display = isOfficial ? "none" : ""; // Bluesky label
+    // Hide social breakdowns in official mode
+    document.getElementById("breakdown-type").style.display = isOfficial ? "none" : "";
+    var srcLabels = document.querySelectorAll("#breakdown-source .breakdown-label");
+    document.getElementById("bd-src-reddit").style.display = isOfficial ? "none" : "";
+    document.getElementById("bd-src-bluesky").style.display = isOfficial ? "none" : "";
+    if (srcLabels.length >= 3) {
+      srcLabels[1].style.display = isOfficial ? "none" : "";
+      srcLabels[2].style.display = isOfficial ? "none" : "";
     }
 
     renderHistory(lastData.history);

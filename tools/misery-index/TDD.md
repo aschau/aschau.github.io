@@ -131,13 +131,22 @@ The scale uses blue → yellow → orange → red → purple rather than the tra
 - Glassmorphism: `backdrop-filter: blur(12px)` with semi-transparent backgrounds
 - Border glow animation on severe+ levels
 - **Status card**: per-component breakdown with color-coded dots, links to status.claude.com. Goes full-width in "Official Only" mode.
-- **Bluesky card**: post/reply counts, top complaint posts. Hidden in "Official Only" mode.
-- **Reddit card**: post/comment counts, top posts with subreddit, score, and time ago. Hidden in "Official Only" mode.
+- **Bluesky card**: post/reply counts, top complaint posts with outage/usage badges. Hidden in "Official Only" mode.
+- **Reddit card**: post/comment counts, top posts with outage/usage/megathread badges. Hidden in "Official Only" mode.
 - **Incidents card**: recent incidents with impact badges, status labels, and latest update text. Filtered by time range toggle.
+- **Score breakdown**: two stacked bars — "By Source" (Status/Reddit/Bluesky) and "By Type" (Status/Outage/Usage). "By Type" hidden in Official Only mode.
+
+### Post Categories
+All Reddit and Bluesky complaint posts are classified as either `outage` or `usage`:
+- **outage**: strong signals (is down, 500 errors) or corroborated weak signals (broken, degraded)
+- **usage**: rate limits, token limits, usage caps — requires frustration language, 5+ upvotes/likes, or 2+ usage keywords
+- Posts display colored inline badges; megathreads can show multiple badges (megathread + category)
+- Filter pipeline: exclusions → showcase/meta rejection → strong outage → usage → weak outage → reject
+- "My code broke" context detection prevents user-code complaints from being tagged as outage
 
 ### History Chart
 - Canvas-based sparkline (no external charting library)
-- 48-hour rolling window
+- 7-day rolling window (672 entries at 15-min intervals)
 - Color-coded background zones matching misery level thresholds
 - Gradient fill under the line
 - Responsive to container width via `devicePixelRatio` scaling

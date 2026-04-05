@@ -7,5 +7,6 @@ module.exports = {
     'games/beamlab/share.js',
     'games/parsed/share.js',
     'tools/snaplayout/conversions.module.js',
+    'tools/misery-index/misery.module.js',
   ],
 };

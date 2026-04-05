@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "aschau-portfolio",
+  "description": "Test suite for aschau.github.io portfolio site",
+  "scripts": {
+    "test": "jest",
+    "test:verbose": "jest --verbose",
+    "test:coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

@@ -124,42 +124,45 @@ async function searchBluesky() {
         if (!hasContext) return;
       }
 
-      // ── Outage/degradation signals (strong — actively experiencing a problem NOW) ──
-      var STRONG_SIGNALS = [
+      // ── Strong outage signals (count alone) ──
+      var STRONG_OUTAGE = [
         "is down", "went down", "goes down", "going down",
-        "outage", "not working", "unavailable",
+        "outage", "not working",
         "can't use", "cant use", "won't work", "doesn't work", "stopped working",
         "keeps crashing", "keeps failing",
         "overloaded", "500 error", "502", "503", "504",
         "please fix", "is it just me"
       ];
 
-      // ── Degradation signals (weaker — could be normal grumbling, needs backup) ──
-      var WEAK_SIGNALS = [
+      // ── Usage frustration signals ──
+      var USAGE_SIGNALS = [
         "rate limit", "token limit", "usage limit", "message limit",
         "limit reached", "hit the limit", "hit my limit", "out of messages",
-        "throttl", "capped", "degraded", "so slow", "unusable", "broken",
-        "nerfed", "bug", "buggy"
+        "throttl", "capped", "usage cap", "daily limit", "pro limit",
+        "token usage", "burning my usage", "burning usage", "save token",
+        "burn through token", "eating my token", "eating token",
+        "wasting token", "draining token", "token drain"
       ];
 
-      // ── False-positive exclusions — skip posts matching these patterns ──
+      // ── Weak outage signals (need 2+ or frustration) ──
+      var WEAK_OUTAGE = [
+        "unavailable", "degraded", "so slow", "broken",
+        "nerfed", "bug", "buggy", "unusable"
+      ];
+
+      // ── False-positive exclusions (synced with bot.js BSKY_EXCLUSIONS) ──
       var EXCLUSIONS = [
-        // Past tense / historical — not about a current issue
         "was down", "were down", "was broken", "was unusable",
         "remember when", "last week", "last month", "yesterday",
         "used to be", "months ago", "back when",
-        // Positive sentiment that happens to contain complaint words
         "fixed the bug", "fixed a bug", "found the bug", "helped me",
         "love claude", "claude is great", "claude is amazing",
         "impressed", "works great", "working great", "working well",
         "back up", "is back", "working again", "resolved",
-        // Dependency humor / memes (not actual complaints about current issues)
         "addicted", "withdrawal", "forgot how to code", "lost without",
         "can't code without", "dependent on", "dependency on",
-        // Competitive switching (opinion, not outage)
         "switched to", "switching to", "going back to", "gave up on",
         "switched from", "moved to",
-        // Generic hot takes / opinion pieces
         "worse than", "better than", "compared to",
         "sucks", "terrible", "garbage", "useless"
       ];
@@ -189,18 +192,23 @@ async function searchBluesky() {
         });
       }
 
-      var hasStrong = hasSignalNearby(STRONG_SIGNALS, 80);
-      var hasWeak = hasSignalNearby(WEAK_SIGNALS, 80);
+      var hasFrustration = /\b(wtf|omg|ugh|smh|seriously|annoying|frustrat|painful|ridiculous|forcing|ruining|unusable|unbearable|fed up|absurd|insane|unacceptable|rethink|give up|giving up)\b/i.test(text);
+      var bskyCategory = false;
 
-      // Strong signal alone is enough. Weak signal needs at least 2 weak signals
-      // or 1 weak signal + explicit frustration language to count.
-      if (!hasStrong) {
-        if (!hasWeak) return;
-        // Count how many distinct weak signals appear
-        var weakCount = WEAK_SIGNALS.filter(function (w) { return text.includes(w); }).length;
-        var hasFrustration = /\b(wtf|omg|ugh|smh|seriously|annoying|frustrat|painful|😡|🤬|💀)\b/i.test(text);
-        if (weakCount < 2 && !hasFrustration) return;
+      // Strong outage → immediate "outage"
+      if (hasSignalNearby(STRONG_OUTAGE, 80)) {
+        bskyCategory = "outage";
+      // Usage signals → "usage" with corroboration
+      } else if (hasSignalNearby(USAGE_SIGNALS, 80)) {
+        var usageCount = USAGE_SIGNALS.filter(function (w) { return text.includes(w); }).length;
+        if (usageCount >= 2 || hasFrustration || (post.likeCount || 0) >= 5) bskyCategory = "usage";
       }
+      // Weak outage → "outage" with corroboration
+      if (!bskyCategory && hasSignalNearby(WEAK_OUTAGE, 80)) {
+        var weakCount = WEAK_OUTAGE.filter(function (w) { return text.includes(w); }).length;
+        if (weakCount >= 2 || hasFrustration) bskyCategory = "outage";
+      }
+      if (!bskyCategory) return;
 
       allPosts.push({
         title: truncateText(post.record?.text || "", 120),
@@ -209,7 +217,8 @@ async function searchBluesky() {
         numComments: post.replyCount || 0,
         url: bskyPostUrl(post.uri),
         created: post.indexedAt || post.record?.createdAt || new Date().toISOString(),
-        source: "bluesky"
+        source: "bluesky",
+        category: bskyCategory
       });
     });
 
@@ -290,49 +299,74 @@ async function getRecentIncidents() {
 var REDDIT_STALE_MS = 30 * 60 * 1000; // 30 minutes
 
 function calculateMisery(statusData, bskyPosts, bskyComments, redditData) {
-  let score = 0;
+  var statusScore = 0;
+  var redditScore = 0;
+  var bskyScore = 0;
+  var bskyReplyScore = 0;
 
-  // Status page contribution (0-8)
+  // Status page (0-8)
   if (statusData?.status) {
     const indicator = statusData.status.indicator;
-    if (indicator === "minor") score += 2;
-    else if (indicator === "major") score += 4;
-    else if (indicator === "critical") score += 6;
+    if (indicator === "minor") statusScore += 2;
+    else if (indicator === "major") statusScore += 4;
+    else if (indicator === "critical") statusScore += 6;
 
     if (statusData.components) {
       const badComponents = statusData.components.filter(function (c) {
         return c.status !== "operational";
       });
-      score += Math.min(badComponents.length * 0.5, 2);
+      statusScore += Math.min(badComponents.length * 0.5, 2);
     }
   }
 
-  // Reddit contribution — only if data is fresh (0-5, primary social signal)
+  // Reddit (0-5) — only if data is fresh, split by outage/usage
+  var redditOutageScore = 0;
+  var redditUsageScore = 0;
   if (redditData && redditData.lastFetched) {
     var redditAge = Date.now() - new Date(redditData.lastFetched).getTime();
     if (redditAge < REDDIT_STALE_MS) {
       var megathreads = (redditData.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
       var rPosts = (redditData.recentPosts || 0) + (megathreads * 4);
-      if (rPosts >= 30) score += 5;
-      else if (rPosts >= 20) score += 4;
-      else if (rPosts >= 10) score += 3;
-      else if (rPosts >= 5) score += 2;
-      else if (rPosts >= 3) score += 1;
-      else if (rPosts >= 1) score += 0.5;
+      if (rPosts >= 30) redditScore = 5;
+      else if (rPosts >= 20) redditScore = 4;
+      else if (rPosts >= 10) redditScore = 3;
+      else if (rPosts >= 5) redditScore = 2;
+      else if (rPosts >= 3) redditScore = 1;
+      else if (rPosts >= 1) redditScore = 0.5;
+
+      var outageN = redditData.outagePosts || 0;
+      var usageN = redditData.usagePosts || 0;
+      var totalN = outageN + usageN;
+      if (totalN > 0) {
+        redditOutageScore = Math.round(redditScore * (outageN / totalN) * 10) / 10;
+        redditUsageScore = Math.round(redditScore * (usageN / totalN) * 10) / 10;
+      } else {
+        redditOutageScore = redditScore;
+      }
     }
   }
 
-  // Bluesky post volume (0-2, secondary signal)
-  if (bskyPosts >= 30) score += 2;
-  else if (bskyPosts >= 15) score += 1.5;
-  else if (bskyPosts >= 5) score += 1;
-  else if (bskyPosts >= 1) score += 0.5;
+  // Bluesky posts (0-2)
+  if (bskyPosts >= 30) bskyScore = 2;
+  else if (bskyPosts >= 15) bskyScore = 1.5;
+  else if (bskyPosts >= 5) bskyScore = 1;
+  else if (bskyPosts >= 1) bskyScore = 0.5;
 
-  // Bluesky reply amplifier (0-1)
-  if (bskyComments >= 75) score += 1;
-  else if (bskyComments >= 30) score += 0.5;
+  // Bluesky replies (0-1)
+  if (bskyComments >= 75) bskyReplyScore = 1;
+  else if (bskyComments >= 30) bskyReplyScore = 0.5;
 
-  return Math.min(Math.round(score * 10) / 10, 10);
+  var total = Math.min(Math.round((statusScore + bskyScore + bskyReplyScore + redditScore) * 10) / 10, 10);
+
+  return {
+    total: total,
+    breakdown: {
+      status: statusScore,
+      bluesky: bskyScore + bskyReplyScore,
+      redditOutage: redditOutageScore,
+      redditUsage: redditUsageScore
+    }
+  };
 }
 
 // ── Main ─────────────────────────────────────────────────────
@@ -363,7 +397,8 @@ async function main() {
 
   // Preserve Reddit data from existing file (written by Discord bot)
   const redditData = existing.reddit || null;
-  const miseryIndex = calculateMisery(statusData, postCount, commentCount, redditData);
+  const miseryResult = calculateMisery(statusData, postCount, commentCount, redditData);
+  const miseryIndex = miseryResult.total;
 
   console.log(`Status: ${statusData?.status?.description || "unknown"}`);
   console.log(`Incidents (7d): ${incidents.length}`);
@@ -382,7 +417,8 @@ async function main() {
     .map(function (p) {
       return {
         title: p.title, author: p.author, score: p.score,
-        url: p.url, created: p.created, source: p.source
+        url: p.url, created: p.created, source: p.source,
+        category: p.category
       };
     });
 

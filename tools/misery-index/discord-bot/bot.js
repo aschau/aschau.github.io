@@ -207,7 +207,10 @@ function filterRedditPost(post, subreddit) {
     "rate limit", "token limit", "usage limit", "message limit",
     "limit reached", "hit the limit", "out of messages",
     "throttl", "capped", "usage cap", "daily limit",
-    "pro limit", "max limit", "too many requests"
+    "pro limit", "max limit", "too many requests",
+    "token usage", "burning my usage", "burning usage", "save token",
+    "burn through token", "eating my token", "eating token",
+    "wasting token", "draining token", "token drain"
   ];
 
   var hasFrustration = /\b(wtf|omg|ugh|smh|seriously|annoying|frustrat|painful|ridiculous|forcing|ruining|unusable|unbearable|fed up|absurd|insane|unacceptable|rethink|give up|giving up)\b/i.test(text)
@@ -218,7 +221,7 @@ function filterRedditPost(post, subreddit) {
     && !(/\bclaude.*(broke|broken|bug|crash)/i.test(text));
 
   // Strip negated signals ("not a bug", "isn't broken", etc.)
-  var negated = text.replace(/\b(not a|not the|not an|isn't|isnt|is not|no |this is not|this isn't)\s*\w*\s*(bug|broken|error|outage|slow|degraded|unusable|unavailable)\b/gi, "");
+  var negated = text.replace(/\b(not a|not the|not an|isn't|isnt|is not|no |this is not|this isn't)(?:\s+\w+){0,3}\s*(bug|broken|error|outage|slow|degraded|unusable|unavailable|down)\b/gi, "");
 
   // Strong outage → pass immediately
   if (STRONG_OUTAGE.some(function (w) { return negated.includes(w); })) return "outage";
@@ -431,7 +434,10 @@ async function fetchBluesky() {
         "nerfed", "bug", "buggy", "unusable"];
       var BSKY_USAGE = ["rate limit", "token limit", "usage limit", "message limit",
         "limit reached", "hit the limit", "hit my limit", "out of messages",
-        "throttl", "capped", "usage cap", "daily limit", "pro limit"];
+        "throttl", "capped", "usage cap", "daily limit", "pro limit",
+        "token usage", "burning my usage", "burning usage", "save token",
+        "burn through token", "eating my token", "eating token",
+        "wasting token", "draining token", "token drain"];
 
       function hasSignalNearby(signals, radius) {
         return signals.some(function (w) {

@@ -53,7 +53,10 @@ var USAGE_SIGNALS = [
   "rate limit", "token limit", "usage limit", "message limit",
   "limit reached", "hit the limit", "out of messages",
   "throttl", "capped", "usage cap", "daily limit",
-  "pro limit", "max limit", "too many requests"
+  "pro limit", "max limit", "too many requests",
+  "token usage", "burning my usage", "burning usage", "save token",
+  "burn through token", "eating my token", "eating token",
+  "wasting token", "draining token", "token drain"
 ];
 
 var SHOWCASE = ["i built", "i made", "i created", "introducing", "announcing",
@@ -91,7 +94,7 @@ function filterRedditPost(post, subreddit) {
   var isUserCode = /\b(my |i |we |our )(code|app|script|pipeline|project|build|setup)\b/.test(text)
     && !(/\bclaude.*(broke|broken|bug|crash)/i.test(text));
 
-  var negated = text.replace(/\b(not a|not the|not an|isn't|isnt|is not|no |this is not|this isn't)\s*\w*\s*(bug|broken|error|outage|slow|degraded|unusable|unavailable)\b/gi, "");
+  var negated = text.replace(/\b(not a|not the|not an|isn't|isnt|is not|no |this is not|this isn't)(?:\s+\w+){0,3}\s*(bug|broken|error|outage|slow|degraded|unusable|unavailable|down)\b/gi, "");
 
   if (STRONG_OUTAGE.some(function (w) { return negated.includes(w); })) return "outage";
 
@@ -332,7 +335,10 @@ async function fetchBluesky() {
         "nerfed", "bug", "buggy", "unusable"];
       var BSKY_USAGE = ["rate limit", "token limit", "usage limit", "message limit",
         "limit reached", "hit the limit", "hit my limit", "out of messages",
-        "throttl", "capped", "usage cap", "daily limit", "pro limit"];
+        "throttl", "capped", "usage cap", "daily limit", "pro limit",
+        "token usage", "burning my usage", "burning usage", "save token",
+        "burn through token", "eating my token", "eating token",
+        "wasting token", "draining token", "token drain"];
 
       function hasSignalNearby(signals, radius) {
         return signals.some(function (w) {

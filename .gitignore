@@ -18,6 +18,7 @@ games/beamlab/debug.html
 games/parsed/scene_configs.txt
 *.pyc
 __pycache__/
+node_modules/
 
 # Discord bot
 tools/misery-index/discord-bot/node_modules/

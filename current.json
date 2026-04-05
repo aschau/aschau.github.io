@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-05T15:52:25.802Z",
+  "lastUpdated": "2026-04-05T16:07:26.166Z",
   "miseryIndex": 2.5,
   "status": {
     "page": {
@@ -135,7 +135,7 @@
     ]
   },
   "reddit": {
-    "lastFetched": "2026-04-05T15:52:25.802Z",
+    "lastFetched": "2026-04-05T16:07:26.166Z",
     "recentPosts": 8,
     "outagePosts": 4,
     "usagePosts": 4,
@@ -144,7 +144,7 @@
       {
         "title": "Claude has \"emotion\" and this can drive Claude’s behavior :smile: We should be gentle with the model and stay calm to av...",
         "author": "No-Cryptographer45",
-        "score": 458,
+        "score": 459,
         "url": "https://reddit.com/r/ClaudeAI/comments/1sblhtu/claude_has_emotion_and_this_can_drive_claudes/",
         "created": "2026-04-03T18:23:20.000Z",
         "subreddit": "ClaudeAI",
@@ -154,13 +154,13 @@
         "topComments": [
           {
             "author": "martin1744",
-            "score": 141,
+            "score": 140,
             "body": "stressed → shortcuts. just like the rest of us",
             "created": "2026-04-03T19:12:25.000Z"
           },
           {
             "author": "DangerousClassic7610",
-            "score": 86,
+            "score": 83,
             "body": "ok so first it's like \"saying please just wastes tokens\"\n\nthen second it's like \"threatening the LLMs with shutdown produces better output\"\n\nnow we've...",
             "created": "2026-04-03T19:19:06.000Z"
           }
@@ -169,7 +169,7 @@
       {
         "title": "I reverse-engineered why Claude Code burns through your usage so fast. 7 bugs that stack on top of each other — and the ...",
         "author": "UnfairFortune9840",
-        "score": 345,
+        "score": 339,
         "url": "https://reddit.com/r/ClaudeAI/comments/1sbqalg/i_reverseengineered_why_claude_code_burns_through/",
         "created": "2026-04-03T21:23:50.000Z",
         "subreddit": "ClaudeAI",
@@ -179,13 +179,13 @@
         "topComments": [
           {
             "author": "bagmorgels",
-            "score": 355,
+            "score": 359,
             "body": "This sub has become bots generating posts for bots to read. I fear no one here knows how to write for themselves anymore.",
             "created": "2026-04-04T02:06:21.000Z"
           },
           {
             "author": "hamuraijack",
-            "score": 153,
+            "score": 151,
             "body": "holy shit. every single comment in here is a bot",
             "created": "2026-04-04T02:55:45.000Z"
           }
@@ -194,7 +194,7 @@
       {
         "title": "Today, I got to experience Opus 4.6 in a blazing fast speed without being queued or rate limited for like 25 minutes.",
         "author": "Squeaky-Bed",
-        "score": 283,
+        "score": 281,
         "url": "https://reddit.com/r/ClaudeAI/comments/1scqyh8/today_i_got_to_experience_opus_46_in_a_blazing/",
         "created": "2026-04-05T01:44:45.000Z",
         "subreddit": "ClaudeAI",
@@ -204,13 +204,13 @@
         "topComments": [
           {
             "author": "LowestKillCount",
-            "score": 89,
+            "score": 93,
             "body": "Did you claim the extra usage credits? Is it possible you were using those on the API? Once they ran out you went back to free?",
             "created": "2026-04-05T02:11:49.000Z"
           },
           {
             "author": "No-Procedure1077",
-            "score": 81,
+            "score": 82,
             "body": "It’s possible I suppose you got moved into the API stream instead of the sub. However this seems just impossible",
             "created": "2026-04-05T02:06:36.000Z"
           }
@@ -219,7 +219,7 @@
       {
         "title": "TIL Anthropic's rate limit pool for OAuth tokens is gated by... the system prompt saying \"You are Claude Code\"",
         "author": "Different-Degree-761",
-        "score": 148,
+        "score": 151,
         "url": "https://reddit.com/r/ClaudeAI/comments/1sboykj/til_anthropics_rate_limit_pool_for_oauth_tokens/",
         "created": "2026-04-03T20:32:34.000Z",
         "subreddit": "ClaudeAI",
@@ -229,19 +229,19 @@
         "topComments": [
           {
             "author": "memetican",
-            "score": 109,
+            "score": 110,
             "body": "Using OAuth tokens outside of Claude Code is a breach of the AUP right?  I wouldn't expect to find that tidbit in the docs... ",
             "created": "2026-04-03T21:39:11.000Z"
           },
           {
             "author": "e_lizzle",
-            "score": 50,
+            "score": 51,
             "body": "You're extracting the token from one of the fixed-price plans, though, right? If you get caught, you lose your account.",
             "created": "2026-04-03T21:11:16.000Z"
           },
           {
             "author": "mensink",
-            "score": 22,
+            "score": 23,
             "body": "Yeah, pretty sure they don't want you to use their [claude.ai](http://claude.ai) plans with custom software. I imagine Claude Desktop has a similar ph...",
             "created": "2026-04-03T21:44:34.000Z"
           }
@@ -250,7 +250,7 @@
       {
         "title": "how to save 80% on your claude bill with better context",
         "author": "Grouchy_Subject_2777",
-        "score": 111,
+        "score": 113,
         "url": "https://reddit.com/r/ClaudeAI/comments/1scylcr/how_to_save_80_on_your_claude_bill_with_better/",
         "created": "2026-04-05T08:45:45.000Z",
         "subreddit": "ClaudeAI",
@@ -260,7 +260,7 @@
         "topComments": [
           {
             "author": "TaskSpecialist5881",
-            "score": 37,
+            "score": 42,
             "body": "the 200k token premium jump is INSANE and nobody talks about it enough. literally almost doubled my costs overnight when i didn't realize my context w...",
             "created": "2026-04-05T08:47:56.000Z"
           },
@@ -279,17 +279,6 @@
         ]
       },
       {
-        "title": "Claude and Obsidian for Second Brain",
-        "author": "Mirrin_",
-        "score": 1,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1sczjpd/claude_and_obsidian_for_second_brain/",
-        "created": "2026-04-05T09:47:02.000Z",
-        "subreddit": "ClaudeAI",
-        "source": "reddit",
-        "isMegathread": false,
-        "category": "outage"
-      },
-      {
         "title": "Rate limited but not even close to hitting usage limits?! Possible bug",
         "author": "FirmCaterpillar2494",
         "score": 1,
@@ -299,6 +288,17 @@
         "source": "reddit",
         "isMegathread": false,
         "category": "usage"
+      },
+      {
+        "title": "Claude and Obsidian for Second Brain",
+        "author": "Mirrin_",
+        "score": 0,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sczjpd/claude_and_obsidian_for_second_brain/",
+        "created": "2026-04-05T09:47:02.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "outage"
       },
       {
         "title": "I used AI to discover I have permanent brain damage. The medical system never told me. Now I can't afford the only tool ...",
@@ -501,13 +501,6 @@
     }
   ],
   "history": [
-    {
-      "timestamp": "2026-03-31T00:49:14.105Z",
-      "miseryIndex": 0.5,
-      "statusIndicator": "none",
-      "postCount": 0,
-      "commentCount": 0
-    },
     {
       "timestamp": "2026-03-31T00:54:37.365Z",
       "miseryIndex": 1.5,
@@ -5200,6 +5193,13 @@
     },
     {
       "timestamp": "2026-04-05T15:52:25.802Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T16:07:26.166Z",
       "miseryIndex": 2.5,
       "statusIndicator": "none",
       "postCount": 2,

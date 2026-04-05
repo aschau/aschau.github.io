@@ -174,19 +174,19 @@
       });
       var dropdownItems = item.dropdown.map(function (d) {
         return '<a class="dropdown-item" href="' + basePath + d.href + '" target="_blank" rel="noopener noreferrer">' +
-          d.label + '<small class="text-muted ml-2">' + d.desc + '</small></a>';
+          d.label + '<small class="text-muted ms-2">' + d.desc + '</small></a>';
       }).join('');
       return (
         '<li class="nav-item dropdown' + (isAnyActive ? ' active' : '') + '">' +
-        '<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+        '<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
         item.label + '</a>' +
-        '<div class="dropdown-menu dropdown-menu-right">' + dropdownItems + '</div>' +
+        '<div class="dropdown-menu dropdown-menu-end">' + dropdownItems + '</div>' +
         '</li>'
       );
     }
     var isActive = currentPage === item.href;
     var activeClass = isActive ? " active" : "";
-    var srOnly = isActive ? ' <span class="sr-only">(current)</span>' : "";
+    var srOnly = isActive ? ' <span class="visually-hidden">(current)</span>' : "";
     return (
       '<li class="nav-item' + activeClass + '">' +
       '<a class="nav-link" href="' + basePath + item.href + '">' + item.label + srOnly + "</a>" +
@@ -197,11 +197,11 @@
   var navbarHtml =
     '<nav class="navbar fixed-top navbar-expand-lg navbar-dark">' +
     '  <a class="navbar-brand link" href="' + basePath + 'index.html">Andrew Steven Chau</a>' +
-    '  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-content">' +
+    '  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#header-content">' +
     '    <span class="navbar-toggler-icon"></span>' +
     "  </button>" +
     '  <div class="navbar-collapse collapse" id="header-content">' +
-    '    <ul class="navbar-nav ml-auto">' +
+    '    <ul class="navbar-nav ms-auto">' +
     "                " + navLinksHtml +
     "    </ul>" +
     "  </div>" +
@@ -225,44 +225,25 @@
         '</footer>';
     }
 
-    var scripts = [
-      {
-        src: "https://code.jquery.com/jquery-3.7.1.slim.min.js",
-        integrity: "sha512-sNylduh9fqpYUK5OYXWcBleGzbZInWj8yCJAU57r1dpSK9tP2ghf/SRYCMj+KsslFkCOt3TvJrX2AV/Gc3wOqA=="
-      },
-      {
-        src: "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js",
-        integrity: "sha512-ubuT8Z88WxezgSqf3RLuNi5lmjstiJcyezx34yIU2gAHonIi27Na7atqzUZCOoY4CExaoFumzOsFQ2Ch+I/HCw=="
-      },
-      {
-        src: "https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js",
-        integrity: "sha512-7rusk8kGPFynZWu26OKbTeI+QPoYchtxsmPeBqkHIEXJxeun4yJ4ISYe7C6sz9wdxeE1Gk3VxsIWgCZTc+vX3g=="
+    var s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js";
+    s.integrity = "sha512-HvOjJrdwNpDbkGJIG2ZNqDlVqMo77qbs4Me4cah0HoDrfhrbA+8SBlZn1KrvAQw7cILLPFJvdwIgphzQmMm+Pw==";
+    s.crossOrigin = "anonymous";
+    s.onload = function () {
+      // Activate tab from URL hash (e.g. #GamesTools) and sync hash on tab click
+      var hash = window.location.hash;
+      if (hash) {
+        var tab = document.querySelector('[data-bs-toggle="list"][href="' + hash + '"]');
+        if (tab) new bootstrap.Tab(tab).show();
       }
-    ];
-
-    function loadNext(i) {
-      if (i >= scripts.length) {
-        // Activate tab from URL hash (e.g. #GamesTools) and sync hash on tab click
-        var hash = window.location.hash;
-        if (hash) {
-          var tab = document.querySelector('[data-toggle="list"][href="' + hash + '"]');
-          if (tab) $(tab).tab("show");
-        }
-        $('[data-toggle="list"]').on("shown.bs.tab", function (e) {
+      document.querySelectorAll('[data-bs-toggle="list"]').forEach(function (t) {
+        t.addEventListener("shown.bs.tab", function (e) {
           history.replaceState(null, null, e.target.getAttribute("href"));
         });
-        if (callback) callback();
-        return;
-      }
-      var s = document.createElement("script");
-      s.src = scripts[i].src;
-      s.integrity = scripts[i].integrity;
-      s.crossOrigin = "anonymous";
-      s.onload = function () { loadNext(i + 1); };
-      document.body.appendChild(s);
-    }
-
-    loadNext(0);
+      });
+      if (callback) callback();
+    };
+    document.body.appendChild(s);
 
     // Load gamification features
     var gamScript = document.createElement("script");

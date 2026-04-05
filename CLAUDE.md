@@ -13,7 +13,7 @@ Static portfolio website (GitHub Pages) for Andrew Steven Chau at `www.raggedydo
 - **Pages**: `index.html` (home), `aboutMe.html`, `workprojects.html`, `personalprojects.html`, `404.html`
 - **Project details**: `projects/work/<name>/` and `projects/personal/<name>.html`
 - **Shared components** (`js/components.js`): navbar, footer, loading screen, particles, gamification
-- **Styling**: Bootstrap 4.6.2 CDN (jsdelivr) + `css/stylesheet.css`. Dark glassmorphism theme. Design tokens in `:root`.
+- **Styling**: Bootstrap 5.3.8 CDN (jsdelivr) + `css/stylesheet.css`. No jQuery dependency. Dark glassmorphism theme. Design tokens in `:root`.
 - **Responsive**: Mobile breakpoint at 1024px (covers all iPads in portrait). Tablet landscape (1025-1200px) has compressed timeline. Navbar `expand-lg` (collapses to hamburger under 992px).
 - **Timeline**: Career timeline on `index.html`. Detail cards clamped within viewport via JS. Character sprite repositions on resize/rotation.
 - **Character sprite**: LPC spritesheets (64x64 frames). Jacket/no-jacket variants. CC-BY-SA 3.0.

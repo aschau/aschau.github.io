@@ -186,10 +186,12 @@ body
 	flex: 1;
 }
 
-/* Transparent jumbotron with white text */
+/* Transparent hero section with white text (replaces Bootstrap 4 jumbotron) */
 .jumbotron-transparent {
 	background: transparent;
 	color: white;
+	padding: 2rem 1rem;
+	border-radius: 0.3rem;
 }
 
 /* White link color for use on dark backgrounds */
@@ -243,6 +245,8 @@ body
 	backdrop-filter: blur(var(--glass-blur));
 	-webkit-backdrop-filter: blur(var(--glass-blur));
 	border-bottom: 1px solid var(--glass-border-light);
+	padding-left: 1rem;
+	padding-right: 1rem;
 }
 
 .navbar .dropdown-menu {
@@ -403,10 +407,6 @@ body
 	/* Tighter spacing on mobile */
 	.card-body {
 		padding: 0.85rem;
-	}
-	.card-deck {
-		margin-left: 0.5rem !important;
-		margin-right: 0.5rem !important;
 	}
 
 	/* Progress bar behind navbar dropdown on mobile */

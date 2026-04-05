@@ -134,6 +134,135 @@
     // Fallback if primary === secondary somehow
     var FALLBACK_ARCHETYPE = { name: 'The Philosopher', desc: 'You defy categorization. Every school of thought has something to offer you, and you refuse to be pinned down. Socrates would approve \u2014 the only thing you know is that you know nothing.' };
 
+    // ---- Philosopher Profiles (for ID card) ----
+    var PROFILES = {
+        kantian: {
+            title: 'Kantian',
+            philosopher: 'Immanuel Kant',
+            icon: '\u2696\uFE0F',
+            motto: '"Do what is right, though the world may perish."',
+            strengths: [
+                'Unshakeable moral backbone',
+                'Treats everyone with equal respect',
+                'Will never lie to you (even when you want them to)'
+            ],
+            weaknesses: [
+                'Overthinks ordering at restaurants',
+                'Would let the trolley hit 5 people on principle',
+                'Judges you silently for jaywalking'
+            ],
+            catchphrases: [
+                '"But is it universalizable?"',
+                '"I don\u2019t make the rules \u2014 well, actually, I do"'
+            ],
+            peerReviews: [
+                { text: 'Absolutely insufferable at parties, but I\u2019d trust them with my life.', author: 'Mill' },
+                { text: 'At least they\u2019re consistent. I\u2019ll give them that.', author: 'Sartre' }
+            ],
+            hiddenTalent: 'Can turn any casual conversation into a moral philosophy lecture'
+        },
+        utilitarian: {
+            title: 'Utilitarian',
+            philosopher: 'John Stuart Mill',
+            icon: '\uD83D\uDCCA',
+            motto: '"The greatest happiness of the greatest number."',
+            strengths: [
+                'Always sees the big picture',
+                'Genuinely wants the best for everyone',
+                'Has a spreadsheet for everything'
+            ],
+            weaknesses: [
+                'Will sacrifice your birthday for the "greater good"',
+                'Treats friendships like cost-benefit analyses',
+                'Gets paralyzed by the trolley problem'
+            ],
+            catchphrases: [
+                '"But what maximizes well-being?"',
+                '"I ran the numbers and your feelings are suboptimal"'
+            ],
+            peerReviews: [
+                { text: 'Efficient but cold. Would not invite to game night.', author: 'Aristotle' },
+                { text: 'They\u2019d sell me out if the math checked out.', author: 'Scanlon' }
+            ],
+            hiddenTalent: 'Can calculate the optimal tip percentage for any group dinner in 3 seconds'
+        },
+        virtue: {
+            title: 'Virtue Ethicist',
+            philosopher: 'Aristotle',
+            icon: '\uD83C\uDF3F',
+            motto: '"We are what we repeatedly do."',
+            strengths: [
+                'The friend everyone goes to for advice',
+                'Genuinely good person, not just rule-following',
+                'Brings homemade food to every gathering'
+            ],
+            weaknesses: [
+                'A little smug about their "character development"',
+                'Takes forever to decide ("What would a virtuous person do?")',
+                'Secretly judgmental'
+            ],
+            catchphrases: [
+                '"It\u2019s not about what you do, it\u2019s about who you are"',
+                '"I\u2019m not judging, I\u2019m... observing"'
+            ],
+            peerReviews: [
+                { text: 'Too focused on vibes, not enough on policy.', author: 'Scanlon' },
+                { text: 'Wholesome energy but needs to commit to something.', author: 'Sartre' }
+            ],
+            hiddenTalent: 'Gives advice so good you feel guilty for not following it'
+        },
+        contractualist: {
+            title: 'Contractualist',
+            philosopher: 'T.M. Scanlon',
+            icon: '\uD83E\uDD1D',
+            motto: '"What we owe to each other."',
+            strengths: [
+                'The fairest person you\u2019ll ever meet',
+                'Great at mediating conflicts',
+                'Actually reads the group chat before responding'
+            ],
+            weaknesses: [
+                'Takes 20 minutes to split a dinner bill fairly',
+                'Can\u2019t make a decision without polling the group',
+                'Would filibuster their own birthday party'
+            ],
+            catchphrases: [
+                '"Could anyone reasonably reject this?"',
+                '"Let\u2019s make sure everyone\u2019s comfortable with this"'
+            ],
+            peerReviews: [
+                { text: 'Means well but moves at the speed of bureaucracy.', author: 'Sartre' },
+                { text: 'Finally, someone who considers other people.', author: 'Mill' }
+            ],
+            hiddenTalent: 'Can draft a roommate agreement that everyone actually likes'
+        },
+        existentialist: {
+            title: 'Existentialist',
+            philosopher: 'Jean-Paul Sartre',
+            icon: '\uD83D\uDD25',
+            motto: '"Man is condemned to be free."',
+            strengths: [
+                'Authentically themselves at all times',
+                'Won\u2019t follow rules just because they exist',
+                'Deeply self-aware'
+            ],
+            weaknesses: [
+                'Overthinks their own existence at brunch',
+                'Uses "freedom" as an excuse to flake on plans',
+                'Will monologue about the void at 2 AM'
+            ],
+            catchphrases: [
+                '"Labels are for jars, not people"',
+                '"That\u2019s just, like, society\u2019s construct, man"'
+            ],
+            peerReviews: [
+                { text: 'Exhausting but never boring.', author: 'Aristotle' },
+                { text: 'They reject my framework on principle. Respect.', author: 'Kant' }
+            ],
+            hiddenTalent: 'Can make ordering coffee sound like an act of radical rebellion'
+        }
+    };
+
     // ---- State ----
     var scores = { kantian: 0, utilitarian: 0, virtue: 0, contractualist: 0, existentialist: 0 };
     var currentQuestion = 0;
@@ -250,31 +379,160 @@
         return sorted;
     }
 
+    // ---- Educational Sources ----
+    var SCHOOL_EXPLANATIONS = {
+        kantian: {
+            explanation: 'Your answers suggest you value duty, honesty, and universal moral rules. Kantian ethics holds that morality comes from rational principles that apply to everyone equally \u2014 regardless of consequences. If you wouldn\u2019t want everyone to do it, you shouldn\u2019t do it either.',
+            keyWork: 'Groundwork of the Metaphysics of Morals (1785)',
+            concept: 'The Categorical Imperative: act only according to rules you could will to be universal laws.',
+            source: 'Kant, I. (1785). Groundwork of the Metaphysics of Morals.',
+            link: 'https://plato.stanford.edu/entries/kant-moral/'
+        },
+        utilitarian: {
+            explanation: 'Your answers lean toward outcomes and impact. Utilitarianism says the right action is the one that produces the most overall good. You think about consequences, weigh trade-offs, and believe that helping more people is almost always better than helping fewer.',
+            keyWork: 'Utilitarianism (1863)',
+            concept: 'The Greatest Happiness Principle: actions are right in proportion as they promote happiness.',
+            source: 'Mill, J.S. (1863). Utilitarianism.',
+            link: 'https://plato.stanford.edu/entries/mill-moral-political/'
+        },
+        virtue: {
+            explanation: 'Your answers focus on character, relationships, and being a good person \u2014 not just doing good things. Virtue ethics says morality isn\u2019t about following rules or maximizing outcomes, but about cultivating excellent character traits (virtues) through practice and habit.',
+            keyWork: 'Nicomachean Ethics (c. 340 BC)',
+            concept: 'The Golden Mean: virtue lies between extremes of excess and deficiency.',
+            source: 'Aristotle. (c. 340 BC). Nicomachean Ethics.',
+            link: 'https://plato.stanford.edu/entries/aristotle-ethics/'
+        },
+        contractualist: {
+            explanation: 'Your answers prioritize fairness, mutual agreement, and considering others\u2019 perspectives. Scanlon\u2019s contractualism asks: could anyone reasonably reject the principle behind your action? If so, it\u2019s wrong. Morality is about what we owe to each other.',
+            keyWork: 'What We Owe to Each Other (1998)',
+            concept: 'Reasonable Rejection: an action is wrong if it violates principles no one could reasonably reject.',
+            source: 'Scanlon, T.M. (1998). What We Owe to Each Other.',
+            link: 'https://plato.stanford.edu/entries/contractualism/'
+        },
+        existentialist: {
+            explanation: 'Your answers reflect a commitment to authenticity, personal freedom, and self-determination. Existentialism says there are no pre-given moral rules \u2014 you must create your own values through your choices. With radical freedom comes radical responsibility.',
+            keyWork: 'Being and Nothingness (1943)',
+            concept: 'Radical Freedom: existence precedes essence \u2014 you define yourself through your choices.',
+            source: 'Sartre, J.-P. (1943). Being and Nothingness.',
+            link: 'https://plato.stanford.edu/entries/sartre/'
+        }
+    };
+
     function showResults() {
         showScreen(resultScreen);
 
-        var archetype = getArchetype();
-        document.getElementById('archetype-name').textContent = archetype.name;
-        document.getElementById('archetype-desc').textContent = archetype.desc;
-
-        // Score breakdown tags
         var sorted = getTopSchools();
-        var breakdownEl = document.getElementById('score-breakdown');
-        breakdownEl.innerHTML = '';
-        for (var i = 0; i < sorted.length; i++) {
-            var key = sorted[i];
-            var school = SCHOOLS[key];
-            var tag = document.createElement('span');
-            tag.className = 'score-tag';
-            tag.style.background = school.color + '18';
-            tag.style.color = school.color;
-            tag.innerHTML = '<span class="score-dot" style="background:' + school.color + '"></span>' +
-                school.emoji + ' ' + school.name + ': ' + scores[key];
-            breakdownEl.appendChild(tag);
+        var primaryKey = sorted[0];
+        var profile = PROFILES[primaryKey];
+        var archetype = getArchetype();
+        var school = SCHOOLS[primaryKey];
+
+        // Calculate total and percentages
+        var totalScore = 0;
+        for (var i = 0; i < SCHOOL_KEYS.length; i++) totalScore += scores[SCHOOL_KEYS[i]];
+        if (totalScore === 0) totalScore = 1;
+
+        // ---- Populate ID Card ----
+        document.getElementById('card-icon').textContent = profile.icon;
+        document.getElementById('card-title').textContent = profile.title;
+        document.getElementById('card-school').textContent = 'School of ' + profile.philosopher;
+        document.getElementById('card-motto').textContent = profile.motto;
+
+        // Strengths
+        var strengthsEl = document.getElementById('card-strengths');
+        strengthsEl.textContent = '';
+        for (var s = 0; s < profile.strengths.length; s++) {
+            var li = document.createElement('li');
+            li.textContent = profile.strengths[s];
+            strengthsEl.appendChild(li);
         }
 
-        // Draw radar chart
-        drawRadarChart();
+        // Weaknesses
+        var weaknessesEl = document.getElementById('card-weaknesses');
+        weaknessesEl.textContent = '';
+        for (var w = 0; w < profile.weaknesses.length; w++) {
+            var wli = document.createElement('li');
+            wli.textContent = profile.weaknesses[w];
+            weaknessesEl.appendChild(wli);
+        }
+
+        // Catchphrases
+        var catchEl = document.getElementById('card-catchphrases');
+        catchEl.textContent = '';
+        for (var c = 0; c < profile.catchphrases.length; c++) {
+            var cp = document.createElement('p');
+            cp.className = 'id-catchphrase';
+            cp.textContent = profile.catchphrases[c];
+            catchEl.appendChild(cp);
+        }
+
+        // Alignment bars
+        var alignEl = document.getElementById('card-alignment');
+        alignEl.textContent = '';
+        for (var a = 0; a < sorted.length; a++) {
+            var key = sorted[a];
+            var pct = Math.round((scores[key] / totalScore) * 100);
+            var row = document.createElement('div');
+            row.className = 'id-alignment-row';
+
+            var label = document.createElement('span');
+            label.className = 'id-alignment-label';
+            label.textContent = SCHOOLS[key].name;
+
+            var track = document.createElement('div');
+            track.className = 'id-alignment-track';
+
+            var fill = document.createElement('div');
+            fill.className = 'id-alignment-fill';
+            fill.style.width = '0%';
+            fill.style.background = SCHOOLS[key].color;
+            track.appendChild(fill);
+
+            var pctEl = document.createElement('span');
+            pctEl.className = 'id-alignment-pct';
+            pctEl.textContent = pct + '%';
+
+            row.appendChild(label);
+            row.appendChild(track);
+            row.appendChild(pctEl);
+            alignEl.appendChild(row);
+
+            // Animate bar fill
+            (function (fillEl, pctVal) {
+                setTimeout(function () {
+                    fillEl.style.width = pctVal + '%';
+                }, 100);
+            })(fill, pct);
+        }
+
+        // Hidden talent
+        document.getElementById('card-hidden-talent').textContent = profile.hiddenTalent;
+
+        // Peer reviews
+        var reviewsEl = document.getElementById('card-reviews');
+        reviewsEl.textContent = '';
+        for (var r = 0; r < profile.peerReviews.length; r++) {
+            var review = document.createElement('div');
+            review.className = 'id-review';
+
+            var reviewText = document.createElement('span');
+            reviewText.className = 'id-review-text';
+            reviewText.textContent = '\u201C' + profile.peerReviews[r].text + '\u201D ';
+
+            var reviewAuthor = document.createElement('span');
+            reviewAuthor.className = 'id-review-author';
+            reviewAuthor.textContent = '\u2014 ' + profile.peerReviews[r].author;
+
+            review.appendChild(reviewText);
+            review.appendChild(reviewAuthor);
+            reviewsEl.appendChild(review);
+        }
+
+        // Archetype subtitle in footer
+        document.getElementById('card-archetype').textContent = archetype.name;
+
+        // ---- Build Learn More section ----
+        buildLearnMore(sorted, totalScore);
 
         // Update progress bar to full
         document.getElementById('progress-fill').style.width = '100%';
@@ -283,6 +541,7 @@
         try {
             localStorage.setItem('examined_result', JSON.stringify({
                 archetype: archetype.name,
+                primary: primaryKey,
                 scores: scores,
                 answers: answers,
                 date: new Date().toISOString()
@@ -290,118 +549,124 @@
         } catch (e) { /* localStorage may be unavailable */ }
     }
 
-    // ---- Radar Chart ----
-    function drawRadarChart() {
-        var canvas = document.getElementById('radar-chart');
-        var ctx = canvas.getContext('2d');
-        var dpr = window.devicePixelRatio || 1;
+    // ---- Learn More / Educational Section ----
+    function buildLearnMore(sorted, totalScore) {
+        // Remove existing learn-more if retaking
+        var existing = document.querySelector('.id-learn-more');
+        if (existing) existing.remove();
 
-        canvas.width = 300 * dpr;
-        canvas.height = 300 * dpr;
-        canvas.style.width = '300px';
-        canvas.style.height = '300px';
-        ctx.scale(dpr, dpr);
+        var container = document.createElement('div');
+        container.className = 'id-learn-more';
 
-        var cx = 150, cy = 150;
-        var maxRadius = 110;
-        var sides = 5;
-        var angleStep = (Math.PI * 2) / sides;
-        var startAngle = -Math.PI / 2; // Start from top
+        // Toggle button
+        var toggleBtn = document.createElement('button');
+        toggleBtn.className = 'learn-more-toggle';
+        toggleBtn.innerHTML = 'Why these results? Learn the philosophy <span class="toggle-arrow">\u25BC</span>';
+        container.appendChild(toggleBtn);
 
-        // Find max score for normalization
-        var maxScore = 0;
-        for (var i = 0; i < SCHOOL_KEYS.length; i++) {
-            if (scores[SCHOOL_KEYS[i]] > maxScore) maxScore = scores[SCHOOL_KEYS[i]];
+        // Content area
+        var content = document.createElement('div');
+        content.className = 'learn-more-content';
+
+        for (var i = 0; i < sorted.length; i++) {
+            var key = sorted[i];
+            var school = SCHOOLS[key];
+            var info = SCHOOL_EXPLANATIONS[key];
+            var pct = Math.round((scores[key] / totalScore) * 100);
+
+            var card = document.createElement('div');
+            card.className = 'learn-more-card';
+            if (i === 0) card.classList.add('open'); // Primary school starts open
+
+            // Header (clickable)
+            var header = document.createElement('div');
+            header.className = 'learn-more-header';
+
+            var dot = document.createElement('span');
+            dot.className = 'learn-more-dot';
+            dot.style.background = school.color;
+
+            var schoolName = document.createElement('span');
+            schoolName.className = 'learn-more-school';
+            schoolName.textContent = school.name + ' (' + school.philosopher + ')';
+
+            var pctLabel = document.createElement('span');
+            pctLabel.className = 'learn-more-pct';
+            pctLabel.textContent = pct + '%';
+
+            var arrow = document.createElement('span');
+            arrow.className = 'learn-more-arrow';
+            arrow.textContent = '\u25BC';
+
+            header.appendChild(dot);
+            header.appendChild(schoolName);
+            header.appendChild(pctLabel);
+            header.appendChild(arrow);
+
+            // Body
+            var body = document.createElement('div');
+            body.className = 'learn-more-body';
+
+            var explanation = document.createElement('p');
+            explanation.className = 'learn-more-explanation';
+            explanation.textContent = info.explanation;
+
+            var conceptP = document.createElement('p');
+            conceptP.className = 'learn-more-explanation';
+            var conceptStrong = document.createElement('strong');
+            conceptStrong.textContent = 'Key concept: ';
+            conceptP.appendChild(conceptStrong);
+            conceptP.appendChild(document.createTextNode(info.concept));
+
+            var sourceP = document.createElement('p');
+            sourceP.className = 'learn-more-source';
+
+            var sourceText = document.createTextNode(info.source + ' ');
+            sourceP.appendChild(sourceText);
+
+            var sourceLink = document.createElement('a');
+            sourceLink.href = info.link;
+            sourceLink.target = '_blank';
+            sourceLink.rel = 'noopener noreferrer';
+            sourceLink.textContent = 'Read more on SEP \u2192';
+            sourceP.appendChild(sourceLink);
+
+            body.appendChild(explanation);
+            body.appendChild(conceptP);
+            body.appendChild(sourceP);
+
+            card.appendChild(header);
+            card.appendChild(body);
+            content.appendChild(card);
+
+            // Toggle individual cards
+            (function (cardEl) {
+                cardEl.querySelector('.learn-more-header').addEventListener('click', function () {
+                    cardEl.classList.toggle('open');
+                });
+            })(card);
         }
-        if (maxScore === 0) maxScore = 1;
 
-        // Draw grid rings
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
-        ctx.lineWidth = 1;
-        for (var ring = 1; ring <= 4; ring++) {
-            var r = (ring / 4) * maxRadius;
-            ctx.beginPath();
-            for (var j = 0; j <= sides; j++) {
-                var a = startAngle + j * angleStep;
-                var x = cx + r * Math.cos(a);
-                var y = cy + r * Math.sin(a);
-                if (j === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-        }
+        container.appendChild(content);
 
-        // Draw axis lines
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-        for (var k = 0; k < sides; k++) {
-            var angle = startAngle + k * angleStep;
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
-            ctx.lineTo(cx + maxRadius * Math.cos(angle), cy + maxRadius * Math.sin(angle));
-            ctx.stroke();
-        }
+        // Insert after the ID card
+        var idCard = document.getElementById('id-card');
+        idCard.parentNode.insertBefore(container, idCard.nextSibling);
 
-        // Draw data polygon
-        var schoolOrder = SCHOOL_KEYS;
-        ctx.beginPath();
-        for (var m = 0; m < sides; m++) {
-            var val = scores[schoolOrder[m]] / maxScore;
-            var rad = val * maxRadius;
-            var ang = startAngle + m * angleStep;
-            var px = cx + rad * Math.cos(ang);
-            var py = cy + rad * Math.sin(ang);
-            if (m === 0) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
-        }
-        ctx.closePath();
-
-        // Fill
-        ctx.fillStyle = 'rgba(139, 124, 247, 0.2)';
-        ctx.fill();
-
-        // Stroke
-        ctx.strokeStyle = 'rgba(139, 124, 247, 0.8)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Draw data points and labels
-        for (var n = 0; n < sides; n++) {
-            var school = SCHOOLS[schoolOrder[n]];
-            var sVal = scores[schoolOrder[n]] / maxScore;
-            var sRad = sVal * maxRadius;
-            var sAng = startAngle + n * angleStep;
-            var sx = cx + sRad * Math.cos(sAng);
-            var sy = cy + sRad * Math.sin(sAng);
-
-            // Dot
-            ctx.beginPath();
-            ctx.arc(sx, sy, 4, 0, Math.PI * 2);
-            ctx.fillStyle = school.color;
-            ctx.fill();
-
-            // Label
-            var labelDist = maxRadius + 22;
-            var lx = cx + labelDist * Math.cos(sAng);
-            var ly = cy + labelDist * Math.sin(sAng);
-
-            ctx.fillStyle = school.color;
-            ctx.font = '500 11px Inter, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            // Adjust label position for readability
-            if (sAng > Math.PI * 0.1 && sAng < Math.PI * 0.9) ly += 4;
-            if (sAng > -Math.PI * 0.9 && sAng < -Math.PI * 0.1) ly -= 4;
-
-            ctx.fillText(school.name, lx, ly);
-        }
+        // Toggle button listener
+        toggleBtn.addEventListener('click', function () {
+            toggleBtn.classList.toggle('open');
+            content.classList.toggle('visible');
+        });
     }
 
     // ---- Share ----
     shareBtn.addEventListener('click', function () {
         if (typeof generateShareText === 'function') {
             var archetype = getArchetype();
-            var text = generateShareText(archetype.name, scores, SCHOOLS, SCHOOL_KEYS);
+            var sorted = getTopSchools();
+            var profile = PROFILES[sorted[0]];
+            var text = generateShareText(archetype.name, profile, scores, SCHOOLS, SCHOOL_KEYS);
             if (navigator.share) {
                 navigator.share({ text: text }).catch(function () {
                     copyToClipboard(text);

@@ -89,20 +89,58 @@
 
         <!-- Result Screen -->
         <div class="screen" id="result-screen">
-            <div class="result-content">
-                <p class="result-label">Your philosophical alignment is...</p>
-                <h2 class="archetype-name" id="archetype-name"></h2>
-                <p class="archetype-desc" id="archetype-desc"></p>
-                <div class="radar-wrapper">
-                    <canvas id="radar-chart" width="300" height="300"></canvas>
+            <p class="result-intro">Your Philosopher ID has arrived.<br>Screenshot it. Save it. Share it.</p>
+
+            <!-- The ID Card (screenshot-friendly) -->
+            <div class="id-card" id="id-card">
+                <div class="id-card-header">
+                    <div class="id-card-badge">PHILOSOPHER ID</div>
+                    <div class="id-card-icon" id="card-icon"></div>
+                    <h2 class="id-card-title" id="card-title"></h2>
+                    <p class="id-card-school" id="card-school"></p>
+                    <p class="id-card-motto" id="card-motto"></p>
                 </div>
-                <div class="score-breakdown" id="score-breakdown"></div>
-                <div class="result-actions">
-                    <button class="btn-primary" id="share-btn">Share Your Result</button>
-                    <button class="btn-secondary" id="retake-btn">Retake Quiz</button>
+
+                <div class="id-card-section">
+                    <div class="id-card-columns">
+                        <div class="id-card-col">
+                            <h3 class="id-section-label id-section-label--green">Strengths</h3>
+                            <ul class="id-trait-list" id="card-strengths"></ul>
+                        </div>
+                        <div class="id-card-col">
+                            <h3 class="id-section-label id-section-label--red">Weaknesses</h3>
+                            <ul class="id-trait-list" id="card-weaknesses"></ul>
+                        </div>
+                    </div>
                 </div>
-                <p class="result-footer">Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a></p>
+
+                <div class="id-card-section id-card-section--alt">
+                    <h3 class="id-section-label">Catchphrases</h3>
+                    <div class="id-catchphrases" id="card-catchphrases"></div>
+                </div>
+
+                <div class="id-card-section">
+                    <h3 class="id-section-label">Alignment</h3>
+                    <div class="id-alignment-bars" id="card-alignment"></div>
+                    <p class="id-hidden-talent" id="card-hidden-talent"></p>
+                </div>
+
+                <div class="id-card-section id-card-section--alt">
+                    <h3 class="id-section-label">Peer Reviews</h3>
+                    <div class="id-peer-reviews" id="card-reviews"></div>
+                </div>
+
+                <div class="id-card-footer">
+                    <span class="id-card-archetype" id="card-archetype"></span>
+                    <span class="id-card-url">raggedydoc.com/games/philosophy</span>
+                </div>
             </div>
+
+            <div class="result-actions">
+                <button class="btn-primary" id="share-btn">Share Your Result</button>
+                <button class="btn-secondary" id="retake-btn">Retake Quiz</button>
+            </div>
+            <p class="result-footer">Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a></p>
         </div>
     </div>
 

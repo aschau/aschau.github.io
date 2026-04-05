@@ -208,10 +208,11 @@ body
 	color: white;
 }
 
-/* Glassmorphism card overrides */
+/* Glassmorphism card overrides — use BS5 CSS vars so .bg-dark applies our values */
 .page-body .card.bg-dark,
 .page-body .card.text-white.bg-dark {
-	background: var(--glass-bg) !important;
+	--bs-dark-rgb: 255, 255, 255;
+	--bs-bg-opacity: 0.05;
 	backdrop-filter: blur(var(--glass-blur));
 	-webkit-backdrop-filter: blur(var(--glass-blur));
 	border: 1px solid var(--glass-border);
@@ -241,7 +242,7 @@ body
 
 /* Glassmorphism navbar */
 .navbar {
-	background: rgba(10,10,30,0.7) !important;
+	background: rgba(10,10,30,0.7);
 	backdrop-filter: blur(var(--glass-blur));
 	-webkit-backdrop-filter: blur(var(--glass-blur));
 	border-bottom: 1px solid var(--glass-border-light);

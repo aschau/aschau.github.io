@@ -13,11 +13,11 @@ Static portfolio website (GitHub Pages) for Andrew Steven Chau at `www.raggedydo
 - **Pages**: `index.html` (home), `aboutMe.html`, `workprojects.html`, `personalprojects.html`, `404.html`
 - **Project details**: `projects/work/<name>/` and `projects/personal/<name>.html`
 - **Shared components** (`js/components.js`): navbar, footer, loading screen, particles, gamification
-- **Styling**: Bootstrap 4.3.1 CDN + `css/stylesheet.css`. Dark glassmorphism theme. Design tokens in `:root`.
+- **Styling**: Bootstrap 4.6.2 CDN (jsdelivr) + `css/stylesheet.css`. Dark glassmorphism theme. Design tokens in `:root`.
 - **Responsive**: Mobile breakpoint at 1024px (covers all iPads in portrait). Tablet landscape (1025-1200px) has compressed timeline. Navbar `expand-lg` (collapses to hamburger under 992px).
 - **Timeline**: Career timeline on `index.html`. Detail cards clamped within viewport via JS. Character sprite repositions on resize/rotation.
 - **Character sprite**: LPC spritesheets (64x64 frames). Jacket/no-jacket variants. CC-BY-SA 3.0.
-- **SEO**: Per-page meta tags, OG/Twitter cards, `sitemap.xml`, `robots.txt`, JSON-LD on aboutMe. Domain is `www.raggedydoc.com`.
+- **SEO**: Per-page meta tags, OG/Twitter cards, `sitemap.xml`, `robots.txt`, JSON-LD on aboutMe. Domain is `www.raggedydoc.com`. Redirect shortcut pages (`/beamlab/`, `/parsed/`, `/misery/`, `/snaplayout/`) mirror destination OG tags for link previews but are excluded from the sitemap (canonical points to the real URL).
 
 ## Conventions
 

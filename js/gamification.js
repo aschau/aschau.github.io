@@ -198,7 +198,7 @@
   function initCuriousClick() {
     document.addEventListener("click", function (e) {
       var link = e.target.closest('a[target="_blank"]');
-      if (link) {
+      if (link && !link.closest('.dropdown-menu')) {
         unlockAchievement("curious");
       }
     });

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha512-rt/SrQ4UNIaGfDyEXZtNcyWvQeOq0QLygHluFQcSjaGB04IxWhal71tKuzP6K8eYXYB6vJV4pHkXcmFGGQ1/0w==" crossorigin="anonymous">
     <link rel="stylesheet" href="css/stylesheet.css">
     <link rel="icon" type="image/png" href="img/favicon.png">
     <link rel="apple-touch-icon" href="img/favicon-apple.png">
@@ -155,7 +155,10 @@
           var slideshowHtml = '';
           if (images.length > 0) {
             slideshowHtml = '<div class="timeline-slideshow">';
-            slideshowHtml += '<img class="timeline-slideshow-img" src="' + images[0] + '" alt="">';
+            var company = entry.querySelector('.timeline-company').textContent;
+            var role = entry.querySelector('.timeline-role').textContent;
+            var altText = company + ' — ' + role;
+            slideshowHtml += '<img class="timeline-slideshow-img" src="' + images[0] + '" alt="' + altText + '">';
             if (images.length > 1) {
               slideshowHtml += '<div class="timeline-slideshow-nav">';
               slideshowHtml += '<button class="timeline-nav-btn" data-dir="-1">&lsaquo;</button>';
@@ -179,6 +182,7 @@
                 ev.stopPropagation();
                 currentIdx = (currentIdx + parseInt(btn.dataset.dir) + images.length) % images.length;
                 img.src = images[currentIdx];
+                img.alt = entry.querySelector('.timeline-company').textContent + ' — ' + entry.querySelector('.timeline-role').textContent + ', image ' + (currentIdx + 1);
                 countEl.textContent = (currentIdx + 1) + ' / ' + images.length;
               });
             });

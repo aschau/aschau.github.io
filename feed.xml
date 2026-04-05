@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Claude Developer Misery Index</title>
+    <link>https://www.raggedydoc.com/tools/misery-index/</link>
+    <description>Real-time Claude AI reliability tracking — misery score, API status, and incident alerts. Updated every 15 minutes.</description>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 05 Apr 2026 15:49:06 GMT</lastBuildDate>
+    <ttl>15</ttl>
+    <atom:link href="https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed.xml" rel="self" type="application/rss+xml"/>
+    <image>
+      <url>https://www.raggedydoc.com/tools/misery-index/favicon.png</url>
+      <title>Claude Developer Misery Index</title>
+      <link>https://www.raggedydoc.com/tools/misery-index/</link>
+    </image>
+    <item>
+      <title>Misery Index: 2.5/10 — MINOR GRUMBLING</title>
+      <link>https://www.raggedydoc.com/tools/misery-index/</link>
+      <guid isPermaLink="false">misery-2026-04-05-MINOR GRUMBLING</guid>
+      <pubDate>Sun, 05 Apr 2026 15:49:06 GMT</pubDate>
+      <description>Score: 2.5/10 (MINOR GRUMBLING). Status: All Systems Operational. API: operational. Bluesky: 2 posts. Reddit: 8 posts.</description>
+      <category>misery-score</category>
+    </item>
+    <item>
+      <title>[NONE] Sonnet 4.6 and Opus 4.6 elevated error rate</title>
+      <link>https://stspg.io/bppjxlqtspvj</link>
+      <guid isPermaLink="false">incident-https://stspg.io/bppjxlqtspvj</guid>
+      <pubDate>Sat, 04 Apr 2026 18:24:55 GMT</pubDate>
+      <description>Status: resolved. Impact: none. Latest: Between 10:09 and 10:31 PDT, Sonnet 4.6 and Opus 4.6 experienced elevated error rates across most product surfaces.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MAJOR] Elevated errors on requests to Claude Sonnet 4.6</title>
+      <link>https://stspg.io/n5n5mg7xv9d8</link>
+      <guid isPermaLink="false">incident-https://stspg.io/n5n5mg7xv9d8</guid>
+      <pubDate>Fri, 03 Apr 2026 19:21:08 GMT</pubDate>
+      <description>Status: resolved. Impact: major. Latest: This incident has been resolved.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MAJOR] Errors on the Claude.ai desktop application</title>
+      <link>https://stspg.io/tfgv19v6g9vk</link>
+      <guid isPermaLink="false">incident-https://stspg.io/tfgv19v6g9vk</guid>
+      <pubDate>Wed, 01 Apr 2026 22:16:55 GMT</pubDate>
+      <description>Status: resolved. Impact: major. Latest: This incident has been resolved.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MAJOR] Elevated errors on requests to Claude Opus 4.6</title>
+      <link>https://stspg.io/6mq5vq24mwm8</link>
+      <guid isPermaLink="false">incident-https://stspg.io/6mq5vq24mwm8</guid>
+      <pubDate>Wed, 01 Apr 2026 10:40:39 GMT</pubDate>
+      <description>Status: resolved. Impact: major. Latest: This incident has been resolved.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MAJOR] Elevated timeouts on requests to Claude Opus 4.6 and Sonnet 4.6</title>
+      <link>https://stspg.io/0h1g3bkh1v1q</link>
+      <guid isPermaLink="false">incident-https://stspg.io/0h1g3bkh1v1q</guid>
+      <pubDate>Wed, 01 Apr 2026 07:04:38 GMT</pubDate>
+      <description>Status: resolved. Impact: major. Latest: We have identified an issue which resulted in elevated rates of timeouts when making requests to Claude Opus 4.6 and Sonnet 4.6 from 17:45 UTC on March 31 through 05:52 UTC on April 1. This issue has been resolved.</description>
+      <category>incident</category>
+    </item>
+  </channel>
+</rss>

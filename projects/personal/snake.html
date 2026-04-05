@@ -43,7 +43,7 @@
     <script src="snake.js"></script>
 
     <!-- jQuery for websocket UI -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" integrity="sha512-BkBgWiL0N/EFIbLZYGTgbksKG5bS6PtwnWvVk3gccv+KhtK/4wkLxCRGh+kelKiXx7Ey4jfTabLg3AEIPC7ENA==" crossorigin="anonymous"></script>
 
     <!-- how the client will communicate with the server -->
     <script src="fancywebsocket.js"></script>
@@ -207,31 +207,31 @@
           else if (payload.split(": ")[1] == "Player " + id1 + " Score")
           {
             p1score = parseInt(payload.split(": ")[2]);
-            document.getElementById("p1score").innerHTML = "Player " + id1 + " Score: " + p1score;
+            document.getElementById("p1score").textContent = "Player " + id1 + " Score: " + p1score;
           }
 
           else if (payload.split(": ")[1] == "Player "+ id2 +" Score")
           {
             p2score = parseInt(payload.split(": ")[2]);
-            document.getElementById("p2score").innerHTML = "Player " + id2 + " Score: " + p2score;
+            document.getElementById("p2score").textContent = "Player " + id2 + " Score: " + p2score;
           }
 
           else if (payload.split(": ")[1] == "Player "+ id1 +" Wins")
           {
             p1wins = parseInt(payload.split(": ")[2]);
-            document.getElementById("p1wins").innerHTML = "Player "+ id1 +" Wins: " + p1wins;
+            document.getElementById("p1wins").textContent = "Player "+ id1 +" Wins: " + p1wins;
           }
 
           else if (payload.split(": ")[1] == "Player "+ id2 +" Wins")
           {
             p2wins = parseInt(payload.split(": ")[2]);
-            document.getElementById("p2wins").innerHTML = "Player "+ id2 +" Wins: " + p2wins;
+            document.getElementById("p2wins").textContent = "Player "+ id2 +" Wins: " + p2wins;
           }
 
           else if (payload.split(": ")[1] == "Ties")
           {
             ties = parseInt(payload.split(": ")[2]);
-            document.getElementById("ties").innerHTML = "Ties: " + ties;
+            document.getElementById("ties").textContent = "Ties: " + ties;
           }
 
           else if (payload.split(": ")[1] == "Reset")

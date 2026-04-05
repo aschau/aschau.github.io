@@ -129,19 +129,34 @@
 
     var overlay = document.createElement("div");
     overlay.id = "loading-screen";
-    overlay.innerHTML =
-      '<div class="loading-content">' +
-        '<h1 class="loading-title">Andrew Steven Chau</h1>' +
-        '<div class="loading-bar-track">' +
-          '<div class="loading-bar-fill" id="loading-bar-fill"></div>' +
-        '</div>' +
-        '<p class="loading-tip" id="loading-tip">' + tips[0] + '</p>' +
-      '</div>';
+
+    var loadingContent = document.createElement("div");
+    loadingContent.className = "loading-content";
+
+    var loadingTitle = document.createElement("h1");
+    loadingTitle.className = "loading-title";
+    loadingTitle.textContent = "Andrew Steven Chau";
+    loadingContent.appendChild(loadingTitle);
+
+    var barTrack = document.createElement("div");
+    barTrack.className = "loading-bar-track";
+    var barFill = document.createElement("div");
+    barFill.className = "loading-bar-fill";
+    barFill.id = "loading-bar-fill";
+    barTrack.appendChild(barFill);
+    loadingContent.appendChild(barTrack);
+
+    var tipEl = document.createElement("p");
+    tipEl.className = "loading-tip";
+    tipEl.id = "loading-tip";
+    tipEl.textContent = tips[0];
+    loadingContent.appendChild(tipEl);
+
+    overlay.appendChild(loadingContent);
     document.body.insertBefore(overlay, document.body.firstChild);
 
     // Cycle tips
     var tipIndex = 0;
-    var tipEl = document.getElementById("loading-tip");
     var tipInterval = setInterval(function () {
       tipIndex = (tipIndex + 1) % tips.length;
       tipEl.style.opacity = "0";
@@ -152,8 +167,7 @@
     }, 800);
 
     // Animate progress bar
-    var fill = document.getElementById("loading-bar-fill");
-    setTimeout(function () { fill.style.width = "100%"; }, 50);
+    setTimeout(function () { barFill.style.width = "100%"; }, 50);
 
     // Fade out after bar fills
     setTimeout(function () {
@@ -167,62 +181,131 @@
   }
 
   // === Navbar ===
-  var navLinksHtml = navItems.map(function (item) {
-    if (item.dropdown) {
-      var isAnyActive = item.dropdown.some(function (d) {
-        return window.location.pathname.indexOf(d.href.replace('index.html', '')) !== -1;
-      });
-      var dropdownItems = item.dropdown.map(function (d) {
-        return '<a class="dropdown-item" href="' + basePath + d.href + '" target="_blank" rel="noopener noreferrer">' +
-          d.label + '<small class="text-muted ms-2">' + d.desc + '</small></a>';
-      }).join('');
-      return (
-        '<li class="nav-item dropdown' + (isAnyActive ? ' active' : '') + '">' +
-        '<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-        item.label + '</a>' +
-        '<div class="dropdown-menu dropdown-menu-end">' + dropdownItems + '</div>' +
-        '</li>'
-      );
-    }
-    var isActive = currentPage === item.href;
-    var activeClass = isActive ? " active" : "";
-    var srOnly = isActive ? ' <span class="visually-hidden">(current)</span>' : "";
-    return (
-      '<li class="nav-item' + activeClass + '">' +
-      '<a class="nav-link" href="' + basePath + item.href + '">' + item.label + srOnly + "</a>" +
-      "</li>"
-    );
-  }).join("\n                ");
+  function buildNavLinks() {
+    var fragment = document.createDocumentFragment();
 
-  var navbarHtml =
-    '<nav class="navbar fixed-top navbar-expand-lg navbar-dark">' +
-    '  <a class="navbar-brand link" href="' + basePath + 'index.html">Andrew Steven Chau</a>' +
-    '  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#header-content">' +
-    '    <span class="navbar-toggler-icon"></span>' +
-    "  </button>" +
-    '  <div class="navbar-collapse collapse" id="header-content">' +
-    '    <ul class="navbar-nav ms-auto">' +
-    "                " + navLinksHtml +
-    "    </ul>" +
-    "  </div>" +
-    "</nav>";
+    navItems.forEach(function (item) {
+      var li = document.createElement("li");
+
+      if (item.dropdown) {
+        var isAnyActive = item.dropdown.some(function (d) {
+          return window.location.pathname.indexOf(d.href.replace("index.html", "")) !== -1;
+        });
+        li.className = "nav-item dropdown" + (isAnyActive ? " active" : "");
+
+        var toggle = document.createElement("a");
+        toggle.className = "nav-link dropdown-toggle";
+        toggle.href = "#";
+        toggle.role = "button";
+        toggle.setAttribute("data-bs-toggle", "dropdown");
+        toggle.setAttribute("aria-haspopup", "true");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.textContent = item.label;
+        li.appendChild(toggle);
+
+        var menu = document.createElement("div");
+        menu.className = "dropdown-menu dropdown-menu-end";
+
+        item.dropdown.forEach(function (d) {
+          var a = document.createElement("a");
+          a.className = "dropdown-item";
+          a.href = basePath + d.href;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.textContent = d.label;
+          var small = document.createElement("small");
+          small.className = "text-muted ms-2";
+          small.textContent = d.desc;
+          a.appendChild(small);
+          menu.appendChild(a);
+        });
+
+        li.appendChild(menu);
+      } else {
+        var isActive = currentPage === item.href;
+        li.className = "nav-item" + (isActive ? " active" : "");
+
+        var link = document.createElement("a");
+        link.className = "nav-link";
+        link.href = basePath + item.href;
+        link.textContent = item.label;
+
+        if (isActive) {
+          var sr = document.createElement("span");
+          sr.className = "visually-hidden";
+          sr.textContent = "(current)";
+          link.appendChild(sr);
+        }
+
+        li.appendChild(link);
+      }
+
+      fragment.appendChild(li);
+    });
+
+    return fragment;
+  }
+
+  var nav = document.createElement("nav");
+  nav.className = "navbar fixed-top navbar-expand-lg navbar-dark";
+
+  var brand = document.createElement("a");
+  brand.className = "navbar-brand link";
+  brand.href = basePath + "index.html";
+  brand.textContent = "Andrew Steven Chau";
+  nav.appendChild(brand);
+
+  var toggler = document.createElement("button");
+  toggler.className = "navbar-toggler";
+  toggler.type = "button";
+  toggler.setAttribute("data-bs-toggle", "collapse");
+  toggler.setAttribute("data-bs-target", "#header-content");
+  var togglerIcon = document.createElement("span");
+  togglerIcon.className = "navbar-toggler-icon";
+  toggler.appendChild(togglerIcon);
+  nav.appendChild(toggler);
+
+  var collapseDiv = document.createElement("div");
+  collapseDiv.className = "navbar-collapse collapse";
+  collapseDiv.id = "header-content";
+
+  var navUl = document.createElement("ul");
+  navUl.className = "navbar-nav ms-auto";
+  navUl.appendChild(buildNavLinks());
+  collapseDiv.appendChild(navUl);
+  nav.appendChild(collapseDiv);
 
   var placeholder = document.getElementById("navbar-placeholder");
   if (placeholder) {
-    placeholder.innerHTML = navbarHtml;
+    placeholder.appendChild(nav);
   }
 
-  // Load common footer scripts (jQuery slim, Popper.js, Bootstrap JS).
-  // Also injects the footer. Call this at the end of <body>.
+  // Load Bootstrap JS bundle and inject footer.
+  // Call this at the end of <body>.
   window.loadCommonScripts = function (callback) {
-    // Inject footer (placeholder exists by this point)
+    // Inject footer
     var footerPlaceholder = document.getElementById("footer-placeholder");
     if (footerPlaceholder) {
-      footerPlaceholder.innerHTML =
-        '<footer class="site-footer">' +
-        '  <p>&copy; ' + new Date().getFullYear() + ' Andrew Steven Chau. All rights reserved.</p>' +
-        '  <p style="font-size:0.7rem;opacity:0.5;">Character sprite by LPC contributors via <a href="https://opengameart.org/content/lpc-character-bases" style="color:#8b9aff;">OpenGameArt.org</a>, licensed under CC-BY-SA 3.0 / OGA-BY 3.0</p>' +
-        '</footer>';
+      var footer = document.createElement("footer");
+      footer.className = "site-footer";
+
+      var copyright = document.createElement("p");
+      copyright.textContent = "\u00A9 " + new Date().getFullYear() + " Andrew Steven Chau. All rights reserved.";
+      footer.appendChild(copyright);
+
+      var attribution = document.createElement("p");
+      attribution.style.fontSize = "0.7rem";
+      attribution.style.opacity = "0.5";
+      attribution.textContent = "Character sprite by LPC contributors via ";
+      var attrLink = document.createElement("a");
+      attrLink.href = "https://opengameart.org/content/lpc-character-bases";
+      attrLink.style.color = "#8b9aff";
+      attrLink.textContent = "OpenGameArt.org";
+      attribution.appendChild(attrLink);
+      attribution.appendChild(document.createTextNode(", licensed under CC-BY-SA 3.0 / OGA-BY 3.0"));
+      footer.appendChild(attribution);
+
+      footerPlaceholder.appendChild(footer);
     }
 
     var s = document.createElement("script");

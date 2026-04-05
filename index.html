@@ -152,37 +152,66 @@
           var detail = document.createElement('div');
           detail.className = 'timeline-detail';
           var images = entry.dataset.images ? entry.dataset.images.split(',') : [];
-          var slideshowHtml = '';
+          var company = entry.querySelector('.timeline-company').textContent;
+          var role = entry.querySelector('.timeline-role').textContent;
+          var altText = company + ' \u2014 ' + role;
+
           if (images.length > 0) {
-            slideshowHtml = '<div class="timeline-slideshow">';
-            var company = entry.querySelector('.timeline-company').textContent;
-            var role = entry.querySelector('.timeline-role').textContent;
-            var altText = company + ' — ' + role;
-            slideshowHtml += '<img class="timeline-slideshow-img" src="' + images[0] + '" alt="' + altText + '">';
+            var slideshow = document.createElement('div');
+            slideshow.className = 'timeline-slideshow';
+
+            var img = document.createElement('img');
+            img.className = 'timeline-slideshow-img';
+            img.src = images[0];
+            img.alt = altText;
+            slideshow.appendChild(img);
+
             if (images.length > 1) {
-              slideshowHtml += '<div class="timeline-slideshow-nav">';
-              slideshowHtml += '<button class="timeline-nav-btn" data-dir="-1">&lsaquo;</button>';
-              slideshowHtml += '<span class="timeline-nav-count">1 / ' + images.length + '</span>';
-              slideshowHtml += '<button class="timeline-nav-btn" data-dir="1">&rsaquo;</button>';
-              slideshowHtml += '</div>';
+              var nav = document.createElement('div');
+              nav.className = 'timeline-slideshow-nav';
+
+              var prevBtn = document.createElement('button');
+              prevBtn.className = 'timeline-nav-btn';
+              prevBtn.dataset.dir = "-1";
+              prevBtn.textContent = '\u2039';
+              nav.appendChild(prevBtn);
+
+              var countEl = document.createElement('span');
+              countEl.className = 'timeline-nav-count';
+              countEl.textContent = '1 / ' + images.length;
+              nav.appendChild(countEl);
+
+              var nextBtn = document.createElement('button');
+              nextBtn.className = 'timeline-nav-btn';
+              nextBtn.dataset.dir = "1";
+              nextBtn.textContent = '\u203A';
+              nav.appendChild(nextBtn);
+
+              slideshow.appendChild(nav);
             }
-            slideshowHtml += '</div>';
+
+            detail.appendChild(slideshow);
           }
-          detail.innerHTML = slideshowHtml +
-            '<p>' + entry.dataset.desc + '</p>' +
-            '<a href="' + entry.dataset.link + '">View details &rarr;</a>';
+
+          var desc = document.createElement('p');
+          desc.textContent = entry.dataset.desc;
+          detail.appendChild(desc);
+
+          var link = document.createElement('a');
+          link.href = entry.dataset.link;
+          link.textContent = 'View details \u2192';
+          detail.appendChild(link);
+
           entry.appendChild(detail);
 
           if (images.length > 1) {
             var currentIdx = 0;
-            var img = detail.querySelector('.timeline-slideshow-img');
-            var countEl = detail.querySelector('.timeline-nav-count');
             detail.querySelectorAll('.timeline-nav-btn').forEach(function(btn) {
               btn.addEventListener('click', function(ev) {
                 ev.stopPropagation();
                 currentIdx = (currentIdx + parseInt(btn.dataset.dir) + images.length) % images.length;
                 img.src = images[currentIdx];
-                img.alt = entry.querySelector('.timeline-company').textContent + ' — ' + entry.querySelector('.timeline-role').textContent + ', image ' + (currentIdx + 1);
+                img.alt = altText + ', image ' + (currentIdx + 1);
                 countEl.textContent = (currentIdx + 1) + ' / ' + images.length;
               });
             });

@@ -1,0 +1,468 @@
+/* ============================================
+   Examined — Philosophy Alignment Quiz
+   ============================================ */
+
+:root {
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #12122a;
+    --bg-card: rgba(255, 255, 255, 0.04);
+    --bg-card-hover: rgba(255, 255, 255, 0.08);
+    --text-primary: #e8e6f0;
+    --text-secondary: #9895a8;
+    --text-muted: #6b6880;
+    --accent: #8b7cf7;
+    --accent-glow: rgba(139, 124, 247, 0.3);
+    --accent-secondary: #c4a7ff;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(139, 124, 247, 0.4);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --transition: 0.25s ease;
+
+    /* Philosopher colors */
+    --color-kantian: #7eb8da;
+    --color-utilitarian: #f0c674;
+    --color-virtue: #a8d5a2;
+    --color-contractualist: #d4a0d0;
+    --color-existentialist: #e8917a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+}
+
+/* Background gradient */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(139, 124, 247, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(196, 167, 255, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.game-container {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---- Screens ---- */
+
+.screen {
+    display: none;
+    width: 100%;
+    animation: fadeIn 0.4s ease;
+}
+
+.screen.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- Start Screen ---- */
+
+.start-content {
+    text-align: center;
+}
+
+.game-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.game-subtitle {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    font-weight: 400;
+}
+
+.game-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+.philosophers-preview {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+}
+
+.phil-tag {
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    background: var(--bg-card);
+}
+
+.phil-tag:nth-child(1) { border-color: var(--color-kantian); color: var(--color-kantian); }
+.phil-tag:nth-child(2) { border-color: var(--color-utilitarian); color: var(--color-utilitarian); }
+.phil-tag:nth-child(3) { border-color: var(--color-virtue); color: var(--color-virtue); }
+.phil-tag:nth-child(4) { border-color: var(--color-contractualist); color: var(--color-contractualist); }
+.phil-tag:nth-child(5) { border-color: var(--color-existentialist); color: var(--color-existentialist); }
+
+.start-quote {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 32px;
+}
+
+/* ---- Buttons ---- */
+
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 14px 36px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+    letter-spacing: 0.01em;
+}
+
+.btn-primary:hover {
+    background: #7a6ae6;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 12px 28px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+}
+
+.btn-secondary:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+    background: var(--bg-card);
+}
+
+/* ---- Question Screen ---- */
+
+.question-header {
+    margin-bottom: 32px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--bg-card);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+
+.question-count {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.question-content {
+    animation: slideIn 0.35s ease;
+}
+
+.scenario-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.scenario-text {
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: var(--text-primary);
+    margin-bottom: 28px;
+}
+
+.choices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.choice-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+    color: var(--text-primary);
+}
+
+.choice-btn:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
+    transform: translateX(4px);
+}
+
+.choice-btn:active {
+    transform: translateX(2px);
+}
+
+.choice-btn.selected {
+    border-color: var(--accent);
+    background: rgba(139, 124, 247, 0.1);
+}
+
+.choice-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    display: block;
+}
+
+.philosopher-quote {
+    margin-top: 32px;
+    padding: 16px;
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.5;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.philosopher-quote.visible {
+    opacity: 1;
+}
+
+/* ---- Result Screen ---- */
+
+.result-content {
+    text-align: center;
+}
+
+.result-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.archetype-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.archetype-desc {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.radar-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+#radar-chart {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+}
+
+.score-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 32px;
+}
+
+.score-tag {
+    font-size: 0.78rem;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.score-tag .score-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.result-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+}
+
+.result-footer {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.result-footer a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.result-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ---- Share Toast ---- */
+
+.share-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-family: inherit;
+    z-index: 100;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+}
+
+.share-toast.visible {
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 480px) {
+    .game-container {
+        padding: 16px;
+    }
+
+    .game-title {
+        font-size: 2.6rem;
+    }
+
+    .archetype-name {
+        font-size: 1.7rem;
+    }
+
+    .scenario-text {
+        font-size: 1rem;
+    }
+
+    .choice-btn {
+        padding: 16px;
+    }
+
+    .result-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 360px) {
+    .game-title {
+        font-size: 2.2rem;
+    }
+
+    .archetype-name {
+        font-size: 1.5rem;
+    }
+}

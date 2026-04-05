@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    <title>Examined — What's Your Moral Philosophy?</title>
+    <meta name="description" content="Examined is a free philosophy alignment quiz. Answer 12 everyday moral dilemmas and discover which philosopher you think like — Kant, Mill, Aristotle, Scanlon, or Sartre. Share your result with friends.">
+    <meta name="keywords" content="philosophy quiz, moral philosophy, ethics quiz, trolley problem, kant, utilitarianism, virtue ethics, personality quiz, moral alignment, examined life, the good place">
+    <meta property="og:title" content="Examined — What's Your Moral Philosophy?">
+    <meta property="og:description" content="Answer 12 everyday moral dilemmas and discover which philosopher you think like. Are you a Kantian? A Utilitarian? Find out.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.raggedydoc.com/games/philosophy/">
+    <meta property="og:site_name" content="Examined">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Examined — What's Your Moral Philosophy?">
+    <meta name="twitter:description" content="Answer 12 everyday moral dilemmas and discover which philosopher you think like. Are you a Kantian? A Utilitarian? Find out.">
+    <link rel="canonical" href="https://www.raggedydoc.com/games/philosophy/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Examined",
+        "description": "A philosophy alignment quiz. Answer 12 everyday moral dilemmas and discover which philosopher you think like.",
+        "url": "https://www.raggedydoc.com/games/philosophy/",
+        "applicationCategory": "Game",
+        "genre": "Quiz",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Andrew Steven Chau",
+            "url": "https://www.raggedydoc.com"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Start Screen -->
+        <div class="screen active" id="start-screen">
+            <div class="start-content">
+                <h1 class="game-title">Examined</h1>
+                <p class="game-subtitle">What's your moral philosophy?</p>
+                <p class="game-desc">12 everyday dilemmas. No right answers.<br>Find out which philosopher you think like.</p>
+                <div class="philosophers-preview">
+                    <span class="phil-tag">Kant</span>
+                    <span class="phil-tag">Mill</span>
+                    <span class="phil-tag">Aristotle</span>
+                    <span class="phil-tag">Scanlon</span>
+                    <span class="phil-tag">Sartre</span>
+                </div>
+                <button class="btn-primary" id="start-btn">Begin the Examination</button>
+                <p class="start-quote">"The unexamined life is not worth living." — Socrates</p>
+            </div>
+        </div>
+
+        <!-- Question Screen -->
+        <div class="screen" id="question-screen">
+            <div class="question-header">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span class="question-count" id="question-count">1 / 12</span>
+            </div>
+            <div class="question-content" id="question-content">
+                <div class="scenario-label" id="scenario-label"></div>
+                <p class="scenario-text" id="scenario-text"></p>
+                <div class="choices">
+                    <button class="choice-btn" id="choice-a">
+                        <span class="choice-text" id="choice-a-text"></span>
+                    </button>
+                    <button class="choice-btn" id="choice-b">
+                        <span class="choice-text" id="choice-b-text"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="philosopher-quote" id="philosopher-quote"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div class="screen" id="result-screen">
+            <div class="result-content">
+                <p class="result-label">Your philosophical alignment is...</p>
+                <h2 class="archetype-name" id="archetype-name"></h2>
+                <p class="archetype-desc" id="archetype-desc"></p>
+                <div class="radar-wrapper">
+                    <canvas id="radar-chart" width="300" height="300"></canvas>
+                </div>
+                <div class="score-breakdown" id="score-breakdown"></div>
+                <div class="result-actions">
+                    <button class="btn-primary" id="share-btn">Share Your Result</button>
+                    <button class="btn-secondary" id="retake-btn">Retake Quiz</button>
+                </div>
+                <p class="result-footer">Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script src="share.js"></script>
+</body>
+</html>

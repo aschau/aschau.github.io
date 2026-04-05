@@ -293,6 +293,16 @@
       copyright.textContent = "\u00A9 " + new Date().getFullYear() + " Andrew Steven Chau. All rights reserved.";
       footer.appendChild(copyright);
 
+      var privacyP = document.createElement("p");
+      privacyP.style.fontSize = "0.8rem";
+      privacyP.style.opacity = "0.7";
+      var privacyLink = document.createElement("a");
+      privacyLink.href = basePath + "privacy.html";
+      privacyLink.style.color = "#8b9aff";
+      privacyLink.textContent = "Privacy Policy";
+      privacyP.appendChild(privacyLink);
+      footer.appendChild(privacyP);
+
       var attribution = document.createElement("p");
       attribution.style.fontSize = "0.7rem";
       attribution.style.opacity = "0.5";

@@ -155,6 +155,19 @@ body::before {
     margin-top: 32px;
 }
 
+.about-link {
+    display: inline-block;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-top: 12px;
+    transition: color var(--transition);
+}
+
+.about-link:hover {
+    color: var(--accent);
+}
+
 /* ---- Buttons ---- */
 
 .btn-primary {

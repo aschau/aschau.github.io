@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Examined — Philosophy Alignment Quiz</title>
+    <meta name="description" content="How Examined works — the philosophy behind the quiz, the five ethical schools, question design, and sources of inspiration.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.raggedydoc.com/games/philosophy/about.html">
+    <meta property="og:title" content="About | Examined — Philosophy Alignment Quiz">
+    <meta property="og:description" content="How Examined works — the philosophy behind the quiz, the five ethical schools, question design, and sources of inspiration.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.raggedydoc.com/games/philosophy/about.html">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="About | Examined">
+    <meta name="twitter:description" content="How Examined works — the philosophy behind the quiz, the five ethical schools, and sources of inspiration.">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .about-container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 48px 20px 64px;
+        }
+
+        .about-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 32px;
+            font-weight: 500;
+        }
+
+        .about-back:hover { text-decoration: underline; }
+
+        .about-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .about-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        .about-section {
+            margin-bottom: 36px;
+        }
+
+        .about-section h2 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .about-section p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .about-section a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .about-section a:hover { text-decoration: underline; }
+
+        .school-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .school-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+        }
+
+        .school-item-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .school-item-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .school-item-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .school-item-philosopher {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .school-item p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0 0 6px;
+        }
+
+        .school-item .school-question {
+            font-weight: 600;
+            font-style: italic;
+            color: var(--text-primary);
+        }
+
+        .school-item .school-source {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            margin-bottom: 0;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+        }
+
+        .faq-item h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .faq-item p {
+            font-size: 0.85rem;
+        }
+
+        .inspiration-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+
+        .inspiration-list li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .inspiration-list li::before {
+            content: '\2022';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        .inspiration-list strong {
+            color: var(--text-primary);
+        }
+
+        .about-footer {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .about-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .about-footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="about-container">
+        <a href="index.html" class="about-back">&larr; Back to quiz</a>
+
+        <h1 class="about-title">About Examined</h1>
+        <p class="about-subtitle">How the quiz works, the philosophy behind it, and where the idea came from.</p>
+
+        <!-- What is this -->
+        <div class="about-section">
+            <h2>What is this?</h2>
+            <p>Examined is a philosophy alignment quiz. You answer 12 everyday moral dilemmas &mdash; no trolley tracks required &mdash; and find out which school of moral philosophy your instincts align with most. The result is a Philosopher ID card with your strengths, weaknesses, and reviews from other philosophers (they have opinions).</p>
+            <p>The name comes from Socrates: <em>"The unexamined life is not worth living."</em></p>
+        </div>
+
+        <!-- The Five Schools -->
+        <div class="about-section">
+            <h2>The Five Schools</h2>
+            <p>Each answer in the quiz maps to one or more of these five major ethical frameworks. They represent genuinely different ways of thinking about right and wrong.</p>
+
+            <div class="school-grid">
+                <div class="school-item">
+                    <div class="school-item-header">
+                        <span class="school-item-dot" style="background: var(--color-kantian)"></span>
+                        <span class="school-item-name">Kantian Ethics</span>
+                        <span class="school-item-philosopher">&mdash; Immanuel Kant (1724&ndash;1804)</span>
+                    </div>
+                    <p class="school-question">"Could I make this a rule for everyone?"</p>
+                    <p>Actions are right or wrong in themselves, regardless of consequences. Kant's Categorical Imperative says you should only act according to rules you could will to be universal laws. Lying is always wrong &mdash; even if it saves lives &mdash; because a world where everyone lies is self-defeating.</p>
+                    <p class="school-source">Key work: <em>Groundwork of the Metaphysics of Morals</em> (1785). <a href="https://plato.stanford.edu/entries/kant-moral/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy &rarr;</a></p>
+                </div>
+
+                <div class="school-item">
+                    <div class="school-item-header">
+                        <span class="school-item-dot" style="background: var(--color-utilitarian)"></span>
+                        <span class="school-item-name">Utilitarianism</span>
+                        <span class="school-item-philosopher">&mdash; John Stuart Mill (1806&ndash;1873)</span>
+                    </div>
+                    <p class="school-question">"What produces the most overall good?"</p>
+                    <p>Only outcomes matter. The right action is the one that maximizes total happiness and minimizes total suffering. If lying saves five lives, you should lie. Morality is, at its core, a calculation &mdash; but a deeply compassionate one. Mill refined Bentham's original framework to distinguish between higher and lower pleasures.</p>
+                    <p class="school-source">Key work: <em>Utilitarianism</em> (1863). <a href="https://plato.stanford.edu/entries/mill-moral-political/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy &rarr;</a></p>
+                </div>
+
+                <div class="school-item">
+                    <div class="school-item-header">
+                        <span class="school-item-dot" style="background: var(--color-virtue)"></span>
+                        <span class="school-item-name">Virtue Ethics</span>
+                        <span class="school-item-philosopher">&mdash; Aristotle (384&ndash;322 BC)</span>
+                    </div>
+                    <p class="school-question">"What would a good person do?"</p>
+                    <p>Instead of asking "what's the rule?" or "what's the outcome?", virtue ethics asks "what kind of person should I be?" Morality is about cultivating excellent character traits &mdash; courage, honesty, compassion, temperance &mdash; through practice and habit. The "Golden Mean" says virtue lies between extremes.</p>
+                    <p class="school-source">Key work: <em>Nicomachean Ethics</em> (c. 340 BC). <a href="https://plato.stanford.edu/entries/aristotle-ethics/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy &rarr;</a></p>
+                </div>
+
+                <div class="school-item">
+                    <div class="school-item-header">
+                        <span class="school-item-dot" style="background: var(--color-contractualist)"></span>
+                        <span class="school-item-name">Contractualism</span>
+                        <span class="school-item-philosopher">&mdash; T.M. Scanlon (1940&ndash;present)</span>
+                    </div>
+                    <p class="school-question">"Could anyone reasonably object to this?"</p>
+                    <p>Morality is about what we owe to each other. An action is wrong if the principle behind it could be reasonably rejected by anyone affected. Unlike utilitarianism, you can't sacrifice one person for the many &mdash; every individual's objection matters. This is the framework at the heart of <em>The Good Place</em>.</p>
+                    <p class="school-source">Key work: <em>What We Owe to Each Other</em> (1998). <a href="https://plato.stanford.edu/entries/contractualism/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy &rarr;</a></p>
+                </div>
+
+                <div class="school-item">
+                    <div class="school-item-header">
+                        <span class="school-item-dot" style="background: var(--color-existentialist)"></span>
+                        <span class="school-item-name">Existentialism</span>
+                        <span class="school-item-philosopher">&mdash; Jean-Paul Sartre (1905&ndash;1980)</span>
+                    </div>
+                    <p class="school-question">"Am I choosing authentically?"</p>
+                    <p>There are no pre-made moral rules waiting to be discovered. "Existence precedes essence" &mdash; you exist first, then define yourself through your choices. Following someone else's moral system to avoid the weight of decision is "bad faith." Freedom is terrifying, but it's all you have.</p>
+                    <p class="school-source">Key work: <em>Being and Nothingness</em> (1943). <a href="https://plato.stanford.edu/entries/sartre/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy &rarr;</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- How scoring works -->
+        <div class="about-section">
+            <h2>How Scoring Works</h2>
+            <p>Each of the 12 questions presents two choices. Each choice awards points to the philosophical schools it most closely aligns with (usually 2 points to a primary school and 1 to a secondary). Your top-scoring school becomes your Philosopher ID, and the combination of your top two schools determines your specific archetype (e.g., "The Absurd Knight" for Existentialist + Kantian).</p>
+            <p>There are 20 unique archetypes covering every primary-secondary combination, each with its own personality profile, strengths, weaknesses, and peer reviews.</p>
+            <p>This is a personality quiz, not a philosophy exam. The mappings are simplified for accessibility &mdash; real ethical reasoning is messier and more nuanced than any binary choice can capture.</p>
+        </div>
+
+        <!-- FAQ -->
+        <div class="about-section">
+            <h2>FAQ</h2>
+
+            <div class="faq-item">
+                <h3>Is this scientifically accurate?</h3>
+                <p>No. This is entertainment with an educational backbone. The philosophical schools are real and the mappings are defensible, but a 12-question quiz can't capture the full depth of any ethical tradition. Think of it as a starting point for curiosity, not a diagnosis.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Why these five schools?</h3>
+                <p>They represent the major families of Western ethical thought that most people encounter in an intro-level philosophy course: duty-based (Kant), consequence-based (Mill), character-based (Aristotle), agreement-based (Scanlon), and freedom-based (Sartre). There are many other important traditions (care ethics, pragmatism, Ubuntu philosophy, Buddhist ethics) that a future version could include.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Can I change my result?</h3>
+                <p>Yes &mdash; just retake the quiz. Your philosophical instincts might genuinely shift depending on your mood, recent experiences, or how much coffee you've had.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Where can I learn more about these philosophies?</h3>
+                <p>Every school links to the <a href="https://plato.stanford.edu/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy</a> (SEP), which is the gold standard for accessible academic philosophy. For a more entertaining introduction, watch <em>The Good Place</em> &mdash; it's genuinely one of the best introductions to moral philosophy ever made for a popular audience.</p>
+            </div>
+        </div>
+
+        <!-- Inspiration -->
+        <div class="about-section">
+            <h2>Inspiration &amp; Credits</h2>
+            <p>This quiz was inspired by several things I love:</p>
+            <ul class="inspiration-list">
+                <li><strong><em>The Good Place</em></strong> (NBC, 2016&ndash;2020) &mdash; The show that made moral philosophy mainstream. Scanlon's <em>What We Owe to Each Other</em> is literally a recurring prop. The show's comedy proved that ethics can be funny, accessible, and deeply human. If Chidi Anagonye can teach Eleanor Shellstrop philosophy, a quiz can at least try.</li>
+                <li><strong><a href="https://neal.fun/absurd-trolley-problems/" target="_blank" rel="noopener noreferrer">Absurd Trolley Problems</a></strong> (neal.fun) &mdash; For proving that moral dilemmas can be hilarious and shareable. The crowd-vote reveal after each question is a brilliant engagement mechanic.</li>
+                <li><strong><a href="https://www.moralmachine.net/" target="_blank" rel="noopener noreferrer">Moral Machine</a></strong> (MIT) &mdash; The landmark study on autonomous vehicle ethics. Showed that people's moral preferences are systematic and mappable, and that comparing your results to the crowd is the real hook.</li>
+                <li><strong><a href="https://sophie006liu.github.io/vegetal/" target="_blank" rel="noopener noreferrer">What Vegetable Are You?</a></strong> (sophie006liu) &mdash; For the ID card format. Turns out giving people a single, rich identity to screenshot and share (with strengths, weaknesses, and peer reviews) is the most viral result format.</li>
+                <li><strong>Myers-Briggs / 16Personalities</strong> &mdash; Love it or hate it, MBTI proved that people will share any result that gives them a label and tells them something about themselves. The insight is: people don't share quizzes, they share their <em>identity</em>.</li>
+            </ul>
+        </div>
+
+        <!-- Sources -->
+        <div class="about-section">
+            <h2>Academic Sources</h2>
+            <p>The philosophical content in this quiz draws from:</p>
+            <ul class="inspiration-list">
+                <li>Kant, I. (1785). <em>Groundwork of the Metaphysics of Morals</em>.</li>
+                <li>Mill, J.S. (1863). <em>Utilitarianism</em>.</li>
+                <li>Aristotle. (c. 340 BC). <em>Nicomachean Ethics</em>.</li>
+                <li>Scanlon, T.M. (1998). <em>What We Owe to Each Other</em>. Harvard University Press.</li>
+                <li>Sartre, J.-P. (1943). <em>Being and Nothingness</em>.</li>
+                <li><a href="https://plato.stanford.edu/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy</a> &mdash; used as the primary reference for all school descriptions.</li>
+            </ul>
+        </div>
+
+        <div class="about-footer">
+            <p>Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a>. The quiz is free, open source, and doesn't collect any data. Your results are stored only in your browser's local storage.</p>
+        </div>
+    </div>
+</body>
+</html>

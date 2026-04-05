@@ -77,10 +77,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.raggedydoc.com/projects/personal/snake.html</loc>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://www.raggedydoc.com/games/beamlab/</loc>
     <lastmod>2026-03-21</lastmod>
     <priority>0.7</priority>

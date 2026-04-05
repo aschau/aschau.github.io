@@ -210,7 +210,7 @@
         // First-visit controls
         if (!localStorage.getItem('parsed_seen_controls')) {
             var controlsModal = document.getElementById('controls-modal');
-            if (controlsModal) controlsModal.hidden = false;
+            if (controlsModal) openModal(controlsModal);
             localStorage.setItem('parsed_seen_controls', '1');
         }
     }
@@ -326,9 +326,13 @@
 
                 if (tok.f) {
                     tokenEl.classList.add('fixed');
+                    tokenEl.setAttribute('aria-hidden', 'true');
                 } else {
                     tokenEl.classList.add('movable');
                     tokenEl.dataset.movableIndex = tok.movableIndex;
+                    tokenEl.setAttribute('role', 'button');
+                    tokenEl.setAttribute('tabindex', '0');
+                    tokenEl.setAttribute('aria-label', 'Swap token: ' + tok.t);
                 }
 
                 lineEl.appendChild(tokenEl);
@@ -571,7 +575,10 @@
                 // accepted — allows multiple narrative interpretations.
                 return { success: true, output: outputStr };
             } else {
-                return { success: false, type: 'output', errors: ['> returned ' + outputStr + ', expected ' + puzzle.output] };
+                var hint = checkLineOrderHint(codeLines, validOutputs);
+                var errors = ['> returned ' + outputStr + ', expected ' + puzzle.output];
+                if (hint) errors.push(hint);
+                return { success: false, type: 'output', errors: errors };
             }
         } catch (e) {
             var errMsg = e.message || 'unexpected token arrangement';
@@ -579,6 +586,50 @@
         }
     }
 
+    function checkLineOrderHint(codeLines, validOutputs) {
+        // Find loop bodies and check if swapping adjacent lines fixes the output
+        for (var i = 0; i < codeLines.length; i++) {
+            var first = codeLines[i][0];
+            if (first !== 'while' && first !== 'for') continue;
+
+            // Collect body lines (between opener and closing brace)
+            var bodyStart = i + 1;
+            var bodyEnd = -1;
+            var depth = 1;
+            for (var j = bodyStart; j < codeLines.length; j++) {
+                var line = codeLines[j];
+                for (var k = 0; k < line.length; k++) {
+                    if (line[k] === '{') depth++;
+                    if (line[k] === '}') depth--;
+                }
+                if (depth === 0) { bodyEnd = j; break; }
+            }
+            if (bodyEnd <= bodyStart) continue;
+
+            // Try swapping each pair of adjacent body lines (skip brace-only lines)
+            for (var a = bodyStart; a < bodyEnd - 1; a++) {
+                if (codeLines[a].length === 1 && codeLines[a][0] === '{') continue;
+                var b = a + 1;
+                if (codeLines[b].length === 1 && (codeLines[b][0] === '{' || codeLines[b][0] === '}')) continue;
+
+                // Swap and test
+                var swapped = codeLines.slice();
+                swapped[a] = codeLines[b];
+                swapped[b] = codeLines[a];
+                try {
+                    var testInterp = new PseudoInterpreter(swapped);
+                    testInterp.execute();
+                    var testOut = String(testInterp.output);
+                    for (var oi = 0; oi < validOutputs.length; oi++) {
+                        if (testOut === validOutputs[oi]) {
+                            return '💡 hint: the order of operations inside the loop matters';
+                        }
+                    }
+                } catch (e) { /* swapped version errors — skip */ }
+            }
+        }
+        return null;
+    }
 
     function validateStructure(codeLines) {
         var errors = [];
@@ -750,11 +801,84 @@
     }
 
     // =============================================
+    // Modal Utilities — Focus Trap & Escape Key
+    // =============================================
+
+    var activeModal = null;
+    var previousFocus = null;
+    var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+    function openModal(modal) {
+        previousFocus = document.activeElement;
+        activeModal = modal;
+        modal.hidden = false;
+        var focusable = modal.querySelectorAll(FOCUSABLE);
+        if (focusable.length) focusable[0].focus();
+    }
+
+    function closeModal(modal) {
+        modal.hidden = true;
+        if (activeModal === modal) activeModal = null;
+        if (previousFocus) {
+            previousFocus.focus();
+            previousFocus = null;
+        }
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && activeModal) {
+            // Exec modal: only close if not animating (use skip first)
+            if (activeModal === execModal && execAnimating) {
+                skipExecution();
+                return;
+            }
+            var wasExec = activeModal === execModal;
+            closeModal(activeModal);
+            // Trigger callback for exec modal continue
+            if (wasExec) {
+                var sceneEl = document.getElementById('exec-scene');
+                if (sceneEl) sceneEl.hidden = true;
+                if (execCallback) {
+                    execCallback();
+                    execCallback = null;
+                }
+            }
+        }
+        // Focus trap
+        if (e.key === 'Tab' && activeModal) {
+            var focusable = activeModal.querySelectorAll(FOCUSABLE);
+            if (focusable.length === 0) return;
+            var first = focusable[0];
+            var last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        }
+    });
+
+    // =============================================
     // Interaction — Tap to Swap
     // =============================================
 
     function setupEventListeners() {
         codeGrid.addEventListener('click', handleTokenClick);
+        codeGrid.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                var token = e.target.closest('.token.movable');
+                if (token) {
+                    e.preventDefault();
+                    handleTokenClick(e);
+                }
+            }
+        });
         undoBtn.addEventListener('click', handleUndo);
         resetBtn.addEventListener('click', handleReset);
         if (restoreBtn) restoreBtn.addEventListener('click', restoreSolution);
@@ -770,9 +894,9 @@
         }
         shareBtn.addEventListener('click', function () { if (everSolved) showWinModal(); });
 
-        helpBtn.addEventListener('click', function () { helpModal.hidden = false; });
-        helpClose.addEventListener('click', function () { helpModal.hidden = true; });
-        helpModal.addEventListener('click', function (e) { if (e.target === helpModal) helpModal.hidden = true; });
+        helpBtn.addEventListener('click', function () { openModal(helpModal); });
+        helpClose.addEventListener('click', function () { closeModal(helpModal); });
+        helpModal.addEventListener('click', function (e) { if (e.target === helpModal) closeModal(helpModal); });
 
         // Archive modal
         var archiveBtn = document.getElementById('archive-btn');
@@ -781,10 +905,10 @@
         if (archiveBtn && archiveModal) {
             archiveBtn.addEventListener('click', function () {
                 renderArchiveGrid();
-                archiveModal.hidden = false;
+                openModal(archiveModal);
             });
-            archiveClose.addEventListener('click', function () { archiveModal.hidden = true; });
-            archiveModal.addEventListener('click', function (e) { if (e.target === archiveModal) archiveModal.hidden = true; });
+            archiveClose.addEventListener('click', function () { closeModal(archiveModal); });
+            archiveModal.addEventListener('click', function (e) { if (e.target === archiveModal) closeModal(archiveModal); });
         }
 
         // Clear all stats & progress (inline confirm, no browser modal)
@@ -813,15 +937,15 @@
             });
         }
 
-        winClose.addEventListener('click', function () { winModal.hidden = true; });
-        winModal.addEventListener('click', function (e) { if (e.target === winModal) winModal.hidden = true; });
+        winClose.addEventListener('click', function () { closeModal(winModal); });
+        winModal.addEventListener('click', function (e) { if (e.target === winModal) closeModal(winModal); });
         winShareBtn.addEventListener('click', webShareResults);
         winCopyBtn.addEventListener('click', copyResults);
 
         var walkthroughBtn = document.getElementById('win-walkthrough-btn');
         if (walkthroughBtn) {
             walkthroughBtn.addEventListener('click', function () {
-                winModal.hidden = true;
+                closeModal(winModal);
                 runExecution(function () { showWinModal(); });
             });
         }
@@ -830,11 +954,11 @@
         var controlsClose = document.getElementById('controls-close');
         var controlsModal = document.getElementById('controls-modal');
         if (controlsClose) {
-            controlsClose.addEventListener('click', function () { controlsModal.hidden = true; });
+            controlsClose.addEventListener('click', function () { closeModal(controlsModal); });
         }
         if (controlsModal) {
             controlsModal.addEventListener('click', function (e) {
-                if (e.target === controlsModal) controlsModal.hidden = true;
+                if (e.target === controlsModal) closeModal(controlsModal);
             });
         }
 
@@ -860,7 +984,7 @@
         }
         if (execContinue) {
             execContinue.addEventListener('click', function () {
-                execModal.hidden = true;
+                closeModal(execModal);
                 var sceneEl = document.getElementById('exec-scene');
                 if (sceneEl) sceneEl.hidden = true;
                 if (execCallback) execCallback();
@@ -1001,7 +1125,7 @@
         runExecution(function () {
             var runResult = tryRunCode();
             if (runResult.success) {
-                execModal.hidden = true;
+                closeModal(execModal);
                 checkWin();
             } else {
                 // Wrong — modal stays open with verdict shown by finishAnimation
@@ -1085,7 +1209,7 @@
         sharePreview.textContent = getShareText();
 
         shareBtn.disabled = false;
-        winModal.hidden = false;
+        openModal(winModal);
     }
 
     // =============================================
@@ -1120,7 +1244,7 @@
         execSkipped = false;
         execAnimating = true;
         execCallback = callback;
-        execModal.hidden = false;
+        openModal(execModal);
 
         // Build the code from current tokens
         var codeTokenLines = [];
@@ -1228,13 +1352,6 @@
             input.max = total;
             input.value = execCurrentStep + 1;
             input.className = 'exec-step-input';
-            input.style.width = '3.5em';
-            input.style.textAlign = 'center';
-            input.style.fontSize = 'inherit';
-            input.style.background = 'rgba(255,255,255,0.1)';
-            input.style.border = '1px solid rgba(255,255,255,0.3)';
-            input.style.borderRadius = '4px';
-            input.style.color = 'inherit';
             counter.textContent = '';
             counter.appendChild(input);
             var suffix = document.createTextNode(' / ' + total);
@@ -1338,19 +1455,9 @@
     }
 
     function finishAnimation() {
-        // Show final output and variable state (skip for dry runs — they set output separately)
+        // Show final step state (skip for dry runs — they set output separately)
         if (!execDryRun && execSteps && execSteps.length > 0) {
-            execCurrentStep = execSteps.length - 1;
-            var lastStep = execSteps[execSteps.length - 1];
-            if (lastStep.vars) {
-                updateExecVars(lastStep.vars, null);
-            }
-            if (lastStep.output !== undefined) {
-                var answerLabel = execSceneConfig ? execSceneConfig.label : 'Answer';
-                execOutput.textContent = '> ' + answerLabel + ': ' + lastStep.output;
-                updateScene(execSceneConfig, lastStep.vars);
-            }
-            updateTimelineDots(execSteps.length - 1);
+            showStepState(execSteps.length - 1);
         }
 
         // Switch to interactive mode
@@ -1397,6 +1504,7 @@
             allLines[i].classList.remove('active', 'done');
             allLines[i].classList.add('tappable');
             allLines[i].dataset.lineIdx = i;
+            allLines[i].removeEventListener('click', handleExecLineClick);
             allLines[i].addEventListener('click', handleExecLineClick);
         }
     }
@@ -1629,7 +1737,7 @@
             var t = tokens[i];
             if (i > 0) html += ' ';
             if (vars.hasOwnProperty(t)) {
-                html += '<span class="exec-annotated">' + escapeHtml(t) + '<span class="exec-annotation">' + vars[t] + '</span></span>';
+                html += '<span class="exec-annotated">' + escapeHtml(t) + '<span class="exec-annotation">' + escapeHtml(String(vars[t])) + '</span></span>';
             } else {
                 html += escapeHtml(t);
             }
@@ -1705,7 +1813,10 @@
         var maxSteps = 200; // prevent infinite loops
         var stepCount = 0;
 
-        while (i <= end && stepCount < maxSteps) {
+        while (i <= end) {
+            if (stepCount >= maxSteps) {
+                throw new Error('execution limit reached (too many steps)');
+            }
             stepCount++;
             var line = this.codeLines[i];
             if (!line || line.length === 0) { i++; continue; }
@@ -2000,19 +2111,19 @@
 
         usernameBtn.addEventListener('click', function () {
             usernameModalInput.value = getUsername();
-            usernameModal.hidden = false;
+            openModal(usernameModal);
         });
-        usernameModalClose.addEventListener('click', function () { usernameModal.hidden = true; });
-        usernameModal.addEventListener('click', function (e) { if (e.target === usernameModal) usernameModal.hidden = true; });
+        usernameModalClose.addEventListener('click', function () { closeModal(usernameModal); });
+        usernameModal.addEventListener('click', function (e) { if (e.target === usernameModal) closeModal(usernameModal); });
         usernameModalSave.addEventListener('click', function () {
             saveUsername(usernameModalInput.value.trim());
-            usernameModal.hidden = true;
+            closeModal(usernameModal);
         });
-        usernameModalSkip.addEventListener('click', function () { usernameModal.hidden = true; });
+        usernameModalSkip.addEventListener('click', function () { closeModal(usernameModal); });
         usernameModalInput.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
                 saveUsername(usernameModalInput.value.trim());
-                usernameModal.hidden = true;
+                closeModal(usernameModal);
             }
         });
 
@@ -2341,8 +2452,7 @@
         function fallbackCopy() {
             var textarea = document.createElement('textarea');
             textarea.value = text;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
+            textarea.className = 'fallback-copy';
             document.body.appendChild(textarea);
             textarea.focus();
             textarea.select();

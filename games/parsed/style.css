@@ -883,6 +883,21 @@ body {
     text-align: center;
 }
 
+.exec-step-input {
+    width: 3.5em;
+    text-align: center;
+    font-size: inherit;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: inherit;
+}
+
+.fallback-copy {
+    position: fixed;
+    opacity: 0;
+}
+
 .exec-step-dot {
     flex: 1;
     height: 6px;
@@ -1215,6 +1230,7 @@ body {
     .code-grid {
         padding: 10px;
         font-size: 0.8rem;
+        overflow-x: hidden;
     }
 
     .code-line {
@@ -1223,9 +1239,20 @@ body {
         min-height: 30px;
     }
 
+    .code-line.indent-1 {
+        padding-left: 16px;
+    }
+
+    .code-line.indent-2 {
+        padding-left: 32px;
+    }
+
     .token {
         padding: 2px 6px;
         font-size: 0.8rem;
+        max-width: 100%;
+        overflow-wrap: break-word;
+        word-break: break-all;
     }
 
     .console-panel {
@@ -1283,6 +1310,14 @@ body {
 
     .token {
         padding: 2px 4px;
+    }
+
+    .code-line.indent-1 {
+        padding-left: 12px;
+    }
+
+    .code-line.indent-2 {
+        padding-left: 24px;
     }
 
     .action-buttons {

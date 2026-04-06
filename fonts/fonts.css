@@ -1,0 +1,17 @@
+/* Self-hosted Google Fonts replacements (GDPR-safe) */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('Inter-Variable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('JetBrainsMono-Variable.woff2') format('woff2');
+}

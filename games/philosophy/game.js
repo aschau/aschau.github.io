@@ -840,7 +840,6 @@
 
         lines.push('');
         lines.push('What\u2019s your moral philosophy?');
-        lines.push('https://www.raggedydoc.com/games/philosophy/');
 
         return lines.join('\n');
     }
@@ -866,32 +865,58 @@
             el.style.webkitTextFillColor = '#e8e6f0';
         }
 
-        return html2canvas(card, {
-            backgroundColor: '#12122a',
-            scale: 2,
-            useCORS: true
-        }).then(function (canvas) {
-            // Restore gradient text
+        function restoreGradients() {
             for (var j = 0; j < saved.length; j++) {
                 var s = saved[j];
                 s.el.style.background = s.bg;
                 s.el.style.webkitBackgroundClip = s.clip;
                 s.el.style.webkitTextFillColor = s.fill;
             }
+        }
+
+        return html2canvas(card, {
+            backgroundColor: '#12122a',
+            scale: isIOS ? 1 : 2,
+            useCORS: true,
+            logging: false
+        }).then(function (canvas) {
+            restoreGradients();
             return canvas;
+        }).catch(function (err) {
+            restoreGradients();
+            throw err;
         });
     }
+
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var isMobile = isIOS || /Android/i.test(navigator.userAgent);
 
     saveImgBtn.addEventListener('click', function () {
         saveImgBtn.disabled = true;
         saveImgBtn.textContent = 'Generating...';
         captureCard().then(function (canvas) {
+            return new Promise(function (resolve) {
+                canvas.toBlob(function (blob) { resolve(blob); }, 'image/png');
+            });
+        }).then(function (blob) {
+            if (isMobile && navigator.share && navigator.canShare) {
+                var file = new File([blob], 'philosopher-id.png', { type: 'image/png' });
+                var shareData = { files: [file] };
+                if (navigator.canShare(shareData)) {
+                    return navigator.share(shareData).then(function () {
+                        showToast(isIOS ? 'Use "Save Image" to add to Photos' : 'Image shared!');
+                    });
+                }
+            }
             var link = document.createElement('a');
             link.download = 'philosopher-id.png';
-            link.href = canvas.toDataURL('image/png');
+            link.href = URL.createObjectURL(blob);
             link.click();
+            setTimeout(function () { URL.revokeObjectURL(link.href); }, 5000);
             showToast('Image saved!');
-        }).catch(function () {
+        }).catch(function (err) {
+            if (err && err.name === 'AbortError') return;
             showToast('Could not generate image');
         }).finally(function () {
             saveImgBtn.disabled = false;
@@ -927,6 +952,8 @@
         });
     });
 
+    var quizUrl = 'https://www.raggedydoc.com/games/philosophy/';
+
     shareBtn.addEventListener('click', function () {
         shareBtn.disabled = true;
         shareBtn.textContent = 'Generating...';
@@ -939,23 +966,18 @@
         }).then(function (blob) {
             if (navigator.share && navigator.canShare) {
                 var file = new File([blob], 'philosopher-id.png', { type: 'image/png' });
-                var shareData = { text: text, files: [file] };
+                var shareData = { text: text, url: quizUrl, files: [file] };
                 if (navigator.canShare(shareData)) {
                     return navigator.share(shareData);
                 }
             }
-            // Fallback: share text only
             if (navigator.share) {
-                return navigator.share({ text: text });
+                return navigator.share({ text: text, url: quizUrl });
             }
-            copyToClipboard(text);
-        }).catch(function () {
-            // User cancelled or error — try text fallback
-            if (navigator.share) {
-                navigator.share({ text: text }).catch(function () { });
-            } else {
-                copyToClipboard(text);
-            }
+            copyToClipboard(text + '\n' + quizUrl);
+        }).catch(function (err) {
+            if (err && err.name === 'AbortError') return;
+            copyToClipboard(text + '\n' + quizUrl);
         }).finally(function () {
             shareBtn.disabled = false;
             shareBtn.textContent = 'Share';

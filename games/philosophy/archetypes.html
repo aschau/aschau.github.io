@@ -11,8 +11,11 @@
     <meta property="og:description" content="Every possible archetype result — 20 unique philosopher personality combos.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.raggedydoc.com/games/philosophy/archetypes.html">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://www.raggedydoc.com/games/philosophy/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="All 20 Archetypes | Examined">
+    <meta name="twitter:description" content="Every possible archetype result — 20 unique philosopher personality combos from Kantian to Existentialist.">
+    <meta name="twitter:image" content="https://www.raggedydoc.com/games/philosophy/og-image.png">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,35 +24,46 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="about-container">
-        <a href="about.html" class="about-back">&larr; Back to about</a>
+    <!-- Sticky header -->
+    <div class="arch-header">
+        <a href="about.html" class="arch-back">&larr; About</a>
+        <span class="arch-header-title">20 Archetypes</span>
+        <a href="index.html" class="arch-cta">Take quiz</a>
+    </div>
 
-        <h1 class="about-title">The 20 Archetypes</h1>
-        <p class="about-subtitle">Your top two schools combine into one of these. Which one are you?</p>
+    <!-- Filter bar -->
+    <div class="arch-filters">
+        <button class="arch-filter active" data-filter="all">All</button>
+        <button class="arch-filter" data-filter="kantian" style="--filter-color: var(--color-kantian)">&#9878;&#65039; Kant</button>
+        <button class="arch-filter" data-filter="utilitarian" style="--filter-color: var(--color-utilitarian)">&#128202; Mill</button>
+        <button class="arch-filter" data-filter="virtue" style="--filter-color: var(--color-virtue)">&#127807; Aristotle</button>
+        <button class="arch-filter" data-filter="contractualist" style="--filter-color: var(--color-contractualist)">&#129309; Scanlon</button>
+        <button class="arch-filter" data-filter="existentialist" style="--filter-color: var(--color-existentialist)">&#128293; Sartre</button>
+    </div>
 
+    <!-- Cards -->
+    <div class="arch-container">
+        <p class="arch-count" id="arch-count">20 archetypes</p>
         <div id="archetype-list"></div>
+    </div>
 
-        <div class="about-footer">
-            <p><a href="index.html">Take the quiz</a> · Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a></p>
-        </div>
+    <!-- Fixed footer -->
+    <div class="arch-footer">
+        <span>Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a></span>
+        <span class="arch-footer-sep">&middot;</span>
+        <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee &#9749;</a>
+        <span class="arch-footer-sep">&middot;</span>
+        <a href="../../privacy.html">Privacy</a>
     </div>
 
     <script>
     (function () {
-        var colors = {
-            kantian: '#7eb8da',
-            utilitarian: '#f0c674',
-            virtue: '#a8d5a2',
-            contractualist: '#d4a0d0',
-            existentialist: '#e8917a'
-        };
-
-        var names = {
-            kantian: 'Kantian',
-            utilitarian: 'Utilitarian',
-            virtue: 'Virtue Ethics',
-            contractualist: 'Contractualist',
-            existentialist: 'Existentialist'
+        var schools = {
+            kantian:        { name: 'Kantian',        emoji: '\u2696\uFE0F', color: '#7eb8da' },
+            utilitarian:    { name: 'Utilitarian',     emoji: '\uD83D\uDCCA', color: '#f0c674' },
+            virtue:         { name: 'Virtue Ethics',   emoji: '\uD83C\uDF3F', color: '#a8d5a2' },
+            contractualist: { name: 'Contractualist',  emoji: '\uD83E\uDD1D', color: '#d4a0d0' },
+            existentialist: { name: 'Existentialist',  emoji: '\uD83D\uDD25', color: '#e8917a' }
         };
 
         var archetypes = [
@@ -76,33 +90,39 @@
         ];
 
         var list = document.getElementById('archetype-list');
+        var countEl = document.getElementById('arch-count');
+        var cards = [];
 
         archetypes.forEach(function (a) {
             var card = document.createElement('div');
             card.className = 'archetype-card';
+            card.setAttribute('data-primary', a.primary);
+            card.setAttribute('data-secondary', a.secondary);
 
-            var dots = document.createElement('div');
-            dots.className = 'archetype-dots';
+            var header = document.createElement('div');
+            header.className = 'archetype-card-header';
 
-            var d1 = document.createElement('span');
-            d1.className = 'archetype-dot';
-            d1.style.background = colors[a.primary];
-            dots.appendChild(d1);
-
-            var plus = document.createElement('span');
-            plus.className = 'archetype-plus';
-            plus.textContent = '+';
-            dots.appendChild(plus);
-
-            var d2 = document.createElement('span');
-            d2.className = 'archetype-dot';
-            d2.style.background = colors[a.secondary];
-            dots.appendChild(d2);
+            var emojis = document.createElement('span');
+            emojis.className = 'archetype-emojis';
+            emojis.textContent = schools[a.primary].emoji + schools[a.secondary].emoji;
 
             var combo = document.createElement('span');
             combo.className = 'archetype-combo';
-            combo.textContent = names[a.primary] + ' + ' + names[a.secondary];
-            dots.appendChild(combo);
+
+            var d1 = document.createElement('span');
+            d1.className = 'archetype-dot';
+            d1.style.background = schools[a.primary].color;
+            var d2 = document.createElement('span');
+            d2.className = 'archetype-dot';
+            d2.style.background = schools[a.secondary].color;
+
+            combo.appendChild(d1);
+            combo.appendChild(document.createTextNode(' ' + schools[a.primary].name + ' + '));
+            combo.appendChild(d2);
+            combo.appendChild(document.createTextNode(' ' + schools[a.secondary].name));
+
+            header.appendChild(emojis);
+            header.appendChild(combo);
 
             var title = document.createElement('h2');
             title.className = 'archetype-card-title';
@@ -112,11 +132,35 @@
             desc.className = 'archetype-card-desc';
             desc.textContent = a.desc;
 
-            card.appendChild(dots);
+            card.appendChild(header);
             card.appendChild(title);
             card.appendChild(desc);
             list.appendChild(card);
+            cards.push(card);
         });
+
+        // Filtering
+        var filters = document.querySelectorAll('.arch-filter');
+        for (var i = 0; i < filters.length; i++) {
+            filters[i].addEventListener('click', function () {
+                var filter = this.getAttribute('data-filter');
+
+                for (var j = 0; j < filters.length; j++) {
+                    filters[j].classList.remove('active');
+                }
+                this.classList.add('active');
+
+                var visible = 0;
+                for (var k = 0; k < cards.length; k++) {
+                    var show = filter === 'all' ||
+                        cards[k].getAttribute('data-primary') === filter ||
+                        cards[k].getAttribute('data-secondary') === filter;
+                    cards[k].style.display = show ? '' : 'none';
+                    if (show) visible++;
+                }
+                countEl.textContent = visible + ' archetype' + (visible !== 1 ? 's' : '');
+            });
+        }
     })();
     </script>
 </body>

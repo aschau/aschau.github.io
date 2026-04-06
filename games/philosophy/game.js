@@ -363,6 +363,11 @@
         showScreen(startScreen);
     });
 
+    document.getElementById('result-back-btn').addEventListener('click', function (e) {
+        e.preventDefault();
+        showScreen(startScreen);
+    });
+
     function renderQuestion() {
         var q = QUESTIONS[currentQuestion];
         document.getElementById('progress-fill').style.width = ((currentQuestion / QUESTIONS.length) * 100) + '%';
@@ -917,12 +922,38 @@
     });
 
     shareBtn.addEventListener('click', function () {
+        shareBtn.disabled = true;
+        shareBtn.textContent = 'Generating...';
         var text = generateShareText();
-        if (navigator.share) {
-            navigator.share({ text: text }).catch(function () { });
-        } else {
+
+        captureCard().then(function (canvas) {
+            return new Promise(function (resolve) {
+                canvas.toBlob(function (blob) { resolve(blob); }, 'image/png');
+            });
+        }).then(function (blob) {
+            if (navigator.share && navigator.canShare) {
+                var file = new File([blob], 'philosopher-id.png', { type: 'image/png' });
+                var shareData = { text: text, files: [file] };
+                if (navigator.canShare(shareData)) {
+                    return navigator.share(shareData);
+                }
+            }
+            // Fallback: share text only
+            if (navigator.share) {
+                return navigator.share({ text: text });
+            }
             copyToClipboard(text);
-        }
+        }).catch(function () {
+            // User cancelled or error — try text fallback
+            if (navigator.share) {
+                navigator.share({ text: text }).catch(function () { });
+            } else {
+                copyToClipboard(text);
+            }
+        }).finally(function () {
+            shareBtn.disabled = false;
+            shareBtn.textContent = 'Share';
+        });
     });
 
     function copyToClipboard(text) {
@@ -1008,18 +1039,15 @@
         var grid = document.createElement('div');
         grid.className = 'compass-grid';
 
-        var labels = [
-            { cls: 'compass-label compass-label--top', text: 'Rules matter most' },
-            { cls: 'compass-label compass-label--bottom', text: 'Outcomes matter most' },
-            { cls: 'compass-label compass-label--left', text: 'Individual focus' },
-            { cls: 'compass-label compass-label--right', text: 'Collective focus' }
-        ];
-        for (var l = 0; l < labels.length; l++) {
-            var lbl = document.createElement('div');
-            lbl.className = labels[l].cls;
-            lbl.textContent = labels[l].text;
-            grid.appendChild(lbl);
-        }
+        var topLabel = document.createElement('div');
+        topLabel.className = 'compass-label compass-label--top';
+        topLabel.textContent = '\u2191 Rules matter most';
+        grid.appendChild(topLabel);
+
+        var bottomLabel = document.createElement('div');
+        bottomLabel.className = 'compass-label compass-label--bottom';
+        bottomLabel.textContent = '\u2193 Outcomes matter most';
+        grid.appendChild(bottomLabel);
 
         var area = document.createElement('div');
         area.className = 'compass-area';
@@ -1037,14 +1065,13 @@
             dot.style.top = pos.y + '%';
             dot.style.left = pos.x + '%';
             dot.style.background = SCHOOLS[sk].color;
-            dot.style.opacity = '0.4';
             dot.style.width = '10px';
             dot.style.height = '10px';
+            dot.style.opacity = '0.7';
 
             var dotLabel = document.createElement('span');
             dotLabel.className = 'compass-dot-label';
             dotLabel.textContent = SCHOOLS[sk].name;
-            dotLabel.style.opacity = '0.5';
             dot.appendChild(dotLabel);
             area.appendChild(dot);
         }

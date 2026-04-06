@@ -11,9 +11,11 @@
     <meta property="og:description" content="How Examined works — the philosophy behind the quiz, the five ethical schools, question design, and sources of inspiration.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.raggedydoc.com/games/philosophy/about.html">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://www.raggedydoc.com/games/philosophy/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="About | Examined">
     <meta name="twitter:description" content="How Examined works — the philosophy behind the quiz, the five ethical schools, and sources of inspiration.">
+    <meta name="twitter:image" content="https://www.raggedydoc.com/games/philosophy/og-image.png">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,9 +24,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="about-container">
-        <a href="index.html" class="about-back">&larr; Back to quiz</a>
+    <!-- Sticky header -->
+    <div class="arch-header">
+        <a href="index.html" class="arch-back">&larr; Quiz</a>
+        <span class="arch-header-title">About Examined</span>
+        <a href="archetypes.html" class="arch-cta">Archetypes</a>
+    </div>
 
+    <div class="about-container">
         <h1 class="about-title">About Examined</h1>
         <p class="about-subtitle">How the quiz works, the philosophy behind it, and where the idea came from.</p>
 
@@ -104,63 +111,58 @@
 
             <div class="school-grid">
                 <div class="school-item">
-                    <div class="school-item-header">
-                        <span class="school-item-dot" style="background: var(--color-kantian)"></span>
-                        <span class="school-item-name">Kantian Ethics</span>
-                        <span class="school-item-philosopher">&mdash; Immanuel Kant (1724&ndash;1804)</span>
+                    <div class="archetype-card-header">
+                        <span class="archetype-emojis">&#9878;&#65039;</span>
+                        <span class="archetype-combo"><span class="archetype-dot" style="background: var(--color-kantian)"></span> Kantian Ethics &mdash; Immanuel Kant (1724&ndash;1804)</span>
                     </div>
                     <p class="school-tldr">TLDR: If you wouldn't want everyone to do it, don't do it. No exceptions.</p>
                     <p class="school-question">"Could I make this a rule for everyone?"</p>
                     <p>Actions are right or wrong in themselves, regardless of consequences. Kant's Categorical Imperative says you should only act according to rules you could will to be universal laws. Lying is always wrong &mdash; even if it saves lives &mdash; because a world where everyone lies is self-defeating.</p>
-                    <p class="school-source">Key work: <em>Groundwork of the Metaphysics of Morals</em> (1785). <a href="https://plato.stanford.edu/entries/kant-moral/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy &rarr;</a></p>
+                    <p class="school-source">Key work: <a href="https://plato.stanford.edu/entries/kant-moral/" target="_blank" rel="noopener noreferrer"><em>Groundwork of the Metaphysics of Morals</em></a> (1785)</p>
                 </div>
 
                 <div class="school-item">
-                    <div class="school-item-header">
-                        <span class="school-item-dot" style="background: var(--color-utilitarian)"></span>
-                        <span class="school-item-name">Utilitarianism</span>
-                        <span class="school-item-philosopher">&mdash; John Stuart Mill (1806&ndash;1873)</span>
+                    <div class="archetype-card-header">
+                        <span class="archetype-emojis">&#128202;</span>
+                        <span class="archetype-combo"><span class="archetype-dot" style="background: var(--color-utilitarian)"></span> Utilitarianism &mdash; John Stuart Mill (1806&ndash;1873)</span>
                     </div>
                     <p class="school-tldr">TLDR: Do whatever helps the most people. Morality is math with feelings.</p>
                     <p class="school-question">"What produces the most overall good?"</p>
                     <p>Only outcomes matter. The right action is the one that maximizes total happiness and minimizes total suffering. If lying saves five lives, you should lie. Morality is, at its core, a calculation &mdash; but a deeply compassionate one. Mill refined Bentham's original framework to distinguish between higher and lower pleasures.</p>
-                    <p class="school-source">Key work: <em>Utilitarianism</em> (1863). <a href="https://plato.stanford.edu/entries/mill-moral-political/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy &rarr;</a></p>
+                    <p class="school-source">Key work: <a href="https://plato.stanford.edu/entries/mill-moral-political/" target="_blank" rel="noopener noreferrer"><em>Utilitarianism</em></a> (1863)</p>
                 </div>
 
                 <div class="school-item">
-                    <div class="school-item-header">
-                        <span class="school-item-dot" style="background: var(--color-virtue)"></span>
-                        <span class="school-item-name">Virtue Ethics</span>
-                        <span class="school-item-philosopher">&mdash; Aristotle (384&ndash;322 BC)</span>
+                    <div class="archetype-card-header">
+                        <span class="archetype-emojis">&#127807;</span>
+                        <span class="archetype-combo"><span class="archetype-dot" style="background: var(--color-virtue)"></span> Virtue Ethics &mdash; Aristotle (384&ndash;322 BC)</span>
                     </div>
                     <p class="school-tldr">TLDR: Be a good person and good actions will follow. Character over checklists.</p>
                     <p class="school-question">"What would a good person do?"</p>
                     <p>Instead of asking "what's the rule?" or "what's the outcome?", virtue ethics asks "what kind of person should I be?" Morality is about cultivating excellent character traits &mdash; courage, honesty, compassion, temperance &mdash; through practice and habit. The "Golden Mean" says virtue lies between extremes.</p>
-                    <p class="school-source">Key work: <em>Nicomachean Ethics</em> (c. 340 BC). <a href="https://plato.stanford.edu/entries/aristotle-ethics/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy &rarr;</a></p>
+                    <p class="school-source">Key work: <a href="https://plato.stanford.edu/entries/aristotle-ethics/" target="_blank" rel="noopener noreferrer"><em>Nicomachean Ethics</em></a> (c. 340 BC)</p>
                 </div>
 
                 <div class="school-item">
-                    <div class="school-item-header">
-                        <span class="school-item-dot" style="background: var(--color-contractualist)"></span>
-                        <span class="school-item-name">Contractualism</span>
-                        <span class="school-item-philosopher">&mdash; T.M. Scanlon (1940&ndash;2022)</span>
+                    <div class="archetype-card-header">
+                        <span class="archetype-emojis">&#129309;</span>
+                        <span class="archetype-combo"><span class="archetype-dot" style="background: var(--color-contractualist)"></span> Contractualism &mdash; T.M. Scanlon (1940&ndash;2022)</span>
                     </div>
                     <p class="school-tldr">TLDR: Only act on principles no one could reasonably say "that's unfair" to.</p>
                     <p class="school-question">"Could anyone reasonably object to this?"</p>
-                    <p>Morality is about what we owe to each other. An action is wrong if the principle behind it could be reasonably rejected by anyone affected. Unlike utilitarianism, you can't sacrifice one person for the many &mdash; every individual's objection matters. This is the framework at the heart of <em>The Good Place</em>.</p>
-                    <p class="school-source">Key work: <em>What We Owe to Each Other</em> (1998). <a href="https://plato.stanford.edu/entries/contractualism/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy &rarr;</a></p>
+                    <p>Morality is about what we owe to each other. An action is wrong if the principle behind it could be reasonably rejected by anyone affected. Unlike utilitarianism, you can't sacrifice one person for the many &mdash; every individual's objection matters. This is the framework at the heart of <a href="https://www.imdb.com/title/tt4955642/" target="_blank" rel="noopener noreferrer"><em>The Good Place</em></a>.</p>
+                    <p class="school-source">Key work: <a href="https://plato.stanford.edu/entries/contractualism/" target="_blank" rel="noopener noreferrer"><em>What We Owe to Each Other</em></a> (1998)</p>
                 </div>
 
                 <div class="school-item">
-                    <div class="school-item-header">
-                        <span class="school-item-dot" style="background: var(--color-existentialist)"></span>
-                        <span class="school-item-name">Existentialism</span>
-                        <span class="school-item-philosopher">&mdash; Jean-Paul Sartre (1905&ndash;1980)</span>
+                    <div class="archetype-card-header">
+                        <span class="archetype-emojis">&#128293;</span>
+                        <span class="archetype-combo"><span class="archetype-dot" style="background: var(--color-existentialist)"></span> Existentialism &mdash; Jean-Paul Sartre (1905&ndash;1980)</span>
                     </div>
                     <p class="school-tldr">TLDR: There are no rules. You're free. That's the terrifying part.</p>
                     <p class="school-question">"Am I choosing authentically?"</p>
                     <p>There are no pre-made moral rules waiting to be discovered. "Existence precedes essence" &mdash; you exist first, then define yourself through your choices. Following someone else's moral system to avoid the weight of decision is "bad faith." Freedom is terrifying, but it's all you have.</p>
-                    <p class="school-source">Key work: <em>Being and Nothingness</em> (1943). <a href="https://plato.stanford.edu/entries/sartre/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy &rarr;</a></p>
+                    <p class="school-source">Key work: <a href="https://plato.stanford.edu/entries/sartre/" target="_blank" rel="noopener noreferrer"><em>Being and Nothingness</em></a> (1943)</p>
                 </div>
             </div>
         </div>
@@ -209,11 +211,11 @@
             <h2>Inspiration &amp; Credits</h2>
             <p>This quiz was inspired by several things I love:</p>
             <ul class="inspiration-list">
-                <li><strong><em>The Good Place</em></strong> (NBC, 2016&ndash;2020) &mdash; The show that made moral philosophy mainstream. Scanlon's <em>What We Owe to Each Other</em> is literally a recurring prop. The show's comedy proved that ethics can be funny, accessible, and deeply human. If Chidi Anagonye can teach Eleanor Shellstrop philosophy, a quiz can at least try.</li>
+                <li><strong><a href="https://www.imdb.com/title/tt4955642/" target="_blank" rel="noopener noreferrer"><em>The Good Place</em></a></strong> (NBC, 2016&ndash;2020) &mdash; The show that made moral philosophy mainstream. Scanlon's <em>What We Owe to Each Other</em> is literally a recurring prop. The show's comedy proved that ethics can be funny, accessible, and deeply human. If Chidi Anagonye can teach Eleanor Shellstrop philosophy, a quiz can at least try.</li>
                 <li><strong><a href="https://neal.fun/absurd-trolley-problems/" target="_blank" rel="noopener noreferrer">Absurd Trolley Problems</a></strong> (neal.fun) &mdash; For proving that moral dilemmas can be hilarious and shareable. The crowd-vote reveal after each question is a brilliant engagement mechanic.</li>
                 <li><strong><a href="https://www.moralmachine.net/" target="_blank" rel="noopener noreferrer">Moral Machine</a></strong> (MIT) &mdash; The landmark study on autonomous vehicle ethics. Showed that people's moral preferences are systematic and mappable, and that comparing your results to the crowd is the real hook.</li>
                 <li><strong><a href="https://sophie006liu.github.io/vegetal/" target="_blank" rel="noopener noreferrer">What Vegetable Are You?</a></strong> (sophie006liu) &mdash; For the ID card format. Turns out giving people a single, rich identity to screenshot and share (with strengths, weaknesses, and peer reviews) is the most viral result format.</li>
-                <li><strong>Myers-Briggs / 16Personalities</strong> &mdash; Love it or hate it, MBTI proved that people will share any result that gives them a label and tells them something about themselves. The insight is: people don't share quizzes, they share their <em>identity</em>.</li>
+                <li><strong><a href="https://www.16personalities.com/" target="_blank" rel="noopener noreferrer">Myers-Briggs / 16Personalities</a></strong> &mdash; Love it or hate it, MBTI proved that people will share any result that gives them a label and tells them something about themselves. The insight is: people don't share quizzes, they share their <em>identity</em>.</li>
             </ul>
         </div>
 
@@ -231,9 +233,14 @@
             <p>All links go to the <a href="https://plato.stanford.edu/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy</a>.</p>
         </div>
 
-        <div class="about-footer">
-            <p>Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a> · <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;">Buy me a coffee &#9749;</a> · <a href="../../privacy.html">Privacy</a></p>
-        </div>
+    </div>
+
+    <div class="arch-footer">
+        <span>Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a></span>
+        <span class="arch-footer-sep">&middot;</span>
+        <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee &#9749;</a>
+        <span class="arch-footer-sep">&middot;</span>
+        <a href="../../privacy.html">Privacy</a>
     </div>
 </body>
 </html>

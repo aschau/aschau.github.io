@@ -1042,6 +1042,11 @@
         title.textContent = 'Where you fall';
         compass.appendChild(title);
 
+        var disclaimer = document.createElement('p');
+        disclaimer.className = 'explore-compass-disclaimer';
+        disclaimer.textContent = 'Approximate positions \u2014 real philosophy is messier than a 2D chart.';
+        compass.appendChild(disclaimer);
+
         var grid = document.createElement('div');
         grid.className = 'compass-grid';
 

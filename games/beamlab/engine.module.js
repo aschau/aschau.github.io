@@ -3,6 +3,7 @@
 // Pure functions extracted from game.js for unit testing.
 // Browser code (game.js) keeps its own copies inside the IIFE;
 // this module is the canonical reference for tests.
+// ── Keep in sync with games/beamlab/game.js ──
 // ============================================
 
 'use strict';
@@ -42,6 +43,11 @@ function getEntryCell(source) {
 /**
  * Trace the laser beam through a grid, returning which cells are hit
  * and which targets are reached. Pure function — no DOM dependencies.
+ *
+ * Combines the logic of three game.js functions:
+ *   - traceLaser()           — beam physics, BFS for splitters, visited set
+ *   - checkTargetHit(r, c)   — exit-edge target matching
+ *   - updateLaserActiveCells() — gem collection check over laserPath
  *
  * @param {object} puzzle - { source, targets, walls, fixed, gem }
  * @param {Array<Array<string|null>>} grid - 6x6 grid of cell contents

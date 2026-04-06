@@ -3,6 +3,7 @@
 // Pure functions extracted from app.js for unit testing.
 // Browser code (app.js) keeps its own copies inside the IIFE;
 // this module is the canonical reference for tests.
+// ── Keep in sync with tools/snaplayout/app.js ──
 // ============================================
 
 'use strict';

@@ -3,6 +3,7 @@
 // Pure functions extracted from game.js for unit testing.
 // Browser code (game.js) keeps its own copies inside the IIFE;
 // this module is the canonical reference for tests.
+// ── Keep in sync with games/parsed/game.js ──
 // ============================================
 
 'use strict';

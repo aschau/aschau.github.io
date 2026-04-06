@@ -1,3 +1,4 @@
+// ── Testable logic extracted to gamification.module.js — keep in sync ──
 (function () {
   // === Configuration ===
   var MAIN_PAGES = ["index.html", "aboutMe.html", "workprojects.html", "personalprojects.html", "deep-dive"];

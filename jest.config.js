@@ -8,5 +8,6 @@ module.exports = {
     'games/parsed/share.js',
     'tools/snaplayout/conversions.module.js',
     'tools/misery-index/misery.module.js',
+    'js/gamification.module.js',
   ],
 };

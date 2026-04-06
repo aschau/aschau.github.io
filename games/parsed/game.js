@@ -1,6 +1,7 @@
 // ============================================
 // Parsed — Core Game Engine
 // Tap-to-swap code tokens to fix buggy programs
+// ── Testable logic extracted to interpreter.module.js — keep in sync ──
 // ============================================
 
 (function () {

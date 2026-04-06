@@ -3,6 +3,8 @@
 // Pure functions extracted from app.js and fetch-misery-data.js
 // for unit testing. Browser/Node code keeps its own copies
 // inside their respective IIFEs/scripts.
+// ── Keep in sync with tools/misery-index/app.js
+//    and .github/scripts/fetch-misery-data.js ──
 // ============================================
 
 'use strict';

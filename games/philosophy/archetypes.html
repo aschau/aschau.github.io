@@ -18,9 +18,7 @@
     <meta name="twitter:image" content="https://www.raggedydoc.com/games/philosophy/og-image.png">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="favicon.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../fonts/fonts.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -160,6 +158,109 @@
                 }
                 countEl.textContent = visible + ' archetype' + (visible !== 1 ? 's' : '');
             });
+        }
+
+        // ---- Per-card expandable compass ----
+        var compassPositions = {
+            kantian:        { x: 60, y: 18 },
+            utilitarian:    { x: 75, y: 72 },
+            virtue:         { x: 45, y: 45 },
+            contractualist: { x: 78, y: 35 },
+            existentialist: { x: 22, y: 65 }
+        };
+        var schoolKeys = ['kantian', 'utilitarian', 'virtue', 'contractualist', 'existentialist'];
+
+        function buildMiniCompass(primaryKey, secondaryKey) {
+            var wrap = document.createElement('div');
+            wrap.className = 'mini-compass';
+
+            var topLbl = document.createElement('div');
+            topLbl.className = 'compass-label compass-label--top';
+            topLbl.textContent = '\u2191 Rules';
+            wrap.appendChild(topLbl);
+
+            var area = document.createElement('div');
+            area.className = 'compass-area mini-compass-area';
+
+            var axes = document.createElement('div');
+            axes.className = 'compass-axes';
+            area.appendChild(axes);
+
+            // School reference dots
+            for (var i = 0; i < schoolKeys.length; i++) {
+                var sk = schoolKeys[i];
+                var pos = compassPositions[sk];
+                var dot = document.createElement('div');
+                dot.className = 'compass-dot';
+                dot.style.top = pos.y + '%';
+                dot.style.left = pos.x + '%';
+                dot.style.background = schools[sk].color;
+                dot.style.width = '8px';
+                dot.style.height = '8px';
+                dot.style.opacity = (sk === primaryKey || sk === secondaryKey) ? '0.8' : '0.2';
+
+                var lbl = document.createElement('span');
+                lbl.className = 'compass-dot-label';
+                lbl.textContent = schools[sk].name;
+                lbl.style.opacity = (sk === primaryKey || sk === secondaryKey) ? '1' : '0.3';
+                lbl.style.fontSize = '0.58rem';
+                dot.appendChild(lbl);
+                area.appendChild(dot);
+            }
+
+            // "You" dot at 60/40 weighted position
+            var p1 = compassPositions[primaryKey];
+            var p2 = compassPositions[secondaryKey];
+            var youX = p1.x * 0.6 + p2.x * 0.4;
+            var youY = p1.y * 0.6 + p2.y * 0.4;
+
+            var youDot = document.createElement('div');
+            youDot.className = 'compass-you';
+            youDot.style.top = youY + '%';
+            youDot.style.left = youX + '%';
+            var youLbl = document.createElement('span');
+            youLbl.className = 'compass-you-label';
+            youLbl.textContent = 'This archetype';
+            youDot.appendChild(youLbl);
+            area.appendChild(youDot);
+
+            wrap.appendChild(area);
+
+            var botLbl = document.createElement('div');
+            botLbl.className = 'compass-label compass-label--bottom';
+            botLbl.textContent = '\u2193 Outcomes';
+            wrap.appendChild(botLbl);
+
+            return wrap;
+        }
+
+        // Add "Where on the compass" toggle to each card
+        for (var ci = 0; ci < cards.length; ci++) {
+            (function (card, arch) {
+                var toggle = document.createElement('button');
+                toggle.className = 'mini-compass-toggle';
+                toggle.textContent = 'Where on the compass \u25BC';
+
+                var compassContainer = document.createElement('div');
+                compassContainer.className = 'mini-compass-container';
+
+                toggle.addEventListener('click', function () {
+                    var isOpen = compassContainer.classList.contains('visible');
+                    if (isOpen) {
+                        compassContainer.classList.remove('visible');
+                        toggle.textContent = 'Where on the compass \u25BC';
+                    } else {
+                        if (!compassContainer.hasChildNodes()) {
+                            compassContainer.appendChild(buildMiniCompass(arch.primary, arch.secondary));
+                        }
+                        compassContainer.classList.add('visible');
+                        toggle.textContent = 'Where on the compass \u25B2';
+                    }
+                });
+
+                card.appendChild(toggle);
+                card.appendChild(compassContainer);
+            })(cards[ci], archetypes[ci]);
         }
     })();
     </script>

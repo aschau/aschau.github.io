@@ -363,7 +363,7 @@
         showScreen(startScreen);
     });
 
-    document.getElementById('result-back-btn').addEventListener('click', function (e) {
+    document.getElementById('result-back-btn2').addEventListener('click', function (e) {
         e.preventDefault();
         showScreen(startScreen);
     });
@@ -1044,11 +1044,6 @@
         topLabel.textContent = '\u2191 Rules matter most';
         grid.appendChild(topLabel);
 
-        var bottomLabel = document.createElement('div');
-        bottomLabel.className = 'compass-label compass-label--bottom';
-        bottomLabel.textContent = '\u2193 Outcomes matter most';
-        grid.appendChild(bottomLabel);
-
         var area = document.createElement('div');
         area.className = 'compass-area';
 
@@ -1088,6 +1083,12 @@
         area.appendChild(youDot);
 
         grid.appendChild(area);
+
+        var bottomLabel = document.createElement('div');
+        bottomLabel.className = 'compass-label compass-label--bottom';
+        bottomLabel.textContent = '\u2193 Outcomes matter most';
+        grid.appendChild(bottomLabel);
+
         compass.appendChild(grid);
         container.appendChild(compass);
     }

@@ -88,21 +88,23 @@ body::before {
     padding-top: 0;
 }
 
-.result-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    width: 100%;
-    z-index: 10;
+.hidden {
+    display: none !important;
 }
 
-.result-fixed-footer {
+.result-header-inner {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin: -20px -20px 0;
+    width: calc(100% + 40px);
+}
+
+/* result-footer styles now handled by .arch-footer */
+
+.result-inner-footer {
     margin: 24px -20px 0;
     width: calc(100% + 40px);
-    position: sticky;
-    bottom: 0;
 }
 
 @keyframes fadeIn {
@@ -790,7 +792,7 @@ body::before {
     margin: 0;
 }
 
-.result-compass .compass-you {
+.compass-you {
     position: absolute;
     width: 20px;
     height: 20px;
@@ -802,7 +804,7 @@ body::before {
     z-index: 2;
 }
 
-.result-compass .compass-you-label {
+.compass-you-label {
     position: absolute;
     top: -22px;
     left: 50%;
@@ -1391,6 +1393,24 @@ body::before {
     background: rgba(139, 124, 247, 0.1);
 }
 
+.arch-header-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-self: end;
+}
+
+.arch-header-link {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.arch-header-link:hover {
+    color: var(--accent);
+}
+
 .arch-filters {
     position: sticky;
     top: 45px;
@@ -1535,6 +1555,52 @@ body::before {
     color: var(--text-secondary);
     line-height: 1.55;
     margin: 0;
+}
+
+/* Per-card mini compass */
+
+.mini-compass-toggle {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+    transition: all var(--transition);
+    text-align: center;
+}
+
+.mini-compass-toggle:hover {
+    background: var(--bg-card);
+    border-color: var(--border-hover);
+}
+
+.mini-compass-container {
+    display: none;
+    margin-top: 10px;
+    animation: fadeIn 0.25s ease;
+}
+
+.mini-compass-container.visible {
+    display: block;
+}
+
+.mini-compass {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mini-compass-area {
+    width: 100%;
+    max-width: 220px;
+    min-height: 160px;
 }
 
 @media (max-width: 480px) {

@@ -169,11 +169,11 @@
                   <h5 class="card-title">Waxheart</h5>
                   <img loading="lazy" class="card-img-top w-50 img-center mb-3" src="img/personal-projects/waxheartSplash.jpg" alt="Waxheart Splash Image">
                   <p class="card-text">
-                    An indie game project where I wear multiple hats as both engineer and technical producer.
-                    <br>Owning the client and engine side — handling engine upgrades and building custom debug tools for performance monitoring and QA testing.
-                    <br>Built a custom Discord bot integrated with Jenkins to streamline the team's build pipeline.
-                    <br>Helped form and lead the QA team — establishing RC test cycles, writing test case master sheets, and owning all QA documentation.
-                    <br>Handling production and leadership meetings, agile sprint planning, roadmap planning, and task management via Trello.
+                    DevOps engineer and technical producer for a distributed indie game team.
+                    <br>Built the team's entire build infrastructure from scratch — Jenkins CI/CD pipeline, Discord bot integration for build notifications and coordination, and Steamworks operations.
+                    <br>Formed and lead the QA department — establishing RC test cycles, writing test case master sheets, and owning all QA documentation.
+                    <br>Drive engineering roadmap, sprint planning, release management, and task coordination.
+                    <br>Using AI-assisted tooling (Claude) to accelerate development across pipeline and operations work.
                   </p>
                   <a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Check out the game!</a>
                 </div>
@@ -223,13 +223,13 @@
                 <div class="card-body">
                   <h5 class="card-title">Games & Tools — Built with AI</h5>
                   <p class="card-text">
-                    I started using Claude Code on March 14th, 2026. Within a week, everything below was live — two complete daily puzzle games with 365 puzzles each, and a room layout planner with a full furniture library. That kind of turnaround would have been impossible working solo in my spare time — especially in languages I'm not deeply familiar with.
+                    Everything below was built rapidly using AI-assisted development. These are projects that would have taken far longer working solo in my spare time — especially in languages I'm not deeply familiar with.
                   </p>
                   <p class="card-text">
                     I barely know HTML, CSS, or JavaScript — but I know game design, I know how to code, and I know how to direct an AI tool effectively. I bring the creative direction, design sensibility, and vision for what the end product should feel like. Claude handles the implementation details — the CSS quirks, the JavaScript patterns, the beam-tracing math. I direct, review, and iterate. It's like having a very fast junior developer who never gets tired, and knowing how to steer that effectively is a skill in itself.
                   </p>
                   <p class="card-text">
-                    These projects are proof of concept for a workflow I believe in: AI doesn't replace creative direction or design judgment — it removes the friction between having an idea and shipping it.
+                    These projects are proof of concept for a workflow I believe in: AI doesn't replace creative direction or design judgment — it closes the gap between having an idea and having something real you can put in front of people.
                   </p>
                 </div>
               </div>
@@ -294,34 +294,26 @@
               <div class="col">
               <div class="card text-white bg-dark h-100">
                 <div class="card-body">
-                  <h5 class="card-title">Beamlab</h5>
-                  <img loading="lazy" src="games/beamlab/og-image.png" class="img-fluid rounded mb-3" alt="Beamlab daily laser puzzle game">
+                  <h5 class="card-title">Examined</h5>
+                  <img loading="lazy" src="games/philosophy/og-image.png" class="img-fluid rounded mb-3" alt="Examined philosophy alignment quiz">
                   <p class="card-text">
-                    A daily laser puzzle. Place mirrors and beam splitters on a 6x6 grid to route a laser beam from the source to all targets. Fewer pieces = better score.
+                    A philosophy alignment quiz inspired by The Good Place and Absurd Trolley Problems. Answer 12 everyday moral dilemmas and discover which philosopher you think like — Kant, Mill, Aristotle, Scanlon, or Sartre.
                   </p>
                   <p class="card-text"><b>How it started:</b></p>
                   <ul class="text-white">
-                    <li>Basic mirror placement (/ and \) with a single laser source and target</li>
-                    <li>Simple brute-force puzzle generation</li>
-                    <li>Tap-to-cycle interaction for piece types</li>
-                  </ul>
-                  <p class="card-text"><b>How it evolved:</b></p>
-                  <ul class="text-white">
-                    <li>Added beam splitters that split the laser into two paths, each needing its own target</li>
-                    <li>Splitters now have two rotatable orientations — tap to flip which direction they reflect</li>
-                    <li>Pre-placed gold "fixed" mirrors that constrain the puzzle and can't be moved</li>
-                    <li>Optional gem collectibles that require creative detours from the main solution</li>
-                    <li>Walls-first generation algorithm with recursive backtracking for natural difficulty scaling</li>
-                    <li>Beam-aware solver with inventory-based pruning for fast validation</li>
-                    <li>Multiprocessed puzzle regeneration leveraging all CPU cores</li>
+                    <li>12 binary-choice questions mapping to five philosophical schools</li>
+                    <li>Simple result screen with score breakdown</li>
                   </ul>
                   <p class="card-text"><b>Where it is now:</b></p>
                   <ul class="text-white">
-                    <li>365 daily puzzles across three difficulty tiers (medium, hard, expert)</li>
-                    <li>Scoring system: Brilliant / Focused / Aligned / Scattered / Refracted</li>
-                    <li>Daily streaks, shareable results, and gem collection stats</li>
+                    <li>Philosopher ID card with archetype name, strengths, weaknesses, peer reviews, and compatibility</li>
+                    <li>20 unique archetypes from primary + secondary school combinations</li>
+                    <li>Interactive alignment compass with Voronoi zones on the archetypes page</li>
+                    <li>Image capture and sharing via html2canvas + Web Share API</li>
+                    <li>Witty reaction quips and philosopher quotes after each choice</li>
+                    <li>About page with school explainers, academic sources, and archetype browser</li>
                   </ul>
-                  <a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary me-2 mb-2">Play Beamlab</a>
+                  <a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary me-2 mb-2">Take the Quiz</a>
                 </div>
               </div>
               </div>
@@ -364,26 +356,34 @@
               <div class="col">
               <div class="card text-white bg-dark h-100">
                 <div class="card-body">
-                  <h5 class="card-title">Examined</h5>
-                  <img loading="lazy" src="games/philosophy/og-image.png" class="img-fluid rounded mb-3" alt="Examined philosophy alignment quiz">
+                  <h5 class="card-title">Beamlab</h5>
+                  <img loading="lazy" src="games/beamlab/og-image.png" class="img-fluid rounded mb-3" alt="Beamlab daily laser puzzle game">
                   <p class="card-text">
-                    A philosophy alignment quiz inspired by The Good Place and Absurd Trolley Problems. Answer 12 everyday moral dilemmas and discover which philosopher you think like — Kant, Mill, Aristotle, Scanlon, or Sartre.
+                    A daily laser puzzle. Place mirrors and beam splitters on a 6x6 grid to route a laser beam from the source to all targets. Fewer pieces = better score.
                   </p>
                   <p class="card-text"><b>How it started:</b></p>
                   <ul class="text-white">
-                    <li>12 binary-choice questions mapping to five philosophical schools</li>
-                    <li>Simple result screen with score breakdown</li>
+                    <li>Basic mirror placement (/ and \) with a single laser source and target</li>
+                    <li>Simple brute-force puzzle generation</li>
+                    <li>Tap-to-cycle interaction for piece types</li>
+                  </ul>
+                  <p class="card-text"><b>How it evolved:</b></p>
+                  <ul class="text-white">
+                    <li>Added beam splitters that split the laser into two paths, each needing its own target</li>
+                    <li>Splitters now have two rotatable orientations — tap to flip which direction they reflect</li>
+                    <li>Pre-placed gold "fixed" mirrors that constrain the puzzle and can't be moved</li>
+                    <li>Optional gem collectibles that require creative detours from the main solution</li>
+                    <li>Walls-first generation algorithm with recursive backtracking for natural difficulty scaling</li>
+                    <li>Beam-aware solver with inventory-based pruning for fast validation</li>
+                    <li>Multiprocessed puzzle regeneration leveraging all CPU cores</li>
                   </ul>
                   <p class="card-text"><b>Where it is now:</b></p>
                   <ul class="text-white">
-                    <li>Philosopher ID card with archetype name, strengths, weaknesses, peer reviews, and compatibility</li>
-                    <li>20 unique archetypes from primary + secondary school combinations</li>
-                    <li>Interactive alignment compass with Voronoi zones on the archetypes page</li>
-                    <li>Image capture and sharing via html2canvas + Web Share API</li>
-                    <li>Witty reaction quips and philosopher quotes after each choice</li>
-                    <li>About page with school explainers, academic sources, and archetype browser</li>
+                    <li>365 daily puzzles across three difficulty tiers (medium, hard, expert)</li>
+                    <li>Scoring system: Brilliant / Focused / Aligned / Scattered / Refracted</li>
+                    <li>Daily streaks, shareable results, and gem collection stats</li>
                   </ul>
-                  <a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary me-2 mb-2">Take the Quiz</a>
+                  <a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary me-2 mb-2">Play Beamlab</a>
                 </div>
               </div>
               </div>

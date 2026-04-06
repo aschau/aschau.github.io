@@ -168,6 +168,10 @@ body::before {
     color: var(--accent);
 }
 
+.start-footer {
+    margin-top: 24px;
+}
+
 /* ---- Buttons ---- */
 
 .btn-primary {
@@ -295,14 +299,68 @@ body::before {
     background: rgba(139, 124, 247, 0.1);
 }
 
+.choice-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+    transform: none;
+}
+
+.choice-btn:disabled:hover {
+    background: var(--bg-card);
+    border-color: var(--border);
+    transform: none;
+}
+
+.choice-btn:disabled.selected:hover {
+    background: rgba(139, 124, 247, 0.1);
+    border-color: var(--accent);
+}
+
 .choice-text {
     font-size: 0.95rem;
     line-height: 1.5;
     display: block;
 }
 
+.btn-next {
+    display: none;
+    margin-top: 20px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+    width: 100%;
+    animation: fadeIn 0.3s ease;
+}
+
+.btn-next:hover {
+    background: #7a6ae6;
+    box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.choice-reaction {
+    margin-top: 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-secondary);
+    line-height: 1.5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-align: center;
+}
+
+.choice-reaction.visible {
+    opacity: 1;
+}
+
 .philosopher-quote {
-    margin-top: 32px;
+    margin-top: 16px;
     padding: 16px;
     background: var(--bg-card);
     border-radius: var(--radius-sm);
@@ -542,6 +600,61 @@ body::before {
     font-style: normal;
 }
 
+/* Scenarios */
+
+.id-scenarios {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.id-scenario {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
+.id-scenario-label {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 2px;
+}
+
+/* Compatibility */
+
+.id-compatibility {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.id-compat-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82rem;
+}
+
+.id-compat-label {
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    width: 80px;
+    flex-shrink: 0;
+}
+
+.id-compat-label--best { color: var(--color-virtue); }
+.id-compat-label--worst { color: var(--color-existentialist); }
+
+.id-compat-value {
+    color: var(--text-secondary);
+}
+
 /* Card footer */
 
 .id-card-footer {
@@ -610,6 +723,139 @@ body::before {
 
 .share-toast.visible {
     transform: translateX(-50%) translateY(0);
+}
+
+/* ---- Result Alignment Compass ---- */
+
+.result-compass {
+    margin-bottom: 24px;
+}
+
+.result-compass .alignment-compass {
+    margin: 0;
+}
+
+.result-compass .compass-you {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid #fff;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 12px var(--accent-glow);
+    z-index: 2;
+}
+
+.result-compass .compass-you-label {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+}
+
+/* ---- Answer Breakdown ---- */
+
+.answer-breakdown {
+    margin-bottom: 24px;
+}
+
+.answer-breakdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.answer-breakdown-toggle:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
+}
+
+.answer-breakdown-toggle .toggle-arrow {
+    transition: transform 0.25s ease;
+    font-size: 0.7rem;
+}
+
+.answer-breakdown-toggle.open .toggle-arrow {
+    transform: rotate(180deg);
+}
+
+.answer-breakdown-content {
+    display: none;
+    margin-top: 12px;
+}
+
+.answer-breakdown-content.visible {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.breakdown-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+}
+
+.breakdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.breakdown-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+
+.breakdown-num {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.breakdown-choice {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin-bottom: 8px;
+    font-style: italic;
+}
+
+.breakdown-scores {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.breakdown-score-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid;
+    opacity: 0.9;
 }
 
 /* ---- Responsive ---- */
@@ -806,5 +1052,408 @@ body::before {
 
     .id-card-title {
         font-size: 1.4rem;
+    }
+}
+
+/* ---- About Page ---- */
+
+.about-container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 20px 64px;
+}
+
+.about-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-decoration: none;
+    margin-bottom: 32px;
+    font-weight: 500;
+}
+
+.about-back:hover { text-decoration: underline; }
+
+.about-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.about-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+}
+
+.about-section {
+    margin-bottom: 36px;
+}
+
+.about-section h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 12px;
+}
+
+.about-section p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+
+.about-section a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.about-section a:hover { text-decoration: underline; }
+
+.school-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.school-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+}
+
+.school-item-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.school-item-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.school-item-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.school-item-philosopher {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.school-item p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0 0 6px;
+}
+
+.school-item .school-question {
+    font-weight: 600;
+    font-style: italic;
+    color: var(--text-primary);
+}
+
+.school-item .school-source {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.faq-item {
+    margin-bottom: 20px;
+}
+
+.faq-item h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.faq-item p {
+    font-size: 0.85rem;
+}
+
+.inspiration-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+}
+
+.inspiration-list li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding: 6px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.inspiration-list li::before {
+    content: '\2022';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+}
+
+.inspiration-list strong {
+    color: var(--text-primary);
+}
+
+.about-footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.about-footer a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.about-footer a:hover { text-decoration: underline; }
+
+/* ---- School TLDR ---- */
+
+.school-tldr {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent-secondary);
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+/* ---- Alignment Compass ---- */
+
+.alignment-compass {
+    margin: 24px 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+
+.compass-title,
+.spectrum-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.compass-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.compass-label {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.compass-label--top { margin-bottom: 8px; }
+.compass-label--bottom { margin-top: 8px; }
+
+.compass-label--left,
+.compass-label--right {
+    display: none;
+}
+
+.compass-area {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Left/right labels rendered as overlays inside the compass area */
+.compass-area::before {
+    content: 'Individual';
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+}
+
+.compass-area::after {
+    content: 'Collective';
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+}
+
+.compass-axes {
+    position: absolute;
+    inset: 0;
+}
+
+.compass-axes::before,
+.compass-axes::after {
+    content: '';
+    position: absolute;
+    background: var(--border);
+}
+
+.compass-axes::before {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+}
+
+.compass-axes::after {
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+}
+
+.compass-dot {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+.compass-dot-label {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+/* ---- Spectrum Bars ---- */
+
+.spectrum-chart {
+    margin: 20px 0 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+
+.spectrum-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.spectrum-end {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    width: 90px;
+    flex-shrink: 0;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.spectrum-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 3px;
+    position: relative;
+}
+
+.spectrum-marker {
+    position: absolute;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.spectrum-legend {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.spectrum-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.spectrum-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+    .spectrum-end {
+        width: 70px;
+        font-size: 0.62rem;
     }
 }

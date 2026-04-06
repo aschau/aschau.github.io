@@ -23,86 +23,86 @@
         {
             label: 'The White Lie',
             scenario: 'Your friend just got a dramatic new haircut and is clearly excited about it. You think it looks terrible. They ask, "What do you think?"',
-            a: { text: '"Honestly? I\u2019m not a fan, but it\u2019s your head."', scores: [2, 0, 0, 0, 1] },
-            b: { text: '"It looks great on you!" You can always be honest later.', scores: [0, 0, 2, 1, 0] },
+            a: { text: '"Honestly? I\u2019m not a fan, but it\u2019s your head."', scores: [2, 0, 0, 0, 1], react: 'Brutal. Kant is slow-clapping somewhere.' },
+            b: { text: '"It looks great on you!" You can always be honest later.', scores: [0, 0, 2, 1, 0], react: 'A kind lie. Aristotle would call that social grace.' },
             quote: '"Act only according to that maxim whereby you can, at the same time, will that it should become a universal law." \u2014 Kant'
         },
         {
             label: 'The Runaway Car',
             scenario: 'A self-driving car\u2019s brakes fail. It can swerve into a wall, injuring you (the passenger), or stay on course and hit a jaywalker who crossed illegally. You designed the algorithm. What does it do?',
-            a: { text: 'Stay on course \u2014 the jaywalker broke the rules and accepted the risk.', scores: [1, 0, 0, 2, 0] },
-            b: { text: 'Swerve into the wall \u2014 you can\u2019t program a car to choose who lives.', scores: [0, 2, 1, 0, 0] },
-            quote: '"The needs of the many outweigh the needs of the few." \u2014 Spock (channeling Bentham)'
+            a: { text: 'Stay on course \u2014 the jaywalker broke the rules and accepted the risk.', scores: [1, 0, 0, 2, 0], react: 'Cold logic. The jaywalker had a contract with the crosswalk.' },
+            b: { text: 'Swerve into the wall \u2014 you can\u2019t program a car to choose who lives.', scores: [0, 2, 1, 0, 0], react: 'Self-sacrifice by algorithm. Very noble of your code.' },
+            quote: '"The needs of the many outweigh the needs of the few." \u2014 Spock (channeling Bentham)',
         },
         {
             label: 'The Credit Thief',
             scenario: 'Your coworker just presented your idea in a meeting and got praised by the boss. They glance at you nervously. The room is waiting for the next topic.',
-            a: { text: 'Speak up: "Thanks \u2014 I actually proposed that last week. Happy to walk through the details."', scores: [1, 0, 0, 0, 2] },
-            b: { text: 'Let it go. The team benefits either way, and you\u2019ll have other chances.', scores: [0, 2, 0, 1, 0] },
-            quote: '"Hell is other people." \u2014 Sartre'
+            a: { text: 'Speak up: "Thanks \u2014 I actually proposed that last week. Happy to walk through the details."', scores: [1, 0, 0, 0, 2], react: 'Authenticity over diplomacy. Sartre would buy you a coffee.' },
+            b: { text: 'Let it go. The team benefits either way, and you\u2019ll have other chances.', scores: [0, 2, 0, 1, 0], react: 'The greater good, one swallowed ego at a time.' },
+            quote: '"Hell is other people." \u2014 Sartre',
         },
         {
             label: 'The Effective Altruist',
             scenario: 'You have $100 to donate. You can fund one local kid\u2019s summer camp (and see them thrive in person), or vaccinate 50 children overseas (but you\u2019ll never meet them).',
-            a: { text: 'Vaccinate 50 kids \u2014 the math is overwhelming and lives are lives.', scores: [0, 2, 0, 1, 0] },
-            b: { text: 'Fund the local kid \u2014 community bonds and visible impact matter.', scores: [0, 0, 2, 0, 1] },
-            quote: '"It is the mark of an educated mind to be able to entertain a thought without accepting it." \u2014 Aristotle'
+            a: { text: 'Vaccinate 50 kids \u2014 the math is overwhelming and lives are lives.', scores: [0, 2, 0, 1, 0], react: '50 > 1. Mill just shed a single, efficient tear.' },
+            b: { text: 'Fund the local kid \u2014 community bonds and visible impact matter.', scores: [0, 0, 2, 0, 1], react: 'You chose the face over the number. That\u2019s very human.' },
+            quote: '"It is not enough to do good; one must do it in the right way." \u2014 John Morley (a question Mill spent his career on)',
         },
         {
             label: 'The Wedding Objection',
             scenario: 'Your best friend is about to marry someone you genuinely believe is bad for them. You\u2019ve seen red flags they keep dismissing. The wedding is in two weeks.',
-            a: { text: 'Tell them your concerns one last time, clearly and directly. You owe them the truth.', scores: [2, 0, 0, 0, 1] },
-            b: { text: 'Support their choice. They\u2019re an adult and this is their life to live.', scores: [0, 0, 1, 2, 0] },
-            quote: '"What we owe to each other is not to act on principles that others could reasonably reject." \u2014 Scanlon'
+            a: { text: 'Tell them your concerns one last time, clearly and directly. You owe them the truth.', scores: [2, 0, 0, 0, 1], react: 'The hardest conversations are the ones that matter most.' },
+            b: { text: 'Support their choice. They\u2019re an adult and this is their life to live.', scores: [0, 0, 1, 2, 0], react: 'Respecting autonomy, even when it hurts to watch.' },
+            quote: '"What we owe to each other is not to act on principles that others could reasonably reject." \u2014 Scanlon',
         },
         {
             label: 'The Late Samaritan',
             scenario: 'You\u2019re rushing to an important job interview. An elderly person drops their groceries all over the sidewalk and looks distressed. No one else is stopping.',
-            a: { text: 'Stop and help. A person in need right in front of you outweighs a potential opportunity.', scores: [0, 0, 2, 0, 1] },
-            b: { text: 'Keep going. You have obligations to the people expecting you, and you can\u2019t save everyone.', scores: [0, 1, 0, 2, 0] },
-            quote: '"We are condemned to be free; because once thrown into the world, we are responsible for everything we do." \u2014 Sartre'
+            a: { text: 'Stop and help. A person in need right in front of you outweighs a potential opportunity.', scores: [0, 0, 2, 0, 1], react: 'Character is what you do when no one\u2019s timing you.' },
+            b: { text: 'Keep going. You have obligations to the people expecting you, and you can\u2019t save everyone.', scores: [0, 1, 0, 2, 0], react: 'You kept a commitment. Scanlon respects the hustle.' },
+            quote: '"We are condemned to be free; because once thrown into the world, we are responsible for everything we do." \u2014 Sartre',
         },
         {
             label: 'The Sweatshop Paradox',
             scenario: 'You discover your favorite ethical clothing brand secretly uses sweatshop labor. But the workers say the factory is their best available option and a boycott would cost them their jobs.',
-            a: { text: 'Boycott immediately. You can\u2019t reward companies that lie about ethics.', scores: [2, 0, 0, 0, 1] },
-            b: { text: 'Keep buying for now. The workers\u2019 livelihoods matter more than your moral purity.', scores: [0, 2, 0, 1, 0] },
-            quote: '"Actions are right in proportion as they tend to promote happiness." \u2014 Mill'
+            a: { text: 'Boycott immediately. You can\u2019t reward companies that lie about ethics.', scores: [2, 0, 0, 0, 1], react: 'Principles over pragmatism. Your closet just got a lot emptier.' },
+            b: { text: 'Keep buying for now. The workers\u2019 livelihoods matter more than your moral purity.', scores: [0, 2, 0, 1, 0], react: 'Messy but compassionate. Mill would approve the trade-off.' },
+            quote: '"Actions are right in proportion as they tend to promote happiness." \u2014 Mill',
         },
         {
             label: 'The Impossible Lifeboat',
             scenario: 'A building is collapsing. You can rush into one of two rooms: one has five strangers, the other has one person you love deeply. You can only reach one room in time.',
-            a: { text: 'Save the five strangers. Every life has equal moral weight, including theirs.', scores: [1, 2, 0, 0, 0] },
-            b: { text: 'Save your person. Love and loyalty aren\u2019t weaknesses \u2014 they\u2019re what make us human.', scores: [0, 0, 2, 0, 1] },
-            quote: '"Excellence is not an act, but a habit." \u2014 Aristotle'
+            a: { text: 'Save the five strangers. Every life has equal moral weight, including theirs.', scores: [1, 2, 0, 0, 0], react: 'The math checks out. Your heart doesn\u2019t.' },
+            b: { text: 'Save your person. Love and loyalty aren\u2019t weaknesses \u2014 they\u2019re what make us human.', scores: [0, 0, 2, 0, 1], react: 'You chose love over logic. Aristotle is weeping proudly.' },
+            quote: '"A friend is a second self." \u2014 Aristotle (so what happens when the numbers disagree?)',
         },
         {
             label: 'The Dinner Party Dilemma',
             scenario: 'At a dinner party, your host proudly serves a dish made with ingredients you have strong ethical objections to (factory farmed, environmentally destructive, etc). Everyone else is eating happily.',
-            a: { text: 'Politely decline and explain your reasoning if asked. Your principles aren\u2019t negotiable.', scores: [2, 0, 0, 0, 1] },
-            b: { text: 'Eat it. The harm is already done, and respecting your host\u2019s effort is its own kind of ethics.', scores: [0, 0, 1, 2, 0] },
-            quote: '"No one can be perfectly free till all are free; no one can be perfectly moral till all are moral." \u2014 Herbert Spencer'
+            a: { text: 'Politely decline and explain your reasoning if asked. Your principles aren\u2019t negotiable.', scores: [2, 0, 0, 0, 1], react: 'You\u2019d rather go hungry than go along. Respect.' },
+            b: { text: 'Eat it. The harm is already done, and respecting your host\u2019s effort is its own kind of ethics.', scores: [0, 0, 1, 2, 0], react: 'Social harmony as its own moral act. Pass the salt.' },
+            quote: '"Two things fill the mind with ever new admiration: the starry heavens above me and the moral law within me." \u2014 Kant (who never ate anything he wasn\u2019t sure about)',
         },
         {
             label: 'The Paycheck Glitch',
             scenario: 'Your company accidentally deposits an extra $500 in your account. You know HR is overwhelmed and probably won\u2019t notice. You could really use the money right now.',
-            a: { text: 'Report it immediately. Taking what isn\u2019t yours is wrong, full stop.', scores: [2, 0, 1, 0, 0] },
-            b: { text: 'Say nothing. The billion-dollar company won\u2019t miss it and you need groceries.', scores: [0, 1, 0, 0, 2] },
-            quote: '"Man is nothing else but what he makes of himself." \u2014 Sartre'
+            a: { text: 'Report it immediately. Taking what isn\u2019t yours is wrong, full stop.', scores: [2, 0, 1, 0, 0], react: 'You\u2019d return a penny. Kant\u2019s favorite employee.' },
+            b: { text: 'Say nothing. The billion-dollar company won\u2019t miss it and you need groceries.', scores: [0, 1, 0, 0, 2], react: 'Robin Hood energy. Sartre says you own this choice.' },
+            quote: '"Property is theft." \u2014 Proudhon (but Kant would say keeping it is theft too)',
         },
         {
             label: 'The Broken Promise',
             scenario: 'You promised your friend you\u2019d help them move this Saturday. On Friday night, a stranger on your street has a medical emergency and asks you to drive them to the hospital tomorrow morning (they have a non-urgent but painful condition). Ambulances are backed up.',
-            a: { text: 'Help the stranger. A medical need, even a non-critical one, trumps moving boxes.', scores: [0, 2, 1, 0, 0] },
-            b: { text: 'Keep your promise. Your word to your friend is a bond you chose to make.', scores: [1, 0, 0, 2, 0] },
-            quote: '"To be is to be perceived... or to perceive." \u2014 Berkeley (but Scanlon would disagree)'
+            a: { text: 'Help the stranger. A medical need, even a non-critical one, trumps moving boxes.', scores: [0, 2, 1, 0, 0], react: 'Suffering outranks schedules. Your friend will understand.' },
+            b: { text: 'Keep your promise. Your word to your friend is a bond you chose to make.', scores: [1, 0, 0, 2, 0], react: 'A promise is a promise. Scanlon wrote a whole book about this.' },
+            quote: '"The promise given was a necessity of the past; the word broken is a necessity of the present." \u2014 Machiavelli (Scanlon would not approve)',
         },
         {
             label: 'The Whistleblower',
             scenario: 'You discover your company is quietly dumping waste into a river. Reporting it will likely shut down the factory, costing 200 coworkers their jobs in a town with no other employers. Staying silent means the river keeps getting polluted.',
-            a: { text: 'Blow the whistle. The environmental damage and dishonesty can\u2019t be justified, no matter the cost.', scores: [2, 0, 0, 0, 1] },
-            b: { text: 'Try to fix it internally first. 200 families depend on this \u2014 find a solution that doesn\u2019t destroy them.', scores: [0, 1, 0, 2, 0] },
-            quote: '"The greatest happiness of the greatest number is the foundation of morals and legislation." \u2014 Bentham'
+            a: { text: 'Blow the whistle. The environmental damage and dishonesty can\u2019t be justified, no matter the cost.', scores: [2, 0, 0, 0, 1], react: 'Truth over comfort. You just became the most principled unemployed person in town.' },
+            b: { text: 'Try to fix it internally first. 200 families depend on this \u2014 find a solution that doesn\u2019t destroy them.', scores: [0, 1, 0, 2, 0], react: 'Pragmatic justice. You\u2019re playing the long game for everyone.' },
+            quote: '"The greatest happiness of the greatest number is the foundation of morals and legislation." \u2014 Bentham',
         }
     ];
 
@@ -152,14 +152,20 @@
                 'Judges you silently for jaywalking'
             ],
             catchphrases: [
-                '"But is it universalizable?"',
+                '"I would rather be right than happy \u2014 and I\u2019m always right"',
                 '"I don\u2019t make the rules \u2014 well, actually, I do"'
             ],
             peerReviews: [
                 { text: 'Absolutely insufferable at parties, but I\u2019d trust them with my life.', author: 'Mill' },
                 { text: 'At least they\u2019re consistent. I\u2019ll give them that.', author: 'Sartre' }
             ],
-            hiddenTalent: 'Can turn any casual conversation into a moral philosophy lecture'
+            hiddenTalent: 'Can turn any casual conversation into a moral philosophy lecture',
+            scenarios: [
+                { label: 'Ordering coffee', text: 'Orders the same thing every time. Has calculated the most ethically sourced option and will not deviate.' },
+                { label: 'At a party', text: 'Standing in the corner, quietly judging everyone who double-dipped. Leaves at exactly the time they said they would.' },
+                { label: 'In an argument', text: 'Won\u2019t raise their voice but will calmly explain why you\u2019re wrong using a framework you can\u2019t argue with.' }
+            ],
+            compatibility: { best: 'virtue', worst: 'existentialist' }
         },
         utilitarian: {
             title: 'Utilitarian',
@@ -184,7 +190,13 @@
                 { text: 'Efficient but cold. Would not invite to game night.', author: 'Aristotle' },
                 { text: 'They\u2019d sell me out if the math checked out.', author: 'Scanlon' }
             ],
-            hiddenTalent: 'Can calculate the optimal tip percentage for any group dinner in 3 seconds'
+            hiddenTalent: 'Can calculate the optimal tip percentage for any group dinner in 3 seconds',
+            scenarios: [
+                { label: 'Ordering coffee', text: 'Calculates caffeine-to-dollar ratio. Tips 20% because studies show it maximizes barista happiness per dollar.' },
+                { label: 'At a party', text: 'Reorganized the snack table for optimal flow. Suggested a better playlist based on aggregate Spotify data.' },
+                { label: 'In an argument', text: 'Pulls up a study on their phone mid-sentence. "I\u2019m not saying you\u2019re wrong, I\u2019m saying the data is."' }
+            ],
+            compatibility: { best: 'contractualist', worst: 'existentialist' }
         },
         virtue: {
             title: 'Virtue Ethicist',
@@ -209,7 +221,13 @@
                 { text: 'Too focused on vibes, not enough on policy.', author: 'Scanlon' },
                 { text: 'Wholesome energy but needs to commit to something.', author: 'Sartre' }
             ],
-            hiddenTalent: 'Gives advice so good you feel guilty for not following it'
+            hiddenTalent: 'Gives advice so good you feel guilty for not following it',
+            scenarios: [
+                { label: 'Ordering coffee', text: 'Asks the barista how their day is going and means it. Orders something seasonal because growth means trying new things.' },
+                { label: 'At a party', text: 'The one person everyone is genuinely happy to see. Somehow already friends with the host\u2019s dog.' },
+                { label: 'In an argument', text: 'Doesn\u2019t argue back. Just asks a question so good it makes you argue with yourself for a week.' }
+            ],
+            compatibility: { best: 'kantian', worst: 'utilitarian' }
         },
         contractualist: {
             title: 'Contractualist',
@@ -234,7 +252,13 @@
                 { text: 'Means well but moves at the speed of bureaucracy.', author: 'Sartre' },
                 { text: 'Finally, someone who considers other people.', author: 'Mill' }
             ],
-            hiddenTalent: 'Can draft a roommate agreement that everyone actually likes'
+            hiddenTalent: 'Can draft a roommate agreement that everyone actually likes',
+            scenarios: [
+                { label: 'Ordering coffee', text: 'Asks the group what everyone wants first. Suggests splitting a French press because it\u2019s fairest per cup.' },
+                { label: 'At a party', text: 'Mediating a disagreement about the music within 10 minutes. Everyone feels heard. No one got their first choice.' },
+                { label: 'In an argument', text: '"I hear your point, but could you accept that principle if you were on the other side?" Infuriating because it works.' }
+            ],
+            compatibility: { best: 'utilitarian', worst: 'existentialist' }
         },
         existentialist: {
             title: 'Existentialist',
@@ -259,7 +283,13 @@
                 { text: 'Exhausting but never boring.', author: 'Aristotle' },
                 { text: 'They reject my framework on principle. Respect.', author: 'Kant' }
             ],
-            hiddenTalent: 'Can make ordering coffee sound like an act of radical rebellion'
+            hiddenTalent: 'Can make ordering coffee sound like an act of radical rebellion',
+            scenarios: [
+                { label: 'Ordering coffee', text: 'Stares at the menu for 3 minutes. Orders something they\u2019ve never tried because routine is a cage. Regrets it immediately.' },
+                { label: 'At a party', text: 'Showed up an hour late because "time is a construct." Currently in the kitchen having a deep conversation with someone they just met.' },
+                { label: 'In an argument', text: '"You\u2019re only saying that because society told you to think that way." Walks away to smoke a cigarette philosophically.' }
+            ],
+            compatibility: { best: 'virtue', worst: 'contractualist' }
         }
     };
 
@@ -275,8 +305,15 @@
     var startBtn = document.getElementById('start-btn');
     var choiceA = document.getElementById('choice-a');
     var choiceB = document.getElementById('choice-b');
+    var nextBtn = document.getElementById('next-btn');
     var retakeBtn = document.getElementById('retake-btn');
     var shareBtn = document.getElementById('share-btn');
+    var copyBtn = document.getElementById('copy-btn');
+    var saveImgBtn = document.getElementById('save-img-btn');
+    var breakdownToggle = document.getElementById('breakdown-toggle');
+    var breakdownContent = document.getElementById('breakdown-content');
+    var lastResultBtn = document.getElementById('last-result-btn');
+    var choosing = false; // prevents double-click
 
     // ---- Screen Management ----
     function showScreen(screen) {
@@ -285,6 +322,33 @@
         });
         screen.classList.add('active');
     }
+
+    // ---- Restore saved result ----
+    function restoreSavedResult() {
+        try {
+            var saved = JSON.parse(localStorage.getItem('examined_result'));
+            if (saved && saved.scores && saved.answers && saved.answers.length === QUESTIONS.length) {
+                return saved;
+            }
+        } catch (e) { /* ignore */ }
+        return null;
+    }
+
+    // Show "View Last Result" button if a saved result exists
+    var saved = restoreSavedResult();
+    if (saved) {
+        lastResultBtn.style.display = '';
+    }
+
+    lastResultBtn.addEventListener('click', function () {
+        var saved = restoreSavedResult();
+        if (!saved) return;
+        // Restore state
+        scores = saved.scores;
+        answers = saved.answers;
+        currentQuestion = QUESTIONS.length;
+        showResults();
+    });
 
     // ---- Game Flow ----
     startBtn.addEventListener('click', function () {
@@ -308,6 +372,10 @@
         document.getElementById('choice-a-text').textContent = q.a.text;
         document.getElementById('choice-b-text').textContent = q.b.text;
 
+        var reactionEl = document.getElementById('choice-reaction');
+        reactionEl.classList.remove('visible');
+        reactionEl.textContent = '';
+
         var quoteEl = document.getElementById('philosopher-quote');
         quoteEl.classList.remove('visible');
         quoteEl.textContent = q.quote;
@@ -320,9 +388,16 @@
 
         choiceA.classList.remove('selected');
         choiceB.classList.remove('selected');
+        choiceA.disabled = false;
+        choiceB.disabled = false;
+        nextBtn.style.display = 'none';
+        choosing = false;
     }
 
     function handleChoice(choice) {
+        if (choosing) return;
+        choosing = true;
+
         var q = QUESTIONS[currentQuestion];
         var chosen = choice === 'a' ? q.a : q.b;
 
@@ -332,51 +407,50 @@
         }
         answers.push(choice);
 
-        // Show selected state briefly
+        // Show selected state and disable buttons
         var btn = choice === 'a' ? choiceA : choiceB;
         btn.classList.add('selected');
+        choiceA.disabled = true;
+        choiceB.disabled = true;
 
-        // Show philosopher quote
-        document.getElementById('philosopher-quote').classList.add('visible');
+        // Show reaction immediately, then quote after a beat
+        var reactionEl = document.getElementById('choice-reaction');
+        reactionEl.textContent = chosen.react;
+        reactionEl.classList.add('visible');
 
-        // Advance after delay
         setTimeout(function () {
-            currentQuestion++;
-            if (currentQuestion >= QUESTIONS.length) {
-                showResults();
-            } else {
-                renderQuestion();
-            }
-        }, 1200);
+            document.getElementById('philosopher-quote').classList.add('visible');
+            nextBtn.style.display = 'block';
+        }, 600);
+    }
+
+    function advanceQuestion() {
+        currentQuestion++;
+        if (currentQuestion >= QUESTIONS.length) {
+            showResults();
+        } else {
+            renderQuestion();
+        }
     }
 
     choiceA.addEventListener('click', function () { handleChoice('a'); });
     choiceB.addEventListener('click', function () { handleChoice('b'); });
+    nextBtn.addEventListener('click', advanceQuestion);
 
     // ---- Results ----
-    function getArchetype() {
-        // Sort schools by score descending
-        var sorted = SCHOOL_KEYS.slice().sort(function (a, b) {
-            return scores[b] - scores[a];
+    // Sort by score descending, ties broken by SCHOOL_KEYS order (stable)
+    function getSortedSchools() {
+        return SCHOOL_KEYS.slice().sort(function (a, b) {
+            var diff = scores[b] - scores[a];
+            if (diff !== 0) return diff;
+            return SCHOOL_KEYS.indexOf(a) - SCHOOL_KEYS.indexOf(b);
         });
-
-        var primary = sorted[0];
-        var secondary = sorted[1];
-
-        // Handle tie for primary — pick by question order bias (first school encountered)
-        if (scores[primary] === scores[secondary]) {
-            // Keep the natural sort order (alphabetical tiebreak is fine)
-        }
-
-        var key = primary + '-' + secondary;
-        return ARCHETYPES[key] || FALLBACK_ARCHETYPE;
     }
 
-    function getTopSchools() {
-        var sorted = SCHOOL_KEYS.slice().sort(function (a, b) {
-            return scores[b] - scores[a];
-        });
-        return sorted;
+    function getArchetype() {
+        var sorted = getSortedSchools();
+        var key = sorted[0] + '-' + sorted[1];
+        return ARCHETYPES[key] || FALLBACK_ARCHETYPE;
     }
 
     // ---- Educational Sources ----
@@ -421,7 +495,7 @@
     function showResults() {
         showScreen(resultScreen);
 
-        var sorted = getTopSchools();
+        var sorted = getSortedSchools();
         var primaryKey = sorted[0];
         var profile = PROFILES[primaryKey];
         var archetype = getArchetype();
@@ -528,11 +602,61 @@
             reviewsEl.appendChild(review);
         }
 
+        // Scenarios
+        var scenariosEl = document.getElementById('card-scenarios');
+        scenariosEl.textContent = '';
+        for (var sc = 0; sc < profile.scenarios.length; sc++) {
+            var scenario = document.createElement('div');
+            scenario.className = 'id-scenario';
+
+            var scLabel = document.createElement('span');
+            scLabel.className = 'id-scenario-label';
+            scLabel.textContent = profile.scenarios[sc].label;
+
+            scenario.appendChild(scLabel);
+            scenario.appendChild(document.createTextNode(profile.scenarios[sc].text));
+            scenariosEl.appendChild(scenario);
+        }
+
+        // Compatibility
+        var compatEl = document.getElementById('card-compatibility');
+        compatEl.textContent = '';
+
+        var bestRow = document.createElement('div');
+        bestRow.className = 'id-compat-row';
+        var bestLabel = document.createElement('span');
+        bestLabel.className = 'id-compat-label id-compat-label--best';
+        bestLabel.textContent = 'Best with';
+        var bestValue = document.createElement('span');
+        bestValue.className = 'id-compat-value';
+        bestValue.textContent = SCHOOLS[profile.compatibility.best].name + ' \u2014 ' + PROFILES[profile.compatibility.best].philosopher;
+        bestRow.appendChild(bestLabel);
+        bestRow.appendChild(bestValue);
+        compatEl.appendChild(bestRow);
+
+        var worstRow = document.createElement('div');
+        worstRow.className = 'id-compat-row';
+        var worstLabel = document.createElement('span');
+        worstLabel.className = 'id-compat-label id-compat-label--worst';
+        worstLabel.textContent = 'Avoid';
+        var worstValue = document.createElement('span');
+        worstValue.className = 'id-compat-value';
+        worstValue.textContent = SCHOOLS[profile.compatibility.worst].name + ' \u2014 ' + PROFILES[profile.compatibility.worst].philosopher;
+        worstRow.appendChild(worstLabel);
+        worstRow.appendChild(worstValue);
+        compatEl.appendChild(worstRow);
+
         // Archetype subtitle in footer
         document.getElementById('card-archetype').textContent = archetype.name;
 
         // ---- Build Learn More section ----
         buildLearnMore(sorted, totalScore);
+
+        // ---- Build Alignment Compass ----
+        buildResultCompass(totalScore);
+
+        // ---- Build Answer Breakdown ----
+        buildBreakdown();
 
         // Update progress bar to full
         document.getElementById('progress-fill').style.width = '100%';
@@ -661,19 +785,126 @@
     }
 
     // ---- Share ----
-    shareBtn.addEventListener('click', function () {
-        if (typeof generateShareText === 'function') {
-            var archetype = getArchetype();
-            var sorted = getTopSchools();
-            var profile = PROFILES[sorted[0]];
-            var text = generateShareText(archetype.name, profile, scores, SCHOOLS, SCHOOL_KEYS);
-            if (navigator.share) {
-                navigator.share({ text: text }).catch(function () {
-                    copyToClipboard(text);
-                });
-            } else {
-                copyToClipboard(text);
+    function generateShareText() {
+        var archetype = getArchetype();
+        var sorted = getSortedSchools();
+        var profile = PROFILES[sorted[0]];
+
+        var totalScore = 0;
+        for (var i = 0; i < SCHOOL_KEYS.length; i++) totalScore += scores[SCHOOL_KEYS[i]];
+        if (totalScore === 0) totalScore = 1;
+
+        var lines = [
+            profile.icon + ' I\u2019m a ' + profile.title + '! (' + archetype.name + ')',
+            profile.motto,
+            ''
+        ];
+
+        for (var j = 0; j < sorted.length; j++) {
+            var key = sorted[j];
+            var pct = Math.round((scores[key] / totalScore) * 100);
+            var bar = '';
+            var barLen = Math.round(pct / 10);
+            for (var k = 0; k < barLen; k++) bar += '\u2588';
+            for (var m = barLen; m < 10; m++) bar += '\u2591';
+            lines.push(SCHOOLS[key].name + ' ' + bar + ' ' + pct + '%');
+        }
+
+        lines.push('');
+        lines.push('What\u2019s your moral philosophy?');
+        lines.push('https://www.raggedydoc.com/games/philosophy/');
+
+        return lines.join('\n');
+    }
+
+    // ---- Image Capture ----
+    // html2canvas can't render background-clip: text, so we temporarily
+    // swap gradient text to solid color before capture and restore after.
+    function captureCard() {
+        var card = document.getElementById('id-card');
+        var gradientEls = card.querySelectorAll('.id-card-title');
+        var saved = [];
+
+        for (var i = 0; i < gradientEls.length; i++) {
+            var el = gradientEls[i];
+            saved.push({
+                el: el,
+                bg: el.style.background,
+                clip: el.style.webkitBackgroundClip,
+                fill: el.style.webkitTextFillColor
+            });
+            el.style.background = 'none';
+            el.style.webkitBackgroundClip = '';
+            el.style.webkitTextFillColor = '#e8e6f0';
+        }
+
+        return html2canvas(card, {
+            backgroundColor: '#12122a',
+            scale: 2,
+            useCORS: true
+        }).then(function (canvas) {
+            // Restore gradient text
+            for (var j = 0; j < saved.length; j++) {
+                var s = saved[j];
+                s.el.style.background = s.bg;
+                s.el.style.webkitBackgroundClip = s.clip;
+                s.el.style.webkitTextFillColor = s.fill;
             }
+            return canvas;
+        });
+    }
+
+    saveImgBtn.addEventListener('click', function () {
+        saveImgBtn.disabled = true;
+        saveImgBtn.textContent = 'Generating...';
+        captureCard().then(function (canvas) {
+            var link = document.createElement('a');
+            link.download = 'philosopher-id.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast('Image saved!');
+        }).catch(function () {
+            showToast('Could not generate image');
+        }).finally(function () {
+            saveImgBtn.disabled = false;
+            saveImgBtn.textContent = 'Save ID Card as Image';
+        });
+    });
+
+    copyBtn.addEventListener('click', function () {
+        copyBtn.disabled = true;
+        copyBtn.textContent = 'Generating...';
+        captureCard().then(function (canvas) {
+            return new Promise(function (resolve, reject) {
+                canvas.toBlob(function (blob) {
+                    if (!blob) return reject();
+                    if (navigator.clipboard && navigator.clipboard.write) {
+                        navigator.clipboard.write([
+                            new ClipboardItem({ 'image/png': blob })
+                        ]).then(function () {
+                            showToast('Image copied to clipboard!');
+                            resolve();
+                        }).catch(reject);
+                    } else {
+                        reject();
+                    }
+                }, 'image/png');
+            });
+        }).catch(function () {
+            // Fallback: copy text instead
+            copyToClipboard(generateShareText());
+        }).finally(function () {
+            copyBtn.disabled = false;
+            copyBtn.textContent = 'Copy Image';
+        });
+    });
+
+    shareBtn.addEventListener('click', function () {
+        var text = generateShareText();
+        if (navigator.share) {
+            navigator.share({ text: text }).catch(function () { });
+        } else {
+            copyToClipboard(text);
         }
     });
 
@@ -724,12 +955,153 @@
         }, 2500);
     }
 
-    // Expose for share.js
-    window.ExaminedGame = {
-        getArchetype: getArchetype,
-        getScores: function () { return scores; },
-        getSchools: function () { return SCHOOLS; },
-        getSchoolKeys: function () { return SCHOOL_KEYS; }
+    // ---- Alignment Compass on Result ----
+    // Maps each school to a position on the 2D compass:
+    //   X axis: individual (left) ↔ collective (right)
+    //   Y axis: rules (top) ↔ outcomes (bottom)
+    var COMPASS_POSITIONS = {
+        kantian:        { x: 60, y: 18 },
+        utilitarian:    { x: 75, y: 72 },
+        virtue:         { x: 45, y: 45 },
+        contractualist: { x: 78, y: 35 },
+        existentialist: { x: 22, y: 65 }
     };
+
+    function buildResultCompass(totalScore) {
+        var container = document.getElementById('result-compass');
+        container.textContent = '';
+
+        // Calculate "You" position as weighted average of school positions
+        var youX = 0, youY = 0;
+        for (var i = 0; i < SCHOOL_KEYS.length; i++) {
+            var key = SCHOOL_KEYS[i];
+            var weight = scores[key] / totalScore;
+            youX += COMPASS_POSITIONS[key].x * weight;
+            youY += COMPASS_POSITIONS[key].y * weight;
+        }
+
+        var compass = document.createElement('div');
+        compass.className = 'alignment-compass';
+
+        var title = document.createElement('div');
+        title.className = 'compass-title';
+        title.textContent = 'Where you fall';
+        compass.appendChild(title);
+
+        var grid = document.createElement('div');
+        grid.className = 'compass-grid';
+
+        var labels = [
+            { cls: 'compass-label compass-label--top', text: 'Rules matter most' },
+            { cls: 'compass-label compass-label--bottom', text: 'Outcomes matter most' },
+            { cls: 'compass-label compass-label--left', text: 'Individual focus' },
+            { cls: 'compass-label compass-label--right', text: 'Collective focus' }
+        ];
+        for (var l = 0; l < labels.length; l++) {
+            var lbl = document.createElement('div');
+            lbl.className = labels[l].cls;
+            lbl.textContent = labels[l].text;
+            grid.appendChild(lbl);
+        }
+
+        var area = document.createElement('div');
+        area.className = 'compass-area';
+
+        var axes = document.createElement('div');
+        axes.className = 'compass-axes';
+        area.appendChild(axes);
+
+        // School dots (dimmed)
+        for (var s = 0; s < SCHOOL_KEYS.length; s++) {
+            var sk = SCHOOL_KEYS[s];
+            var pos = COMPASS_POSITIONS[sk];
+            var dot = document.createElement('div');
+            dot.className = 'compass-dot';
+            dot.style.top = pos.y + '%';
+            dot.style.left = pos.x + '%';
+            dot.style.background = SCHOOLS[sk].color;
+            dot.style.opacity = '0.4';
+            dot.style.width = '10px';
+            dot.style.height = '10px';
+
+            var dotLabel = document.createElement('span');
+            dotLabel.className = 'compass-dot-label';
+            dotLabel.textContent = SCHOOLS[sk].name;
+            dotLabel.style.opacity = '0.5';
+            dot.appendChild(dotLabel);
+            area.appendChild(dot);
+        }
+
+        // "You" dot
+        var youDot = document.createElement('div');
+        youDot.className = 'compass-you';
+        youDot.style.top = youY + '%';
+        youDot.style.left = youX + '%';
+        var youLabel = document.createElement('span');
+        youLabel.className = 'compass-you-label';
+        youLabel.textContent = 'You';
+        youDot.appendChild(youLabel);
+        area.appendChild(youDot);
+
+        grid.appendChild(area);
+        compass.appendChild(grid);
+        container.appendChild(compass);
+    }
+
+    // ---- Answer Breakdown ----
+    function buildBreakdown() {
+        breakdownContent.textContent = '';
+        for (var i = 0; i < QUESTIONS.length; i++) {
+            var q = QUESTIONS[i];
+            var choice = answers[i];
+            var chosen = choice === 'a' ? q.a : q.b;
+
+            var item = document.createElement('div');
+            item.className = 'breakdown-item';
+
+            var header = document.createElement('div');
+            header.className = 'breakdown-header';
+
+            var label = document.createElement('span');
+            label.className = 'breakdown-label';
+            label.textContent = q.label;
+
+            var num = document.createElement('span');
+            num.className = 'breakdown-num';
+            num.textContent = 'Q' + (i + 1);
+
+            header.appendChild(label);
+            header.appendChild(num);
+
+            var choiceText = document.createElement('p');
+            choiceText.className = 'breakdown-choice';
+            choiceText.textContent = chosen.text;
+
+            var scoreTags = document.createElement('div');
+            scoreTags.className = 'breakdown-scores';
+
+            for (var j = 0; j < SCHOOL_KEYS.length; j++) {
+                var pts = chosen.scores[j];
+                if (pts > 0) {
+                    var tag = document.createElement('span');
+                    tag.className = 'breakdown-score-tag';
+                    tag.style.borderColor = SCHOOLS[SCHOOL_KEYS[j]].color;
+                    tag.style.color = SCHOOLS[SCHOOL_KEYS[j]].color;
+                    tag.textContent = SCHOOLS[SCHOOL_KEYS[j]].name + ' +' + pts;
+                    scoreTags.appendChild(tag);
+                }
+            }
+
+            item.appendChild(header);
+            item.appendChild(choiceText);
+            item.appendChild(scoreTags);
+            breakdownContent.appendChild(item);
+        }
+    }
+
+    breakdownToggle.addEventListener('click', function () {
+        breakdownToggle.classList.toggle('open');
+        breakdownContent.classList.toggle('visible');
+    });
 
 })();

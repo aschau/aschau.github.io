@@ -13,9 +13,11 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.raggedydoc.com/games/philosophy/">
     <meta property="og:site_name" content="Examined">
+    <meta property="og:image" content="https://www.raggedydoc.com/games/philosophy/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Examined — What's Your Moral Philosophy?">
     <meta name="twitter:description" content="Answer 12 everyday moral dilemmas and discover which philosopher you think like. Are you a Kantian? A Utilitarian? Find out.">
+    <meta name="twitter:image" content="https://www.raggedydoc.com/games/philosophy/og-image.png">
     <link rel="canonical" href="https://www.raggedydoc.com/games/philosophy/">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,8 +62,10 @@
                     <span class="phil-tag">Sartre</span>
                 </div>
                 <button class="btn-primary" id="start-btn">Begin the Examination</button>
+                <button class="btn-secondary" id="last-result-btn" style="display:none; margin-top: 12px;">View Last Result</button>
                 <p class="start-quote">"The unexamined life is not worth living." — Socrates</p>
                 <a href="about.html" class="about-link">About this quiz &rarr;</a>
+                <p class="result-footer start-footer">Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a> · <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee</a> · <a href="../../privacy.html">Privacy</a></p>
             </div>
         </div>
 
@@ -84,7 +88,9 @@
                         <span class="choice-text" id="choice-b-text"></span>
                     </button>
                 </div>
+                <button class="btn-next" id="next-btn">Next &rarr;</button>
             </div>
+            <div class="choice-reaction" id="choice-reaction"></div>
             <div class="philosopher-quote" id="philosopher-quote"></div>
         </div>
 
@@ -131,6 +137,16 @@
                     <div class="id-peer-reviews" id="card-reviews"></div>
                 </div>
 
+                <div class="id-card-section">
+                    <h3 class="id-section-label">Your Philosopher At...</h3>
+                    <div class="id-scenarios" id="card-scenarios"></div>
+                </div>
+
+                <div class="id-card-section id-card-section--alt">
+                    <h3 class="id-section-label">Compatibility</h3>
+                    <div class="id-compatibility" id="card-compatibility"></div>
+                </div>
+
                 <div class="id-card-footer">
                     <span class="id-card-archetype" id="card-archetype"></span>
                     <span class="id-card-url">raggedydoc.com/games/philosophy</span>
@@ -138,14 +154,27 @@
             </div>
 
             <div class="result-actions">
-                <button class="btn-primary" id="share-btn">Share Your Result</button>
+                <button class="btn-primary" id="save-img-btn">Save ID Card as Image</button>
+                <button class="btn-secondary" id="copy-btn">Copy Image</button>
+                <button class="btn-secondary" id="share-btn">Share as Text</button>
                 <button class="btn-secondary" id="retake-btn">Retake Quiz</button>
             </div>
-            <p class="result-footer">Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a> · <a href="about.html">About this quiz</a></p>
+
+            <!-- Alignment Map -->
+            <div class="result-compass" id="result-compass"></div>
+
+            <!-- Answer Breakdown -->
+            <div class="answer-breakdown" id="answer-breakdown">
+                <button class="answer-breakdown-toggle" id="breakdown-toggle">
+                    How each answer shaped your result <span class="toggle-arrow">&#9660;</span>
+                </button>
+                <div class="answer-breakdown-content" id="breakdown-content"></div>
+            </div>
+            <p class="result-footer">Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a> · <a href="about.html">About this quiz</a> · <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee</a> · <a href="../../privacy.html">Privacy</a></p>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="game.js"></script>
-    <script src="share.js"></script>
 </body>
 </html>

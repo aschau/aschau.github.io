@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OG Image Generator — Examined</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .og {
+            width: 1200px;
+            height: 630px;
+            background: #0a0a1a;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Subtle gradient blobs */
+        .og::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            left: -100px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(139, 124, 247, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .og::after {
+            content: '';
+            position: absolute;
+            bottom: -120px;
+            right: -80px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(196, 167, 255, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 0 80px;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #8b7cf7;
+            border: 1.5px solid #8b7cf7;
+            border-radius: 5px;
+            padding: 5px 14px;
+            margin-bottom: 28px;
+        }
+
+        .title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 86px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #e8e6f0 0%, #c4a7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.05;
+        }
+
+        .subtitle {
+            font-size: 26px;
+            color: #9895a8;
+            font-weight: 400;
+            margin-bottom: 40px;
+        }
+
+        .tags {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .tag {
+            font-size: 15px;
+            font-weight: 600;
+            padding: 7px 18px;
+            border-radius: 24px;
+            border: 1.5px solid;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tag--kantian { border-color: #7eb8da; color: #7eb8da; }
+        .tag--utilitarian { border-color: #f0c674; color: #f0c674; }
+        .tag--virtue { border-color: #a8d5a2; color: #a8d5a2; }
+        .tag--contractualist { border-color: #d4a0d0; color: #d4a0d0; }
+        .tag--existentialist { border-color: #e8917a; color: #e8917a; }
+
+        .domain {
+            position: absolute;
+            bottom: 24px;
+            right: 32px;
+            font-size: 14px;
+            color: #6b6880;
+            font-weight: 500;
+            z-index: 1;
+        }
+
+        .quote {
+            position: absolute;
+            bottom: 24px;
+            left: 32px;
+            font-size: 13px;
+            color: #4a4860;
+            font-style: italic;
+            z-index: 1;
+        }
+
+        .instructions {
+            margin-top: 24px;
+            color: #9895a8;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="og" id="og">
+            <div class="content">
+                <div class="badge">Philosophy Alignment Quiz</div>
+                <div class="title">Examined</div>
+                <p class="subtitle">What's your moral philosophy?</p>
+                <div class="tags">
+                    <span class="tag tag--kantian">Kant</span>
+                    <span class="tag tag--utilitarian">Mill</span>
+                    <span class="tag tag--virtue">Aristotle</span>
+                    <span class="tag tag--contractualist">Scanlon</span>
+                    <span class="tag tag--existentialist">Sartre</span>
+                </div>
+            </div>
+            <span class="quote">"The unexamined life is not worth living." — Socrates</span>
+            <span class="domain">raggedydoc.com</span>
+        </div>
+        <p class="instructions">Screenshot the card above at 1200&times;630. Right-click &rarr; Inspect &rarr; select the .og div &rarr; Capture node screenshot.</p>
+    </div>
+</body>
+</html>

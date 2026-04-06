@@ -1016,14 +1016,13 @@
         var text = generateShareText();
         var fullText = text + '\n' + quizUrl;
 
-        // Mobile: if cached blob is ready, share image + text
+        // Mobile: if cached blob is ready, share image + text + URL
         // synchronously in the click handler (preserves user gesture).
-        // No URL in text or url param — share targets generate a link
-        // preview that overrides the image file. The card footer already
-        // has the URL baked into the image.
+        // URL without protocol avoids link preview that overrides image.
         if (isMobile && cachedCardBlob && navigator.share && navigator.canShare) {
             var file = new File([cachedCardBlob], 'philosopher-id.png', { type: 'image/png' });
-            var shareData = { text: text, files: [file] };
+            var imgText = text + '\nraggedydoc.com/games/philosophy';
+            var shareData = { text: imgText, files: [file] };
             if (navigator.canShare(shareData)) {
                 navigator.share(shareData).catch(function () { /* user cancelled */ });
                 return;

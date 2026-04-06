@@ -1,0 +1,1970 @@
+/* ============================================
+   Examined — Philosophy Alignment Quiz
+   ============================================ */
+
+:root {
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #12122a;
+    --bg-card: rgba(255, 255, 255, 0.04);
+    --bg-card-hover: rgba(255, 255, 255, 0.08);
+    --text-primary: #e8e6f0;
+    --text-secondary: #9895a8;
+    --text-muted: #6b6880;
+    --accent: #8b7cf7;
+    --accent-glow: rgba(139, 124, 247, 0.3);
+    --accent-secondary: #c4a7ff;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(139, 124, 247, 0.4);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --transition: 0.25s ease;
+
+    /* Philosopher colors */
+    --color-kantian: #7eb8da;
+    --color-utilitarian: #f0c674;
+    --color-virtue: #a8d5a2;
+    --color-contractualist: #d4a0d0;
+    --color-existentialist: #e8917a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+}
+
+/* Background gradient */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(139, 124, 247, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(196, 167, 255, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.game-container {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+/* ---- Screens ---- */
+
+.screen {
+    display: none;
+    width: 100%;
+    animation: fadeIn 0.4s ease;
+}
+
+.screen.active {
+    display: block;
+}
+
+#question-screen {
+    padding-top: 15vh;
+}
+
+/* Result screen content — matches about-container layout */
+.result-content {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 16px 20px 40px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- Start Screen ---- */
+
+.start-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+    min-height: calc(100dvh - 80px);
+}
+
+.start-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.start-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 20px;
+    background: rgba(10, 10, 26, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    z-index: 10;
+}
+
+.game-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.game-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    font-weight: 400;
+}
+
+.game-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+    margin-bottom: 20px;
+    max-width: 320px;
+}
+
+.philosophers-preview {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: nowrap;
+    margin-bottom: 24px;
+}
+
+.phil-tag {
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    white-space: nowrap;
+}
+
+.phil-tag:nth-child(1) { border-color: var(--color-kantian); color: var(--color-kantian); }
+.phil-tag:nth-child(2) { border-color: var(--color-utilitarian); color: var(--color-utilitarian); }
+.phil-tag:nth-child(3) { border-color: var(--color-virtue); color: var(--color-virtue); }
+.phil-tag:nth-child(4) { border-color: var(--color-contractualist); color: var(--color-contractualist); }
+.phil-tag:nth-child(5) { border-color: var(--color-existentialist); color: var(--color-existentialist); }
+
+#last-result-btn {
+    margin-top: 10px;
+}
+
+.start-quote {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 6px;
+}
+
+.start-links {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.start-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.start-links a:hover {
+    color: var(--accent);
+}
+
+/* ---- Buttons ---- */
+
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 14px 36px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+    letter-spacing: 0.01em;
+}
+
+.btn-primary:hover {
+    background: #7a6ae6;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 12px 28px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+}
+
+.btn-secondary:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+    background: var(--bg-card);
+}
+
+/* ---- Question Screen ---- */
+
+.question-header {
+    margin-bottom: 32px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--bg-card);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+
+.question-count {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.question-content {
+    animation: slideIn 0.35s ease;
+}
+
+.scenario-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.scenario-text {
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: var(--text-primary);
+    margin-bottom: 28px;
+}
+
+.choices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.choice-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+    color: var(--text-primary);
+}
+
+.choice-btn:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
+    transform: translateX(4px);
+}
+
+.choice-btn:active {
+    transform: translateX(2px);
+}
+
+.choice-btn.selected {
+    border-color: var(--accent);
+    background: rgba(139, 124, 247, 0.1);
+}
+
+.choice-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+    transform: none;
+}
+
+.choice-btn:disabled:hover {
+    background: var(--bg-card);
+    border-color: var(--border);
+    transform: none;
+}
+
+.choice-btn:disabled.selected:hover {
+    background: rgba(139, 124, 247, 0.1);
+    border-color: var(--accent);
+}
+
+.choice-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    display: block;
+}
+
+.btn-next {
+    display: none;
+    margin-top: 20px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+    width: 100%;
+    animation: fadeIn 0.3s ease;
+}
+
+.btn-next:hover {
+    background: #7a6ae6;
+    box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.choice-reaction {
+    margin-top: 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-secondary);
+    line-height: 1.5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-align: center;
+}
+
+.choice-reaction.visible {
+    opacity: 1;
+}
+
+.philosopher-quote {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.5;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.philosopher-quote.visible {
+    opacity: 1;
+}
+
+/* ---- Result Screen ---- */
+
+.result-intro {
+    text-align: center;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+/* ---- ID Card ---- */
+
+.id-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.id-card-header {
+    text-align: center;
+    padding: 28px 24px 20px;
+    background: linear-gradient(135deg, rgba(139, 124, 247, 0.12) 0%, rgba(196, 167, 255, 0.06) 100%);
+    border-bottom: 1px solid var(--border);
+}
+
+.id-card-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 3px 10px;
+    margin-bottom: 16px;
+}
+
+.id-card-icon {
+    font-size: 3rem;
+    margin-bottom: 8px;
+    line-height: 1;
+}
+
+.id-card-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.id-card-school {
+    font-size: 0.82rem;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.id-card-archetype-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 12px;
+    padding: 0 8px;
+}
+
+.id-card-motto {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Card sections */
+
+.id-card-section {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.id-card-section--alt {
+    background: rgba(255, 255, 255, 0.015);
+}
+
+.id-section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.id-section-label--green { color: var(--color-virtue); }
+.id-section-label--red { color: var(--color-existentialist); }
+
+/* The Mix */
+
+.id-mix-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+
+/* Columns for strengths/weaknesses */
+
+.id-card-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.id-trait-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.id-trait-list li {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+}
+
+.id-trait-list li::before {
+    content: '\2022';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+}
+
+/* Catchphrases */
+
+.id-catchphrases {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.id-catchphrase {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* Alignment bars */
+
+.id-alignment-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.id-alignment-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.id-alignment-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    width: 100px;
+    text-align: right;
+    flex-shrink: 0;
+    font-weight: 500;
+}
+
+.id-alignment-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.id-alignment-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+.id-alignment-pct {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    width: 32px;
+    flex-shrink: 0;
+    font-weight: 600;
+}
+
+.id-hidden-talent {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    line-height: 1.4;
+}
+
+.id-hidden-talent::before {
+    content: 'Hidden Talent: ';
+    font-weight: 700;
+    color: var(--accent);
+}
+
+/* Peer reviews */
+
+.id-peer-reviews {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.id-review {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
+.id-review-text {
+    font-style: italic;
+}
+
+.id-review-author {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* Scenarios */
+
+.id-scenarios {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.id-scenario {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
+.id-scenario-label {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 2px;
+}
+
+/* Compatibility */
+
+.id-compatibility {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.id-compat-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82rem;
+}
+
+.id-compat-label {
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    width: 80px;
+    flex-shrink: 0;
+}
+
+.id-compat-label--best { color: var(--color-virtue); }
+.id-compat-label--worst { color: var(--color-existentialist); }
+
+.id-compat-value {
+    color: var(--text-secondary);
+}
+
+/* Card footer */
+
+.id-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.id-card-archetype {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent-secondary);
+}
+
+.id-card-url {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Result actions (below card) */
+
+.result-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.result-about-link {
+    font-size: 0.78rem;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ---- Share Toast ---- */
+
+.share-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-family: inherit;
+    z-index: 100;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+}
+
+.share-toast.visible {
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ---- Result Alignment Compass ---- */
+
+.result-compass {
+    margin-bottom: 24px;
+}
+
+.result-compass .alignment-compass {
+    margin: 0;
+}
+
+.compass-you {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid #fff;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 12px var(--accent-glow);
+    z-index: 2;
+}
+
+.compass-you-label {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+}
+
+/* ---- Answer Breakdown ---- */
+
+.answer-breakdown {
+    margin-bottom: 24px;
+}
+
+.answer-breakdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.answer-breakdown-toggle:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
+}
+
+.answer-breakdown-toggle .toggle-arrow {
+    transition: transform 0.25s ease;
+    font-size: 0.7rem;
+}
+
+.answer-breakdown-toggle.open .toggle-arrow {
+    transform: rotate(180deg);
+}
+
+.answer-breakdown-content {
+    display: none;
+    margin-top: 12px;
+}
+
+.answer-breakdown-content.visible {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.breakdown-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+}
+
+.breakdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.breakdown-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+
+.breakdown-num {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.breakdown-choice {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin-bottom: 8px;
+    font-style: italic;
+}
+
+.breakdown-scores {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.breakdown-score-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid;
+    opacity: 0.9;
+}
+
+/* ---- Responsive ---- */
+
+/* ---- Learn More / Sources ---- */
+
+.id-learn-more {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.learn-more-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.learn-more-toggle:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
+}
+
+.learn-more-toggle .toggle-arrow {
+    transition: transform 0.25s ease;
+    font-size: 0.7rem;
+}
+
+.learn-more-toggle.open .toggle-arrow {
+    transform: rotate(180deg);
+}
+
+.learn-more-content {
+    display: none;
+    margin-top: 12px;
+}
+
+.learn-more-content.visible {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.learn-more-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.learn-more-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.learn-more-header:hover {
+    background: var(--bg-card);
+}
+
+.learn-more-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.learn-more-school {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.learn-more-pct {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.learn-more-arrow {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    transition: transform 0.25s ease;
+}
+
+.learn-more-card.open .learn-more-arrow {
+    transform: rotate(180deg);
+}
+
+.learn-more-body {
+    display: none;
+    padding: 0 16px 14px;
+    border-top: 1px solid var(--border);
+}
+
+.learn-more-card.open .learn-more-body {
+    display: block;
+}
+
+.learn-more-explanation {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 10px;
+    padding-top: 12px;
+}
+
+.learn-more-source {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.learn-more-source a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.learn-more-source a:hover {
+    text-decoration: underline;
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 480px) {
+    .game-container {
+        padding: 16px;
+    }
+
+    .game-title {
+        font-size: 2.6rem;
+    }
+
+    .game-title {
+        margin-bottom: 4px;
+    }
+
+    .game-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+    }
+
+    .game-desc {
+        font-size: 0.8rem;
+        margin-bottom: 16px;
+    }
+
+    .philosophers-preview {
+        gap: 4px;
+        margin-bottom: 20px;
+    }
+
+    .phil-tag {
+        font-size: 0.65rem;
+        padding: 3px 7px;
+    }
+
+    .btn-primary {
+        padding: 12px 28px;
+        font-size: 0.9rem;
+    }
+
+    #question-screen {
+        padding-top: 8vh;
+    }
+
+    .id-card-title {
+        font-size: 1.6rem;
+    }
+
+    .id-card-columns {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .id-card-section {
+        padding: 16px 18px;
+    }
+
+    .id-card-header {
+        padding: 24px 18px 18px;
+    }
+
+    .id-alignment-label {
+        width: 80px;
+        font-size: 0.7rem;
+    }
+
+    .scenario-text {
+        font-size: 1rem;
+    }
+
+    .choice-btn {
+        padding: 16px;
+    }
+
+    .result-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 360px) {
+    .game-title {
+        font-size: 2.2rem;
+    }
+
+    .id-card-title {
+        font-size: 1.4rem;
+    }
+
+    .phil-tag {
+        font-size: 0.6rem;
+        padding: 2px 6px;
+    }
+}
+
+/* Short screens (iPhone SE, etc.) */
+@media (max-height: 700px) {
+    .game-title {
+        font-size: 2.4rem;
+    }
+
+    .game-subtitle {
+        margin-bottom: 6px;
+    }
+
+    .game-desc {
+        margin-bottom: 14px;
+        font-size: 0.78rem;
+    }
+
+    .philosophers-preview {
+        margin-bottom: 18px;
+    }
+
+    .start-quote {
+        font-size: 0.7rem;
+    }
+}
+
+/* ---- About Page ---- */
+
+.about-container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 60px 20px 80px;
+}
+
+.about-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-decoration: none;
+    margin-bottom: 32px;
+    font-weight: 500;
+}
+
+.about-back:hover { text-decoration: underline; }
+
+.about-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.about-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+}
+
+.about-section {
+    margin-bottom: 36px;
+}
+
+.about-section h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 12px;
+}
+
+.about-section p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+
+.about-section a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.about-section a:hover { text-decoration: underline; }
+
+.school-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.school-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+}
+
+.school-item-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.school-item-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.school-item-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.school-item-philosopher {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 2px;
+}
+
+.school-item p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0 0 6px;
+}
+
+.school-item .school-question {
+    font-weight: 600;
+    font-style: italic;
+    color: var(--text-primary);
+}
+
+.school-item .school-source {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.faq-item {
+    margin-bottom: 20px;
+}
+
+.faq-item h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.faq-item p {
+    font-size: 0.85rem;
+}
+
+.inspiration-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+}
+
+.inspiration-list li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding: 6px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.inspiration-list li::before {
+    content: '\2022';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+}
+
+.inspiration-list strong {
+    color: var(--text-primary);
+}
+
+/* ---- Archetypes Page (archetypes.html) ---- */
+
+.arch-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 12px 20px;
+    background: rgba(10, 10, 26, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+}
+
+.arch-back {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    justify-self: start;
+}
+
+.arch-back:hover { text-decoration: underline; }
+
+.arch-header-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: center;
+}
+
+.arch-cta {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 3px 10px;
+    border: 1px solid var(--accent);
+    border-radius: 20px;
+    justify-self: end;
+    white-space: nowrap;
+}
+
+.arch-cta:hover {
+    background: rgba(139, 124, 247, 0.1);
+}
+
+.arch-header-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-self: end;
+}
+
+.arch-header-link {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.arch-header-link:hover {
+    color: var(--accent);
+}
+
+.arch-filters {
+    position: sticky;
+    top: 45px;
+    z-index: 9;
+    display: flex;
+    gap: 6px;
+    padding: 12px 20px;
+    background: rgba(10, 10, 26, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.arch-filters::-webkit-scrollbar {
+    display: none;
+}
+
+.arch-filter {
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition);
+    flex-shrink: 0;
+}
+
+.arch-filter:hover {
+    border-color: var(--border-hover);
+}
+
+.arch-filter.active {
+    background: rgba(139, 124, 247, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.arch-filter[data-filter]:not([data-filter="all"]).active {
+    border-color: var(--filter-color);
+    color: var(--filter-color);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.arch-container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 16px 20px 80px;
+}
+
+.arch-count {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.arch-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: rgba(10, 10, 26, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+}
+
+.arch-footer a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.arch-footer a:hover { text-decoration: underline; }
+
+.arch-footer-sep {
+    opacity: 0.4;
+}
+
+/* Archetype cards */
+
+.archetype-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 10px;
+    animation: fadeIn 0.25s ease;
+}
+
+.archetype-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.archetype-emojis {
+    font-size: 1.2rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.archetype-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    vertical-align: middle;
+}
+
+.archetype-combo {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.archetype-card-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent-secondary);
+    margin-bottom: 6px;
+}
+
+.archetype-card-desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* ---- Explore Compass (archetypes page) ---- */
+
+.explore-compass-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 56px 20px 0;
+}
+
+.explore-compass-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.explore-compass-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+}
+
+.explore-compass-disclaimer,
+.about-section .explore-compass-disclaimer {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 4px;
+    margin-bottom: 10px;
+    opacity: 0.6;
+    text-align: center;
+}
+
+.explore-compass-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.explore-compass-area {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1;
+    min-height: 220px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    cursor: crosshair;
+    touch-action: manipulation;
+}
+
+.explore-compass-area::before {
+    content: '\2190 Individual';
+    position: absolute;
+    left: 6px;
+    bottom: 6px;
+    font-size: 0.58rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.5;
+}
+
+.explore-compass-area::after {
+    content: 'Collective \2192';
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    font-size: 0.58rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.5;
+}
+
+.explore-highlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: var(--radius-md);
+}
+
+.explore-dot {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid #fff;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 12px var(--accent-glow);
+    z-index: 3;
+    pointer-events: none;
+    transition: left 0.15s ease, top 0.15s ease;
+}
+
+.explore-result {
+    display: none;
+    text-align: center;
+    padding: 14px 16px;
+    margin-top: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    animation: fadeIn 0.2s ease;
+}
+
+.explore-result.visible {
+    display: block;
+}
+
+.explore-result-emojis {
+    font-size: 1.3rem;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.explore-result-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent-secondary);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.explore-result-combo {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 8px;
+}
+
+.explore-result-desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+@media (max-width: 480px) {
+    .explore-compass-wrap {
+        padding: 56px 16px 0;
+    }
+
+    .explore-compass-area {
+        max-width: 280px;
+        min-height: 200px;
+    }
+}
+
+/* Per-card mini compass */
+
+.mini-compass-toggle {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+    transition: all var(--transition);
+    text-align: center;
+}
+
+.mini-compass-toggle:hover {
+    background: var(--bg-card);
+    border-color: var(--border-hover);
+}
+
+.mini-compass-container {
+    display: none;
+    margin-top: 10px;
+    animation: fadeIn 0.25s ease;
+}
+
+.mini-compass-container.visible {
+    display: block;
+}
+
+.mini-compass {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mini-compass-area {
+    width: 100%;
+    max-width: 220px;
+    min-height: 160px;
+}
+
+@media (max-width: 480px) {
+    .arch-header {
+        padding: 10px 16px;
+    }
+
+    .arch-filters {
+        padding: 10px 16px;
+        gap: 5px;
+    }
+
+    .arch-container {
+        padding: 12px 16px 80px;
+    }
+
+    .archetype-card-title {
+        font-size: 1.05rem;
+    }
+}
+
+/* about-footer styles now handled by .arch-footer */
+
+/* ---- School TLDR ---- */
+
+.school-tldr {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent-secondary);
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+/* ---- Alignment Compass ---- */
+
+.alignment-compass {
+    margin: 24px 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+
+.compass-title,
+.spectrum-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.compass-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.compass-label {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.compass-label--top { margin-bottom: 8px; }
+.compass-label--bottom { margin-top: 8px; }
+
+.compass-label--left,
+.compass-label--right {
+    display: none;
+}
+
+.compass-area {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.02);
+    /* Fallback for browsers without aspect-ratio */
+    min-height: 200px;
+}
+
+/* Left/right axis labels inside the compass */
+.compass-area::before {
+    content: '\2190 Individual';
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    font-size: 0.58rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.5;
+}
+
+.compass-area::after {
+    content: 'Collective \2192';
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    font-size: 0.58rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+}
+
+.compass-axes {
+    position: absolute;
+    inset: 0;
+}
+
+.compass-axes::before,
+.compass-axes::after {
+    content: '';
+    position: absolute;
+    background: var(--border);
+}
+
+.compass-axes::before {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+}
+
+.compass-axes::after {
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+}
+
+.compass-dot {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+.compass-dot-label {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+/* ---- At a Glance Cards ---- */
+
+.glance-cards {
+    margin: 20px 0 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+}
+
+.glance-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.glance-card {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.glance-card:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.glance-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.glance-name {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.glance-sep {
+    color: var(--text-muted);
+    margin: 0 4px;
+}
+
+.glance-desc {
+    color: var(--text-secondary);
+}

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All 20 Archetypes | Examined</title>
+    <meta name="description" content="Every possible archetype result in Examined — 20 unique philosopher personality combos from Kantian to Existentialist.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.raggedydoc.com/games/philosophy/archetypes.html">
+    <meta property="og:title" content="All 20 Archetypes | Examined">
+    <meta property="og:description" content="Every possible archetype result — 20 unique philosopher personality combos.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.raggedydoc.com/games/philosophy/archetypes.html">
+    <meta property="og:image" content="https://www.raggedydoc.com/games/philosophy/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="All 20 Archetypes | Examined">
+    <meta name="twitter:description" content="Every possible archetype result — 20 unique philosopher personality combos from Kantian to Existentialist.">
+    <meta name="twitter:image" content="https://www.raggedydoc.com/games/philosophy/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    <link rel="stylesheet" href="../../fonts/fonts.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sticky header -->
+    <div class="arch-header">
+        <a href="about.html" class="arch-back">&larr; About</a>
+        <span class="arch-header-title">20 Archetypes</span>
+        <a href="index.html" class="arch-cta">Take quiz</a>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="arch-filters">
+        <button class="arch-filter active" data-filter="all">All</button>
+        <button class="arch-filter" data-filter="kantian" style="--filter-color: var(--color-kantian)">&#9878;&#65039; Kant</button>
+        <button class="arch-filter" data-filter="utilitarian" style="--filter-color: var(--color-utilitarian)">&#128202; Mill</button>
+        <button class="arch-filter" data-filter="virtue" style="--filter-color: var(--color-virtue)">&#127807; Aristotle</button>
+        <button class="arch-filter" data-filter="contractualist" style="--filter-color: var(--color-contractualist)">&#129309; Scanlon</button>
+        <button class="arch-filter" data-filter="existentialist" style="--filter-color: var(--color-existentialist)">&#128293; Sartre</button>
+    </div>
+
+    <!-- Interactive Compass -->
+    <div class="explore-compass-wrap">
+        <div class="explore-compass-header">
+            <span class="explore-compass-title">Tap anywhere to explore</span>
+            <p class="explore-compass-disclaimer">Approximate positions — real philosophy is messier than a 2D chart.</p>
+        </div>
+        <div class="explore-compass-body">
+            <div class="compass-label compass-label--top">&uarr; Rules</div>
+            <div class="explore-compass-area" id="explore-area">
+                <div class="compass-axes"></div>
+            </div>
+            <div class="compass-label compass-label--bottom">&darr; Outcomes</div>
+        </div>
+        <div class="explore-result" id="explore-result"></div>
+    </div>
+
+    <!-- Cards -->
+    <div class="arch-container">
+        <p class="arch-count" id="arch-count">20 archetypes</p>
+        <div id="archetype-list"></div>
+    </div>
+
+    <!-- Fixed footer -->
+    <div class="arch-footer">
+        <span>Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a></span>
+        <span class="arch-footer-sep">&middot;</span>
+        <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee &#9749;</a>
+        <span class="arch-footer-sep">&middot;</span>
+        <a href="../../privacy.html">Privacy</a>
+    </div>
+
+    <script>
+    (function () {
+        var schools = {
+            kantian:        { name: 'Kantian',        emoji: '\u2696\uFE0F', color: '#7eb8da' },
+            utilitarian:    { name: 'Utilitarian',     emoji: '\uD83D\uDCCA', color: '#f0c674' },
+            virtue:         { name: 'Virtue Ethics',   emoji: '\uD83C\uDF3F', color: '#a8d5a2' },
+            contractualist: { name: 'Contractualist',  emoji: '\uD83E\uDD1D', color: '#d4a0d0' },
+            existentialist: { name: 'Existentialist',  emoji: '\uD83D\uDD25', color: '#e8917a' }
+        };
+
+        var archetypes = [
+            { primary: 'kantian', secondary: 'utilitarian', name: 'The Dutiful Analyst', desc: 'You believe in doing the right thing \u2014 and you\u2019ve got the spreadsheet to prove it. Rules matter, but so do results. You\u2019re the person who follows the speed limit AND calculates the optimal route.' },
+            { primary: 'kantian', secondary: 'virtue', name: 'The Moral Compass', desc: 'You\u2019re the friend everyone comes to for advice, because you somehow always know the right thing to do. Kant would be proud. Aristotle would buy you a drink.' },
+            { primary: 'kantian', secondary: 'contractualist', name: 'The Rule Architect', desc: 'You believe society works best when everyone agrees to fair principles and actually follows them. You\u2019re the person who reads the Terms of Service \u2014 and sends feedback.' },
+            { primary: 'kantian', secondary: 'existentialist', name: 'The Principled Rebel', desc: 'You have an unshakable moral code, but you built it yourself. You follow rules because they\u2019re right, not because someone told you to. Kant with a leather jacket.' },
+            { primary: 'utilitarian', secondary: 'kantian', name: 'The Principled Calculator', desc: 'You want the best outcome for everyone, but you won\u2019t cross certain lines to get there. You\u2019d save the world, but not by lying. The trolley problem keeps you up at night.' },
+            { primary: 'utilitarian', secondary: 'virtue', name: 'The Compassionate Optimizer', desc: 'You genuinely care about people AND you\u2019re good at math. You\u2019d donate to the most effective charity and then volunteer at the local one too. Maximum impact with maximum heart.' },
+            { primary: 'utilitarian', secondary: 'contractualist', name: 'The Social Engineer', desc: 'You see society as a system that can be optimized for fairness. You\u2019d redesign the trolley tracks so no one has to choose. Why solve the dilemma when you can eliminate it?' },
+            { primary: 'utilitarian', secondary: 'existentialist', name: 'The Pragmatic Rebel', desc: 'You want the best outcome and you\u2019re not precious about how to get there. Rules are tools, not commandments. You\u2019d hack the trolley\u2019s GPS.' },
+            { primary: 'virtue', secondary: 'kantian', name: 'The Noble Guardian', desc: 'You strive to be good in the deepest sense \u2014 not just doing right things, but being a right person. You\u2019re the protagonist of a novel no one has written yet.' },
+            { primary: 'virtue', secondary: 'utilitarian', name: 'The Wise Pragmatist', desc: 'You lead with character but never lose sight of consequences. The kind of person who\u2019d be a great ruler in an Aristotle thought experiment \u2014 wise, measured, and surprisingly effective.' },
+            { primary: 'virtue', secondary: 'contractualist', name: 'The Community Builder', desc: 'You believe good people make good societies, and good societies make good people. You\u2019re the neighbor everyone wishes they had. You probably bring pie.' },
+            { primary: 'virtue', secondary: 'existentialist', name: 'The Authentic Soul', desc: 'You\u2019re not good because society told you to be \u2014 you\u2019re good because you chose to be. Your character is your own project, and you take it seriously. Aristotle meets Camus at a coffee shop.' },
+            { primary: 'contractualist', secondary: 'kantian', name: 'The Justice Seeker', desc: 'Fairness is your north star. You believe in rules, but only rules that no one could reasonably reject. You\u2019d rewrite the social contract and proofread it twice.' },
+            { primary: 'contractualist', secondary: 'utilitarian', name: 'The Fair Maximizer', desc: 'You want the best for everyone, but "everyone" actually means everyone \u2014 not just the majority. Scanlon\u2019s favorite student. You\u2019d filibuster the trolley.' },
+            { primary: 'contractualist', secondary: 'virtue', name: 'The Fair Mentor', desc: 'You believe we owe each other not just fairness, but genuine care. You\u2019re the teacher who stays after class, the friend who remembers birthdays. The social contract, but make it warm.' },
+            { primary: 'contractualist', secondary: 'existentialist', name: 'The Reluctant Lawmaker', desc: 'You see the need for social agreements but chafe against anything that limits freedom. You\u2019d sign the social contract \u2014 in pencil, with amendments attached.' },
+            { primary: 'existentialist', secondary: 'kantian', name: 'The Absurd Knight', desc: 'You live by a strict moral code in a universe you know is meaningless. It\u2019s Sisyphus, but he wrote his own ethics textbook on the way up the hill. Beautifully stubborn.' },
+            { primary: 'existentialist', secondary: 'utilitarian', name: 'The Free Thinker', desc: 'You refuse to follow anyone else\u2019s rules, but you still care about making things better. You\u2019re the philosopher who quits academia to start a nonprofit.' },
+            { primary: 'existentialist', secondary: 'virtue', name: 'The Authentic Sage', desc: 'You\u2019ve chosen your own values through radical self-examination, and they happen to be pretty good ones. Sartre and Aristotle\u2019s unlikely friendship, personified.' },
+            { primary: 'existentialist', secondary: 'contractualist', name: 'The Reluctant Citizen', desc: 'You value freedom above all, but you grudgingly admit that other people exist and maybe you owe them something. You\u2019d live off the grid \u2014 but you\u2019d still recycle.' }
+        ];
+
+        var list = document.getElementById('archetype-list');
+        var countEl = document.getElementById('arch-count');
+        var cards = [];
+
+        archetypes.forEach(function (a) {
+            var card = document.createElement('div');
+            card.className = 'archetype-card';
+            card.setAttribute('data-primary', a.primary);
+            card.setAttribute('data-secondary', a.secondary);
+
+            var header = document.createElement('div');
+            header.className = 'archetype-card-header';
+
+            var emojis = document.createElement('span');
+            emojis.className = 'archetype-emojis';
+            emojis.textContent = schools[a.primary].emoji + schools[a.secondary].emoji;
+
+            var combo = document.createElement('span');
+            combo.className = 'archetype-combo';
+
+            var d1 = document.createElement('span');
+            d1.className = 'archetype-dot';
+            d1.style.background = schools[a.primary].color;
+            var d2 = document.createElement('span');
+            d2.className = 'archetype-dot';
+            d2.style.background = schools[a.secondary].color;
+
+            combo.appendChild(d1);
+            combo.appendChild(document.createTextNode(' ' + schools[a.primary].name + ' + '));
+            combo.appendChild(d2);
+            combo.appendChild(document.createTextNode(' ' + schools[a.secondary].name));
+
+            header.appendChild(emojis);
+            header.appendChild(combo);
+
+            var title = document.createElement('h2');
+            title.className = 'archetype-card-title';
+            title.textContent = a.name;
+
+            var desc = document.createElement('p');
+            desc.className = 'archetype-card-desc';
+            desc.textContent = a.desc;
+
+            card.appendChild(header);
+            card.appendChild(title);
+            card.appendChild(desc);
+            list.appendChild(card);
+            cards.push(card);
+        });
+
+        // Filtering
+        var filters = document.querySelectorAll('.arch-filter');
+        for (var i = 0; i < filters.length; i++) {
+            filters[i].addEventListener('click', function () {
+                var filter = this.getAttribute('data-filter');
+
+                for (var j = 0; j < filters.length; j++) {
+                    filters[j].classList.remove('active');
+                }
+                this.classList.add('active');
+
+                var visible = 0;
+                for (var k = 0; k < cards.length; k++) {
+                    var show = filter === 'all' ||
+                        cards[k].getAttribute('data-primary') === filter ||
+                        cards[k].getAttribute('data-secondary') === filter;
+                    cards[k].style.display = show ? '' : 'none';
+                    if (show) visible++;
+                }
+                countEl.textContent = visible + ' archetype' + (visible !== 1 ? 's' : '');
+            });
+        }
+
+        // ---- Per-card expandable compass ----
+        var compassPositions = {
+            kantian:        { x: 60, y: 18 },
+            utilitarian:    { x: 75, y: 72 },
+            virtue:         { x: 45, y: 45 },
+            contractualist: { x: 78, y: 35 },
+            existentialist: { x: 22, y: 65 }
+        };
+        var schoolKeys = ['kantian', 'utilitarian', 'virtue', 'contractualist', 'existentialist'];
+
+        function buildMiniCompass(primaryKey, secondaryKey) {
+            var wrap = document.createElement('div');
+            wrap.className = 'mini-compass';
+
+            var topLbl = document.createElement('div');
+            topLbl.className = 'compass-label compass-label--top';
+            topLbl.textContent = '\u2191 Rules';
+            wrap.appendChild(topLbl);
+
+            var area = document.createElement('div');
+            area.className = 'compass-area mini-compass-area';
+
+            var axes = document.createElement('div');
+            axes.className = 'compass-axes';
+            area.appendChild(axes);
+
+            // School reference dots
+            for (var i = 0; i < schoolKeys.length; i++) {
+                var sk = schoolKeys[i];
+                var pos = compassPositions[sk];
+                var dot = document.createElement('div');
+                dot.className = 'compass-dot';
+                dot.style.top = pos.y + '%';
+                dot.style.left = pos.x + '%';
+                dot.style.background = schools[sk].color;
+                dot.style.width = '8px';
+                dot.style.height = '8px';
+                dot.style.opacity = (sk === primaryKey || sk === secondaryKey) ? '0.8' : '0.2';
+
+                var lbl = document.createElement('span');
+                lbl.className = 'compass-dot-label';
+                lbl.textContent = schools[sk].name;
+                lbl.style.opacity = (sk === primaryKey || sk === secondaryKey) ? '1' : '0.3';
+                lbl.style.fontSize = '0.58rem';
+                dot.appendChild(lbl);
+                area.appendChild(dot);
+            }
+
+            // "You" dot at 60/40 weighted position
+            var p1 = compassPositions[primaryKey];
+            var p2 = compassPositions[secondaryKey];
+            var youX = p1.x * 0.6 + p2.x * 0.4;
+            var youY = p1.y * 0.6 + p2.y * 0.4;
+
+            var youDot = document.createElement('div');
+            youDot.className = 'compass-you';
+            youDot.style.top = youY + '%';
+            youDot.style.left = youX + '%';
+            var youLbl = document.createElement('span');
+            youLbl.className = 'compass-you-label';
+            youLbl.textContent = 'This archetype';
+            youDot.appendChild(youLbl);
+            area.appendChild(youDot);
+
+            wrap.appendChild(area);
+
+            var botLbl = document.createElement('div');
+            botLbl.className = 'compass-label compass-label--bottom';
+            botLbl.textContent = '\u2193 Outcomes';
+            wrap.appendChild(botLbl);
+
+            return wrap;
+        }
+
+        // Add "Where on the compass" toggle to each card
+        for (var ci = 0; ci < cards.length; ci++) {
+            (function (card, arch) {
+                var toggle = document.createElement('button');
+                toggle.className = 'mini-compass-toggle';
+                toggle.textContent = 'Where on the compass \u25BC';
+
+                var compassContainer = document.createElement('div');
+                compassContainer.className = 'mini-compass-container';
+
+                toggle.addEventListener('click', function () {
+                    var isOpen = compassContainer.classList.contains('visible');
+                    if (isOpen) {
+                        compassContainer.classList.remove('visible');
+                        toggle.textContent = 'Where on the compass \u25BC';
+                    } else {
+                        if (!compassContainer.hasChildNodes()) {
+                            compassContainer.appendChild(buildMiniCompass(arch.primary, arch.secondary));
+                        }
+                        compassContainer.classList.add('visible');
+                        toggle.textContent = 'Where on the compass \u25B2';
+                    }
+                });
+
+                card.appendChild(toggle);
+                card.appendChild(compassContainer);
+            })(cards[ci], archetypes[ci]);
+        }
+
+        // ---- Interactive Explore Compass ----
+        var exploreArea = document.getElementById('explore-area');
+        var exploreResult = document.getElementById('explore-result');
+        var exploreDot = null;
+
+        // Pre-compute archetype positions (60/40 weighted midpoint)
+        var archetypePositions = [];
+        archetypes.forEach(function (a) {
+            var p1 = compassPositions[a.primary];
+            var p2 = compassPositions[a.secondary];
+            archetypePositions.push({
+                x: p1.x * 0.6 + p2.x * 0.4,
+                y: p1.y * 0.6 + p2.y * 0.4,
+                archetype: a
+            });
+        });
+
+        // Add school dots to explore compass
+        for (var ei = 0; ei < schoolKeys.length; ei++) {
+            var ek = schoolKeys[ei];
+            var ep = compassPositions[ek];
+            var ed = document.createElement('div');
+            ed.className = 'compass-dot';
+            ed.style.top = ep.y + '%';
+            ed.style.left = ep.x + '%';
+            ed.style.background = schools[ek].color;
+            ed.style.opacity = '0.7';
+            ed.style.width = '10px';
+            ed.style.height = '10px';
+            var el = document.createElement('span');
+            el.className = 'compass-dot-label';
+            el.textContent = schools[ek].name;
+            ed.appendChild(el);
+            exploreArea.appendChild(ed);
+        }
+
+        // Find nearest archetype to a point (nearest-neighbor, not inverse-distance)
+        function getArchetypeAtPoint(px, py) {
+            var closest = null;
+            var closestDist = Infinity;
+            for (var i = 0; i < archetypePositions.length; i++) {
+                var ap = archetypePositions[i];
+                var dx = px - ap.x;
+                var dy = py - ap.y;
+                var dist = dx * dx + dy * dy;
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closest = ap.archetype;
+                }
+            }
+            return closest;
+        }
+
+        // Canvas overlay for Voronoi zone highlight
+        var highlightCanvas = document.createElement('canvas');
+        highlightCanvas.className = 'explore-highlight';
+        exploreArea.appendChild(highlightCanvas);
+
+        function drawZoneHighlight(targetArch) {
+            var w = exploreArea.offsetWidth;
+            var h = exploreArea.offsetHeight;
+            highlightCanvas.width = w;
+            highlightCanvas.height = h;
+            var ctx = highlightCanvas.getContext('2d');
+            ctx.clearRect(0, 0, w, h);
+
+            // Find target archetype position and color
+            var targetPos = null;
+            for (var t = 0; t < archetypePositions.length; t++) {
+                if (archetypePositions[t].archetype === targetArch) {
+                    targetPos = archetypePositions[t];
+                    break;
+                }
+            }
+            if (!targetPos) return;
+
+            var color = schools[targetArch.primary].color;
+            var r = parseInt(color.slice(1, 3), 16);
+            var g = parseInt(color.slice(3, 5), 16);
+            var b = parseInt(color.slice(5, 7), 16);
+
+            // For each pixel, calculate how much closer this archetype is vs the next closest.
+            // Use the ratio to fade opacity — strong near center, transparent at boundaries.
+            var step = 4;
+            var imgData = ctx.createImageData(w, h);
+            var data = imgData.data;
+
+            for (var gx = 0; gx < w; gx += step) {
+                for (var gy = 0; gy < h; gy += step) {
+                    var ptx = (gx / w) * 100;
+                    var pty = (gy / h) * 100;
+
+                    // Distance to target archetype
+                    var dx0 = ptx - targetPos.x;
+                    var dy0 = pty - targetPos.y;
+                    var distTarget = Math.sqrt(dx0 * dx0 + dy0 * dy0);
+
+                    // Distance to nearest OTHER archetype
+                    var distOther = Infinity;
+                    for (var i = 0; i < archetypePositions.length; i++) {
+                        if (archetypePositions[i].archetype === targetArch) continue;
+                        var dxo = ptx - archetypePositions[i].x;
+                        var dyo = pty - archetypePositions[i].y;
+                        var d = Math.sqrt(dxo * dxo + dyo * dyo);
+                        if (d < distOther) distOther = d;
+                    }
+
+                    // Only fill if this is the nearest archetype's zone
+                    if (distTarget > distOther) continue;
+
+                    // Opacity fades from 0.2 at center to 0 at boundary
+                    // margin = how much closer target is vs next closest (0 at boundary, large at center)
+                    var margin = (distOther - distTarget) / (distOther + distTarget + 0.1);
+                    var alpha = Math.min(margin * 1.5, 0.2);
+
+                    // Fill the step×step block
+                    for (var sx = 0; sx < step && gx + sx < w; sx++) {
+                        for (var sy = 0; sy < step && gy + sy < h; sy++) {
+                            var idx = ((gy + sy) * w + (gx + sx)) * 4;
+                            data[idx] = r;
+                            data[idx + 1] = g;
+                            data[idx + 2] = b;
+                            data[idx + 3] = Math.round(alpha * 255);
+                        }
+                    }
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+        }
+
+        exploreArea.addEventListener('click', function (e) {
+            var rect = exploreArea.getBoundingClientRect();
+            var px = ((e.clientX - rect.left) / rect.width) * 100;
+            var py = ((e.clientY - rect.top) / rect.height) * 100;
+
+            // Place or move the explore dot
+            if (!exploreDot) {
+                exploreDot = document.createElement('div');
+                exploreDot.className = 'explore-dot';
+                exploreArea.appendChild(exploreDot);
+            }
+            exploreDot.style.left = px + '%';
+            exploreDot.style.top = py + '%';
+
+            // Find nearest archetype
+            var arch = getArchetypeAtPoint(px, py);
+            if (!arch) return;
+
+            // Highlight zone
+            drawZoneHighlight(arch);
+
+            // Show result
+            exploreResult.innerHTML = '';
+
+            var emojis = document.createElement('span');
+            emojis.className = 'explore-result-emojis';
+            emojis.textContent = schools[arch.primary].emoji + schools[arch.secondary].emoji;
+
+            var name = document.createElement('span');
+            name.className = 'explore-result-name';
+            name.textContent = arch.name;
+
+            var combo = document.createElement('span');
+            combo.className = 'explore-result-combo';
+            combo.textContent = schools[arch.primary].name + ' + ' + schools[arch.secondary].name;
+
+            var desc = document.createElement('p');
+            desc.className = 'explore-result-desc';
+            desc.textContent = arch.desc;
+
+            exploreResult.appendChild(emojis);
+            exploreResult.appendChild(name);
+            exploreResult.appendChild(combo);
+            exploreResult.appendChild(desc);
+            exploreResult.classList.add('visible');
+        });
+    })();
+    </script>
+</body>
+</html>

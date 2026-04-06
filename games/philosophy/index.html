@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    <title>Examined — What's Your Moral Philosophy?</title>
+    <meta name="description" content="Examined is a free philosophy alignment quiz. Answer 12 everyday moral dilemmas and discover which philosopher you think like — Kant, Mill, Aristotle, Scanlon, or Sartre. Share your result with friends.">
+    <meta name="keywords" content="philosophy quiz, moral philosophy, ethics quiz, trolley problem, kant, utilitarianism, virtue ethics, personality quiz, moral alignment, examined life, the good place">
+    <meta property="og:title" content="Examined — What's Your Moral Philosophy?">
+    <meta property="og:description" content="Answer 12 everyday moral dilemmas and discover which philosopher you think like. Are you a Kantian? A Utilitarian? Find out.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.raggedydoc.com/games/philosophy/">
+    <meta property="og:site_name" content="Examined">
+    <meta property="og:image" content="https://www.raggedydoc.com/games/philosophy/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Examined — What's Your Moral Philosophy?">
+    <meta name="twitter:description" content="Answer 12 everyday moral dilemmas and discover which philosopher you think like. Are you a Kantian? A Utilitarian? Find out.">
+    <meta name="twitter:image" content="https://www.raggedydoc.com/games/philosophy/og-image.png">
+    <link rel="canonical" href="https://www.raggedydoc.com/games/philosophy/">
+    <link rel="stylesheet" href="../../fonts/fonts.css">
+    <link rel="stylesheet" href="style.css">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Examined",
+        "description": "A philosophy alignment quiz. Answer 12 everyday moral dilemmas and discover which philosopher you think like.",
+        "url": "https://www.raggedydoc.com/games/philosophy/",
+        "applicationCategory": "Game",
+        "genre": "Quiz",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Andrew Steven Chau",
+            "url": "https://www.raggedydoc.com"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Start Screen -->
+        <div class="screen active" id="start-screen">
+            <div class="start-content">
+                <div class="start-main">
+                    <h1 class="game-title">Examined</h1>
+                    <p class="game-subtitle">What's your moral philosophy?</p>
+                    <p class="game-desc">12 everyday dilemmas. No right answers. Find out which philosopher you think like.</p>
+                    <div class="philosophers-preview">
+                        <span class="phil-tag">Kant</span>
+                        <span class="phil-tag">Mill</span>
+                        <span class="phil-tag">Aristotle</span>
+                        <span class="phil-tag">Scanlon</span>
+                        <span class="phil-tag">Sartre</span>
+                    </div>
+                    <button class="btn-primary" id="start-btn">Begin the Examination</button>
+                    <button class="btn-secondary" id="last-result-btn" style="display:none;">View Last Result</button>
+                </div>
+                <div class="start-bottom">
+                    <p class="start-quote">"The unexamined life is not worth living." — Socrates</p>
+                    <p class="start-links"><a href="about.html">About</a> · <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee &#9749;</a> · <a href="../../privacy.html">Privacy</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question Screen -->
+        <div class="screen" id="question-screen">
+            <div class="question-header">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span class="question-count" id="question-count">1 / 12</span>
+            </div>
+            <div class="question-content" id="question-content">
+                <div class="scenario-label" id="scenario-label"></div>
+                <p class="scenario-text" id="scenario-text"></p>
+                <div class="choices">
+                    <button class="choice-btn" id="choice-a">
+                        <span class="choice-text" id="choice-a-text"></span>
+                    </button>
+                    <button class="choice-btn" id="choice-b">
+                        <span class="choice-text" id="choice-b-text"></span>
+                    </button>
+                </div>
+                <button class="btn-next" id="next-btn">Next &rarr;</button>
+            </div>
+            <div class="choice-reaction" id="choice-reaction"></div>
+            <div class="philosopher-quote" id="philosopher-quote"></div>
+        </div>
+
+        </div><!-- end question-screen -->
+    </div><!-- end game-container -->
+
+    <!-- Result Screen — outside game-container, same structure as about/archetypes -->
+    <div class="screen" id="result-screen">
+        <div class="arch-header">
+            <a href="#" class="arch-back" id="result-back-btn2">&larr; Home</a>
+            <span class="arch-header-title">Your Result</span>
+            <a href="archetypes.html" class="arch-cta">Archetypes</a>
+        </div>
+
+        <div class="result-content">
+            <p class="result-intro">Your Philosopher ID has arrived.<br>Screenshot it. Save it. Share it.<br><a href="about.html" class="result-about-link">How does this work?</a></p>
+
+            <!-- The ID Card (screenshot-friendly) -->
+            <div class="id-card" id="id-card">
+                <div class="id-card-header">
+                    <div class="id-card-badge">PHILOSOPHER ID</div>
+                    <div class="id-card-icon" id="card-icon"></div>
+                    <h2 class="id-card-title" id="card-title"></h2>
+                    <p class="id-card-school" id="card-school"></p>
+                    <p class="id-card-archetype-desc" id="card-archetype-desc"></p>
+                    <p class="id-card-motto" id="card-motto"></p>
+                </div>
+
+                <div class="id-card-section">
+                    <div class="id-card-columns">
+                        <div class="id-card-col">
+                            <h3 class="id-section-label id-section-label--green">Strengths</h3>
+                            <ul class="id-trait-list" id="card-strengths"></ul>
+                        </div>
+                        <div class="id-card-col">
+                            <h3 class="id-section-label id-section-label--red">Weaknesses</h3>
+                            <ul class="id-trait-list" id="card-weaknesses"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="id-card-section id-card-section--alt">
+                    <h3 class="id-section-label">The Mix</h3>
+                    <p class="id-mix-desc" id="card-mix"></p>
+                </div>
+
+                <div class="id-card-section">
+                    <h3 class="id-section-label">Catchphrases</h3>
+                    <div class="id-catchphrases" id="card-catchphrases"></div>
+                </div>
+
+                <div class="id-card-section">
+                    <h3 class="id-section-label">Alignment</h3>
+                    <div class="id-alignment-bars" id="card-alignment"></div>
+                    <p class="id-hidden-talent" id="card-hidden-talent"></p>
+                </div>
+
+                <div class="id-card-section id-card-section--alt">
+                    <h3 class="id-section-label">Peer Reviews</h3>
+                    <div class="id-peer-reviews" id="card-reviews"></div>
+                </div>
+
+                <div class="id-card-section">
+                    <h3 class="id-section-label">Your Philosopher At...</h3>
+                    <div class="id-scenarios" id="card-scenarios"></div>
+                </div>
+
+                <div class="id-card-section id-card-section--alt">
+                    <h3 class="id-section-label">Compatibility</h3>
+                    <div class="id-compatibility" id="card-compatibility"></div>
+                </div>
+
+                <div class="id-card-footer">
+                    <span class="id-card-archetype" id="card-archetype"></span>
+                    <span class="id-card-url">raggedydoc.com/games/philosophy</span>
+                </div>
+            </div>
+
+            <div class="result-actions">
+                <button class="btn-primary" id="share-btn">Share</button>
+                <button class="btn-secondary" id="copy-btn">Copy Image</button>
+                <button class="btn-secondary" id="save-img-btn">Save ID Card as Image</button>
+                <button class="btn-secondary" id="retake-btn">Retake Quiz</button>
+            </div>
+
+            <!-- Alignment Map -->
+            <div class="result-compass" id="result-compass"></div>
+
+            <!-- Answer Breakdown -->
+            <div class="answer-breakdown" id="answer-breakdown">
+                <button class="answer-breakdown-toggle" id="breakdown-toggle">
+                    How each answer shaped your result <span class="toggle-arrow">&#9660;</span>
+                </button>
+                <div class="answer-breakdown-content" id="breakdown-content"></div>
+            </div>
+        </div>
+
+        <div class="arch-footer">
+            <span>Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a></span>
+            <span class="arch-footer-sep">&middot;</span>
+            <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee &#9749;</a>
+            <span class="arch-footer-sep">&middot;</span>
+            <a href="../../privacy.html">Privacy</a>
+        </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="game.js"></script>
+</body>
+</html>

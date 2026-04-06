@@ -3,7 +3,7 @@
 A free, mobile-friendly room layout planner. Import a floorplan image or draw rooms from scratch, set scale, and drag furniture with real dimensions.
 
 ## Files
-- `index.html`, `style.css`, `app.js` (core engine), `furniture.js` (furniture library data)
+- `index.html`, `style.css`, `app.js` (core engine), `conversions.module.js` (testable pure logic — keep in sync with app.js), `furniture.js` (furniture library data)
 
 ## Tech
 - Fabric.js (CDN) for canvas manipulation (drag, rotate, resize, select, serialize, export)

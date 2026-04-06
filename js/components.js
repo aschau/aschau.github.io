@@ -294,22 +294,20 @@
       footer.appendChild(copyright);
 
       var privacyP = document.createElement("p");
-      privacyP.style.fontSize = "0.8rem";
-      privacyP.style.opacity = "0.7";
+      privacyP.className = "footer-secondary";
       var privacyLink = document.createElement("a");
       privacyLink.href = basePath + "privacy.html";
-      privacyLink.style.color = "#8b9aff";
       privacyLink.textContent = "Privacy Policy";
       privacyP.appendChild(privacyLink);
       footer.appendChild(privacyP);
 
       var attribution = document.createElement("p");
-      attribution.style.fontSize = "0.7rem";
-      attribution.style.opacity = "0.5";
+      attribution.className = "footer-attribution";
       attribution.textContent = "Character sprite by LPC contributors via ";
       var attrLink = document.createElement("a");
       attrLink.href = "https://opengameart.org/content/lpc-character-bases";
-      attrLink.style.color = "#8b9aff";
+      attrLink.target = "_blank";
+      attrLink.rel = "noopener noreferrer";
       attrLink.textContent = "OpenGameArt.org";
       attribution.appendChild(attrLink);
       attribution.appendChild(document.createTextNode(", licensed under CC-BY-SA 3.0 / OGA-BY 3.0"));

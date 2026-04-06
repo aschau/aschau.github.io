@@ -302,6 +302,20 @@ body
 .site-footer a:hover {
 	color: white;
 }
+.site-footer .footer-secondary {
+	font-size: 0.8rem;
+	opacity: 0.7;
+}
+.site-footer .footer-secondary a {
+	color: var(--color-primary-light);
+}
+.site-footer .footer-attribution {
+	font-size: 0.7rem;
+	opacity: 0.5;
+}
+.site-footer .footer-attribution a {
+	color: var(--color-primary-light);
+}
 
 /* Consistent carousel image sizing */
 .carousel-inner {

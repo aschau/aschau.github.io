@@ -1021,7 +1021,7 @@
         // URL without protocol avoids link preview that overrides image.
         if (isMobile && cachedCardBlob && navigator.share && navigator.canShare) {
             var file = new File([cachedCardBlob], 'philosopher-id.png', { type: 'image/png' });
-            var imgText = text + '\nraggedydoc.com/games/philosophy';
+            var imgText = text + '\nraggedydoc.com/examined';
             var shareData = { text: imgText, files: [file] };
             if (navigator.canShare(shareData)) {
                 navigator.share(shareData).catch(function () { /* user cancelled */ });

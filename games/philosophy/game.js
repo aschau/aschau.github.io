@@ -699,6 +699,11 @@
                 date: new Date().toISOString()
             }));
         } catch (e) { /* localStorage may be unavailable */ }
+
+        // Pre-render card image in the background so share/save can
+        // use the cached blob synchronously (preserves user gesture on iOS).
+        cachedCardBlob = null;
+        preRenderCard();
     }
 
     // ---- Learn More / Educational Section ----
@@ -849,6 +854,11 @@
         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     var isMobile = isIOS || /Android/i.test(navigator.userAgent);
 
+    // Pre-rendered card image, populated when results are shown.
+    // Lets share/save use the blob synchronously in the click handler,
+    // preserving the user gesture context on iOS.
+    var cachedCardBlob = null;
+
     // html2canvas can't render background-clip: text, so we temporarily
     // swap gradient text to solid color before capture and restore after.
     // Waits for fonts to load first — html2canvas fails on mobile if
@@ -901,29 +911,53 @@
         });
     }
 
+    function preRenderCard() {
+        captureCard().then(function (canvas) {
+            canvas.toBlob(function (blob) {
+                if (blob) cachedCardBlob = blob;
+            }, 'image/png');
+        }).catch(function () { /* non-critical */ });
+    }
+
+    // Helper: get cached blob or capture fresh
+    function getCardBlob() {
+        if (cachedCardBlob) return Promise.resolve(cachedCardBlob);
+        return captureCard().then(function (canvas) {
+            return new Promise(function (resolve, reject) {
+                canvas.toBlob(function (blob) {
+                    if (!blob) return reject(new Error('empty blob'));
+                    cachedCardBlob = blob;
+                    resolve(blob);
+                }, 'image/png');
+            });
+        });
+    }
+
     saveImgBtn.addEventListener('click', function () {
+        if (isMobile && cachedCardBlob) {
+            // Cached blob ready — share with file synchronously (user gesture preserved)
+            var file = new File([cachedCardBlob], 'philosopher-id.png', { type: 'image/png' });
+            var shareData = { files: [file] };
+            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                navigator.share(shareData).catch(function () { /* user cancelled */ });
+                return;
+            }
+        }
+
+        // Fallback: generate (or re-generate) and download/overlay
         saveImgBtn.disabled = true;
         saveImgBtn.textContent = 'Generating...';
-        captureCard().then(function (canvas) {
+        getCardBlob().then(function (blob) {
             if (isMobile) {
-                // Show image inline so user can long-press → Save to Photos.
-                // navigator.share with files loses user gesture in async chain.
-                var dataUrl = canvas.toDataURL('image/png');
-                showSaveOverlay(dataUrl);
+                var url = URL.createObjectURL(blob);
+                showSaveOverlay(url);
             } else {
-                return new Promise(function (resolve, reject) {
-                    canvas.toBlob(function (blob) {
-                        if (!blob) return reject(new Error('empty blob'));
-                        resolve(blob);
-                    }, 'image/png');
-                }).then(function (blob) {
-                    var link = document.createElement('a');
-                    link.download = 'philosopher-id.png';
-                    link.href = URL.createObjectURL(blob);
-                    link.click();
-                    setTimeout(function () { URL.revokeObjectURL(link.href); }, 5000);
-                    showToast('Image saved!');
-                });
+                var link = document.createElement('a');
+                link.download = 'philosopher-id.png';
+                link.href = URL.createObjectURL(blob);
+                link.click();
+                setTimeout(function () { URL.revokeObjectURL(link.href); }, 5000);
+                showToast('Image saved!');
             }
         }).catch(function () {
             showToast('Could not generate image');
@@ -933,7 +967,7 @@
         });
     });
 
-    function showSaveOverlay(dataUrl) {
+    function showSaveOverlay(imgSrc) {
         var existing = document.getElementById('save-overlay');
         if (existing) existing.remove();
 
@@ -943,7 +977,7 @@
         overlay.innerHTML =
             '<div class="save-overlay-content">' +
                 '<p class="save-overlay-hint">Long press the image to save to Photos</p>' +
-                '<img src="' + dataUrl + '" alt="Philosopher ID Card" class="save-overlay-img">' +
+                '<img src="' + imgSrc + '" alt="Philosopher ID Card" class="save-overlay-img">' +
                 '<button class="btn-secondary save-overlay-close">Done</button>' +
             '</div>';
         document.body.appendChild(overlay);
@@ -959,24 +993,16 @@
     copyBtn.addEventListener('click', function () {
         copyBtn.disabled = true;
         copyBtn.textContent = 'Generating...';
-        captureCard().then(function (canvas) {
-            return new Promise(function (resolve, reject) {
-                canvas.toBlob(function (blob) {
-                    if (!blob) return reject();
-                    if (navigator.clipboard && navigator.clipboard.write) {
-                        navigator.clipboard.write([
-                            new ClipboardItem({ 'image/png': blob })
-                        ]).then(function () {
-                            showToast('Image copied to clipboard!');
-                            resolve();
-                        }).catch(reject);
-                    } else {
-                        reject();
-                    }
-                }, 'image/png');
-            });
+        getCardBlob().then(function (blob) {
+            if (navigator.clipboard && navigator.clipboard.write) {
+                return navigator.clipboard.write([
+                    new ClipboardItem({ 'image/png': blob })
+                ]).then(function () {
+                    showToast('Image copied to clipboard!');
+                });
+            }
+            throw new Error('clipboard unavailable');
         }).catch(function () {
-            // Fallback: copy text instead
             copyToClipboard(generateShareText());
         }).finally(function () {
             copyBtn.disabled = false;
@@ -990,9 +1016,18 @@
         var text = generateShareText();
         var fullText = text + '\n' + quizUrl;
 
-        // Mobile: share text+link immediately (like Parsed/Beamlab).
-        // Calling navigator.share synchronously in the click handler
-        // preserves the user gesture — async image generation loses it.
+        // Mobile: if cached blob is ready, share image + text + link
+        // synchronously in the click handler (preserves user gesture).
+        if (isMobile && cachedCardBlob && navigator.share && navigator.canShare) {
+            var file = new File([cachedCardBlob], 'philosopher-id.png', { type: 'image/png' });
+            var shareData = { text: text, url: quizUrl, files: [file] };
+            if (navigator.canShare(shareData)) {
+                navigator.share(shareData).catch(function () { /* user cancelled */ });
+                return;
+            }
+        }
+
+        // Mobile fallback: share text only (no image)
         if (isMobile && navigator.share) {
             navigator.share({
                 title: 'Examined — Philosophy Alignment Quiz',
@@ -1002,25 +1037,18 @@
             return;
         }
 
-        // Desktop: try to copy ID card image to clipboard
+        // Desktop: copy image to clipboard
         shareBtn.disabled = true;
         shareBtn.textContent = 'Generating...';
-        captureCard().then(function (canvas) {
-            return new Promise(function (resolve, reject) {
-                canvas.toBlob(function (blob) {
-                    if (!blob) return reject();
-                    if (navigator.clipboard && navigator.clipboard.write) {
-                        navigator.clipboard.write([
-                            new ClipboardItem({ 'image/png': blob })
-                        ]).then(function () {
-                            showToast('Image copied to clipboard!');
-                            resolve();
-                        }).catch(reject);
-                    } else {
-                        reject();
-                    }
-                }, 'image/png');
-            });
+        getCardBlob().then(function (blob) {
+            if (navigator.clipboard && navigator.clipboard.write) {
+                return navigator.clipboard.write([
+                    new ClipboardItem({ 'image/png': blob })
+                ]).then(function () {
+                    showToast('Image copied to clipboard!');
+                });
+            }
+            throw new Error('clipboard unavailable');
         }).catch(function () {
             copyToClipboard(fullText);
         }).finally(function () {

@@ -69,13 +69,15 @@ Each question choice has a `react` property — a witty one-liner shown immediat
 
 ## Sharing & Image Export
 - **Platform detection**: `isIOS` (UA + iPad check), `isMobile` (iOS or Android). Defined *before* `captureCard()` so the values are initialized when the function runs.
+- **Pre-rendering**: `preRenderCard()` is called at the end of `showResults()`. It runs `captureCard()` in the background and stores the resulting blob in `cachedCardBlob`. By the time the user reads results and taps Share/Save, the image is ready — so `navigator.share({ files })` can fire synchronously in the click handler, preserving the iOS user gesture.
 - **`captureCard()`**: Waits for `document.fonts.ready` (custom @font-face fonts must load before html2canvas can render them), then strips `background-clip: text` gradient CSS, captures via html2canvas, and restores. Scale is 1x on mobile (iOS canvas memory limits) and 2x on desktop. Uses `allowTaint: true` for font/resource compatibility.
+- **`getCardBlob()`**: Returns `cachedCardBlob` if available, otherwise runs `captureCard()` fresh.
 - **Share** (primary button):
-  - **Mobile** (iOS/Android) — calls `navigator.share({ title, text, url })` synchronously in the click handler (same pattern as Parsed/Beamlab). No image generation — async html2canvas loses the user gesture context on iOS, causing silent failure.
+  - **Mobile** (iOS/Android) — if cached blob is ready, shares image + text + quiz URL via Web Share API with files (synchronous in click handler). Falls back to text-only `navigator.share` if blob isn't cached yet.
   - **Desktop** (Windows/Mac/Linux) — copies ID card image to clipboard via `ClipboardItem`. Falls back to copying text + quiz link.
-- **Copy Image** — captures card, copies to clipboard as PNG. Falls back to text.
+- **Copy Image** — uses `getCardBlob()`, copies to clipboard as PNG. Falls back to text.
 - **Save Image**:
-  - **Mobile** (iOS/Android) — captures card, then shows a fullscreen overlay with the image and "Long press to save to Photos" hint. Uses `-webkit-touch-callout: default` to ensure iOS shows the long-press context menu. `navigator.share` with files can't be used here because the async html2canvas chain loses the user gesture context.
+  - **Mobile** (iOS/Android) — if cached blob is ready, opens native share sheet with file (synchronous, user gesture preserved). Otherwise captures fresh and shows fullscreen overlay with "Long press to save to Photos" hint (`-webkit-touch-callout: default` ensures iOS context menu).
   - **Desktop** — triggers PNG download via blob URL.
 
 ### Dependencies

@@ -6,7 +6,7 @@ A philosophical alignment quiz. Answer 12 everyday moral dilemmas to discover wh
 - `index.html` — start screen, question screen, result screen (result screen is outside `.game-container` for consistent header/footer)
 - `style.css` — dark theme, responsive, glassmorphic design (includes about page, archetypes page, and compass styles)
 - `game.js` — core engine: questions, scoring, screen flow, image capture, sharing, localStorage, compass rendering
-- `about.html` — about page with school explainers, alignment compass, glance cards, FAQ, credits
+- `about.html` — about page with school explainers, alignment compass, glance cards, FAQ, credits, and "See Something Wrong?" feedback link to GitHub issues
 - `archetypes.html` — all 20 archetypes with filter chips, per-card mini compass, interactive explore compass with Voronoi zones
 - `favicon.svg` — simple SVG favicon
 - `og-image.png` — Open Graph social preview image (1200x630)
@@ -68,10 +68,16 @@ Each school has a full profile used on the ID card:
 Each question choice has a `react` property — a witty one-liner shown immediately after choosing, before the philosopher quote fades in. These add personality to the quiz flow.
 
 ## Sharing & Image Export
-- **Share** (primary button) — html2canvas captures ID card, shares image+text via Web Share API. Falls back to text-only, then clipboard.
+- **Platform detection**: `isIOS` (UA + iPad check), `isMobile` (iOS or Android). Used to pick the right share/save strategy per platform.
+- **Share** (primary button):
+  - **Mobile** (iOS/Android) — html2canvas captures ID card, shares image + text + quiz URL via Web Share API (`navigator.share` with `files` and `url`). Falls back to text-only share, then clipboard.
+  - **Desktop** (Windows/Mac/Linux) — copies ID card image to clipboard via `ClipboardItem`. Falls back to copying text + quiz link.
 - **Copy Image** — captures card, copies to clipboard as PNG. Falls back to text.
-- **Save Image** — captures card, triggers PNG download.
-- html2canvas temporarily strips `background-clip: text` CSS (gradient text) during capture to avoid rendering artifacts.
+- **Save Image**:
+  - **Mobile** (iOS/Android) — opens native share sheet via Web Share API so users can save to Photos (not Files). iOS toast hints "Use Save Image to add to Photos".
+  - **Desktop** — triggers PNG download via blob URL.
+- html2canvas temporarily strips `background-clip: text` CSS (gradient text) during capture to avoid rendering artifacts. Scale is 1x on iOS (memory limits) and 2x elsewhere.
+- Share/save catch handlers never re-call `navigator.share` from async context (user gesture is lost); they fall back to clipboard instead.
 
 ### Dependencies
 - `html2canvas` 1.4.1 from cdnjs (SRI hash included)

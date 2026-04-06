@@ -1016,13 +1016,13 @@
         var text = generateShareText();
         var fullText = text + '\n' + quizUrl;
 
-        // Mobile: if cached blob is ready, share image + text + link
+        // Mobile: if cached blob is ready, share image + text + URL
         // synchronously in the click handler (preserves user gesture).
-        // URL goes inside text (not as separate `url` param) because
-        // share targets hide the url field when files are present.
+        // URL without protocol avoids link preview that overrides image.
         if (isMobile && cachedCardBlob && navigator.share && navigator.canShare) {
             var file = new File([cachedCardBlob], 'philosopher-id.png', { type: 'image/png' });
-            var shareData = { text: fullText, files: [file] };
+            var imgText = text + '\nraggedydoc.com/examined';
+            var shareData = { text: imgText, files: [file] };
             if (navigator.canShare(shareData)) {
                 navigator.share(shareData).catch(function () { /* user cancelled */ });
                 return;

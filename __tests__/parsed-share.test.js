@@ -15,7 +15,7 @@ describe('Parsed generateShareText', () => {
         expect(text).toContain('Parsed #42');
         expect(text).toContain('Compiled');
         expect(text).toContain('5/5');
-        expect(text).toContain('https://www.raggedydoc.com/games/parsed');
+        expect(text).toContain('https://www.raggedydoc.com/parsed');
     });
 
     test('Genius label when well under par', () => {

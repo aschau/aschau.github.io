@@ -16,7 +16,7 @@ describe('Beamlab generateShareText', () => {
         expect(text).toContain('Beamlab #42');
         expect(text).toContain('Focused');
         expect(text).toContain('4/4');
-        expect(text).toContain('https://www.raggedydoc.com/games/beamlab');
+        expect(text).toContain('https://www.raggedydoc.com/beamlab');
     });
 
     test('Brilliant label when under par', () => {

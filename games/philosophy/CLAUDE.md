@@ -71,7 +71,7 @@ Each question choice has a `react` property — a witty one-liner shown immediat
 - **Platform detection**: `isIOS` (UA + iPad check), `isMobile` (iOS or Android). Defined *before* `captureCard()` so the values are initialized when the function runs.
 - **`captureCard()`**: Waits for `document.fonts.ready` (custom @font-face fonts must load before html2canvas can render them), then strips `background-clip: text` gradient CSS, captures via html2canvas, and restores. Scale is 1x on mobile (iOS canvas memory limits) and 2x on desktop. Uses `allowTaint: true` for font/resource compatibility.
 - **Share** (primary button):
-  - **Mobile** (iOS/Android) — captures ID card, shares image + text + quiz URL via Web Share API (`navigator.share` with `files` and `url`). If image capture fails, falls back to text-only native share sheet, then clipboard.
+  - **Mobile** (iOS/Android) — calls `navigator.share({ title, text, url })` synchronously in the click handler (same pattern as Parsed/Beamlab). No image generation — async html2canvas loses the user gesture context on iOS, causing silent failure.
   - **Desktop** (Windows/Mac/Linux) — copies ID card image to clipboard via `ClipboardItem`. Falls back to copying text + quiz link.
 - **Copy Image** — captures card, copies to clipboard as PNG. Falls back to text.
 - **Save Image**:

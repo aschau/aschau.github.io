@@ -967,66 +967,42 @@
     var quizUrl = 'https://www.raggedydoc.com/games/philosophy/';
 
     shareBtn.addEventListener('click', function () {
-        shareBtn.disabled = true;
-        shareBtn.textContent = 'Generating...';
         var text = generateShareText();
         var fullText = text + '\n' + quizUrl;
 
-        if (!isMobile) {
-            captureCard().then(function (canvas) {
-                return new Promise(function (resolve, reject) {
-                    canvas.toBlob(function (blob) {
-                        if (!blob) return reject();
-                        if (navigator.clipboard && navigator.clipboard.write) {
-                            navigator.clipboard.write([
-                                new ClipboardItem({ 'image/png': blob })
-                            ]).then(function () {
-                                showToast('Image & link copied to clipboard!');
-                                resolve();
-                            }).catch(reject);
-                        } else {
-                            reject();
-                        }
-                    }, 'image/png');
-                });
-            }).catch(function () {
-                copyToClipboard(fullText);
-            }).finally(function () {
-                shareBtn.disabled = false;
-                shareBtn.textContent = 'Share';
-            });
+        // Mobile: share text+link immediately (like Parsed/Beamlab).
+        // Calling navigator.share synchronously in the click handler
+        // preserves the user gesture — async image generation loses it.
+        if (isMobile && navigator.share) {
+            navigator.share({
+                title: 'Examined — Philosophy Alignment Quiz',
+                text: text,
+                url: quizUrl
+            }).catch(function () { /* user cancelled */ });
             return;
         }
 
+        // Desktop: try to copy ID card image to clipboard
+        shareBtn.disabled = true;
+        shareBtn.textContent = 'Generating...';
         captureCard().then(function (canvas) {
             return new Promise(function (resolve, reject) {
                 canvas.toBlob(function (blob) {
-                    if (!blob) return reject(new Error('empty blob'));
-                    resolve(blob);
+                    if (!blob) return reject();
+                    if (navigator.clipboard && navigator.clipboard.write) {
+                        navigator.clipboard.write([
+                            new ClipboardItem({ 'image/png': blob })
+                        ]).then(function () {
+                            showToast('Image copied to clipboard!');
+                            resolve();
+                        }).catch(reject);
+                    } else {
+                        reject();
+                    }
                 }, 'image/png');
             });
-        }).then(function (blob) {
-            if (navigator.share && navigator.canShare) {
-                var file = new File([blob], 'philosopher-id.png', { type: 'image/png' });
-                var shareData = { text: text, url: quizUrl, files: [file] };
-                if (navigator.canShare(shareData)) {
-                    return navigator.share(shareData);
-                }
-            }
-            if (navigator.share) {
-                return navigator.share({ text: text, url: quizUrl });
-            }
+        }).catch(function () {
             copyToClipboard(fullText);
-        }).catch(function (err) {
-            if (err && err.name === 'AbortError') return;
-            // Image failed — share text+link via native share sheet
-            if (navigator.share) {
-                navigator.share({ text: text, url: quizUrl }).catch(function () {
-                    copyToClipboard(fullText);
-                });
-            } else {
-                copyToClipboard(fullText);
-            }
         }).finally(function () {
             shareBtn.disabled = false;
             shareBtn.textContent = 'Share';

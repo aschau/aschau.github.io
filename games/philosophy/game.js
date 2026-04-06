@@ -958,6 +958,33 @@
         shareBtn.disabled = true;
         shareBtn.textContent = 'Generating...';
         var text = generateShareText();
+        var fullText = text + '\n' + quizUrl;
+
+        if (!isMobile) {
+            captureCard().then(function (canvas) {
+                return new Promise(function (resolve, reject) {
+                    canvas.toBlob(function (blob) {
+                        if (!blob) return reject();
+                        if (navigator.clipboard && navigator.clipboard.write) {
+                            navigator.clipboard.write([
+                                new ClipboardItem({ 'image/png': blob })
+                            ]).then(function () {
+                                showToast('Image & link copied to clipboard!');
+                                resolve();
+                            }).catch(reject);
+                        } else {
+                            reject();
+                        }
+                    }, 'image/png');
+                });
+            }).catch(function () {
+                copyToClipboard(fullText);
+            }).finally(function () {
+                shareBtn.disabled = false;
+                shareBtn.textContent = 'Share';
+            });
+            return;
+        }
 
         captureCard().then(function (canvas) {
             return new Promise(function (resolve) {
@@ -974,10 +1001,10 @@
             if (navigator.share) {
                 return navigator.share({ text: text, url: quizUrl });
             }
-            copyToClipboard(text + '\n' + quizUrl);
+            copyToClipboard(fullText);
         }).catch(function (err) {
             if (err && err.name === 'AbortError') return;
-            copyToClipboard(text + '\n' + quizUrl);
+            copyToClipboard(fullText);
         }).finally(function () {
             shareBtn.disabled = false;
             shareBtn.textContent = 'Share';

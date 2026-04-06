@@ -75,7 +75,7 @@ Each question choice has a `react` property — a witty one-liner shown immediat
   - **Desktop** (Windows/Mac/Linux) — copies ID card image to clipboard via `ClipboardItem`. Falls back to copying text + quiz link.
 - **Copy Image** — captures card, copies to clipboard as PNG. Falls back to text.
 - **Save Image**:
-  - **Mobile** (iOS/Android) — opens native share sheet via Web Share API so users can save to Photos (not Files). iOS toast hints "Use Save Image to add to Photos". If capture fails, shows "Try a screenshot instead!" toast.
+  - **Mobile** (iOS/Android) — captures card, then shows a fullscreen overlay with the image and "Long press to save to Photos" hint. Uses `-webkit-touch-callout: default` to ensure iOS shows the long-press context menu. `navigator.share` with files can't be used here because the async html2canvas chain loses the user gesture context.
   - **Desktop** — triggers PNG download via blob URL.
 
 ### Dependencies

@@ -770,6 +770,42 @@ body::before {
     transform: translateX(-50%) translateY(0);
 }
 
+/* ---- Save Overlay (mobile long-press to save) ---- */
+
+.save-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: var(--z-loading, 9999);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.save-overlay-content {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.save-overlay-hint {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+}
+
+.save-overlay-img {
+    width: 100%;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    -webkit-touch-callout: default;
+}
+
+.save-overlay-close {
+    margin-top: 16px;
+}
+
 /* ---- Result Alignment Compass ---- */
 
 .result-compass {

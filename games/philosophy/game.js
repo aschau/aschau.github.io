@@ -905,36 +905,56 @@
         saveImgBtn.disabled = true;
         saveImgBtn.textContent = 'Generating...';
         captureCard().then(function (canvas) {
-            return new Promise(function (resolve, reject) {
-                canvas.toBlob(function (blob) {
-                    if (!blob) return reject(new Error('empty blob'));
-                    resolve(blob);
-                }, 'image/png');
-            });
-        }).then(function (blob) {
-            if (isMobile && navigator.share && navigator.canShare) {
-                var file = new File([blob], 'philosopher-id.png', { type: 'image/png' });
-                var shareData = { files: [file] };
-                if (navigator.canShare(shareData)) {
-                    return navigator.share(shareData).then(function () {
-                        showToast(isIOS ? 'Use "Save Image" to add to Photos' : 'Image shared!');
-                    });
-                }
+            if (isMobile) {
+                // Show image inline so user can long-press → Save to Photos.
+                // navigator.share with files loses user gesture in async chain.
+                var dataUrl = canvas.toDataURL('image/png');
+                showSaveOverlay(dataUrl);
+            } else {
+                return new Promise(function (resolve, reject) {
+                    canvas.toBlob(function (blob) {
+                        if (!blob) return reject(new Error('empty blob'));
+                        resolve(blob);
+                    }, 'image/png');
+                }).then(function (blob) {
+                    var link = document.createElement('a');
+                    link.download = 'philosopher-id.png';
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    setTimeout(function () { URL.revokeObjectURL(link.href); }, 5000);
+                    showToast('Image saved!');
+                });
             }
-            var link = document.createElement('a');
-            link.download = 'philosopher-id.png';
-            link.href = URL.createObjectURL(blob);
-            link.click();
-            setTimeout(function () { URL.revokeObjectURL(link.href); }, 5000);
-            showToast('Image saved!');
-        }).catch(function (err) {
-            if (err && err.name === 'AbortError') return;
-            showToast(isMobile ? 'Try a screenshot instead!' : 'Could not generate image');
+        }).catch(function () {
+            showToast('Could not generate image');
         }).finally(function () {
             saveImgBtn.disabled = false;
             saveImgBtn.textContent = 'Save ID Card as Image';
         });
     });
+
+    function showSaveOverlay(dataUrl) {
+        var existing = document.getElementById('save-overlay');
+        if (existing) existing.remove();
+
+        var overlay = document.createElement('div');
+        overlay.id = 'save-overlay';
+        overlay.className = 'save-overlay';
+        overlay.innerHTML =
+            '<div class="save-overlay-content">' +
+                '<p class="save-overlay-hint">Long press the image to save to Photos</p>' +
+                '<img src="' + dataUrl + '" alt="Philosopher ID Card" class="save-overlay-img">' +
+                '<button class="btn-secondary save-overlay-close">Done</button>' +
+            '</div>';
+        document.body.appendChild(overlay);
+
+        overlay.querySelector('.save-overlay-close').addEventListener('click', function () {
+            overlay.remove();
+        });
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) overlay.remove();
+        });
+    }
 
     copyBtn.addEventListener('click', function () {
         copyBtn.disabled = true;

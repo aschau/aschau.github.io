@@ -68,16 +68,15 @@ Each school has a full profile used on the ID card:
 Each question choice has a `react` property — a witty one-liner shown immediately after choosing, before the philosopher quote fades in. These add personality to the quiz flow.
 
 ## Sharing & Image Export
-- **Platform detection**: `isIOS` (UA + iPad check), `isMobile` (iOS or Android). Used to pick the right share/save strategy per platform.
+- **Platform detection**: `isIOS` (UA + iPad check), `isMobile` (iOS or Android). Defined *before* `captureCard()` so the values are initialized when the function runs.
+- **`captureCard()`**: Waits for `document.fonts.ready` (custom @font-face fonts must load before html2canvas can render them), then strips `background-clip: text` gradient CSS, captures via html2canvas, and restores. Scale is 1x on mobile (iOS canvas memory limits) and 2x on desktop. Uses `allowTaint: true` for font/resource compatibility.
 - **Share** (primary button):
-  - **Mobile** (iOS/Android) — html2canvas captures ID card, shares image + text + quiz URL via Web Share API (`navigator.share` with `files` and `url`). Falls back to text-only share, then clipboard.
+  - **Mobile** (iOS/Android) — captures ID card, shares image + text + quiz URL via Web Share API (`navigator.share` with `files` and `url`). If image capture fails, falls back to text-only native share sheet, then clipboard.
   - **Desktop** (Windows/Mac/Linux) — copies ID card image to clipboard via `ClipboardItem`. Falls back to copying text + quiz link.
 - **Copy Image** — captures card, copies to clipboard as PNG. Falls back to text.
 - **Save Image**:
-  - **Mobile** (iOS/Android) — opens native share sheet via Web Share API so users can save to Photos (not Files). iOS toast hints "Use Save Image to add to Photos".
+  - **Mobile** (iOS/Android) — opens native share sheet via Web Share API so users can save to Photos (not Files). iOS toast hints "Use Save Image to add to Photos". If capture fails, shows "Try a screenshot instead!" toast.
   - **Desktop** — triggers PNG download via blob URL.
-- html2canvas temporarily strips `background-clip: text` CSS (gradient text) during capture to avoid rendering artifacts. Scale is 1x on iOS (memory limits) and 2x elsewhere.
-- Share/save catch handlers never re-call `navigator.share` from async context (user gesture is lost); they fall back to clipboard instead.
 
 ### Dependencies
 - `html2canvas` 1.4.1 from cdnjs (SRI hash included)

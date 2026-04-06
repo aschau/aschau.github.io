@@ -95,17 +95,19 @@
             <div class="philosopher-quote" id="philosopher-quote"></div>
         </div>
 
-        <!-- Result Screen -->
-        <div class="screen" id="result-screen">
-            <div class="arch-header result-header-inner">
-                <a href="#" class="arch-back" id="result-back-btn2">&larr; Home</a>
-                <span class="arch-header-title">Your Result</span>
-                <span class="arch-header-links">
-                    <a href="about.html" class="arch-header-link">About</a>
-                    <a href="archetypes.html" class="arch-cta">Archetypes</a>
-                </span>
-            </div>
-            <p class="result-intro">Your Philosopher ID has arrived.<br>Screenshot it. Save it. Share it.</p>
+        </div><!-- end question-screen -->
+    </div><!-- end game-container -->
+
+    <!-- Result Screen — outside game-container, same structure as about/archetypes -->
+    <div class="screen" id="result-screen">
+        <div class="arch-header">
+            <a href="#" class="arch-back" id="result-back-btn2">&larr; Home</a>
+            <span class="arch-header-title">Your Result</span>
+            <a href="archetypes.html" class="arch-cta">Archetypes</a>
+        </div>
+
+        <div class="result-content">
+            <p class="result-intro">Your Philosopher ID has arrived.<br>Screenshot it. Save it. Share it.<br><a href="about.html" class="result-about-link">How does this work?</a></p>
 
             <!-- The ID Card (screenshot-friendly) -->
             <div class="id-card" id="id-card">
@@ -185,13 +187,14 @@
                 </button>
                 <div class="answer-breakdown-content" id="breakdown-content"></div>
             </div>
-            <div class="arch-footer result-inner-footer">
-                <span>Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a></span>
-                <span class="arch-footer-sep">&middot;</span>
-                <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee &#9749;</a>
-                <span class="arch-footer-sep">&middot;</span>
-                <a href="../../privacy.html">Privacy</a>
-            </div>
+        </div>
+
+        <div class="arch-footer">
+            <span>Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a></span>
+            <span class="arch-footer-sep">&middot;</span>
+            <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee &#9749;</a>
+            <span class="arch-footer-sep">&middot;</span>
+            <a href="../../privacy.html">Privacy</a>
         </div>
     </div>
 

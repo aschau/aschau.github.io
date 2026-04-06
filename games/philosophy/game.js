@@ -316,11 +316,17 @@
     var choosing = false; // prevents double-click
 
     // ---- Screen Management ----
+    var gameContainer = document.querySelector('.game-container');
+
     function showScreen(screen) {
         [startScreen, questionScreen, resultScreen].forEach(function (s) {
             s.classList.remove('active');
         });
         screen.classList.add('active');
+
+        // Hide game-container when result screen is active (it's outside the container)
+        gameContainer.style.display = (screen === resultScreen) ? 'none' : '';
+        window.scrollTo(0, 0);
     }
 
     // ---- Restore saved result ----

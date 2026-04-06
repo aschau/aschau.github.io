@@ -45,7 +45,8 @@ function calculateMisery(statusData, bskyPosts, bskyComments, redditData, nowMs)
 
         if (statusData.components) {
             var badComponents = statusData.components.filter(function (c) {
-                return c.status !== 'operational';
+                return c.status !== 'operational' &&
+                    c.name !== 'Visit https://status.claude.com for more information';
             });
             statusScore += Math.min(badComponents.length * 0.5, 2);
         }

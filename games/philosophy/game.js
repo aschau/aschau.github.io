@@ -845,59 +845,71 @@
     }
 
     // ---- Image Capture ----
-    // html2canvas can't render background-clip: text, so we temporarily
-    // swap gradient text to solid color before capture and restore after.
-    function captureCard() {
-        var card = document.getElementById('id-card');
-        var gradientEls = card.querySelectorAll('.id-card-title');
-        var saved = [];
-
-        for (var i = 0; i < gradientEls.length; i++) {
-            var el = gradientEls[i];
-            saved.push({
-                el: el,
-                bg: el.style.background,
-                clip: el.style.webkitBackgroundClip,
-                fill: el.style.webkitTextFillColor
-            });
-            el.style.background = 'none';
-            el.style.webkitBackgroundClip = '';
-            el.style.webkitTextFillColor = '#e8e6f0';
-        }
-
-        function restoreGradients() {
-            for (var j = 0; j < saved.length; j++) {
-                var s = saved[j];
-                s.el.style.background = s.bg;
-                s.el.style.webkitBackgroundClip = s.clip;
-                s.el.style.webkitTextFillColor = s.fill;
-            }
-        }
-
-        return html2canvas(card, {
-            backgroundColor: '#12122a',
-            scale: isIOS ? 1 : 2,
-            useCORS: true,
-            logging: false
-        }).then(function (canvas) {
-            restoreGradients();
-            return canvas;
-        }).catch(function (err) {
-            restoreGradients();
-            throw err;
-        });
-    }
-
     var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     var isMobile = isIOS || /Android/i.test(navigator.userAgent);
+
+    // html2canvas can't render background-clip: text, so we temporarily
+    // swap gradient text to solid color before capture and restore after.
+    // Waits for fonts to load first — html2canvas fails on mobile if
+    // custom @font-face fonts haven't finished loading.
+    function captureCard() {
+        var fontsReady = (document.fonts && document.fonts.ready)
+            ? document.fonts.ready
+            : Promise.resolve();
+
+        return fontsReady.then(function () {
+            var card = document.getElementById('id-card');
+            var gradientEls = card.querySelectorAll('.id-card-title');
+            var saved = [];
+
+            for (var i = 0; i < gradientEls.length; i++) {
+                var el = gradientEls[i];
+                saved.push({
+                    el: el,
+                    bg: el.style.background,
+                    clip: el.style.webkitBackgroundClip,
+                    fill: el.style.webkitTextFillColor
+                });
+                el.style.background = 'none';
+                el.style.webkitBackgroundClip = '';
+                el.style.webkitTextFillColor = '#e8e6f0';
+            }
+
+            function restoreGradients() {
+                for (var j = 0; j < saved.length; j++) {
+                    var s = saved[j];
+                    s.el.style.background = s.bg;
+                    s.el.style.webkitBackgroundClip = s.clip;
+                    s.el.style.webkitTextFillColor = s.fill;
+                }
+            }
+
+            return html2canvas(card, {
+                backgroundColor: '#12122a',
+                scale: isMobile ? 1 : 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false
+            }).then(function (canvas) {
+                restoreGradients();
+                return canvas;
+            }).catch(function (err) {
+                restoreGradients();
+                throw err;
+            });
+        });
+    }
 
     saveImgBtn.addEventListener('click', function () {
         saveImgBtn.disabled = true;
         saveImgBtn.textContent = 'Generating...';
         captureCard().then(function (canvas) {
-            return new Promise(function (resolve) {
-                canvas.toBlob(function (blob) { resolve(blob); }, 'image/png');
+            return new Promise(function (resolve, reject) {
+                canvas.toBlob(function (blob) {
+                    if (!blob) return reject(new Error('empty blob'));
+                    resolve(blob);
+                }, 'image/png');
             });
         }).then(function (blob) {
             if (isMobile && navigator.share && navigator.canShare) {
@@ -917,7 +929,7 @@
             showToast('Image saved!');
         }).catch(function (err) {
             if (err && err.name === 'AbortError') return;
-            showToast('Could not generate image');
+            showToast(isMobile ? 'Try a screenshot instead!' : 'Could not generate image');
         }).finally(function () {
             saveImgBtn.disabled = false;
             saveImgBtn.textContent = 'Save ID Card as Image';
@@ -987,8 +999,11 @@
         }
 
         captureCard().then(function (canvas) {
-            return new Promise(function (resolve) {
-                canvas.toBlob(function (blob) { resolve(blob); }, 'image/png');
+            return new Promise(function (resolve, reject) {
+                canvas.toBlob(function (blob) {
+                    if (!blob) return reject(new Error('empty blob'));
+                    resolve(blob);
+                }, 'image/png');
             });
         }).then(function (blob) {
             if (navigator.share && navigator.canShare) {
@@ -1004,7 +1019,14 @@
             copyToClipboard(fullText);
         }).catch(function (err) {
             if (err && err.name === 'AbortError') return;
-            copyToClipboard(fullText);
+            // Image failed — share text+link via native share sheet
+            if (navigator.share) {
+                navigator.share({ text: text, url: quizUrl }).catch(function () {
+                    copyToClipboard(fullText);
+                });
+            } else {
+                copyToClipboard(fullText);
+            }
         }).finally(function () {
             shareBtn.disabled = false;
             shareBtn.textContent = 'Share';

@@ -1,6 +1,7 @@
 // ============================================
 // Parsed — Core Game Engine
 // Tap-to-swap code tokens to fix buggy programs
+// ── Testable logic extracted to interpreter.module.js — keep in sync ──
 // ============================================
 
 (function () {
@@ -1892,7 +1893,7 @@
                     if (ifEnd + 1 <= end) {
                         var nextLine = this.codeLines[ifEnd];
                         if (nextLine && nextLine.length > 1 && nextLine[1] === 'else') {
-                            var elseEnd = this.findBlockEnd(ifEnd);
+                            var elseEnd = this.findElseEnd(ifEnd);
                             i = elseEnd + 1;
                         } else {
                             i = ifEnd + 1;
@@ -1906,7 +1907,7 @@
                     var closeLine = this.codeLines[ifEnd];
                     if (closeLine && closeLine.length > 1 && closeLine[1] === 'else') {
                         elseBlockStart = ifEnd;
-                        var elseEnd2 = this.findBlockEnd(elseBlockStart);
+                        var elseEnd2 = this.findElseEnd(elseBlockStart);
                         this.executeBlock(elseBlockStart + 1, elseEnd2 - 1);
                         i = elseEnd2 + 1;
                     } else {
@@ -2002,6 +2003,24 @@
     PseudoInterpreter.prototype.findBlockEnd = function (startLine) {
         var depth = 0;
         for (var i = startLine; i < this.codeLines.length; i++) {
+            var line = this.codeLines[i];
+            for (var j = 0; j < line.length; j++) {
+                if (line[j] === '{') depth++;
+                if (line[j] === '}') {
+                    depth--;
+                    if (depth === 0) return i;
+                }
+            }
+        }
+        return this.codeLines.length - 1;
+    };
+
+    // findElseEnd: find the closing } of an else block starting from a "} else {"
+    // line. Unlike findBlockEnd, this starts at depth 1 and scans from the NEXT
+    // line, matching the Python verifier's _find_else_end.
+    PseudoInterpreter.prototype.findElseEnd = function (elseLine) {
+        var depth = 1;
+        for (var i = elseLine + 1; i < this.codeLines.length; i++) {
             var line = this.codeLines[i];
             for (var j = 0; j < line.length; j++) {
                 if (line[j] === '{') depth++;

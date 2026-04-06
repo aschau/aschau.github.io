@@ -1,3 +1,4 @@
+// ── Testable logic extracted to conversions.module.js — keep in sync ──
 (function () {
     'use strict';
 

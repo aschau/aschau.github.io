@@ -1,6 +1,7 @@
 // ============================================
 // Redirect — Core Game Engine
 // Supports mirrors (/ \) and beam splitters
+// ── Testable logic extracted to engine.module.js — keep in sync ──
 // ============================================
 
 (function () {

@@ -1,4 +1,5 @@
 // Developer Misery Index — Frontend
+// ── Testable logic extracted to misery.module.js — keep in sync ──
 (function () {
   "use strict";
 
@@ -111,8 +112,8 @@
     return arr[Math.floor(Math.random() * arr.length)];
   }
 
-  function timeAgo(isoString) {
-    var diff = (Date.now() - new Date(isoString).getTime()) / 1000;
+  function timeAgo(isoString, nowMs) {
+    var diff = ((nowMs || Date.now()) - new Date(isoString).getTime()) / 1000;
     if (diff < 60) return "just now";
     if (diff < 3600) return Math.floor(diff / 60) + "m ago";
     if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
@@ -147,7 +148,7 @@
     document.getElementById("commentary-text").textContent = pickRandom(COMMENTARY[level.key]);
   }
 
-  function computeBreakdown(data) {
+  function computeBreakdown(data, sf) {
     var statusScore = 0;
     var bskyScore = 0;
     var redditOutageScore = 0;
@@ -167,7 +168,7 @@
       }
     }
 
-    if (sourceFilter !== "official") {
+    if (sf !== "official") {
       var bskyPosts = data.social ? data.social.recentPosts : 0;
       var bskyComments = data.social ? data.social.recentComments : 0;
       if (bskyPosts >= 30) bskyScore += 2;
@@ -730,7 +731,7 @@
     }
 
     // Recalculate breakdown with filter
-    var breakdown = computeBreakdown({ status: lastData.status, social: lastSocialData, reddit: lastData.reddit });
+    var breakdown = computeBreakdown({ status: lastData.status, social: lastSocialData, reddit: lastData.reddit }, sourceFilter);
     var displayIndex = Math.min(breakdown.status + breakdown.reddit + breakdown.bluesky, 10);
 
     setMiseryLevel(displayIndex);

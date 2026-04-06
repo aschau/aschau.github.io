@@ -66,9 +66,6 @@ body::before {
     padding: 20px;
     min-height: 100vh;
     min-height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* ---- Screens ---- */
@@ -81,6 +78,14 @@ body::before {
 
 .screen.active {
     display: block;
+}
+
+#question-screen {
+    padding-top: 15vh;
+}
+
+#result-screen {
+    padding-top: 32px;
 }
 
 @keyframes fadeIn {
@@ -97,6 +102,24 @@ body::before {
 
 .start-content {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    justify-content: center;
+}
+
+.start-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.start-bottom {
+    padding-bottom: 8px;
+    flex-shrink: 0;
 }
 
 .game-title {
@@ -112,34 +135,36 @@ body::before {
 }
 
 .game-subtitle {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: var(--text-secondary);
-    margin-bottom: 24px;
+    margin-bottom: 12px;
     font-weight: 400;
 }
 
 .game-desc {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
-    line-height: 1.6;
-    margin-bottom: 28px;
+    line-height: 1.45;
+    margin-bottom: 20px;
+    max-width: 320px;
 }
 
 .philosophers-preview {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 36px;
+    flex-wrap: nowrap;
+    margin-bottom: 24px;
 }
 
 .phil-tag {
-    font-size: 0.8rem;
-    padding: 4px 12px;
+    font-size: 0.72rem;
+    padding: 3px 10px;
     border-radius: 20px;
     border: 1px solid var(--border);
     color: var(--text-secondary);
     background: var(--bg-card);
+    white-space: nowrap;
 }
 
 .phil-tag:nth-child(1) { border-color: var(--color-kantian); color: var(--color-kantian); }
@@ -148,28 +173,30 @@ body::before {
 .phil-tag:nth-child(4) { border-color: var(--color-contractualist); color: var(--color-contractualist); }
 .phil-tag:nth-child(5) { border-color: var(--color-existentialist); color: var(--color-existentialist); }
 
-.start-quote {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    font-style: italic;
-    margin-top: 32px;
+#last-result-btn {
+    margin-top: 10px;
 }
 
-.about-link {
-    display: inline-block;
-    font-size: 0.78rem;
+.start-quote {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 6px;
+}
+
+.start-links {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.start-links a {
     color: var(--text-muted);
     text-decoration: none;
-    margin-top: 12px;
     transition: color var(--transition);
 }
 
-.about-link:hover {
+.start-links a:hover {
     color: var(--accent);
-}
-
-.start-footer {
-    margin-top: 24px;
 }
 
 /* ---- Buttons ---- */
@@ -427,7 +454,7 @@ body::before {
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -435,14 +462,22 @@ body::before {
 }
 
 .id-card-school {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--accent);
     font-weight: 600;
     margin-bottom: 10px;
 }
 
+.id-card-archetype-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 12px;
+    padding: 0 8px;
+}
+
 .id-card-motto {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     color: var(--text-muted);
     font-style: italic;
 }
@@ -469,6 +504,14 @@ body::before {
 
 .id-section-label--green { color: var(--color-virtue); }
 .id-section-label--red { color: var(--color-existentialist); }
+
+/* The Mix */
+
+.id-mix-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
 
 /* Columns for strengths/weaknesses */
 
@@ -1004,6 +1047,39 @@ body::before {
         font-size: 2.6rem;
     }
 
+    .game-title {
+        margin-bottom: 4px;
+    }
+
+    .game-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+    }
+
+    .game-desc {
+        font-size: 0.8rem;
+        margin-bottom: 16px;
+    }
+
+    .philosophers-preview {
+        gap: 4px;
+        margin-bottom: 20px;
+    }
+
+    .phil-tag {
+        font-size: 0.65rem;
+        padding: 3px 7px;
+    }
+
+    .btn-primary {
+        padding: 12px 28px;
+        font-size: 0.9rem;
+    }
+
+    #question-screen {
+        padding-top: 8vh;
+    }
+
     .id-card-title {
         font-size: 1.6rem;
     }
@@ -1052,6 +1128,35 @@ body::before {
 
     .id-card-title {
         font-size: 1.4rem;
+    }
+
+    .phil-tag {
+        font-size: 0.6rem;
+        padding: 2px 6px;
+    }
+}
+
+/* Short screens (iPhone SE, etc.) */
+@media (max-height: 700px) {
+    .game-title {
+        font-size: 2.4rem;
+    }
+
+    .game-subtitle {
+        margin-bottom: 6px;
+    }
+
+    .game-desc {
+        margin-bottom: 14px;
+        font-size: 0.78rem;
+    }
+
+    .philosophers-preview {
+        margin-bottom: 18px;
+    }
+
+    .start-quote {
+        font-size: 0.7rem;
     }
 }
 
@@ -1220,6 +1325,56 @@ body::before {
     color: var(--text-primary);
 }
 
+/* Archetype cards (archetypes.html) */
+
+.archetype-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 10px;
+}
+
+.archetype-dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.archetype-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.archetype-plus {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.archetype-combo {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-left: 4px;
+}
+
+.archetype-card-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent-secondary);
+    margin-bottom: 6px;
+}
+
+.archetype-card-desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin: 0;
+}
+
 .about-footer {
     margin-top: 48px;
     padding-top: 24px;
@@ -1302,30 +1457,30 @@ body::before {
     aspect-ratio: 1;
     border-radius: var(--radius-md);
     background: rgba(255, 255, 255, 0.02);
+    /* Fallback for browsers without aspect-ratio */
+    min-height: 200px;
 }
 
-/* Left/right labels rendered as overlays inside the compass area */
+/* Left/right axis labels inside the compass */
 .compass-area::before {
-    content: 'Individual';
+    content: '\2190 Individual';
     position: absolute;
-    left: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.62rem;
+    left: 4px;
+    bottom: 4px;
+    font-size: 0.58rem;
     color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    opacity: 0.6;
+    opacity: 0.5;
 }
 
 .compass-area::after {
-    content: 'Collective';
+    content: 'Collective \2192';
     position: absolute;
-    right: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.62rem;
+    right: 4px;
+    bottom: 4px;
+    font-size: 0.58rem;
     color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
@@ -1380,80 +1535,57 @@ body::before {
     white-space: nowrap;
 }
 
-/* ---- Spectrum Bars ---- */
+/* ---- At a Glance Cards ---- */
 
-.spectrum-chart {
+.glance-cards {
     margin: 20px 0 28px;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    padding: 20px;
+    padding: 16px 20px;
 }
 
-.spectrum-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-}
-
-.spectrum-end {
-    font-size: 0.68rem;
-    font-weight: 600;
+.glance-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     color: var(--text-muted);
-    width: 90px;
-    flex-shrink: 0;
+    margin-bottom: 12px;
     text-align: center;
-    line-height: 1.2;
 }
 
-.spectrum-bar {
-    flex: 1;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 3px;
-    position: relative;
+.glance-card {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    font-size: 0.82rem;
+    line-height: 1.5;
 }
 
-.spectrum-marker {
-    position: absolute;
-    top: 50%;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+.glance-card:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
-.spectrum-legend {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-top: 8px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-}
-
-.spectrum-legend-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    font-weight: 500;
-}
-
-.spectrum-legend-dot {
+.glance-dot {
+    display: inline-block;
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    flex-shrink: 0;
+    margin-right: 4px;
+    vertical-align: middle;
 }
 
-@media (max-width: 480px) {
-    .spectrum-end {
-        width: 70px;
-        font-size: 0.62rem;
-    }
+.glance-name {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.glance-sep {
+    color: var(--text-muted);
+    margin: 0 4px;
+}
+
+.glance-desc {
+    color: var(--text-secondary);
 }

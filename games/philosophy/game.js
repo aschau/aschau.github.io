@@ -497,9 +497,12 @@
 
         var sorted = getSortedSchools();
         var primaryKey = sorted[0];
+        var secondaryKey = sorted[1];
         var profile = PROFILES[primaryKey];
+        var secondaryProfile = PROFILES[secondaryKey];
         var archetype = getArchetype();
         var school = SCHOOLS[primaryKey];
+        var secondarySchool = SCHOOLS[secondaryKey];
 
         // Calculate total and percentages
         var totalScore = 0;
@@ -507,9 +510,10 @@
         if (totalScore === 0) totalScore = 1;
 
         // ---- Populate ID Card ----
-        document.getElementById('card-icon').textContent = profile.icon;
-        document.getElementById('card-title').textContent = profile.title;
-        document.getElementById('card-school').textContent = 'School of ' + profile.philosopher;
+        document.getElementById('card-icon').textContent = school.emoji + secondarySchool.emoji;
+        document.getElementById('card-title').textContent = archetype.name;
+        document.getElementById('card-school').textContent = profile.title + ' + ' + secondaryProfile.title;
+        document.getElementById('card-archetype-desc').textContent = archetype.desc;
         document.getElementById('card-motto').textContent = profile.motto;
 
         // Strengths
@@ -529,6 +533,19 @@
             wli.textContent = profile.weaknesses[w];
             weaknessesEl.appendChild(wli);
         }
+
+        // The Mix — what the secondary school adds
+        var mixEl = document.getElementById('card-mix');
+        var primaryPct = Math.round((scores[primaryKey] / totalScore) * 100);
+        var secondaryPct = Math.round((scores[secondaryKey] / totalScore) * 100);
+        var mixDescs = {
+            kantian: 'Your Kantian side keeps you grounded in principles \u2014 you won\u2019t bend the rules, even when it\u2019d be easier.',
+            utilitarian: 'Your Utilitarian side keeps one eye on the bigger picture \u2014 outcomes matter, even when rules don\u2019t.',
+            virtue: 'Your Virtue Ethics side cares about being a good person, not just doing the right thing on paper.',
+            contractualist: 'Your Contractualist side means you always ask: is this fair to everyone involved?',
+            existentialist: 'Your Existentialist side refuses to follow any rule you didn\u2019t choose for yourself.'
+        };
+        mixEl.textContent = primaryPct + '% ' + school.name + ', ' + secondaryPct + '% ' + secondarySchool.name + '. ' + mixDescs[secondaryKey];
 
         // Catchphrases
         var catchEl = document.getElementById('card-catchphrases');

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All 20 Archetypes | Examined</title>
+    <meta name="description" content="Every possible archetype result in Examined — 20 unique philosopher personality combos from Kantian to Existentialist.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.raggedydoc.com/games/philosophy/archetypes.html">
+    <meta property="og:title" content="All 20 Archetypes | Examined">
+    <meta property="og:description" content="Every possible archetype result — 20 unique philosopher personality combos.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.raggedydoc.com/games/philosophy/archetypes.html">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="All 20 Archetypes | Examined">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="about-container">
+        <a href="about.html" class="about-back">&larr; Back to about</a>
+
+        <h1 class="about-title">The 20 Archetypes</h1>
+        <p class="about-subtitle">Your top two schools combine into one of these. Which one are you?</p>
+
+        <div id="archetype-list"></div>
+
+        <div class="about-footer">
+            <p><a href="index.html">Take the quiz</a> · Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a></p>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        var colors = {
+            kantian: '#7eb8da',
+            utilitarian: '#f0c674',
+            virtue: '#a8d5a2',
+            contractualist: '#d4a0d0',
+            existentialist: '#e8917a'
+        };
+
+        var names = {
+            kantian: 'Kantian',
+            utilitarian: 'Utilitarian',
+            virtue: 'Virtue Ethics',
+            contractualist: 'Contractualist',
+            existentialist: 'Existentialist'
+        };
+
+        var archetypes = [
+            { primary: 'kantian', secondary: 'utilitarian', name: 'The Dutiful Analyst', desc: 'You believe in doing the right thing \u2014 and you\u2019ve got the spreadsheet to prove it. Rules matter, but so do results. You\u2019re the person who follows the speed limit AND calculates the optimal route.' },
+            { primary: 'kantian', secondary: 'virtue', name: 'The Moral Compass', desc: 'You\u2019re the friend everyone comes to for advice, because you somehow always know the right thing to do. Kant would be proud. Aristotle would buy you a drink.' },
+            { primary: 'kantian', secondary: 'contractualist', name: 'The Rule Architect', desc: 'You believe society works best when everyone agrees to fair principles and actually follows them. You\u2019re the person who reads the Terms of Service \u2014 and sends feedback.' },
+            { primary: 'kantian', secondary: 'existentialist', name: 'The Principled Rebel', desc: 'You have an unshakable moral code, but you built it yourself. You follow rules because they\u2019re right, not because someone told you to. Kant with a leather jacket.' },
+            { primary: 'utilitarian', secondary: 'kantian', name: 'The Principled Calculator', desc: 'You want the best outcome for everyone, but you won\u2019t cross certain lines to get there. You\u2019d save the world, but not by lying. The trolley problem keeps you up at night.' },
+            { primary: 'utilitarian', secondary: 'virtue', name: 'The Compassionate Optimizer', desc: 'You genuinely care about people AND you\u2019re good at math. You\u2019d donate to the most effective charity and then volunteer at the local one too. Maximum impact with maximum heart.' },
+            { primary: 'utilitarian', secondary: 'contractualist', name: 'The Social Engineer', desc: 'You see society as a system that can be optimized for fairness. You\u2019d redesign the trolley tracks so no one has to choose. Why solve the dilemma when you can eliminate it?' },
+            { primary: 'utilitarian', secondary: 'existentialist', name: 'The Pragmatic Rebel', desc: 'You want the best outcome and you\u2019re not precious about how to get there. Rules are tools, not commandments. You\u2019d hack the trolley\u2019s GPS.' },
+            { primary: 'virtue', secondary: 'kantian', name: 'The Noble Guardian', desc: 'You strive to be good in the deepest sense \u2014 not just doing right things, but being a right person. You\u2019re the protagonist of a novel no one has written yet.' },
+            { primary: 'virtue', secondary: 'utilitarian', name: 'The Wise Pragmatist', desc: 'You lead with character but never lose sight of consequences. The kind of person who\u2019d be a great ruler in an Aristotle thought experiment \u2014 wise, measured, and surprisingly effective.' },
+            { primary: 'virtue', secondary: 'contractualist', name: 'The Community Builder', desc: 'You believe good people make good societies, and good societies make good people. You\u2019re the neighbor everyone wishes they had. You probably bring pie.' },
+            { primary: 'virtue', secondary: 'existentialist', name: 'The Authentic Soul', desc: 'You\u2019re not good because society told you to be \u2014 you\u2019re good because you chose to be. Your character is your own project, and you take it seriously. Aristotle meets Camus at a coffee shop.' },
+            { primary: 'contractualist', secondary: 'kantian', name: 'The Justice Seeker', desc: 'Fairness is your north star. You believe in rules, but only rules that no one could reasonably reject. You\u2019d rewrite the social contract and proofread it twice.' },
+            { primary: 'contractualist', secondary: 'utilitarian', name: 'The Fair Maximizer', desc: 'You want the best for everyone, but "everyone" actually means everyone \u2014 not just the majority. Scanlon\u2019s favorite student. You\u2019d filibuster the trolley.' },
+            { primary: 'contractualist', secondary: 'virtue', name: 'The Fair Mentor', desc: 'You believe we owe each other not just fairness, but genuine care. You\u2019re the teacher who stays after class, the friend who remembers birthdays. The social contract, but make it warm.' },
+            { primary: 'contractualist', secondary: 'existentialist', name: 'The Reluctant Lawmaker', desc: 'You see the need for social agreements but chafe against anything that limits freedom. You\u2019d sign the social contract \u2014 in pencil, with amendments attached.' },
+            { primary: 'existentialist', secondary: 'kantian', name: 'The Absurd Knight', desc: 'You live by a strict moral code in a universe you know is meaningless. It\u2019s Sisyphus, but he wrote his own ethics textbook on the way up the hill. Beautifully stubborn.' },
+            { primary: 'existentialist', secondary: 'utilitarian', name: 'The Free Thinker', desc: 'You refuse to follow anyone else\u2019s rules, but you still care about making things better. You\u2019re the philosopher who quits academia to start a nonprofit.' },
+            { primary: 'existentialist', secondary: 'virtue', name: 'The Authentic Sage', desc: 'You\u2019ve chosen your own values through radical self-examination, and they happen to be pretty good ones. Sartre and Aristotle\u2019s unlikely friendship, personified.' },
+            { primary: 'existentialist', secondary: 'contractualist', name: 'The Reluctant Citizen', desc: 'You value freedom above all, but you grudgingly admit that other people exist and maybe you owe them something. You\u2019d live off the grid \u2014 but you\u2019d still recycle.' }
+        ];
+
+        var list = document.getElementById('archetype-list');
+
+        archetypes.forEach(function (a) {
+            var card = document.createElement('div');
+            card.className = 'archetype-card';
+
+            var dots = document.createElement('div');
+            dots.className = 'archetype-dots';
+
+            var d1 = document.createElement('span');
+            d1.className = 'archetype-dot';
+            d1.style.background = colors[a.primary];
+            dots.appendChild(d1);
+
+            var plus = document.createElement('span');
+            plus.className = 'archetype-plus';
+            plus.textContent = '+';
+            dots.appendChild(plus);
+
+            var d2 = document.createElement('span');
+            d2.className = 'archetype-dot';
+            d2.style.background = colors[a.secondary];
+            dots.appendChild(d2);
+
+            var combo = document.createElement('span');
+            combo.className = 'archetype-combo';
+            combo.textContent = names[a.primary] + ' + ' + names[a.secondary];
+            dots.appendChild(combo);
+
+            var title = document.createElement('h2');
+            title.className = 'archetype-card-title';
+            title.textContent = a.name;
+
+            var desc = document.createElement('p');
+            desc.className = 'archetype-card-desc';
+            desc.textContent = a.desc;
+
+            card.appendChild(dots);
+            card.appendChild(title);
+            card.appendChild(desc);
+            list.appendChild(card);
+        });
+    })();
+    </script>
+</body>
+</html>

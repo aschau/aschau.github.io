@@ -44,10 +44,8 @@
             <div class="alignment-compass">
                 <div class="compass-title">How the schools relate</div>
                 <div class="compass-grid">
-                    <div class="compass-label compass-label--top">Rules matter most</div>
-                    <div class="compass-label compass-label--bottom">Outcomes matter most</div>
-                    <div class="compass-label compass-label--left">Individual focus</div>
-                    <div class="compass-label compass-label--right">Collective focus</div>
+                    <div class="compass-label compass-label--top">&uarr; Rules matter most</div>
+                    <div class="compass-label compass-label--bottom">&darr; Outcomes matter most</div>
                     <div class="compass-area">
                         <div class="compass-axes"></div>
                         <div class="compass-dot" style="top: 18%; left: 60%; background: var(--color-kantian);" title="Kantian">
@@ -69,48 +67,38 @@
                 </div>
             </div>
 
-            <!-- Spectrum Bars -->
-            <div class="spectrum-chart">
-                <div class="spectrum-title">At a glance</div>
-                <div class="spectrum-row">
-                    <span class="spectrum-end">Follow rules</span>
-                    <div class="spectrum-bar">
-                        <span class="spectrum-marker" style="left: 10%; background: var(--color-kantian);" title="Kantian"></span>
-                        <span class="spectrum-marker" style="left: 35%; background: var(--color-contractualist);" title="Contractualist"></span>
-                        <span class="spectrum-marker" style="left: 55%; background: var(--color-virtue);" title="Virtue"></span>
-                        <span class="spectrum-marker" style="left: 75%; background: var(--color-existentialist);" title="Existentialist"></span>
-                        <span class="spectrum-marker" style="left: 90%; background: var(--color-utilitarian);" title="Utilitarian"></span>
-                    </div>
-                    <span class="spectrum-end">Judge outcomes</span>
+            <!-- At a Glance -->
+            <div class="glance-cards">
+                <div class="glance-title">At a glance</div>
+                <div class="glance-card">
+                    <span class="glance-dot" style="background: var(--color-kantian)"></span>
+                    <span class="glance-name">Kant</span>
+                    <span class="glance-sep">&mdash;</span>
+                    <span class="glance-desc">Duty first. Universal rules. Inflexible but unbreakable.</span>
                 </div>
-                <div class="spectrum-row">
-                    <span class="spectrum-end">Objective truth</span>
-                    <div class="spectrum-bar">
-                        <span class="spectrum-marker" style="left: 8%; background: var(--color-kantian);" title="Kantian"></span>
-                        <span class="spectrum-marker" style="left: 30%; background: var(--color-utilitarian);" title="Utilitarian"></span>
-                        <span class="spectrum-marker" style="left: 50%; background: var(--color-contractualist);" title="Contractualist"></span>
-                        <span class="spectrum-marker" style="left: 70%; background: var(--color-virtue);" title="Virtue"></span>
-                        <span class="spectrum-marker" style="left: 92%; background: var(--color-existentialist);" title="Existentialist"></span>
-                    </div>
-                    <span class="spectrum-end">Personal truth</span>
+                <div class="glance-card">
+                    <span class="glance-dot" style="background: var(--color-utilitarian)"></span>
+                    <span class="glance-name">Mill</span>
+                    <span class="glance-sep">&mdash;</span>
+                    <span class="glance-desc">Best outcome for the most people. Cold math, warm heart.</span>
                 </div>
-                <div class="spectrum-row">
-                    <span class="spectrum-end">The many</span>
-                    <div class="spectrum-bar">
-                        <span class="spectrum-marker" style="left: 10%; background: var(--color-utilitarian);" title="Utilitarian"></span>
-                        <span class="spectrum-marker" style="left: 30%; background: var(--color-contractualist);" title="Contractualist"></span>
-                        <span class="spectrum-marker" style="left: 50%; background: var(--color-virtue);" title="Virtue"></span>
-                        <span class="spectrum-marker" style="left: 70%; background: var(--color-kantian);" title="Kantian"></span>
-                        <span class="spectrum-marker" style="left: 92%; background: var(--color-existentialist);" title="Existentialist"></span>
-                    </div>
-                    <span class="spectrum-end">The individual</span>
+                <div class="glance-card">
+                    <span class="glance-dot" style="background: var(--color-virtue)"></span>
+                    <span class="glance-name">Aristotle</span>
+                    <span class="glance-sep">&mdash;</span>
+                    <span class="glance-desc">Be a good person. Good actions follow. Vibes over rules.</span>
                 </div>
-                <div class="spectrum-legend">
-                    <span class="spectrum-legend-item"><span class="spectrum-legend-dot" style="background: var(--color-kantian)"></span>Kant</span>
-                    <span class="spectrum-legend-item"><span class="spectrum-legend-dot" style="background: var(--color-utilitarian)"></span>Mill</span>
-                    <span class="spectrum-legend-item"><span class="spectrum-legend-dot" style="background: var(--color-virtue)"></span>Aristotle</span>
-                    <span class="spectrum-legend-item"><span class="spectrum-legend-dot" style="background: var(--color-contractualist)"></span>Scanlon</span>
-                    <span class="spectrum-legend-item"><span class="spectrum-legend-dot" style="background: var(--color-existentialist)"></span>Sartre</span>
+                <div class="glance-card">
+                    <span class="glance-dot" style="background: var(--color-contractualist)"></span>
+                    <span class="glance-name">Scanlon</span>
+                    <span class="glance-sep">&mdash;</span>
+                    <span class="glance-desc">Only act on principles no one could reasonably reject.</span>
+                </div>
+                <div class="glance-card">
+                    <span class="glance-dot" style="background: var(--color-existentialist)"></span>
+                    <span class="glance-name">Sartre</span>
+                    <span class="glance-sep">&mdash;</span>
+                    <span class="glance-desc">No rules exist. Choose freely. Own it completely.</span>
                 </div>
             </div>
 
@@ -185,6 +173,12 @@
             <p>This is a personality quiz, not a philosophy exam. The mappings are simplified for accessibility &mdash; real ethical reasoning is messier and more nuanced than any binary choice can capture.</p>
         </div>
 
+        <!-- Archetypes -->
+        <div class="about-section">
+            <h2>The 20 Archetypes</h2>
+            <p>Your result combines your top two schools into one of 20 unique archetypes, each with its own personality profile. <a href="archetypes.html">See all 20 archetypes &rarr;</a></p>
+        </div>
+
         <!-- FAQ -->
         <div class="about-section">
             <h2>FAQ</h2>
@@ -228,18 +222,17 @@
             <h2>Academic Sources</h2>
             <p>The philosophical content in this quiz draws from:</p>
             <ul class="inspiration-list">
-                <li>Kant, I. (1785). <em>Groundwork of the Metaphysics of Morals</em>.</li>
-                <li>Mill, J.S. (1863). <em>Utilitarianism</em>.</li>
-                <li>Aristotle. (c. 340 BC). <em>Nicomachean Ethics</em>.</li>
-                <li>Scanlon, T.M. (1998). <em>What We Owe to Each Other</em>. Harvard University Press.</li>
-                <li>Sartre, J.-P. (1943). <em>Being and Nothingness</em>.</li>
-                <li><a href="https://plato.stanford.edu/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy</a> &mdash; used as the primary reference for all school descriptions.</li>
+                <li>Kant, I. (1785). <a href="https://plato.stanford.edu/entries/kant-moral/" target="_blank" rel="noopener noreferrer"><em>Groundwork of the Metaphysics of Morals</em></a></li>
+                <li>Mill, J.S. (1863). <a href="https://plato.stanford.edu/entries/mill-moral-political/" target="_blank" rel="noopener noreferrer"><em>Utilitarianism</em></a></li>
+                <li>Aristotle (c. 340 BC). <a href="https://plato.stanford.edu/entries/aristotle-ethics/" target="_blank" rel="noopener noreferrer"><em>Nicomachean Ethics</em></a></li>
+                <li>Scanlon, T.M. (1998). <a href="https://plato.stanford.edu/entries/contractualism/" target="_blank" rel="noopener noreferrer"><em>What We Owe to Each Other</em></a></li>
+                <li>Sartre, J.-P. (1943). <a href="https://plato.stanford.edu/entries/sartre/" target="_blank" rel="noopener noreferrer"><em>Being and Nothingness</em></a></li>
             </ul>
+            <p>All links go to the <a href="https://plato.stanford.edu/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy</a>.</p>
         </div>
 
         <div class="about-footer">
-            <p>Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a>. The quiz is free, open source, and doesn't collect any data. Your results are stored only in your browser's local storage.</p>
-            <p><a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer">Buy me a coffee</a> · <a href="../../privacy.html">Privacy</a></p>
+            <p>Made by <a href="https://www.raggedydoc.com" target="_blank" rel="noopener noreferrer">Andrew Steven Chau</a> · <a href="https://ko-fi.com/andrewchau" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;">Buy me a coffee &#9749;</a> · <a href="../../privacy.html">Privacy</a></p>
         </div>
     </div>
 </body>

@@ -23,7 +23,7 @@ Static site built with plain HTML, CSS, and JavaScript — no build system or fr
 
 ### Tools
 
-- **Misery Index** — Cost-of-living comparison tool
+- **Misery Index** — Real-time Claude AI outage and sentiment tracker
 - **SnapLayout** — Layout utility
 
 ## Tech Stack
@@ -65,7 +65,7 @@ npm run test:coverage
 │   ├── parsed/             # Code puzzle game
 │   └── philosophy/         # Philosophy exploration
 ├── tools/
-│   ├── misery-index/       # Cost-of-living tool
+│   ├── misery-index/       # Claude AI outage tracker
 │   └── snaplayout/         # Layout utility
 ├── projects/               # Project detail pages
 ├── __tests__/              # Jest test suites

@@ -237,7 +237,7 @@
     function pct(v) { return Math.max((v / max) * 100, v > 0 ? 2 : 0) + "%"; }
     function set(id, width, val) {
       document.getElementById(id).style.width = width;
-      document.getElementById(id + "-val").textContent = "+" + (+(val || 0)).toFixed(1);
+      document.getElementById(id + "-val").textContent = "+" + (val || 0).toFixed(1);
     }
 
     // By Source bar

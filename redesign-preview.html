@@ -1,0 +1,2053 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Andrew Steven Chau — Redesign Preview</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+    :root {
+      --gold: #c8a455;
+      --gold-light: #e8d5a0;
+      --gold-dim: rgba(200, 164, 85, 0.15);
+      --gold-glow: rgba(200, 164, 85, 0.3);
+      --copper: #b87333;
+      --cream: #f5f0e8;
+      --cream-dim: rgba(245, 240, 232, 0.06);
+      --ink: #0b0b14;
+      --ink-mid: #131320;
+      --ink-light: #1c1c30;
+      --text-primary: #e8e4dc;
+      --text-muted: rgba(232, 228, 220, 0.55);
+      --text-warm: rgba(232, 212, 180, 0.7);
+      --accent-blue: #5b7fff;
+      --accent-teal: #4ecdc4;
+      --accent-rose: #c45b72;
+      --accent-violet: #8b6fc0;
+      --border-subtle: rgba(200, 164, 85, 0.12);
+      --border-warm: rgba(200, 164, 85, 0.25);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      background: var(--ink);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--ink);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== NOISE TEXTURE OVERLAY ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.5;
+    }
+
+    /* ===== GEOMETRIC BACKGROUND PATTERN ===== */
+    .geo-pattern {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.035;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 80px,
+          rgba(200, 164, 85, 0.5) 80px,
+          rgba(200, 164, 85, 0.5) 81px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 80px,
+          rgba(200, 164, 85, 0.5) 80px,
+          rgba(200, 164, 85, 0.5) 81px
+        );
+    }
+
+    /* ===== NAVIGATION ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 0 3rem;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(11, 11, 20, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: all 0.4s ease;
+    }
+
+    nav.scrolled {
+      height: 60px;
+      background: rgba(11, 11, 20, 0.95);
+    }
+
+    .nav-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover { color: var(--gold-light); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--gold);
+      transition: all 0.3s ease;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 0 6vw;
+      overflow: hidden;
+    }
+
+    .hero-bg-line {
+      position: absolute;
+      background: linear-gradient(180deg, transparent, var(--gold-dim), transparent);
+      width: 1px;
+      height: 100%;
+      top: 0;
+      opacity: 0.5;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease 0.3s forwards;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      margin-right: 1rem;
+      vertical-align: middle;
+    }
+
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease 0.5s forwards;
+    }
+
+    .hero-name .highlight {
+      color: var(--gold);
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-name .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: 0.08em;
+      left: 0;
+      width: 100%;
+      height: 0.08em;
+      background: var(--gold);
+      opacity: 0.3;
+    }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      font-weight: 300;
+      color: var(--text-warm);
+      line-height: 1.7;
+      max-width: 550px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease 0.7s forwards;
+    }
+
+    .hero-roles {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease 0.9s forwards;
+    }
+
+    .role-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.5rem 1.2rem;
+      border: 1px solid var(--border-warm);
+      border-radius: 2px;
+      color: var(--gold-light);
+      letter-spacing: 0.06em;
+      transition: all 0.3s ease;
+      background: transparent;
+    }
+
+    .role-tag:hover {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(200, 164, 85, 0.1);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeIn 1s ease 1.5s forwards;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(180deg, var(--gold), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+
+    /* ===== DECO DIVIDER ===== */
+    .deco-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 4rem 0;
+    }
+
+    .deco-divider::before,
+    .deco-divider::after {
+      content: '';
+      flex: 1;
+      max-width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    }
+
+    .deco-diamond {
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--gold);
+      transform: rotate(45deg);
+      opacity: 0.5;
+    }
+
+    /* ===== CAREER JOURNEY SECTION ===== */
+    .journey-section {
+      padding: 2rem 6vw 6rem;
+      position: relative;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+    }
+
+    /* Vertical timeline */
+    .journey-timeline {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+      padding-left: 60px;
+    }
+
+    .journey-timeline::before {
+      content: '';
+      position: absolute;
+      left: 24px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, var(--gold), var(--border-subtle), transparent);
+    }
+
+    .journey-item {
+      position: relative;
+      margin-bottom: 3rem;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .journey-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .journey-node {
+      position: absolute;
+      left: -43px;
+      top: 8px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--node-color, var(--gold));
+      background: var(--ink);
+      z-index: 2;
+      transition: all 0.3s ease;
+    }
+
+    .journey-item:hover .journey-node {
+      background: var(--node-color, var(--gold));
+      box-shadow: 0 0 16px color-mix(in srgb, var(--node-color, var(--gold)) 40%, transparent);
+    }
+
+    .journey-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+
+    .journey-card {
+      background: var(--cream-dim);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 1.8rem 2rem;
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+
+    .journey-card:hover {
+      border-color: var(--border-warm);
+      background: rgba(200, 164, 85, 0.04);
+      transform: translateX(6px);
+    }
+
+    .journey-company {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      color: var(--text-primary);
+    }
+
+    .journey-role {
+      font-size: 0.85rem;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 0.8rem;
+    }
+
+    .journey-desc {
+      font-size: 0.88rem;
+      color: var(--text-warm);
+      line-height: 1.65;
+    }
+
+    .journey-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      padding: 0.25rem 0.6rem;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      margin-top: 0.8rem;
+      margin-right: 0.4rem;
+      border-radius: 2px;
+    }
+
+    .journey-current {
+      position: relative;
+    }
+
+    .journey-current::after {
+      content: 'NOW';
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      color: var(--accent-teal);
+      position: absolute;
+      left: -60px;
+      top: 10px;
+      transform: rotate(-90deg);
+    }
+
+    /* ===== ABOUT SNAPSHOT ===== */
+    .about-section {
+      padding: 4rem 6vw 6rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: center;
+    }
+
+    .about-photo-frame {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      max-height: 520px;
+    }
+
+    .about-photo-frame::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border: 1px solid var(--border-warm);
+      border-radius: 4px;
+      transform: translate(12px, 12px);
+      z-index: 0;
+    }
+
+    .about-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 4px;
+      position: relative;
+      z-index: 1;
+      filter: grayscale(15%) contrast(1.05);
+    }
+
+    .about-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .about-text p {
+      font-size: 0.95rem;
+      color: var(--text-warm);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* ===== SKILLS MATRIX ===== */
+    .skills-section {
+      padding: 4rem 6vw 6rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .skill-card {
+      background: var(--cream-dim);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 2rem;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--card-accent, var(--gold)), transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .skill-card:hover {
+      border-color: var(--border-warm);
+      transform: translateY(-4px);
+    }
+
+    .skill-card:hover::before { opacity: 1; }
+
+    .skill-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .skill-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .skill-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.35rem 0.7rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: 2px;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .skill-item:hover {
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+
+    /* ===== PROJECT SECTIONS (Work & Personal) ===== */
+    .projects-section {
+      padding: 4rem 6vw 6rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .project-group {
+      margin-bottom: 2rem;
+    }
+
+    .project-group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 2rem;
+      background: var(--cream-dim);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      user-select: none;
+    }
+
+    .project-group-header:hover {
+      border-color: var(--border-warm);
+      background: rgba(200, 164, 85, 0.04);
+    }
+
+    .project-group.open .project-group-header {
+      border-color: var(--border-warm);
+      border-radius: 4px 4px 0 0;
+    }
+
+    .project-group-left {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .project-group-color {
+      width: 4px;
+      height: 40px;
+      border-radius: 2px;
+      background: var(--group-color, var(--gold));
+      flex-shrink: 0;
+    }
+
+    .project-group-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .project-group-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .project-group-arrow {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .project-group.open .project-group-arrow {
+      transform: rotate(180deg);
+    }
+
+    .project-group-body {
+      display: none;
+      border: 1px solid var(--border-subtle);
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      padding: 2rem;
+      background: rgba(245, 240, 232, 0.02);
+    }
+
+    .project-group.open .project-group-body {
+      display: block;
+      animation: fadeSlideUp 0.4s ease forwards;
+    }
+
+    .project-group-desc {
+      font-size: 0.9rem;
+      color: var(--text-warm);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .project-group-desc b { color: var(--text-primary); }
+
+    .project-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--cream-dim);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .project-card:hover {
+      border-color: var(--border-warm);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .project-card-img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      background: rgba(0, 0, 0, 0.3);
+      display: block;
+    }
+
+    .project-card-img-cover {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: rgba(0, 0, 0, 0.3);
+      display: block;
+    }
+
+    .project-card-body {
+      padding: 1.2rem 1.5rem;
+    }
+
+    .project-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .project-card-role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+    }
+
+    .project-card-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 0.8rem;
+    }
+
+    .project-card-link {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      text-decoration: none;
+      border: 1px solid var(--border-warm);
+      padding: 0.4rem 1rem;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      margin-right: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .project-card-link:hover {
+      background: var(--gold-dim);
+      color: var(--gold-light);
+    }
+
+    .project-images-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .project-images-row img {
+      width: 100%;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .project-group-link {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      text-decoration: none;
+      border: 1px solid var(--border-warm);
+      padding: 0.5rem 1.2rem;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      margin-bottom: 1.5rem;
+    }
+
+    .project-group-link:hover {
+      background: var(--gold-dim);
+      color: var(--gold-light);
+    }
+
+    .project-subsection {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .evolution-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .evolution-list li {
+      position: relative;
+      padding: 0.5rem 0 0.5rem 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-warm);
+      line-height: 1.5;
+    }
+
+    .evolution-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 1rem;
+      width: 6px;
+      height: 6px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+    }
+
+    .evolution-list li b {
+      color: var(--gold-light);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    @media (max-width: 480px) {
+      .project-cards { grid-template-columns: 1fr; }
+      .project-images-row { grid-template-columns: 1fr; }
+      .project-group-header { padding: 1rem 1.2rem; }
+      .project-group-name { font-size: 1.1rem; }
+      .project-group-body { padding: 1.2rem; }
+    }
+
+    /* ===== GAMES & TOOLS SHOWCASE ===== */
+    .showcase-section {
+      padding: 4rem 6vw 6rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .showcase-card {
+      background: var(--cream-dim);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .showcase-card:hover {
+      border-color: var(--border-warm);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .showcase-visual {
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: rgba(200, 164, 85, 0.08);
+    }
+
+    .showcase-visual-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--card-bg, linear-gradient(135deg, var(--ink-mid), var(--ink-light)));
+      opacity: 0.8;
+    }
+
+    .showcase-visual-icon {
+      position: relative;
+      z-index: 1;
+      font-size: 2.5rem;
+      opacity: 0.6;
+    }
+
+    .showcase-body {
+      padding: 1.5rem;
+    }
+
+    .showcase-type {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .showcase-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .showcase-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 4rem 6vw 2rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .footer-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-tagline {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-copy {
+      text-align: center;
+      padding: 2rem 6vw 1.5rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50% { opacity: 0.8; transform: scaleY(1.2); }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .hero { padding: 0 4vw; }
+      .hero-name { font-size: clamp(2.5rem, 8vw, 4rem); }
+
+      .about-section {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        padding: 3rem 4vw;
+      }
+
+      .about-photo-frame {
+        max-height: 400px;
+        max-width: 350px;
+        margin: 0 auto;
+      }
+
+      .journey-section { padding: 2rem 4vw 4rem; }
+
+      nav { padding: 0 1.5rem; }
+
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(11, 11, 20, 0.97);
+        backdrop-filter: blur(20px);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--border-subtle);
+        gap: 1.2rem;
+      }
+
+      .journey-item .journey-current::after {
+        display: none;
+      }
+
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-subtitle { font-size: 0.95rem; }
+      .hero-roles { gap: 0.5rem; }
+      .role-tag { font-size: 0.6rem; padding: 0.4rem 0.8rem; }
+      .about-stats { grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
+      .stat-number { font-size: 1.5rem; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .showcase-grid { grid-template-columns: 1fr; }
+      .journey-timeline { padding-left: 40px; }
+      .journey-node { left: -23px; }
+      .journey-timeline::before { left: 24px; }
+      .journey-card { padding: 1.2rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .journey-item { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="geo-pattern"></div>
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <a href="#" class="nav-brand">Andrew Steven Chau</a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#journey">Journey</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#personal">Personal</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#showcase">Games & Tools</a></li>
+    </ul>
+    <button class="nav-hamburger" id="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-line" style="left: 20%;"></div>
+    <div class="hero-bg-line" style="left: 50%;"></div>
+    <div class="hero-bg-line" style="left: 80%;"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Senior Software Engineer at Blizzard</div>
+      <h1 class="hero-name">
+        Andrew<br>Steven <span class="highlight">Chau</span>
+      </h1>
+      <p class="hero-subtitle">
+        From QA to shipping AR experiences to maintaining some of the
+        best card games on the app stores. Co-founder of an indie game studio.
+      </p>
+      <div class="hero-roles">
+        <span class="role-tag">Hearthstone</span>
+        <span class="role-tag">AR / XR</span>
+        <span class="role-tag">Game Dev</span>
+        <span class="role-tag">Indie Studio</span>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <div class="deco-divider"><div class="deco-diamond"></div></div>
+
+  <!-- JOURNEY -->
+  <section class="journey-section" id="journey">
+    <div class="section-header">
+      <div class="section-eyebrow">Career</div>
+      <h2 class="section-title">The Journey</h2>
+    </div>
+
+    <div class="journey-timeline">
+      <div class="journey-item" style="--node-color: #FFD100;">
+        <div class="journey-node"></div>
+        <div class="journey-date">2013 — 2017</div>
+        <div class="journey-card">
+          <div class="journey-company">UC Irvine</div>
+          <div class="journey-role">B.S. Computer Game Science</div>
+          <div class="journey-desc">Studied Computer Game Science. Built award-winning games in Python and Unity.</div>
+          <span class="journey-tag">Python</span>
+          <span class="journey-tag">Unity</span>
+          <span class="journey-tag">Game Design</span>
+        </div>
+      </div>
+
+      <div class="journey-item" style="--node-color: #FF6B35;">
+        <div class="journey-node"></div>
+        <div class="journey-date">2016 — 2017</div>
+        <div class="journey-card">
+          <div class="journey-company">Super Toy Box</div>
+          <div class="journey-role">Client Developer</div>
+          <div class="journey-desc">Built client apps from scratch including the Subaru Wheelstand showroom experience and VR Factory.</div>
+          <span class="journey-tag">Unity</span>
+          <span class="journey-tag">VR</span>
+          <span class="journey-tag">Client Dev</span>
+        </div>
+      </div>
+
+      <div class="journey-item" style="--node-color: #0060A8;">
+        <div class="journey-node"></div>
+        <div class="journey-date">2016 — 2020</div>
+        <div class="journey-card">
+          <div class="journey-company">Sega Atlus</div>
+          <div class="journey-role">QA Tester</div>
+          <div class="journey-desc">QA tested AAA titles including Persona 5 Royal, Yakuza 5, and Catherine: Full Body.</div>
+          <span class="journey-tag">QA</span>
+          <span class="journey-tag">AAA</span>
+          <span class="journey-tag">Localization</span>
+        </div>
+      </div>
+
+      <div class="journey-item" style="--node-color: #00C9DB;">
+        <div class="journey-node"></div>
+        <div class="journey-date">2018 — 2019</div>
+        <div class="journey-card">
+          <div class="journey-company">Trigger Global</div>
+          <div class="journey-role">AR Developer</div>
+          <div class="journey-desc">Shipped AR experiences for the NBA, NHL, NFL, and major brands. Deployed on-site at stadiums with Intel.</div>
+          <span class="journey-tag">ARKit</span>
+          <span class="journey-tag">ARCore</span>
+          <span class="journey-tag">Sports</span>
+        </div>
+      </div>
+
+      <div class="journey-item" style="--node-color: #f26835;">
+        <div class="journey-node"></div>
+        <div class="journey-date">2020 — 2025</div>
+        <div class="journey-card">
+          <div class="journey-company">MobilityWare</div>
+          <div class="journey-role">Software Engineer II</div>
+          <div class="journey-desc">Supported 30+ shipped titles. Led studio-wide privacy and compliance initiatives working with the CTO.</div>
+          <span class="journey-tag">Mobile</span>
+          <span class="journey-tag">SDK</span>
+          <span class="journey-tag">Privacy</span>
+        </div>
+      </div>
+
+      <div class="journey-item journey-current" style="--node-color: #8B6DAF;">
+        <div class="journey-node"></div>
+        <div class="journey-date">Current</div>
+        <div class="journey-card">
+          <div class="journey-company">Waxheart</div>
+          <div class="journey-role">DevOps Engineer / Technical Producer</div>
+          <div class="journey-desc">Built the team's entire build infrastructure from scratch — Jenkins CI/CD, QA department, Discord bot. Driving sprint planning and release management.</div>
+          <span class="journey-tag">Jenkins</span>
+          <span class="journey-tag">CI/CD</span>
+          <span class="journey-tag">Production</span>
+        </div>
+      </div>
+
+      <div class="journey-item journey-current" style="--node-color: #c13e5d;">
+        <div class="journey-node"></div>
+        <div class="journey-date">Current</div>
+        <div class="journey-card">
+          <div class="journey-company">Friend Castle</div>
+          <div class="journey-role">Co-Founder</div>
+          <div class="journey-desc">Co-founded an indie game studio. Handling everything from design and engineering to production and publishing.</div>
+          <span class="journey-tag">Indie</span>
+          <span class="journey-tag">Studio</span>
+          <span class="journey-tag">Publishing</span>
+        </div>
+      </div>
+
+      <div class="journey-item journey-current" style="--node-color: #148EFF;">
+        <div class="journey-node"></div>
+        <div class="journey-date">2025 — Current</div>
+        <div class="journey-card">
+          <div class="journey-company">Blizzard Entertainment</div>
+          <div class="journey-role">Senior Software Engineer</div>
+          <div class="journey-desc">Part of the Hearthstone Client Team. Managing SDKs and modernizing platform support.</div>
+          <span class="journey-tag">Hearthstone</span>
+          <span class="journey-tag">C#</span>
+          <span class="journey-tag">Platform</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="deco-divider"><div class="deco-diamond"></div></div>
+
+  <!-- WORK PROJECTS -->
+  <section class="projects-section" id="work">
+    <div class="section-header">
+      <div class="section-eyebrow">Professional</div>
+      <h2 class="section-title">Work Projects</h2>
+    </div>
+
+    <!-- Blizzard -->
+    <div class="project-group open" style="--group-color: #148EFF;">
+      <div class="project-group-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="project-group-left">
+          <div class="project-group-color"></div>
+          <div>
+            <div class="project-group-name">Blizzard Entertainment</div>
+            <div class="project-group-meta">Senior Software Engineer &middot; 2025 — Current</div>
+          </div>
+        </div>
+        <div class="project-group-arrow">&#9662;</div>
+      </div>
+      <div class="project-group-body">
+        <div class="project-group-desc">
+          Part of the <b>Hearthstone Client Team</b>, maintaining and evolving an over-a-decade-old codebase for one of the most iconic digital card games.
+          <br>Managing and updating critical internal and third-party SDKs — including Firebase, AppsFlyer, Braze, and China-specific integrations — tackling long-standing tech debt.
+          <br>Strengthening macOS and iOS platform support by modernizing build tools and environment configurations.
+        </div>
+        <a href="https://www.blizzard.com/" target="_blank" rel="noopener noreferrer" class="project-group-link">Company Website &rarr;</a>
+        <div class="project-images-row">
+          <a href="https://apps.apple.com/us/app/hearthstone/id625257520" target="_blank" rel="noopener noreferrer">
+            <img src="img/work-projects/Blizzard/Hearthstone_Apple.png" alt="Hearthstone on the Apple App Store" loading="lazy">
+          </a>
+          <a href="https://play.google.com/store/apps/details?id=com.blizzard.wtcg.hearthstone" target="_blank" rel="noopener noreferrer">
+            <img src="img/work-projects/Blizzard/Hearthstone_Google.png" alt="Hearthstone on the Google Play Store" loading="lazy">
+          </a>
+        </div>
+        <div class="project-subsection">Official In-Game Credits Card</div>
+        <div class="project-images-row">
+          <img src="img/work-projects/Blizzard/Hearthstone_Credits_Card.png" alt="Andrew Steven Chau's official Hearthstone credits card" loading="lazy">
+          <img src="img/work-projects/Blizzard/Hearthstone_Credits_Card_Golden.png" alt="Andrew Steven Chau's golden Hearthstone credits card" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <!-- MobilityWare -->
+    <div class="project-group" style="--group-color: #f26835;">
+      <div class="project-group-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="project-group-left">
+          <div class="project-group-color"></div>
+          <div>
+            <div class="project-group-name">MobilityWare</div>
+            <div class="project-group-meta">Software Engineer II &middot; 2020 — 2025</div>
+          </div>
+        </div>
+        <div class="project-group-arrow">&#9662;</div>
+      </div>
+      <div class="project-group-body">
+        <div class="project-group-desc">
+          Served as <b>Software Engineer II</b> on the <b>Spark Studio — Yellow Team</b>, a cross-cutting team that supported nearly every product in the studio.
+          <br>Provided engineering support across <b>30+ shipped titles</b> — from Solitaire and Mahjong to Bubble Shooter Pop! — maintaining critical internal and third-party SDKs.
+          <br>Served as the <b>studio's point person for privacy and compliance</b>, directly owning GDPR, CCPA, Google Privacy Sandbox, Google CMP, and privacy-related AppsFlyer and Firebase configurations.
+          <br>Worked directly with the <b>Technical Director and CTO</b> to plan and execute these initiatives across the full game portfolio.
+          <br>Went through complete release cycles for new games and drove critical features from concept to launch.
+        </div>
+        <a href="https://www.mobilityware.com/" target="_blank" rel="noopener noreferrer" class="project-group-link">Company Website &rarr;</a>
+        <div class="project-images-row">
+          <a href="https://apps.apple.com/cg/developer/mobilityware/id284117362" target="_blank" rel="noopener noreferrer">
+            <img src="img/work-projects/MobilityWare/Mobilityware_Apple.png" alt="MobilityWare on the Apple App Store" loading="lazy">
+          </a>
+          <a href="https://play.google.com/store/apps/dev?id=7125885284350687141" target="_blank" rel="noopener noreferrer">
+            <img src="img/work-projects/MobilityWare/Mobilityware_Google.png" alt="MobilityWare on the Google Play Store" loading="lazy">
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sega Atlus -->
+    <div class="project-group" style="--group-color: #0060A8;">
+      <div class="project-group-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="project-group-left">
+          <div class="project-group-color"></div>
+          <div>
+            <div class="project-group-name">Sega Atlus</div>
+            <div class="project-group-meta">QA Tester &middot; 2016—2017, 2019—2020</div>
+          </div>
+        </div>
+        <div class="project-group-arrow">&#9662;</div>
+      </div>
+      <div class="project-group-body">
+        <div class="project-cards">
+          <div class="project-card">
+            <img src="img/work-projects/SegaAtlus/persona5Royal.jpg" alt="Persona 5 Royal" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Persona 5: The Royal</div>
+              <div class="project-card-role">Quality Assurance Tester</div>
+              <a href="https://persona.atlus.com/p5r/" target="_blank" rel="noopener noreferrer" class="project-card-link">View Game</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/work-projects/SegaAtlus/yakuza5.jpg" alt="Yakuza 5 Remastered" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Yakuza 5 Remastered</div>
+              <div class="project-card-role">Quality Assurance Tester</div>
+              <a href="https://store.steampowered.com/app/1105510/Yakuza_5_Remastered/" target="_blank" rel="noopener noreferrer" class="project-card-link">View Game</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/work-projects/SegaAtlus/catherineFullBodySwitch.jpg" alt="Catherine Full Body for Nintendo Switch" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Catherine: Full Body (Switch)</div>
+              <div class="project-card-role">Quality Assurance Tester</div>
+              <a href="https://www.catherinethegame.com/fullbody/" target="_blank" rel="noopener noreferrer" class="project-card-link">View Game</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/work-projects/SegaAtlus/yakuza0.jpg" alt="Yakuza 0" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Yakuza 0</div>
+              <div class="project-card-role">Quality Assurance Tester</div>
+              <a href="https://games.sega.com/yakuza0/" target="_blank" rel="noopener noreferrer" class="project-card-link">View Game</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trigger Global -->
+    <div class="project-group" style="--group-color: #00C9DB;">
+      <div class="project-group-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="project-group-left">
+          <div class="project-group-color"></div>
+          <div>
+            <div class="project-group-name">Trigger Global</div>
+            <div class="project-group-meta">AR Developer &middot; January 2018 — October 2019</div>
+          </div>
+        </div>
+        <div class="project-group-arrow">&#9662;</div>
+      </div>
+      <div class="project-group-body">
+        <div class="project-cards">
+          <div class="project-card">
+            <img src="img/work-projects/Trigger/starviewYardlineStat.jpg" alt="NFL Starview AR" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">NFL AR — Starview</div>
+              <div class="project-card-role">Main Developer &middot; Jun—Oct 2019</div>
+              <div class="project-card-text">Engineered live AR stat overlays for Dallas Cowboys games in Unity 3D. Deployed on-site at NFL stadiums working directly with team operations.</div>
+              <a href="projects/work/starview/starview.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" alt="NHL AR" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">NHL AR</div>
+              <div class="project-card-role">Main Developer &middot; Nov 2018—Jan 2019</div>
+              <div class="project-card-text">Built a prototype live AR hockey rink in Unity 3D, rendering real-time game data. Deployed on-site with the Sharks and Golden Knights in collaboration with Intel.</div>
+              <a href="projects/work/nhlAR/nhlAR.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/work-projects/Trigger/nbaARTiles.jpg" alt="NBA AR" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">NBA AR</div>
+              <div class="project-card-role">Main Developer &middot; Mar 2018—Sep 2019</div>
+              <div class="project-card-text">Shipped a mobile AR game and portal experience built with Unity 3D, bringing interactive basketball content to fans via ARKit and ARCore.</div>
+              <a href="projects/work/nbaAR/nbaAR.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/work-projects/Trigger/lenovoMirageARExample.jpg" alt="Lenovo Mirage AR Games" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Lenovo Mirage AR Games</div>
+              <div class="project-card-role">Developer/Support &middot; Oct 2018</div>
+              <div class="project-card-text">AR applications developed for the Lenovo Mirage headset with Unity 3D.</div>
+              <a href="projects/work/lenovoMirageAR/lenovoMirageAR.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/work-projects/Trigger/generalmills-starwar_main_01.jpeg" alt="General Mills Star Wars AR" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">General Mills — Star Wars AR</div>
+              <div class="project-card-role">Developer &middot; 2019</div>
+              <div class="project-card-text">Worked through several iterations of AR placement flow and post-processing effects to nail that "Star Wars" feeling.</div>
+              <a href="https://www.triggerxr.com/work/general-mills-do-good-for-the-galaxy-ar" target="_blank" rel="noopener noreferrer" class="project-card-link">View Project</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/work-projects/Trigger/moviebill_feature_main_v02.jpg" alt="Moviebill" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Moviebill</div>
+              <div class="project-card-role">Developer &middot; 2018</div>
+              <div class="project-card-text">Supported the team with asset downloading/management, feature releases, and bug fixes.</div>
+              <a href="https://www.triggerxr.com/work/moviebill" target="_blank" rel="noopener noreferrer" class="project-card-link">View Project</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Super Toy Box -->
+    <div class="project-group" style="--group-color: #FF6B35;">
+      <div class="project-group-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="project-group-left">
+          <div class="project-group-color"></div>
+          <div>
+            <div class="project-group-name">Super Toy Box</div>
+            <div class="project-group-meta">Client Developer &middot; December 2016 — December 2017</div>
+          </div>
+        </div>
+        <div class="project-group-arrow">&#9662;</div>
+      </div>
+      <div class="project-group-body">
+        <div class="project-cards">
+          <div class="project-card">
+            <img src="img/work-projects/SuperToyBox/stb-cap-subaru2.png" alt="Subaru Wheelstand" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Subaru Wheelstand</div>
+              <div class="project-card-role">Sole Client Developer</div>
+              <div class="project-card-text">Engineered client app from start to release to be showcased on the show floor. Dynamic content pulled from a CMS based on VIN.</div>
+              <a href="https://www.offekt.com/archive/work/subaru-wheelstand.html" target="_blank" rel="noopener noreferrer" class="project-card-link">View Project</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/work-projects/SuperToyBox/vrFactory.PNG" alt="VR Factory" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">VR Factory</div>
+              <div class="project-card-role">Client Developer</div>
+              <div class="project-card-text">Engineered client app in Unity to pull from custom CMS and deploy custom builds to users. Created flexible layouts in coordination with design and artists.</div>
+              <a href="https://www.offekt.com/archive/supertoybox.html" target="_blank" rel="noopener noreferrer" class="project-card-link">View Project</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="deco-divider"><div class="deco-diamond"></div></div>
+
+  <!-- PERSONAL PROJECTS -->
+  <section class="projects-section" id="personal">
+    <div class="section-header">
+      <div class="section-eyebrow">Independent</div>
+      <h2 class="section-title">Personal Projects</h2>
+    </div>
+
+    <!-- Friend Castle -->
+    <div class="project-group open" style="--group-color: #c13e5d;">
+      <div class="project-group-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="project-group-left">
+          <div class="project-group-color"></div>
+          <div>
+            <div class="project-group-name">Friend Castle</div>
+            <div class="project-group-meta">Co-Founder &middot; 2023 — Present</div>
+          </div>
+        </div>
+        <div class="project-group-arrow">&#9662;</div>
+      </div>
+      <div class="project-group-body">
+        <div class="project-group-desc">
+          An indie game development LLC I co-founded with friends. We handle everything from design and engineering to production and publishing.
+        </div>
+        <a href="https://friendcastle.org/home" target="_blank" rel="noopener noreferrer" class="project-group-link">Friend Castle Website &rarr;</a>
+        <div class="project-cards">
+          <div class="project-card">
+            <img src="img/personal-projects/schedazzle_promo.webp" alt="Schedazzle event scheduling app" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Schedazzle</div>
+              <div class="project-card-role">Engineer/Lead, Technical Producer</div>
+              <div class="project-card-text">A free event scheduling companion app for conventions and expos. Promoters input schedules, attendees customize their personal itinerary on-device.</div>
+              <a href="https://apps.apple.com/us/app/schedazzle/id6642688721" target="_blank" rel="noopener noreferrer" class="project-card-link">App Store</a>
+              <a href="https://play.google.com/store/apps/details?id=com.FriendCastle.Schedazzle" target="_blank" rel="noopener noreferrer" class="project-card-link">Google Play</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card-body">
+              <div class="project-card-title">Box Dog</div>
+              <div class="project-card-role">Engineer/Lead, Technical Producer</div>
+              <div class="project-card-text">A hidden object game with hand-drawn levels. Guide Joget and Box Dog through vibrant worlds searching for mischievous Imps.</div>
+              <a href="https://store.steampowered.com/app/2991630/" target="_blank" rel="noopener noreferrer" class="project-card-link">Steam</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-subsection">Contract Work</div>
+        <div class="project-cards">
+          <div class="project-card">
+            <div class="project-card-body">
+              <div class="project-card-title">Gnome Hunt</div>
+              <div class="project-card-role">Engineer/Lead, Technical Producer</div>
+              <div class="project-card-text">AR game built as contract work for Niantic to showcase their Lightship SDK/API.</div>
+              <a href="https://youtu.be/GnhbABKCzQs" target="_blank" rel="noopener noreferrer" class="project-card-link">Watch Video</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-card-body">
+              <div class="project-card-title">Fairy Finder</div>
+              <div class="project-card-role">Engineer/Lead, Technical Producer</div>
+              <div class="project-card-text">AR game built as contract work for Niantic to showcase their Lightship SDK/API.</div>
+              <a href="https://youtu.be/26JofclHeZc" target="_blank" rel="noopener noreferrer" class="project-card-link">Watch Video</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Waxheart -->
+    <div class="project-group" style="--group-color: #8B6DAF;">
+      <div class="project-group-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="project-group-left">
+          <div class="project-group-color"></div>
+          <div>
+            <div class="project-group-name">Waxheart</div>
+            <div class="project-group-meta">DevOps Engineer / Technical Producer &middot; 2024 — Present</div>
+          </div>
+        </div>
+        <div class="project-group-arrow">&#9662;</div>
+      </div>
+      <div class="project-group-body">
+        <div class="project-group-desc">
+          DevOps engineer and technical producer for a distributed indie game team.
+          <br>Built the team's entire build infrastructure from scratch — Jenkins CI/CD pipeline, Discord bot integration for build notifications and coordination, and Steamworks operations.
+          <br>Formed and lead the QA department — establishing RC test cycles, writing test case master sheets, and owning all QA documentation.
+          <br>Drive engineering roadmap, sprint planning, release management, and task coordination.
+          <br>Using AI-assisted tooling (Claude) to accelerate development across pipeline and operations work.
+        </div>
+        <a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="project-group-link">View the Game &rarr;</a>
+        <div class="project-cards">
+          <div class="project-card">
+            <img src="img/personal-projects/waxheart%20jenkins%20pipeline.png" alt="Jenkins build pipeline" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Jenkins Build Pipeline</div>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/personal-projects/waxheart%20discord%20bot%20instructions.png" alt="Discord bot build instructions" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Discord Bot — Build Instructions</div>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/personal-projects/waxheart%20jenkins%20discord%20bot%20error.png" alt="Discord bot error reporting" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Discord Bot — Error Reporting</div>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/personal-projects/waxheart%20qa%20test%20case%20sheet.png" alt="QA test case master sheet" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">QA Test Case Master Sheet</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Games & Tools -->
+    <div class="project-group" style="--group-color: var(--gold);">
+      <div class="project-group-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="project-group-left">
+          <div class="project-group-color"></div>
+          <div>
+            <div class="project-group-name">Games & Tools — Built with AI</div>
+            <div class="project-group-meta">2026 — Present</div>
+          </div>
+        </div>
+        <div class="project-group-arrow">&#9662;</div>
+      </div>
+      <div class="project-group-body">
+        <div class="project-group-desc">
+          Everything below was built rapidly using AI-assisted development. These are projects that would have taken far longer working solo — especially in languages I'm not deeply familiar with.
+          <br><br>I barely know HTML, CSS, or JavaScript — but I know game design, I know how to code, and I know how to direct an AI tool effectively. I bring the creative direction, design sensibility, and vision for what the end product should feel like. Claude handles the implementation details. I direct, review, and iterate.
+          <br><br>These projects are proof of concept for a workflow I believe in: <b>AI doesn't replace creative direction or design judgment — it closes the gap between having an idea and having something real you can put in front of people.</b>
+        </div>
+        <div class="project-cards">
+          <div class="project-card">
+            <img src="tools/misery-index/og-image.png" alt="Claude Developer Misery Index" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Claude Developer Misery Index</div>
+              <div class="project-card-role">Dashboard</div>
+              <div class="project-card-text">Real-time dashboard tracking developer sentiment when Claude AI goes down. Combines status page data, incident history, Reddit and Bluesky social chatter into a 0-10 misery score. Discord bot alerts on level changes. Light/dark theme with visual escalation.</div>
+              <a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="project-card-link">View Dashboard</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="tools/snaplayout/og-image.png" alt="SnapLayout room planner" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">SnapLayout</div>
+              <div class="project-card-role">Planning Tool</div>
+              <div class="project-card-text">Free, mobile-friendly room layout planner. Import a floorplan or draw rooms from scratch, set the scale, drag and drop furniture with real-world dimensions. No sign-up required.</div>
+              <a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="project-card-link">Open App</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="games/philosophy/og-image.png" alt="Examined philosophy quiz" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Examined</div>
+              <div class="project-card-role">Alignment Quiz</div>
+              <div class="project-card-text">Philosophy alignment quiz inspired by The Good Place. Answer 12 moral dilemmas and discover which philosopher you think like. 20 unique archetypes, interactive alignment compass, shareable ID cards.</div>
+              <a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="project-card-link">Take the Quiz</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="games/parsed/og-image.png" alt="Parsed daily code puzzle" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Parsed</div>
+              <div class="project-card-role">Daily Code Puzzle</div>
+              <div class="project-card-text">Swap scrambled tokens in a buggy program to produce the correct output. 365 daily puzzles across medium and hard tiers with themed real-world narratives, execution animations, and step-by-step explanations.</div>
+              <a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="project-card-link">Play Parsed</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="games/beamlab/og-image.png" alt="Beamlab daily laser puzzle" class="project-card-img" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Beamlab</div>
+              <div class="project-card-role">Daily Laser Puzzle</div>
+              <div class="project-card-text">Place mirrors and beam splitters on a 6x6 grid to route a laser from source to all targets. 365 daily puzzles across three difficulty tiers with gem collectibles and daily streaks.</div>
+              <a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="project-card-link">Play Beamlab</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- This Website -->
+    <div class="project-group" style="--group-color: var(--accent-blue);">
+      <div class="project-group-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="project-group-left">
+          <div class="project-group-color"></div>
+          <div>
+            <div class="project-group-name">This Website</div>
+            <div class="project-group-meta">raggedydoc.com &middot; 2016 — Present</div>
+          </div>
+        </div>
+        <div class="project-group-arrow">&#9662;</div>
+      </div>
+      <div class="project-group-body">
+        <div class="project-group-desc">
+          What started as a college assignment in 2016 has become my longest-running personal project. Every version reflects where I was at that point in my career, and the current iteration is the most ambitious yet. Always plain HTML, CSS, and JavaScript — no frameworks, no build tools.
+        </div>
+        <ul class="evolution-list">
+          <li>
+            <b>2016 — The Origin</b>
+            Began as a project for a UCI informatics course. Static HTML/CSS with a space-themed background. Full UX process — user research, competitor analysis, user testing.
+            <br><a href="projects/personal/portfolio.html" class="project-card-link" style="margin-top: 0.5rem;">View Original Research</a>
+          </li>
+          <li>
+            <b>2017 — 2025 — Career Evolution</b>
+            The site grew alongside the career. New projects meant new pages. New skills meant new ways to present them.
+          </li>
+          <li>
+            <b>2026 — Current Version</b>
+            Dark glassmorphism design, interactive career timeline with animated sprite character, floating game-themed particles, gamification layer with achievements, game-style loading screen.
+          </li>
+          <li>
+            <b>Now & Beyond — AI-Powered Development</b>
+            Built with AI assistance via Claude Code. From the achievement system to the sprite animation logic — AI accelerates execution without replacing creative direction.
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- College Years -->
+    <div class="project-group" style="--group-color: #FFD100;">
+      <div class="project-group-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="project-group-left">
+          <div class="project-group-color"></div>
+          <div>
+            <div class="project-group-name">The College Years</div>
+            <div class="project-group-meta">UCI &middot; 2013 — 2017</div>
+          </div>
+        </div>
+        <div class="project-group-arrow">&#9662;</div>
+      </div>
+      <div class="project-group-body">
+        <div class="project-cards">
+          <div class="project-card">
+            <img src="img/personal-projects/spookyspoils.jpg" alt="Spooky Spoils" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Spooky Spoils</div>
+              <div class="project-card-role">Engineer</div>
+              <div class="project-card-text">Puzzle/Survival with eye-tracking. Award for Creativity (IEEE GameSig 2016), Best Game Design (VGDC at UCI 2016).</div>
+              <a href="https://youtu.be/mqumUz5ktdY" target="_blank" rel="noopener noreferrer" class="project-card-link">Video</a>
+              <a href="projects/personal/spookyspoils.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/personal-projects/goinghome.jpg" alt="Going Home" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Going Home</div>
+              <div class="project-card-role">Engineer</div>
+              <div class="project-card-text">Rogue-like survival in Python/Pygame. Make it home in the rough seas with limited power!</div>
+              <a href="https://youtu.be/bB11x5bz4Wk" target="_blank" rel="noopener noreferrer" class="project-card-link">Video</a>
+              <a href="projects/personal/goinghome.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/personal-projects/Left To Die.jpg" alt="Left 2 Die" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Left 2 Die</div>
+              <div class="project-card-role">Engineer, Designer</div>
+              <div class="project-card-text">Puzzle platformer in Python/Pygame. Invert the level by turning left and right. 2nd Place — VGDC at UCI 2015.</div>
+              <a href="https://youtu.be/Pw06Zx9Awik" target="_blank" rel="noopener noreferrer" class="project-card-link">Video</a>
+              <a href="projects/personal/lefttodie.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/personal-projects/monochrome.jpg" alt="Monochrome Memories" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Monochrome Memories</div>
+              <div class="project-card-role">Lead Engineer, Producer</div>
+              <div class="project-card-text">Puzzle platformer/story. Walk through the 5 stages of grief with your counterpart.</div>
+              <a href="projects/personal/monochrome.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/personal-projects/dormDashGame.jpg" alt="Microscums" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Microscums</div>
+              <div class="project-card-role">Lead Engineer</div>
+              <div class="project-card-text">Python/Pygame game jam. Time/money management — struggle as a college student with only a microwave.</div>
+              <a href="projects/personal/dormdash.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/personal-projects/scuminvaders.jpg" alt="Scuminvaders" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Scuminvaders</div>
+              <div class="project-card-role">Lead Engineer, Producer</div>
+              <div class="project-card-text">Multiplayer TCP networking space invaders with some pizzazz.</div>
+              <a href="https://youtu.be/-R9o7FAty8o" target="_blank" rel="noopener noreferrer" class="project-card-link">Video</a>
+              <a href="projects/personal/scuminvaders.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/personal-projects/lifeofpymenu.jpg" alt="Life of Py" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Life of Py</div>
+              <div class="project-card-role">Lead Engineer, Lead Designer, Producer</div>
+              <div class="project-card-text">Educational game teaching kids the basics of Python in a fun way.</div>
+              <a href="projects/personal/lifeofpy.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/personal-projects/scallywags.jpg" alt="Scallywags" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Scallywags</div>
+              <div class="project-card-role">Designer</div>
+              <div class="project-card-text">Competitive solitaire card game. Stack against other pirates for the title of Captain!</div>
+              <a href="projects/personal/scallywags.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+          <div class="project-card">
+            <img src="img/personal-projects/Date or Die Title.jpg" alt="Date or Die" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-body">
+              <div class="project-card-title">Date or Die</div>
+              <div class="project-card-role">Designer</div>
+              <div class="project-card-text">Dating simulator visual novel. Fall madly in love... or die trying!</div>
+              <a href="projects/personal/dateordie.html" class="project-card-link">Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="deco-divider"><div class="deco-diamond"></div></div>
+
+  <!-- ABOUT -->
+  <section class="about-section" id="about">
+    <div class="about-photo-frame">
+      <img src="img/about-me/me.JPG" alt="Andrew Steven Chau" class="about-photo">
+    </div>
+    <div class="about-text">
+      <h2>Building games,<br>shipping <em>experiences</em></h2>
+      <p>
+        Currently a Senior Software Engineer at Blizzard Entertainment on the Hearthstone Client Team.
+        Co-founder of Friend Castle, an indie game studio LLC.
+        UCI Computer Game Science grad who went from QA testing Persona 5 to shipping AR for the NBA to maintaining one of the most iconic card games ever made.
+      </p>
+      <div class="about-stats">
+        <div>
+          <div class="stat-number">10+</div>
+          <div class="stat-label">Years in Games</div>
+        </div>
+        <div>
+          <div class="stat-number">30+</div>
+          <div class="stat-label">Titles Shipped</div>
+        </div>
+        <div>
+          <div class="stat-number">5</div>
+          <div class="stat-label">Studios</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="deco-divider"><div class="deco-diamond"></div></div>
+
+  <!-- SKILLS -->
+  <section class="skills-section" id="skills">
+    <div class="section-header">
+      <div class="section-eyebrow">Expertise</div>
+      <h2 class="section-title">Skills & Stack</h2>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-card" style="--card-accent: #5b7fff;">
+        <div class="skill-card-title">Languages</div>
+        <div class="skill-items">
+          <span class="skill-item">C#</span>
+          <span class="skill-item">Python</span>
+          <span class="skill-item">C++</span>
+          <span class="skill-item">Java</span>
+        </div>
+      </div>
+      <div class="skill-card" style="--card-accent: #4ecdc4;">
+        <div class="skill-card-title">Engines & Frameworks</div>
+        <div class="skill-items">
+          <span class="skill-item">Unity 3D</span>
+          <span class="skill-item">Pygame</span>
+        </div>
+      </div>
+      <div class="skill-card" style="--card-accent: #c45b72;">
+        <div class="skill-card-title">Platforms</div>
+        <div class="skill-items">
+          <span class="skill-item">iOS</span>
+          <span class="skill-item">Android</span>
+          <span class="skill-item">macOS</span>
+          <span class="skill-item">Windows</span>
+        </div>
+      </div>
+      <div class="skill-card" style="--card-accent: #f2a63b;">
+        <div class="skill-card-title">Tools</div>
+        <div class="skill-items">
+          <span class="skill-item">Git</span>
+          <span class="skill-item">Jenkins</span>
+          <span class="skill-item">Xcode</span>
+          <span class="skill-item">Android Studio</span>
+          <span class="skill-item">Discord.js</span>
+        </div>
+      </div>
+      <div class="skill-card" style="--card-accent: #8b6fc0;">
+        <div class="skill-card-title">SDKs</div>
+        <div class="skill-items">
+          <span class="skill-item">Firebase</span>
+          <span class="skill-item">AppsFlyer</span>
+          <span class="skill-item">Braze</span>
+          <span class="skill-item">ARCore</span>
+          <span class="skill-item">ARKit</span>
+        </div>
+      </div>
+      <div class="skill-card" style="--card-accent: #4ecdc4;">
+        <div class="skill-card-title">Production</div>
+        <div class="skill-items">
+          <span class="skill-item">Agile/Scrum</span>
+          <span class="skill-item">Sprint Planning</span>
+          <span class="skill-item">Roadmap</span>
+          <span class="skill-item">QA Formation</span>
+          <span class="skill-item">Jira</span>
+          <span class="skill-item">Trello</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="deco-divider"><div class="deco-diamond"></div></div>
+
+  <!-- GAMES & TOOLS SHOWCASE -->
+  <section class="showcase-section" id="showcase">
+    <div class="section-header">
+      <div class="section-eyebrow">Side Projects</div>
+      <h2 class="section-title">Games & Tools</h2>
+    </div>
+
+    <div class="showcase-grid">
+      <div class="showcase-card" onclick="window.open('games/beamlab/', '_blank')">
+        <img src="games/beamlab/og-image.png" alt="Beamlab" class="project-card-img" loading="lazy">
+        <div class="showcase-body">
+          <div class="showcase-type">Daily Puzzle Game</div>
+          <div class="showcase-name">Beamlab</div>
+          <div class="showcase-desc">365 laser-reflection puzzles across three difficulty tiers. A new challenge every day.</div>
+        </div>
+      </div>
+
+      <div class="showcase-card" onclick="window.open('games/parsed/', '_blank')">
+        <img src="games/parsed/og-image.png" alt="Parsed" class="project-card-img" loading="lazy">
+        <div class="showcase-body">
+          <div class="showcase-type">Daily Code Puzzle</div>
+          <div class="showcase-name">Parsed</div>
+          <div class="showcase-desc">365 themed code puzzles in medium and hard. Test your pattern recognition daily.</div>
+        </div>
+      </div>
+
+      <div class="showcase-card" onclick="window.open('games/philosophy/', '_blank')">
+        <img src="games/philosophy/og-image.png" alt="Examined" class="project-card-img" loading="lazy">
+        <div class="showcase-body">
+          <div class="showcase-type">Alignment Quiz</div>
+          <div class="showcase-name">Examined</div>
+          <div class="showcase-desc">Discover your philosophical alignment across 5 schools and 20 archetypes.</div>
+        </div>
+      </div>
+
+      <div class="showcase-card" onclick="window.open('tools/snaplayout/', '_blank')">
+        <img src="tools/snaplayout/og-image.png" alt="SnapLayout" class="project-card-img" loading="lazy">
+        <div class="showcase-body">
+          <div class="showcase-type">Planning Tool</div>
+          <div class="showcase-name">SnapLayout</div>
+          <div class="showcase-desc">Room layout planner with a furniture library. Drag, drop, and snap into place.</div>
+        </div>
+      </div>
+
+      <div class="showcase-card" onclick="window.open('tools/misery-index/', '_blank')">
+        <img src="tools/misery-index/og-image.png" alt="Misery Index" class="project-card-img" loading="lazy">
+        <div class="showcase-body">
+          <div class="showcase-type">Dashboard</div>
+          <div class="showcase-name">Misery Index</div>
+          <div class="showcase-desc">Claude AI outage sentiment dashboard. Real-time pulse on how the community feels.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <div class="footer-brand">Andrew Steven Chau</div>
+      <div class="footer-tagline">Senior Software Engineer &middot; Game Developer &middot; Indie Studio Co-Founder</div>
+    </div>
+    <div class="footer-links">
+      <a href="https://www.linkedin.com/in/andrewstevenchau/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href="https://www.youtube.com/@raggedydoc" target="_blank" rel="noopener noreferrer">YouTube</a>
+      <a href="https://bsky.app/profile/raggedydoctv.bsky.social" target="_blank" rel="noopener noreferrer">Bluesky</a>
+    </div>
+  </footer>
+  <div class="footer-copy">
+    &copy; 2025 Andrew Steven Chau. All rights reserved.
+    <br><a href="privacy.html" style="color: var(--text-muted); text-decoration: none; transition: color 0.3s ease;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">Privacy Policy</a>
+  </div>
+
+  <script>
+    // Nav scroll effect
+    var nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', function() {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Mobile menu toggle
+    document.getElementById('nav-toggle').addEventListener('click', function() {
+      document.getElementById('nav-links').classList.toggle('open');
+    });
+
+    // Scroll reveal for journey items
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.journey-item').forEach(function(item, i) {
+      item.style.transitionDelay = (i * 0.08) + 's';
+      observer.observe(item);
+    });
+
+    // Scroll reveal for skill cards and showcase cards
+    var cardObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.project-group').forEach(function(group) {
+      cardObserver.observe(group);
+      group.style.opacity = '0';
+      group.style.transform = 'translateY(20px)';
+      group.style.transition = 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+    });
+
+    document.querySelectorAll('.skill-card, .showcase-card').forEach(function(card, i) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      card.style.transition = 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1) ' + (i * 0.06) + 's';
+      cardObserver.observe(card);
+    });
+  </script>
+
+</body>
+</html>

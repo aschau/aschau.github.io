@@ -1,0 +1,1653 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Andrew Steven Chau — Redesign Preview 2</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500&display=swap');
+
+    :root {
+      --pixel-blue: #4a90d9;
+      --pixel-blue-light: #7ab8ff;
+      --pixel-blue-dim: rgba(74, 144, 217, 0.15);
+      --pixel-purple: #9b6dff;
+      --pixel-pink: #ff6b9d;
+      --pixel-green: #50e3a4;
+      --pixel-yellow: #ffd166;
+      --pixel-orange: #ff8a50;
+      --pixel-red: #ff5a5a;
+      --pixel-teal: #4ecdc4;
+      --bg-deep: #0c0e1a;
+      --bg-panel: #111428;
+      --bg-card: rgba(20, 24, 50, 0.85);
+      --bg-card-hover: rgba(30, 36, 70, 0.9);
+      --border-dim: rgba(74, 144, 217, 0.15);
+      --border-glow: rgba(74, 144, 217, 0.35);
+      --text-primary: #e4e8f7;
+      --text-muted: rgba(180, 190, 220, 0.6);
+      --text-soft: rgba(200, 210, 240, 0.8);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      background: var(--bg-deep);
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%237ab8ff' stroke-width='1.5' opacity='0.8'/%3E%3Cline x1='12' y1='4' x2='12' y2='8' stroke='%237ab8ff' stroke-width='1.5'/%3E%3Cline x1='12' y1='16' x2='12' y2='20' stroke='%237ab8ff' stroke-width='1.5'/%3E%3Cline x1='4' y1='12' x2='8' y2='12' stroke='%237ab8ff' stroke-width='1.5'/%3E%3Cline x1='16' y1='12' x2='20' y2='12' stroke='%237ab8ff' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%237ab8ff'/%3E%3C/svg%3E") 12 12, crosshair;
+    }
+
+    /* ===== STARFIELD BACKGROUND ===== */
+    .starfield {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      animation: twinkle var(--dur, 3s) ease-in-out infinite alternate;
+      opacity: 0;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.1; }
+      100% { opacity: var(--max-opacity, 0.6); }
+    }
+
+    /* ===== FLOATING GAME PARTICLES ===== */
+    .game-particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .game-particle {
+      position: absolute;
+      opacity: 0.35;
+      animation: particleFloat linear infinite;
+    }
+
+    .game-particle:nth-child(odd) { opacity: 0.2; }
+
+    .game-particle.card-shape {
+      width: 12px;
+      height: 17px;
+      border: 1.5px solid rgba(122, 184, 255, 0.5);
+      border-radius: 2px;
+    }
+
+    .game-particle.diamond-shape {
+      width: 10px;
+      height: 10px;
+      border: 1.5px solid rgba(155, 109, 255, 0.5);
+      transform: rotate(45deg);
+    }
+
+    .game-particle.dot-shape {
+      width: 3px;
+      height: 3px;
+      background: rgba(78, 205, 196, 0.5);
+      border-radius: 50%;
+    }
+
+    .game-particle.cross-shape {
+      width: 10px;
+      height: 10px;
+    }
+
+    .game-particle.cross-shape::before,
+    .game-particle.cross-shape::after {
+      content: '';
+      position: absolute;
+      background: rgba(122, 184, 255, 0.4);
+      border-radius: 1px;
+    }
+
+    .game-particle.cross-shape::before {
+      width: 100%;
+      height: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .game-particle.cross-shape::after {
+      width: 2px;
+      height: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      5% { opacity: 0.3; }
+      95% { opacity: 0.3; }
+      100% { transform: translateY(-5vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ===== SCANLINE OVERLAY (subtle) ===== */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(12, 14, 26, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .nav-brand {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.85rem;
+      color: var(--pixel-blue-light);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover { color: var(--pixel-blue-light); }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      width: 22px;
+      height: 2px;
+      background: var(--pixel-blue-light);
+      transition: all 0.3s ease;
+    }
+
+    /* ===== PIXEL SECTION HEADERS ===== */
+    .section-tag {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--pixel-teal);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-family: 'Silkscreen', cursive;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .section-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 600px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-header .section-desc {
+      margin: 0.5rem auto 0;
+    }
+
+    /* ===== PIXEL DIVIDER ===== */
+    .pixel-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 3rem 0;
+    }
+
+    .pixel-divider-dot {
+      width: 4px;
+      height: 4px;
+      background: var(--pixel-blue);
+      opacity: 0.4;
+    }
+
+    .pixel-divider-dot:nth-child(2) { opacity: 0.7; }
+    .pixel-divider-dot:nth-child(3) { background: var(--pixel-purple); opacity: 1; }
+    .pixel-divider-dot:nth-child(4) { opacity: 0.7; }
+    .pixel-divider-dot:nth-child(5) { opacity: 0.4; }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 0 2rem;
+      text-align: center;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-sprite {
+      width: 128px;
+      height: 128px;
+      background: url('img/character-spritesheet.png') 0 -1280px;
+      background-size: 1664px 6912px;
+      image-rendering: pixelated;
+      margin: 0 auto 2rem;
+      animation: spriteIdle 1.5s steps(1) infinite;
+    }
+
+    @keyframes spriteIdle {
+      0%, 100% { background-position: 0 -1280px; }
+    }
+
+    .hero-name {
+      font-family: 'Silkscreen', cursive;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: white;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+      text-shadow: 0 0 40px rgba(74, 144, 217, 0.3);
+    }
+
+    .hero-name .accent { color: var(--pixel-blue-light); }
+
+    .hero-typing {
+      font-family: 'Fira Code', monospace;
+      font-size: 1rem;
+      color: var(--text-soft);
+      min-height: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-cursor {
+      display: inline;
+      animation: blink 1s step-end infinite;
+      color: var(--pixel-blue-light);
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .hero-tagline {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 550px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+
+    .hero-badges {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.65rem;
+      padding: 0.45rem 1rem;
+      border: 1px solid var(--border-dim);
+      border-radius: 4px;
+      color: var(--pixel-blue-light);
+      background: rgba(74, 144, 217, 0.06);
+      letter-spacing: 0.04em;
+      transition: all 0.3s ease;
+    }
+
+    .hero-badge:hover {
+      border-color: var(--border-glow);
+      background: var(--pixel-blue-dim);
+      box-shadow: 0 0 16px rgba(74, 144, 217, 0.15);
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeIn 1s ease 1.5s forwards;
+    }
+
+    .hero-scroll-arrow {
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid var(--pixel-blue);
+      border-bottom: 2px solid var(--pixel-blue);
+      transform: rotate(45deg);
+      animation: bounceDown 1.5s ease infinite;
+    }
+
+    @keyframes bounceDown {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(4px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== TIMELINE ===== */
+    .timeline-section {
+      padding: 2rem 2rem 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-track {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      padding-left: 50px;
+    }
+
+    .timeline-track::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--pixel-blue-dim), var(--border-glow), var(--pixel-blue-dim));
+    }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tl-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tl-node {
+      position: absolute;
+      left: -38px;
+      top: 12px;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--node-color, var(--pixel-blue));
+      border-radius: 3px;
+      background: var(--bg-deep);
+      transform: rotate(45deg);
+      transition: all 0.3s ease;
+      z-index: 2;
+    }
+
+    .tl-item:hover .tl-node {
+      background: var(--node-color, var(--pixel-blue));
+      box-shadow: 0 0 12px color-mix(in srgb, var(--node-color, var(--pixel-blue)) 50%, transparent);
+    }
+
+    .tl-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      border-radius: 6px;
+      padding: 1.4rem 1.6rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .tl-card:hover {
+      border-color: var(--border-glow);
+      background: var(--bg-card-hover);
+      transform: translateX(4px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .tl-date {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+    }
+
+    .tl-company {
+      font-family: 'Silkscreen', cursive;
+      font-size: 1rem;
+      margin: 0.3rem 0 0.2rem;
+    }
+
+    .tl-role {
+      font-size: 0.82rem;
+      color: var(--pixel-blue-light);
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+    }
+
+    .tl-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .tl-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.6rem;
+    }
+
+    .tl-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.55rem;
+      padding: 0.2rem 0.5rem;
+      border: 1px solid var(--border-dim);
+      border-radius: 3px;
+      color: var(--text-muted);
+    }
+
+    .tl-current-badge {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.5rem;
+      color: var(--pixel-green);
+      border: 1px solid rgba(80, 227, 164, 0.3);
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    /* ===== WORK & PERSONAL PROJECTS ===== */
+    .projects-section {
+      padding: 2rem 2rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .project-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .pg-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+
+    .pg-header:hover {
+      border-color: var(--border-glow);
+      background: var(--bg-card-hover);
+    }
+
+    .project-group.open .pg-header {
+      border-radius: 6px 6px 0 0;
+      border-color: var(--border-glow);
+    }
+
+    .pg-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .pg-icon {
+      width: 36px;
+      height: 36px;
+      border: 2px solid var(--pg-color, var(--pixel-blue));
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.6rem;
+      color: var(--pg-color, var(--pixel-blue));
+      flex-shrink: 0;
+      background: color-mix(in srgb, var(--pg-color, var(--pixel-blue)) 10%, transparent);
+    }
+
+    .pg-name {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.95rem;
+    }
+
+    .pg-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .pg-arrow {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      transition: transform 0.3s ease;
+    }
+
+    .project-group.open .pg-arrow { transform: rotate(180deg); }
+
+    .pg-body {
+      display: none;
+      border: 1px solid var(--border-dim);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      padding: 1.5rem;
+      background: rgba(17, 20, 40, 0.6);
+    }
+
+    .project-group.open .pg-body {
+      display: block;
+      animation: fadeSlideUp 0.3s ease;
+    }
+
+    .pg-desc {
+      font-size: 0.88rem;
+      color: var(--text-soft);
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+    }
+
+    .pg-desc b { color: var(--text-primary); }
+
+    .pg-link {
+      display: inline-block;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.65rem;
+      color: var(--pixel-blue-light);
+      text-decoration: none;
+      border: 1px solid var(--border-dim);
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      margin-bottom: 1.5rem;
+      margin-right: 0.4rem;
+    }
+
+    .pg-link:hover {
+      border-color: var(--border-glow);
+      background: var(--pixel-blue-dim);
+    }
+
+    .pg-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .pg-card {
+      background: rgba(20, 24, 50, 0.5);
+      border: 1px solid var(--border-dim);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .pg-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .pg-card-img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      background: rgba(0, 0, 0, 0.3);
+      display: block;
+    }
+
+    .pg-card-img-cover {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: rgba(0, 0, 0, 0.3);
+      display: block;
+    }
+
+    .pg-card-body {
+      padding: 1rem 1.2rem;
+    }
+
+    .pg-card-title {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.8rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .pg-card-role {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--pixel-purple);
+      margin-bottom: 0.5rem;
+    }
+
+    .pg-card-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 0.6rem;
+    }
+
+    .pg-images {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .pg-images img {
+      width: 100%;
+      border-radius: 4px;
+      border: 1px solid var(--border-dim);
+    }
+
+    .pg-subsection {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .pg-evolution {
+      list-style: none;
+      padding: 0;
+    }
+
+    .pg-evolution li {
+      position: relative;
+      padding: 0.5rem 0 0.5rem 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+
+    .pg-evolution li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.9rem;
+      width: 6px;
+      height: 6px;
+      background: var(--pixel-blue);
+      border-radius: 1px;
+      transform: rotate(45deg);
+    }
+
+    .pg-evolution li b {
+      color: var(--pixel-blue-light);
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.6rem;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    /* ===== ABOUT ===== */
+    .about-section {
+      padding: 4rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 3rem;
+      align-items: start;
+      position: relative;
+      z-index: 1;
+    }
+
+    .about-photo-wrap {
+      position: relative;
+    }
+
+    .about-photo-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border: 2px solid var(--pixel-blue);
+      border-radius: 6px;
+      opacity: 0.3;
+      transform: translate(6px, 6px);
+    }
+
+    .about-photo {
+      width: 100%;
+      border-radius: 6px;
+      position: relative;
+      z-index: 1;
+      filter: contrast(1.05);
+    }
+
+    .about-content h2 {
+      font-family: 'Silkscreen', cursive;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    .about-content p {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .about-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-dim);
+    }
+
+    .about-stat-num {
+      font-family: 'Silkscreen', cursive;
+      font-size: 1.8rem;
+      color: var(--pixel-blue-light);
+    }
+
+    .about-stat-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+
+    .social-row {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      border: 1px solid var(--border-dim);
+      background: transparent;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-btn:hover {
+      border-color: var(--border-glow);
+      color: var(--pixel-blue-light);
+      background: var(--pixel-blue-dim);
+      transform: translateY(-2px);
+    }
+
+    /* ===== SKILLS ===== */
+    .skills-section {
+      padding: 2rem 2rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .skill-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      border-radius: 6px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--card-color, var(--pixel-blue));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .skill-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-3px);
+    }
+
+    .skill-card:hover::after { opacity: 1; }
+
+    .skill-card-title {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.75rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .skill-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+
+    .skill-pill {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.6rem;
+      padding: 0.3rem 0.6rem;
+      border: 1px solid var(--border-dim);
+      border-radius: 3px;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .skill-pill:hover {
+      border-color: var(--pixel-blue);
+      color: var(--pixel-blue-light);
+    }
+
+    /* ===== SHOWCASE (Games & Tools quick links) ===== */
+    .showcase-section {
+      padding: 2rem 2rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .showcase-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .showcase-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .showcase-card-img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      background: rgba(0, 0, 0, 0.3);
+      display: block;
+    }
+
+    .showcase-card-body {
+      padding: 1.2rem;
+    }
+
+    .showcase-card-type {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      color: var(--pixel-purple);
+      margin-bottom: 0.3rem;
+    }
+
+    .showcase-card-name {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .showcase-card-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 3rem 2rem 1.5rem;
+      border-top: 1px solid var(--border-dim);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-brand {
+      font-family: 'Silkscreen', cursive;
+      font-size: 1rem;
+      color: var(--pixel-blue-light);
+      margin-bottom: 0.3rem;
+    }
+
+    .footer-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover { color: var(--pixel-blue-light); }
+
+    .footer-copy {
+      text-align: center;
+      padding: 1.5rem 2rem 1rem;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      opacity: 0.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-copy a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-copy a:hover { color: var(--pixel-blue-light); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .about-section {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 3rem 2rem;
+      }
+
+      .about-photo-wrap {
+        max-width: 250px;
+        margin: 0 auto;
+      }
+
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(12, 14, 26, 0.97);
+        backdrop-filter: blur(16px);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--border-dim);
+        gap: 1rem;
+      }
+
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-badges { gap: 0.4rem; }
+      .hero-badge { font-size: 0.55rem; padding: 0.35rem 0.7rem; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .showcase-grid { grid-template-columns: 1fr; }
+      .pg-cards { grid-template-columns: 1fr; }
+      .pg-images { grid-template-columns: 1fr; }
+      .about-stats { flex-wrap: wrap; gap: 1.5rem; }
+      .timeline-track { padding-left: 40px; }
+      .tl-node { left: -28px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .tl-item { opacity: 1; transform: none; }
+      .game-particles, .starfield { display: none; }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous">
+</head>
+<body>
+
+  <!-- STARFIELD -->
+  <div class="starfield" id="starfield"></div>
+
+  <!-- FLOATING PARTICLES -->
+  <div class="game-particles" id="game-particles"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-brand">Andrew Steven Chau</a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#journey">Journey</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#personal">Personal</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#showcase">Games & Tools</a></li>
+    </ul>
+    <button class="nav-hamburger" id="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-sprite"></div>
+      <h1 class="hero-name">Andrew Steven <span class="accent">Chau</span></h1>
+      <div class="hero-typing">
+        <span id="typing-text"></span><span class="hero-cursor">_</span>
+      </div>
+      <p class="hero-tagline">
+        From QA to shipping AR experiences to maintaining some of the best card games on the app stores. Co-founder of an indie game studio.
+      </p>
+      <div class="hero-badges">
+        <span class="hero-badge">Hearthstone</span>
+        <span class="hero-badge">AR / XR</span>
+        <span class="hero-badge">Game Dev</span>
+        <span class="hero-badge">Indie Studio</span>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="hero-scroll-arrow"></div>
+    </div>
+  </section>
+
+  <div class="pixel-divider"><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div></div>
+
+  <!-- JOURNEY -->
+  <section class="timeline-section" id="journey">
+    <div class="section-header">
+      <div class="section-tag">// career</div>
+      <h2 class="section-title">The Journey</h2>
+    </div>
+    <div class="timeline-track">
+      <div class="tl-item" style="--node-color: #FFD100;">
+        <div class="tl-node"></div>
+        <div class="tl-card">
+          <div class="tl-date">2013 — 2017</div>
+          <div class="tl-company">UC Irvine</div>
+          <div class="tl-role">B.S. Computer Game Science</div>
+          <div class="tl-desc">Studied Computer Game Science. Built award-winning games in Python and Unity.</div>
+          <div class="tl-tags"><span class="tl-tag">Python</span><span class="tl-tag">Unity</span><span class="tl-tag">Game Design</span></div>
+        </div>
+      </div>
+      <div class="tl-item" style="--node-color: #FF6B35;">
+        <div class="tl-node"></div>
+        <div class="tl-card">
+          <div class="tl-date">2016 — 2017</div>
+          <div class="tl-company">Super Toy Box</div>
+          <div class="tl-role">Client Developer</div>
+          <div class="tl-desc">Built client apps from scratch including the Subaru Wheelstand showroom experience and VR Factory.</div>
+          <div class="tl-tags"><span class="tl-tag">Unity</span><span class="tl-tag">VR</span><span class="tl-tag">Client Dev</span></div>
+        </div>
+      </div>
+      <div class="tl-item" style="--node-color: #0060A8;">
+        <div class="tl-node"></div>
+        <div class="tl-card">
+          <div class="tl-date">2016 — 2020</div>
+          <div class="tl-company">Sega Atlus</div>
+          <div class="tl-role">QA Tester</div>
+          <div class="tl-desc">QA tested AAA titles including Persona 5 Royal, Yakuza 5, and Catherine: Full Body.</div>
+          <div class="tl-tags"><span class="tl-tag">QA</span><span class="tl-tag">AAA</span><span class="tl-tag">Localization</span></div>
+        </div>
+      </div>
+      <div class="tl-item" style="--node-color: #00C9DB;">
+        <div class="tl-node"></div>
+        <div class="tl-card">
+          <div class="tl-date">2018 — 2019</div>
+          <div class="tl-company">Trigger Global</div>
+          <div class="tl-role">AR Developer</div>
+          <div class="tl-desc">Shipped AR experiences for the NBA, NHL, NFL, and major brands. Deployed on-site at stadiums with Intel.</div>
+          <div class="tl-tags"><span class="tl-tag">ARKit</span><span class="tl-tag">ARCore</span><span class="tl-tag">Sports</span></div>
+        </div>
+      </div>
+      <div class="tl-item" style="--node-color: #f26835;">
+        <div class="tl-node"></div>
+        <div class="tl-card">
+          <div class="tl-date">2020 — 2025</div>
+          <div class="tl-company">MobilityWare</div>
+          <div class="tl-role">Software Engineer II</div>
+          <div class="tl-desc">Supported 30+ shipped titles. Led studio-wide privacy and compliance initiatives working with the CTO.</div>
+          <div class="tl-tags"><span class="tl-tag">Mobile</span><span class="tl-tag">SDK</span><span class="tl-tag">Privacy</span></div>
+        </div>
+      </div>
+      <div class="tl-item" style="--node-color: #8B6DAF;">
+        <div class="tl-node"></div>
+        <div class="tl-card">
+          <div class="tl-date">Current</div>
+          <div class="tl-company">Waxheart <span class="tl-current-badge">NOW</span></div>
+          <div class="tl-role">DevOps Engineer / Technical Producer</div>
+          <div class="tl-desc">Built the team's entire build infrastructure from scratch — Jenkins CI/CD, QA department, Discord bot. Driving sprint planning and release management.</div>
+          <div class="tl-tags"><span class="tl-tag">Jenkins</span><span class="tl-tag">CI/CD</span><span class="tl-tag">Production</span></div>
+        </div>
+      </div>
+      <div class="tl-item" style="--node-color: #c13e5d;">
+        <div class="tl-node"></div>
+        <div class="tl-card">
+          <div class="tl-date">Current</div>
+          <div class="tl-company">Friend Castle <span class="tl-current-badge">NOW</span></div>
+          <div class="tl-role">Co-Founder</div>
+          <div class="tl-desc">Co-founded an indie game studio. Handling everything from design and engineering to production and publishing.</div>
+          <div class="tl-tags"><span class="tl-tag">Indie</span><span class="tl-tag">Studio</span><span class="tl-tag">Publishing</span></div>
+        </div>
+      </div>
+      <div class="tl-item" style="--node-color: #148EFF;">
+        <div class="tl-node"></div>
+        <div class="tl-card">
+          <div class="tl-date">2025 — Current</div>
+          <div class="tl-company">Blizzard <span class="tl-current-badge">NOW</span></div>
+          <div class="tl-role">Senior Software Engineer</div>
+          <div class="tl-desc">Part of the Hearthstone Client Team. Managing SDKs and modernizing platform support.</div>
+          <div class="tl-tags"><span class="tl-tag">Hearthstone</span><span class="tl-tag">C#</span><span class="tl-tag">Platform</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pixel-divider"><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div></div>
+
+  <!-- WORK PROJECTS -->
+  <section class="projects-section" id="work">
+    <div class="section-header">
+      <div class="section-tag">// professional</div>
+      <h2 class="section-title">Work Projects</h2>
+    </div>
+
+    <div class="project-group open" style="--pg-color: #148EFF;">
+      <div class="pg-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="pg-left">
+          <div class="pg-icon">B</div>
+          <div><div class="pg-name">Blizzard Entertainment</div><div class="pg-meta">Senior Software Engineer · 2025 — Current</div></div>
+        </div>
+        <div class="pg-arrow">&#9662;</div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-desc">Part of the <b>Hearthstone Client Team</b>, maintaining and evolving an over-a-decade-old codebase. Managing and updating critical SDKs — Firebase, AppsFlyer, Braze, and China-specific integrations. Strengthening macOS and iOS platform support by modernizing build tools.</div>
+        <a href="https://www.blizzard.com/" target="_blank" rel="noopener noreferrer" class="pg-link">Company Website →</a>
+        <div class="pg-images">
+          <a href="https://apps.apple.com/us/app/hearthstone/id625257520" target="_blank" rel="noopener noreferrer"><img src="img/work-projects/Blizzard/Hearthstone_Apple.png" alt="Hearthstone App Store" loading="lazy"></a>
+          <a href="https://play.google.com/store/apps/details?id=com.blizzard.wtcg.hearthstone" target="_blank" rel="noopener noreferrer"><img src="img/work-projects/Blizzard/Hearthstone_Google.png" alt="Hearthstone Google Play" loading="lazy"></a>
+        </div>
+        <div class="pg-subsection">Official In-Game Credits Card</div>
+        <div class="pg-images">
+          <img src="img/work-projects/Blizzard/Hearthstone_Credits_Card.png" alt="Hearthstone credits card" loading="lazy">
+          <img src="img/work-projects/Blizzard/Hearthstone_Credits_Card_Golden.png" alt="Golden credits card" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <div class="project-group" style="--pg-color: #f26835;">
+      <div class="pg-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="pg-left">
+          <div class="pg-icon">MW</div>
+          <div><div class="pg-name">MobilityWare</div><div class="pg-meta">Software Engineer II · 2020 — 2025</div></div>
+        </div>
+        <div class="pg-arrow">&#9662;</div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-desc"><b>Spark Studio — Yellow Team</b>, a cross-cutting team supporting nearly every product. Engineering support across <b>30+ shipped titles</b>. <b>Studio point person for privacy and compliance</b> — GDPR, CCPA, Google Privacy Sandbox. Worked directly with the <b>Technical Director and CTO</b>.</div>
+        <a href="https://www.mobilityware.com/" target="_blank" rel="noopener noreferrer" class="pg-link">Company Website →</a>
+        <div class="pg-images">
+          <a href="https://apps.apple.com/cg/developer/mobilityware/id284117362" target="_blank" rel="noopener noreferrer"><img src="img/work-projects/MobilityWare/Mobilityware_Apple.png" alt="MobilityWare App Store" loading="lazy"></a>
+          <a href="https://play.google.com/store/apps/dev?id=7125885284350687141" target="_blank" rel="noopener noreferrer"><img src="img/work-projects/MobilityWare/Mobilityware_Google.png" alt="MobilityWare Google Play" loading="lazy"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-group" style="--pg-color: #0060A8;">
+      <div class="pg-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="pg-left">
+          <div class="pg-icon">SA</div>
+          <div><div class="pg-name">Sega Atlus</div><div class="pg-meta">QA Tester · 2016—2017, 2019—2020</div></div>
+        </div>
+        <div class="pg-arrow">&#9662;</div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-cards">
+          <div class="pg-card"><img src="img/work-projects/SegaAtlus/persona5Royal.jpg" alt="Persona 5 Royal" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Persona 5: The Royal</div><div class="pg-card-role">QA Tester</div><a href="https://persona.atlus.com/p5r/" target="_blank" rel="noopener noreferrer" class="pg-link">View Game</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/SegaAtlus/yakuza5.jpg" alt="Yakuza 5" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Yakuza 5 Remastered</div><div class="pg-card-role">QA Tester</div><a href="https://store.steampowered.com/app/1105510/Yakuza_5_Remastered/" target="_blank" rel="noopener noreferrer" class="pg-link">View Game</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/SegaAtlus/catherineFullBodySwitch.jpg" alt="Catherine Full Body" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Catherine: Full Body (Switch)</div><div class="pg-card-role">QA Tester</div><a href="https://www.catherinethegame.com/fullbody/" target="_blank" rel="noopener noreferrer" class="pg-link">View Game</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/SegaAtlus/yakuza0.jpg" alt="Yakuza 0" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Yakuza 0</div><div class="pg-card-role">QA Tester</div><a href="https://games.sega.com/yakuza0/" target="_blank" rel="noopener noreferrer" class="pg-link">View Game</a></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-group" style="--pg-color: #00C9DB;">
+      <div class="pg-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="pg-left">
+          <div class="pg-icon">TG</div>
+          <div><div class="pg-name">Trigger Global</div><div class="pg-meta">AR Developer · Jan 2018 — Oct 2019</div></div>
+        </div>
+        <div class="pg-arrow">&#9662;</div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-cards">
+          <div class="pg-card"><img src="img/work-projects/Trigger/starviewYardlineStat.jpg" alt="NFL Starview AR" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">NFL AR — Starview</div><div class="pg-card-role">Main Developer · Jun—Oct 2019</div><div class="pg-card-text">Live AR stat overlays for Dallas Cowboys games. Deployed on-site at NFL stadiums.</div><a href="projects/work/starview/starview.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" alt="NHL AR" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">NHL AR</div><div class="pg-card-role">Main Developer · Nov 2018—Jan 2019</div><div class="pg-card-text">Prototype live AR hockey rink rendering real-time game data. Deployed with Sharks and Golden Knights + Intel.</div><a href="projects/work/nhlAR/nhlAR.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/Trigger/nbaARTiles.jpg" alt="NBA AR" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">NBA AR</div><div class="pg-card-role">Main Developer · Mar 2018—Sep 2019</div><div class="pg-card-text">Mobile AR game and portal via ARKit and ARCore.</div><a href="projects/work/nbaAR/nbaAR.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/Trigger/lenovoMirageARExample.jpg" alt="Lenovo Mirage" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Lenovo Mirage AR</div><div class="pg-card-role">Developer/Support · Oct 2018</div><a href="projects/work/lenovoMirageAR/lenovoMirageAR.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/Trigger/generalmills-starwar_main_01.jpeg" alt="Star Wars AR" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">General Mills — Star Wars AR</div><div class="pg-card-role">Developer · 2019</div><a href="https://www.triggerxr.com/work/general-mills-do-good-for-the-galaxy-ar" target="_blank" rel="noopener noreferrer" class="pg-link">View Project</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/Trigger/moviebill_feature_main_v02.jpg" alt="Moviebill" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Moviebill</div><div class="pg-card-role">Developer · 2018</div><a href="https://www.triggerxr.com/work/moviebill" target="_blank" rel="noopener noreferrer" class="pg-link">View Project</a></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-group" style="--pg-color: #FF6B35;">
+      <div class="pg-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="pg-left">
+          <div class="pg-icon">STB</div>
+          <div><div class="pg-name">Super Toy Box</div><div class="pg-meta">Client Developer · Dec 2016 — Dec 2017</div></div>
+        </div>
+        <div class="pg-arrow">&#9662;</div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-cards">
+          <div class="pg-card"><img src="img/work-projects/SuperToyBox/stb-cap-subaru2.png" alt="Subaru Wheelstand" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Subaru Wheelstand</div><div class="pg-card-role">Sole Client Developer</div><div class="pg-card-text">Client app from start to release for the show floor. Dynamic CMS content by VIN.</div><a href="https://www.offekt.com/archive/work/subaru-wheelstand.html" target="_blank" rel="noopener noreferrer" class="pg-link">View Project</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/SuperToyBox/vrFactory.PNG" alt="VR Factory" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">VR Factory</div><div class="pg-card-role">Client Developer</div><div class="pg-card-text">Unity client pulling from custom CMS to deploy custom builds.</div><a href="https://www.offekt.com/archive/supertoybox.html" target="_blank" rel="noopener noreferrer" class="pg-link">View Project</a></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pixel-divider"><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div></div>
+
+  <!-- PERSONAL PROJECTS -->
+  <section class="projects-section" id="personal">
+    <div class="section-header">
+      <div class="section-tag">// independent</div>
+      <h2 class="section-title">Personal Projects</h2>
+    </div>
+
+    <div class="project-group open" style="--pg-color: #c13e5d;">
+      <div class="pg-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="pg-left">
+          <div class="pg-icon">FC</div>
+          <div><div class="pg-name">Friend Castle</div><div class="pg-meta">Co-Founder · 2023 — Present</div></div>
+        </div>
+        <div class="pg-arrow">&#9662;</div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-desc">An indie game development LLC I co-founded with friends. We handle everything from design and engineering to production and publishing.</div>
+        <a href="https://friendcastle.org/home" target="_blank" rel="noopener noreferrer" class="pg-link">Friend Castle Website →</a>
+        <div class="pg-cards">
+          <div class="pg-card"><img src="img/personal-projects/schedazzle_promo.webp" alt="Schedazzle" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Schedazzle</div><div class="pg-card-role">Engineer/Lead, Technical Producer</div><div class="pg-card-text">Free event scheduling companion app for conventions and expos.</div><a href="https://apps.apple.com/us/app/schedazzle/id6642688721" target="_blank" rel="noopener noreferrer" class="pg-link">App Store</a><a href="https://play.google.com/store/apps/details?id=com.FriendCastle.Schedazzle" target="_blank" rel="noopener noreferrer" class="pg-link">Google Play</a></div></div>
+          <div class="pg-card"><div class="pg-card-body"><div class="pg-card-title">Box Dog</div><div class="pg-card-role">Engineer/Lead, Technical Producer</div><div class="pg-card-text">Hidden object game with hand-drawn levels. Guide Joget and Box Dog through vibrant worlds.</div><a href="https://store.steampowered.com/app/2991630/" target="_blank" rel="noopener noreferrer" class="pg-link">Steam</a></div></div>
+        </div>
+        <div class="pg-subsection">Contract Work</div>
+        <div class="pg-cards">
+          <div class="pg-card"><div class="pg-card-body"><div class="pg-card-title">Gnome Hunt</div><div class="pg-card-role">Engineer/Lead · Niantic Lightship</div><a href="https://youtu.be/GnhbABKCzQs" target="_blank" rel="noopener noreferrer" class="pg-link">Watch Video</a></div></div>
+          <div class="pg-card"><div class="pg-card-body"><div class="pg-card-title">Fairy Finder</div><div class="pg-card-role">Engineer/Lead · Niantic Lightship</div><a href="https://youtu.be/26JofclHeZc" target="_blank" rel="noopener noreferrer" class="pg-link">Watch Video</a></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-group" style="--pg-color: #8B6DAF;">
+      <div class="pg-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="pg-left">
+          <div class="pg-icon">WH</div>
+          <div><div class="pg-name">Waxheart</div><div class="pg-meta">DevOps / Technical Producer · 2024 — Present</div></div>
+        </div>
+        <div class="pg-arrow">&#9662;</div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-desc">DevOps engineer and technical producer for a distributed indie game team. Built entire build infrastructure from scratch — Jenkins CI/CD, Discord bot integration, Steamworks operations. Formed and lead the QA department.</div>
+        <a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="pg-link">View the Game →</a>
+        <div class="pg-cards">
+          <div class="pg-card"><img src="img/personal-projects/waxheart%20jenkins%20pipeline.png" alt="Jenkins pipeline" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Jenkins Build Pipeline</div></div></div>
+          <div class="pg-card"><img src="img/personal-projects/waxheart%20discord%20bot%20instructions.png" alt="Discord bot" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Discord Bot — Build Instructions</div></div></div>
+          <div class="pg-card"><img src="img/personal-projects/waxheart%20jenkins%20discord%20bot%20error.png" alt="Error reporting" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Discord Bot — Error Reporting</div></div></div>
+          <div class="pg-card"><img src="img/personal-projects/waxheart%20qa%20test%20case%20sheet.png" alt="QA sheet" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">QA Test Case Master Sheet</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-group" style="--pg-color: var(--pixel-teal);">
+      <div class="pg-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="pg-left">
+          <div class="pg-icon">AI</div>
+          <div><div class="pg-name">Games & Tools — Built with AI</div><div class="pg-meta">2026 — Present</div></div>
+        </div>
+        <div class="pg-arrow">&#9662;</div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-desc">Built rapidly using AI-assisted development. I bring the creative direction and design sensibility; Claude handles the implementation details. <b>AI doesn't replace creative direction — it closes the gap between having an idea and having something real.</b></div>
+        <div class="pg-cards">
+          <div class="pg-card"><img src="tools/misery-index/og-image.png" alt="Misery Index" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Claude Developer Misery Index</div><div class="pg-card-role">Dashboard</div><div class="pg-card-text">Real-time dashboard tracking developer sentiment when Claude goes down. Status page, incidents, Reddit, Bluesky combined into a 0-10 misery score.</div><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="pg-link">View Dashboard</a></div></div>
+          <div class="pg-card"><img src="tools/snaplayout/og-image.png" alt="SnapLayout" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">SnapLayout</div><div class="pg-card-role">Planning Tool</div><div class="pg-card-text">Free room layout planner. Import a floorplan or draw rooms, set scale, drag furniture with real dimensions.</div><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="pg-link">Open App</a></div></div>
+          <div class="pg-card"><img src="games/philosophy/og-image.png" alt="Examined" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Examined</div><div class="pg-card-role">Alignment Quiz</div><div class="pg-card-text">Philosophy alignment quiz. 12 moral dilemmas, 5 schools, 20 archetypes, shareable ID cards.</div><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="pg-link">Take the Quiz</a></div></div>
+          <div class="pg-card"><img src="games/parsed/og-image.png" alt="Parsed" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Parsed</div><div class="pg-card-role">Daily Code Puzzle</div><div class="pg-card-text">365 daily puzzles. Swap scrambled tokens to fix buggy code. Themed narratives, execution animations.</div><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="pg-link">Play Parsed</a></div></div>
+          <div class="pg-card"><img src="games/beamlab/og-image.png" alt="Beamlab" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Beamlab</div><div class="pg-card-role">Daily Laser Puzzle</div><div class="pg-card-text">365 daily puzzles across 3 tiers. Place mirrors and beam splitters to route lasers to all targets.</div><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="pg-link">Play Beamlab</a></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-group" style="--pg-color: var(--pixel-blue);">
+      <div class="pg-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="pg-left">
+          <div class="pg-icon">WWW</div>
+          <div><div class="pg-name">This Website</div><div class="pg-meta">raggedydoc.com · 2016 — Present</div></div>
+        </div>
+        <div class="pg-arrow">&#9662;</div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-desc">What started as a college assignment in 2016 has become my longest-running personal project. Always plain HTML/CSS/JS — no frameworks, no build tools.</div>
+        <ul class="pg-evolution">
+          <li><b>2016 — The Origin</b>UCI informatics course. Static HTML/CSS with space-themed background. Full UX process.<br><a href="projects/personal/portfolio.html" class="pg-link" style="margin-top:0.5rem">View Original Research</a></li>
+          <li><b>2017—2025 — Career Evolution</b>Grew alongside the career. New projects, new skills, new iterations.</li>
+          <li><b>2026 — Current Version</b>Dark glassmorphism, animated sprite timeline, floating particles, achievements, game-style loading screen.</li>
+          <li><b>Now — AI-Powered</b>Built with Claude Code. AI accelerates execution without replacing creative direction.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="project-group" style="--pg-color: #FFD100;">
+      <div class="pg-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="pg-left">
+          <div class="pg-icon">UCI</div>
+          <div><div class="pg-name">The College Years</div><div class="pg-meta">2013 — 2017</div></div>
+        </div>
+        <div class="pg-arrow">&#9662;</div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-cards">
+          <div class="pg-card"><img src="img/personal-projects/spookyspoils.jpg" alt="Spooky Spoils" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Spooky Spoils</div><div class="pg-card-role">Engineer</div><div class="pg-card-text">Eye-tracking puzzle. Award for Creativity (IEEE GameSig 2016), Best Game Design (VGDC 2016).</div><a href="https://youtu.be/mqumUz5ktdY" target="_blank" rel="noopener noreferrer" class="pg-link">Video</a><a href="projects/personal/spookyspoils.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/personal-projects/goinghome.jpg" alt="Going Home" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Going Home</div><div class="pg-card-role">Engineer</div><div class="pg-card-text">Rogue-like survival in Pygame. Make it home in the rough seas!</div><a href="https://youtu.be/bB11x5bz4Wk" target="_blank" rel="noopener noreferrer" class="pg-link">Video</a><a href="projects/personal/goinghome.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/personal-projects/Left To Die.jpg" alt="Left 2 Die" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Left 2 Die</div><div class="pg-card-role">Engineer, Designer</div><div class="pg-card-text">Puzzle platformer. 2nd Place — VGDC at UCI 2015.</div><a href="https://youtu.be/Pw06Zx9Awik" target="_blank" rel="noopener noreferrer" class="pg-link">Video</a><a href="projects/personal/lefttodie.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/personal-projects/monochrome.jpg" alt="Monochrome Memories" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Monochrome Memories</div><div class="pg-card-role">Lead Engineer, Producer</div><div class="pg-card-text">Walk through the 5 stages of grief with your counterpart.</div><a href="projects/personal/monochrome.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/personal-projects/dormDashGame.jpg" alt="Microscums" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Microscums</div><div class="pg-card-role">Lead Engineer</div><div class="pg-card-text">Game jam. Struggle as a college student with only a microwave.</div><a href="projects/personal/dormdash.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/personal-projects/scuminvaders.jpg" alt="Scuminvaders" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Scuminvaders</div><div class="pg-card-role">Lead Engineer, Producer</div><div class="pg-card-text">Multiplayer TCP space invaders with some pizzazz.</div><a href="https://youtu.be/-R9o7FAty8o" target="_blank" rel="noopener noreferrer" class="pg-link">Video</a><a href="projects/personal/scuminvaders.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/personal-projects/lifeofpymenu.jpg" alt="Life of Py" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Life of Py</div><div class="pg-card-role">Lead Engineer, Designer, Producer</div><div class="pg-card-text">Educational game teaching kids Python basics.</div><a href="projects/personal/lifeofpy.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/personal-projects/scallywags.jpg" alt="Scallywags" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Scallywags</div><div class="pg-card-role">Designer</div><div class="pg-card-text">Competitive solitaire pirate card game.</div><a href="projects/personal/scallywags.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/personal-projects/Date or Die Title.jpg" alt="Date or Die" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Date or Die</div><div class="pg-card-role">Designer</div><div class="pg-card-text">Dating simulator visual novel. Fall in love... or die trying!</div><a href="projects/personal/dateordie.html" class="pg-link">Details</a></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pixel-divider"><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div></div>
+
+  <!-- ABOUT -->
+  <section class="about-section" id="about">
+    <div class="about-photo-wrap">
+      <img src="img/about-me/me.JPG" alt="Andrew Steven Chau" class="about-photo">
+    </div>
+    <div class="about-content">
+      <div class="section-tag">// about</div>
+      <h2>Building games,<br>shipping experiences</h2>
+      <p>
+        Currently a Senior Software Engineer at Blizzard Entertainment on the Hearthstone Client Team.
+        Co-founder of Friend Castle, an indie game studio LLC.
+        UCI Computer Game Science grad who went from QA testing Persona 5 to shipping AR for the NBA to maintaining one of the most iconic card games ever made.
+      </p>
+      <div class="social-row">
+        <a href="https://www.linkedin.com/in/andrewstevenchau/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="https://www.youtube.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.twitch.tv/raggedydoc" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Twitch"><i class="fab fa-twitch"></i></a>
+        <a href="https://www.instagram.com/raggedydoc/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        <a href="https://bsky.app/profile/raggedydoctv.bsky.social" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Bluesky"><i class="fab fa-bluesky"></i></a>
+      </div>
+      <div class="about-stats">
+        <div><div class="about-stat-num">10+</div><div class="about-stat-label">Years in Games</div></div>
+        <div><div class="about-stat-num">30+</div><div class="about-stat-label">Titles Shipped</div></div>
+        <div><div class="about-stat-num">5</div><div class="about-stat-label">Studios</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pixel-divider"><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div></div>
+
+  <!-- SKILLS -->
+  <section class="skills-section" id="skills">
+    <div class="section-header">
+      <div class="section-tag">// expertise</div>
+      <h2 class="section-title">Skills & Stack</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card" style="--card-color: #5b7fff;"><div class="skill-card-title">Languages</div><div class="skill-pills"><span class="skill-pill">C#</span><span class="skill-pill">Python</span><span class="skill-pill">C++</span><span class="skill-pill">Java</span></div></div>
+      <div class="skill-card" style="--card-color: #4ecdc4;"><div class="skill-card-title">Engines</div><div class="skill-pills"><span class="skill-pill">Unity 3D</span><span class="skill-pill">Pygame</span></div></div>
+      <div class="skill-card" style="--card-color: #ff6b9d;"><div class="skill-card-title">Platforms</div><div class="skill-pills"><span class="skill-pill">iOS</span><span class="skill-pill">Android</span><span class="skill-pill">macOS</span><span class="skill-pill">Windows</span></div></div>
+      <div class="skill-card" style="--card-color: #ffd166;"><div class="skill-card-title">Tools</div><div class="skill-pills"><span class="skill-pill">Git</span><span class="skill-pill">Jenkins</span><span class="skill-pill">Xcode</span><span class="skill-pill">Android Studio</span><span class="skill-pill">Discord.js</span></div></div>
+      <div class="skill-card" style="--card-color: #9b6dff;"><div class="skill-card-title">SDKs</div><div class="skill-pills"><span class="skill-pill">Firebase</span><span class="skill-pill">AppsFlyer</span><span class="skill-pill">Braze</span><span class="skill-pill">ARCore</span><span class="skill-pill">ARKit</span></div></div>
+      <div class="skill-card" style="--card-color: #4ecdc4;"><div class="skill-card-title">Production</div><div class="skill-pills"><span class="skill-pill">Agile/Scrum</span><span class="skill-pill">Sprint Planning</span><span class="skill-pill">Roadmap</span><span class="skill-pill">QA Formation</span><span class="skill-pill">Jira</span><span class="skill-pill">Trello</span></div></div>
+    </div>
+  </section>
+
+  <div class="pixel-divider"><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div><div class="pixel-divider-dot"></div></div>
+
+  <!-- SHOWCASE -->
+  <section class="showcase-section" id="showcase">
+    <div class="section-header">
+      <div class="section-tag">// play</div>
+      <h2 class="section-title">Games & Tools</h2>
+    </div>
+    <div class="showcase-grid">
+      <div class="showcase-card" onclick="window.open('games/beamlab/','_blank')"><img src="games/beamlab/og-image.png" alt="Beamlab" class="showcase-card-img" loading="lazy"><div class="showcase-card-body"><div class="showcase-card-type">Daily Puzzle</div><div class="showcase-card-name">Beamlab</div><div class="showcase-card-desc">365 laser-reflection puzzles across three difficulty tiers.</div></div></div>
+      <div class="showcase-card" onclick="window.open('games/parsed/','_blank')"><img src="games/parsed/og-image.png" alt="Parsed" class="showcase-card-img" loading="lazy"><div class="showcase-card-body"><div class="showcase-card-type">Daily Code Puzzle</div><div class="showcase-card-name">Parsed</div><div class="showcase-card-desc">365 themed code puzzles in medium and hard.</div></div></div>
+      <div class="showcase-card" onclick="window.open('games/philosophy/','_blank')"><img src="games/philosophy/og-image.png" alt="Examined" class="showcase-card-img" loading="lazy"><div class="showcase-card-body"><div class="showcase-card-type">Alignment Quiz</div><div class="showcase-card-name">Examined</div><div class="showcase-card-desc">Discover your philosophical alignment across 5 schools.</div></div></div>
+      <div class="showcase-card" onclick="window.open('tools/snaplayout/','_blank')"><img src="tools/snaplayout/og-image.png" alt="SnapLayout" class="showcase-card-img" loading="lazy"><div class="showcase-card-body"><div class="showcase-card-type">Planning Tool</div><div class="showcase-card-name">SnapLayout</div><div class="showcase-card-desc">Room layout planner with a furniture library.</div></div></div>
+      <div class="showcase-card" onclick="window.open('tools/misery-index/','_blank')"><img src="tools/misery-index/og-image.png" alt="Misery Index" class="showcase-card-img" loading="lazy"><div class="showcase-card-body"><div class="showcase-card-type">Dashboard</div><div class="showcase-card-name">Misery Index</div><div class="showcase-card-desc">Claude AI outage sentiment dashboard.</div></div></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <div class="footer-brand">Andrew Steven Chau</div>
+      <div class="footer-sub">Senior Software Engineer · Game Developer · Indie Studio Co-Founder</div>
+    </div>
+    <div class="footer-links">
+      <a href="https://www.linkedin.com/in/andrewstevenchau/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href="https://www.youtube.com/@raggedydoc" target="_blank" rel="noopener noreferrer">YouTube</a>
+      <a href="https://bsky.app/profile/raggedydoctv.bsky.social" target="_blank" rel="noopener noreferrer">Bluesky</a>
+    </div>
+  </footer>
+  <div class="footer-copy">
+    &copy; 2025 Andrew Steven Chau. All rights reserved.
+    <br><a href="privacy.html">Privacy Policy</a>
+  </div>
+
+  <script>
+    // Typing effect
+    (function() {
+      var roles = ["Senior Software Engineer", "AR/XR Developer", "Game Developer", "Indie Developer"];
+      var el = document.getElementById("typing-text");
+      var roleIndex = 0, charIndex = 0, deleting = false;
+      function tick() {
+        var current = roles[roleIndex];
+        if (!deleting) {
+          el.textContent = current.substring(0, charIndex + 1);
+          charIndex++;
+          if (charIndex === current.length) { deleting = true; setTimeout(tick, 1800); return; }
+          setTimeout(tick, 80);
+        } else {
+          el.textContent = current.substring(0, charIndex - 1);
+          charIndex--;
+          if (charIndex === 0) { deleting = false; roleIndex = (roleIndex + 1) % roles.length; setTimeout(tick, 400); return; }
+          setTimeout(tick, 40);
+        }
+      }
+      tick();
+    })();
+
+    // Mobile menu
+    document.getElementById('nav-toggle').addEventListener('click', function() {
+      document.getElementById('nav-links').classList.toggle('open');
+    });
+
+    // Generate starfield
+    (function() {
+      var container = document.getElementById('starfield');
+      for (var i = 0; i < 80; i++) {
+        var star = document.createElement('div');
+        star.className = 'star';
+        star.style.width = star.style.height = (Math.random() * 2 + 1) + 'px';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.setProperty('--dur', (Math.random() * 4 + 2) + 's');
+        star.style.setProperty('--max-opacity', (Math.random() * 0.5 + 0.2).toFixed(2));
+        star.style.animationDelay = (Math.random() * 5) + 's';
+        container.appendChild(star);
+      }
+    })();
+
+    // Generate floating particles
+    (function() {
+      var container = document.getElementById('game-particles');
+      var shapes = ['card-shape', 'diamond-shape', 'dot-shape', 'cross-shape'];
+      for (var i = 0; i < 50; i++) {
+        var p = document.createElement('div');
+        p.className = 'game-particle ' + shapes[Math.floor(Math.random() * shapes.length)];
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (Math.random() * 40 + 25) + 's';
+        p.style.animationDelay = (Math.random() * 30) + 's';
+        container.appendChild(p);
+      }
+    })();
+
+    // Scroll reveal for timeline items
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.tl-item').forEach(function(item, i) {
+      item.style.transitionDelay = (i * 0.08) + 's';
+      observer.observe(item);
+    });
+
+    // Scroll reveal for cards
+    var cardObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.skill-card, .showcase-card, .project-group').forEach(function(el, i) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(16px)';
+      el.style.transition = 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1) ' + (i * 0.04) + 's';
+      cardObserver.observe(el);
+    });
+  </script>
+
+</body>
+</html>

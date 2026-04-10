@@ -553,14 +553,6 @@ function generateRssFeeds(data) {
   var allLevelChangeTime = data.lastLevelChangeTime;
   var allItems = [];
 
-  var apiStatus = "Unknown";
-  if (data.status && data.status.components) {
-    var apiComp = data.status.components.find(function (c) {
-      return c.name.toLowerCase().indexOf("api") !== -1;
-    });
-    if (apiComp) apiStatus = apiComp.status.replace(/_/g, " ");
-  }
-
   allItems.push(
     "    <item>\n" +
     "      <title>Misery Index: " + escapeXml(data.miseryIndex.toFixed(1)) + "/10 — " + escapeXml(allLevel) + "</title>\n" +
@@ -569,10 +561,7 @@ function generateRssFeeds(data) {
     "      <pubDate>" + new Date(allLevelChangeTime).toUTCString() + "</pubDate>\n" +
     "      <description>" + escapeXml(
       "Score: " + data.miseryIndex.toFixed(1) + "/10 (" + allLevel + "). " +
-      "Status: " + statusDesc + ". " +
-      "API: " + apiStatus + ". " +
-      "Bluesky: " + (data.social ? data.social.recentPosts : 0) + " posts. " +
-      (data.reddit ? "Reddit: " + (data.reddit.recentPosts || 0) + " posts." : "")
+      "Status: " + statusDesc + "."
     ) + "</description>\n" +
     "      <category>misery-score</category>\n" +
     "    </item>"

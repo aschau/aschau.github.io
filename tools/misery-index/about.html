@@ -191,7 +191,7 @@
     </table>
 
     <p><strong>2. Reddit (0–5 points) — primary social signal</strong></p>
-    <p class="formula-note">Active megathreads count as 5 posts each. Only counted if data is fresh (&lt;30 min).</p>
+    <p class="formula-note">Active megathreads count as 5 posts each. Only counted if data is fresh (&lt;24 hours).</p>
     <table class="formula-table">
       <tr><th>Effective posts</th><th>Points</th></tr>
       <tr><td>0</td><td>0</td></tr>
@@ -259,7 +259,7 @@
     <h2>How data is collected</h2>
     <p>
       Data is refreshed every 15 minutes automatically. The dashboard also fetches live status
-      and incident data directly, so it stays current between refreshes.
+      and incident data directly, and auto-refreshes every 5 minutes, so it stays current between data updates.
     </p>
     <p>
       History is preserved for 7 days. Use the time toggle (24h / 3d / 7d) below the gauge to

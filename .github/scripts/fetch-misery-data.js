@@ -296,7 +296,7 @@ async function getRecentIncidents() {
 }
 
 // ── Misery Calculation ───────────────────────────────────────
-var REDDIT_STALE_MS = 30 * 60 * 1000; // 30 minutes
+var REDDIT_STALE_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 function calculateMisery(statusData, bskyPosts, bskyComments, redditData) {
   var statusScore = 0;

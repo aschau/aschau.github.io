@@ -205,9 +205,9 @@ describe('calculateMisery', () => {
         expect(result.breakdown.redditOutage + result.breakdown.redditUsage).toBe(2);
     });
 
-    test('stale reddit data (>30min) → score 0', () => {
+    test('stale reddit data (>24h) → score 0', () => {
         const staleReddit = {
-            lastFetched: new Date(NOW - 35 * 60000).toISOString(),
+            lastFetched: new Date(NOW - 25 * 60 * 60000).toISOString(),
             recentPosts: 50,
             topPosts: []
         };
@@ -313,6 +313,28 @@ describe('computeBreakdown', () => {
         const result = computeBreakdown(data, 'all');
         // Only 1 real bad component (API), info-banner excluded
         expect(result.status).toBe(0.5);
+    });
+
+    test('excludes Reddit data older than 24 hours from score', () => {
+        const now = Date.now();
+        const staleTime = new Date(now - 25 * 60 * 60 * 1000).toISOString();
+        const data = {
+            social: { recentPosts: 0, recentComments: 0, topPosts: [] },
+            reddit: { lastFetched: staleTime, recentPosts: 10, topPosts: [], outagePosts: 10, usagePosts: 0 }
+        };
+        const result = computeBreakdown(data, 'all', now);
+        expect(result.reddit).toBe(0);
+    });
+
+    test('includes Reddit data from earlier today in score', () => {
+        const now = Date.now();
+        const freshTime = new Date(now - 6 * 60 * 60 * 1000).toISOString();
+        const data = {
+            social: { recentPosts: 0, recentComments: 0, topPosts: [] },
+            reddit: { lastFetched: freshTime, recentPosts: 10, topPosts: [], outagePosts: 10, usagePosts: 0 }
+        };
+        const result = computeBreakdown(data, 'all', now);
+        expect(result.reddit).toBe(3);
     });
 });
 

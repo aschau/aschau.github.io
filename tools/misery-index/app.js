@@ -179,25 +179,28 @@
       else if (bskyComments >= 30) bskyScore += 0.5;
 
       if (data.reddit && data.reddit.lastFetched) {
-        var megas = (data.reddit.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
-        var rPosts = (data.reddit.recentPosts || 0) + (megas * 4);
-        var redditTotal = 0;
-        if (rPosts >= 30) redditTotal = 5;
-        else if (rPosts >= 20) redditTotal = 4;
-        else if (rPosts >= 10) redditTotal = 3;
-        else if (rPosts >= 5) redditTotal = 2;
-        else if (rPosts >= 3) redditTotal = 1;
-        else if (rPosts >= 1) redditTotal = 0.5;
+        var redditAge = Date.now() - new Date(data.reddit.lastFetched).getTime();
+        if (redditAge < 24 * 60 * 60 * 1000) {
+          var megas = (data.reddit.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
+          var rPosts = (data.reddit.recentPosts || 0) + (megas * 4);
+          var redditTotal = 0;
+          if (rPosts >= 30) redditTotal = 5;
+          else if (rPosts >= 20) redditTotal = 4;
+          else if (rPosts >= 10) redditTotal = 3;
+          else if (rPosts >= 5) redditTotal = 2;
+          else if (rPosts >= 3) redditTotal = 1;
+          else if (rPosts >= 1) redditTotal = 0.5;
 
-        // Split score by outage vs usage ratio
-        var outageN = data.reddit.outagePosts || 0;
-        var usageN = data.reddit.usagePosts || 0;
-        var totalN = outageN + usageN;
-        if (totalN > 0) {
-          redditOutageScore = Math.round(redditTotal * (outageN / totalN) * 10) / 10;
-          redditUsageScore = Math.round(redditTotal * (usageN / totalN) * 10) / 10;
-        } else {
-          redditOutageScore = redditTotal; // legacy data without categories
+          // Split score by outage vs usage ratio
+          var outageN = data.reddit.outagePosts || 0;
+          var usageN = data.reddit.usagePosts || 0;
+          var totalN = outageN + usageN;
+          if (totalN > 0) {
+            redditOutageScore = Math.round(redditTotal * (outageN / totalN) * 10) / 10;
+            redditUsageScore = Math.round(redditTotal * (usageN / totalN) * 10) / 10;
+          } else {
+            redditOutageScore = redditTotal; // legacy data without categories
+          }
         }
       }
     }
@@ -599,8 +602,11 @@
 
   // ── Data Fetching ──────────────────────────────────────────
   var INCIDENTS_API = "https://status.claude.com/api/v2/incidents.json";
+  var fetchInFlight = false;
 
   function fetchData() {
+    if (fetchInFlight) return;
+    fetchInFlight = true;
     var isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
       || window.location.protocol === "file:";
 
@@ -680,7 +686,7 @@
       if (data.lastUpdated) {
         document.getElementById("last-updated").textContent = timeAgo(data.lastUpdated);
       }
-    });
+    }).finally(function () { fetchInFlight = false; });
   }
 
   function renderDemo(liveStatus, liveIncidents) {
@@ -808,4 +814,6 @@
   initTheme();
   document.getElementById("theme-btn").addEventListener("click", toggleTheme);
   fetchData();
+
+  setInterval(fetchData, 5 * 60 * 1000);
 })();

@@ -11,7 +11,7 @@
       --blue: #4a90d9; --blue-light: #7ab8ff; --blue-dim: rgba(74,144,217,0.12);
       --purple: #9b6dff; --pink: #ff6b9d; --green: #50e3a4;
       --yellow: #ffd166; --orange: #ff8a50; --teal: #4ecdc4;
-      --bg: #0a0c18; --bg-card: rgba(16,20,42,0.92);
+      --bg: #0c1020; --bg-card: rgba(16,20,42,0.92);
       --border: rgba(74,144,217,0.12); --border-glow: rgba(74,144,217,0.3);
       --text: #e4e8f7; --text-dim: rgba(180,190,220,0.55); --text-soft: rgba(200,210,240,0.8);
       --world-h: 220px;
@@ -21,7 +21,7 @@
     html, body { height: 100%; overflow: hidden; background: var(--bg); font-family: 'Outfit', sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
 
     /* Scanlines */
-    body::after { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px); pointer-events: none; z-index: 9999; }
+    /* Scanline overlay removed — was causing dark band between bezel and world */
 
     /* ===== SPLIT LAYOUT ===== */
     .layout { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
@@ -31,39 +31,20 @@
     .screen-bezel {
       flex: 1;
       position: relative;
-      margin: 6px 10px 0;
-      border-radius: 12px 12px 0 0;
-      background: linear-gradient(180deg, #141830 0%, #0e1225 60%, #0c1020 100%);
-      border: 3px solid #1e2240;
-      border-bottom: none;
-      box-shadow:
-        inset 0 0 40px rgba(0,0,0,0.4),
-        0 0 8px rgba(0,0,0,0.8),
-        0 0 30px rgba(74,144,217,0.04);
+      margin: 4px 8px 0;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 2px solid rgba(74,144,217,0.12);
+      z-index: 2;
       overflow: hidden;
     }
 
     /* CRT vignette */
-    .screen-bezel::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 10px;
-      background: radial-gradient(ellipse at center, transparent 70%, rgba(0,0,0,0.35) 100%);
-      pointer-events: none;
-      z-index: 5;
-    }
+    /* Vignette removed — was causing dark band at bottom */
 
     /* CRT phosphor glow on edges */
     .screen-bezel::after {
-      content: '';
-      position: absolute;
-      inset: -1px;
-      border-radius: 13px;
-      border: 1px solid rgba(74,144,217,0.08);
-      box-shadow:
-        inset 0 1px 0 rgba(122,184,255,0.06),
-        inset 0 -1px 0 rgba(0,0,0,0.3);
+      content: none;
       pointer-events: none;
       z-index: 6;
     }
@@ -118,7 +99,7 @@
       transition: background 0.8s ease, opacity 0.8s ease;
       pointer-events: none;
       z-index: 0;
-      border-radius: 10px;
+      border-radius: 8px;
     }
 
     /* Themed pattern overlay */
@@ -127,7 +108,7 @@
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      border-radius: 10px;
+      border-radius: 8px;
       opacity: 0;
       transition: opacity 0.8s ease;
     }
@@ -140,7 +121,7 @@
       inset: 0;
       pointer-events: none;
       z-index: 4;
-      border-radius: 10px;
+      border-radius: 8px;
       animation: crtFlicker 0.15s infinite;
       opacity: 0.02;
       background: linear-gradient(transparent 50%, rgba(0,0,0,0.08) 50%);
@@ -153,7 +134,7 @@
       inset: 0;
       pointer-events: none;
       z-index: 1;
-      border-radius: 10px;
+      border-radius: 8px;
       opacity: 0.015;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
       animation: staticShift 0.5s steps(3) infinite;
@@ -184,7 +165,7 @@
       inset: 0;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 0.8rem 1.5rem;
+      padding: 0.5rem 1.5rem;
       display: flex;
       flex-direction: column;
       opacity: 0;
@@ -197,9 +178,8 @@
     .panel.exit-left { transform: translateX(-40px); opacity: 0; }
     .panel.exit-right { transform: translateX(40px); opacity: 0; }
 
-    .panel::-webkit-scrollbar { width: 5px; }
-    .panel::-webkit-scrollbar-track { background: transparent; }
-    .panel::-webkit-scrollbar-thumb { background: rgba(74,144,217,0.2); border-radius: 3px; }
+    .panel::-webkit-scrollbar { width: 0; }
+    .panel { scrollbar-width: none; }
 
     /* Bottom: game world */
     .world {
@@ -207,16 +187,17 @@
       min-height: var(--world-h);
       position: relative;
       overflow: hidden;
+      background: #0c1020;
+      margin-top: -12px;
+      padding-top: 12px;
     }
 
     /* Sky in world strip */
     .sky { position: absolute; inset: 0; background: linear-gradient(180deg, #0c1020 0%, #0e1428 40%, #141a35 100%); }
     .stars { position: absolute; inset: 0; }
     .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--d,3s) ease-in-out infinite alternate; }
-    @keyframes twinkle { 0% { opacity: 0.1; } 100% { opacity: var(--o,0.5); } }
+    @keyframes twinkle { 0%, 100% { opacity: var(--o, 0.3); } 50% { opacity: 0.08; } }
 
-    .mountains-far { position: absolute; bottom: 90px; left: 0; width: 300%; height: 60px; background: repeating-linear-gradient(135deg, transparent 33%, #0d1230 33%, #0d1230 66%, transparent 66%) 0 0 / 180px 60px; opacity: 0.4; transition: transform 0.8s cubic-bezier(0.25,1,0.5,1); }
-    .mountains-near { position: absolute; bottom: 80px; left: 0; width: 300%; height: 50px; background: repeating-linear-gradient(130deg, transparent 30%, #111838 30%, #111838 60%, transparent 60%) 0 0 / 140px 50px; opacity: 0.6; transition: transform 0.8s cubic-bezier(0.25,1,0.5,1); }
 
     .ground { position: absolute; bottom: 0; left: 0; right: 0; height: 90px; background: linear-gradient(180deg, #141830, #0e1225); border-top: 2px solid rgba(74,144,217,0.12); }
     .ground-grid { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(74,144,217,0.03) 79px, rgba(74,144,217,0.03) 80px), repeating-linear-gradient(180deg, transparent, transparent 29px, rgba(74,144,217,0.02) 29px, rgba(74,144,217,0.02) 30px); }
@@ -314,8 +295,8 @@
     }
 
     /* ===== CONTENT STYLES (same as before, compressed) ===== */
-    .p-tag { font-family: 'Fira Code', monospace; font-size: 0.6rem; color: var(--teal); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.2rem; }
-    .p-title { font-family: 'Silkscreen', cursive; font-size: clamp(1.3rem,3vw,1.8rem); margin-bottom: 0.3rem; }
+    .p-tag { font-family: 'Fira Code', monospace; font-size: 0.55rem; color: var(--teal); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.1rem; }
+    .p-title { font-family: 'Silkscreen', cursive; font-size: clamp(1.1rem,2.5vw,1.5rem); margin-bottom: 0.15rem; }
     .p-desc { font-size: 0.88rem; color: var(--text-dim); max-width: 600px; line-height: 1.6; margin-bottom: 1.5rem; }
 
     /* Home */
@@ -347,9 +328,9 @@
 
     /* Tab system for project sections */
     .tab-bar {
-      display: flex; gap: 4px; margin-bottom: 0.5rem;
+      display: flex; gap: 4px; margin-bottom: 0.2rem;
       overflow-x: auto; scrollbar-width: none;
-      padding-bottom: 2px; justify-content: center;
+      padding-bottom: 0; justify-content: center;
     }
     .tab-bar::-webkit-scrollbar { display: none; }
 
@@ -380,14 +361,12 @@
     /* Card carousel within tabs */
     .card-carousel {
       display: flex; gap: 1.5rem; overflow-x: auto;
-      padding: 0.5rem calc(50% - 170px) 0.5rem; scroll-snap-type: x mandatory;
-      scrollbar-width: thin; scrollbar-color: rgba(74,144,217,0.2) transparent;
+      padding: 0.2rem calc(50% - 150px) 0.2rem; scroll-snap-type: x mandatory;
+      scrollbar-width: none;
       flex-wrap: nowrap;
       flex: 1; align-items: center;
     }
-    .card-carousel::-webkit-scrollbar { height: 4px; }
-    .card-carousel::-webkit-scrollbar-track { background: transparent; }
-    .card-carousel::-webkit-scrollbar-thumb { background: rgba(74,144,217,0.2); border-radius: 2px; }
+    .card-carousel::-webkit-scrollbar { display: none; }
 
     .card-carousel .gc { scroll-snap-align: center; }
 
@@ -430,7 +409,7 @@
     .cg { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 1rem; justify-content: flex-start; }
 
     .gc {
-      width: 300px; height: 420px; perspective: 900px; cursor: pointer; flex-shrink: 0;
+      width: 300px; height: 480px; perspective: 900px; cursor: pointer; flex-shrink: 0;
       animation: cardFloat var(--float-dur, 4s) ease-in-out infinite;
       animation-delay: var(--float-del, 0s);
     }
@@ -507,6 +486,7 @@
     }
 
     .gc.flipped { animation-play-state: paused; }
+    .gc.no-flip { cursor: default; }
     .gc.flipped .gc-inner { transform: rotateY(180deg); }
 
     .gc-front, .gc-back {
@@ -571,31 +551,42 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 10px 10px, var(--card-color) 1.5px, transparent 1.5px),
-        radial-gradient(circle at calc(100% - 10px) 10px, var(--card-color) 1.5px, transparent 1.5px),
-        radial-gradient(circle at 10px calc(100% - 10px), var(--card-color) 1.5px, transparent 1.5px),
-        radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), var(--card-color) 1.5px, transparent 1.5px);
-      opacity: 0.25;
+        radial-gradient(circle at 10px 10px, var(--card-color) 2px, transparent 2px),
+        radial-gradient(circle at calc(100% - 10px) 10px, var(--card-color) 2px, transparent 2px),
+        radial-gradient(circle at 10px calc(100% - 10px), var(--card-color) 2px, transparent 2px),
+        radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), var(--card-color) 2px, transparent 2px),
+        repeating-linear-gradient(45deg, transparent, transparent 8px, color-mix(in srgb, var(--card-color) 4%, transparent) 8px, color-mix(in srgb, var(--card-color) 4%, transparent) 9px);
+      opacity: 0.3;
       pointer-events: none;
     }
 
     .gc-emblem-text {
       font-family: 'Silkscreen', cursive;
-      font-size: 2.2rem;
+      font-size: 2.8rem;
       color: var(--card-color);
-      opacity: 0.7;
-      text-shadow: 0 0 20px color-mix(in srgb, var(--card-color) 30%, transparent);
+      opacity: 0.8;
+      text-shadow: 0 0 25px color-mix(in srgb, var(--card-color) 35%, transparent);
       z-index: 1;
     }
 
     .gc-emblem-sub {
       font-family: 'Fira Code', monospace;
-      font-size: 0.5rem;
+      font-size: 0.55rem;
       color: var(--card-color);
-      opacity: 0.4;
-      letter-spacing: 0.1em;
-      margin-top: 4px;
+      opacity: 0.45;
+      letter-spacing: 0.12em;
+      margin-top: 6px;
       z-index: 1;
+    }
+
+    /* Shimmer effect on emblem */
+    .gc-emblem .gc-emblem-text {
+      animation: emblemPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes emblemPulse {
+      0%, 100% { opacity: 0.7; text-shadow: 0 0 20px color-mix(in srgb, var(--card-color) 25%, transparent); }
+      50% { opacity: 0.9; text-shadow: 0 0 35px color-mix(in srgb, var(--card-color) 45%, transparent); }
     }
 
     .gc-nameplate {
@@ -757,17 +748,68 @@
       .cabinet:last-child { margin-right: max(calc(50vw - 75px), 30px); }
       .controls { height: 40px; min-height: 40px; }
       .ctrl-btn { width: 32px; height: 32px; }
-      .gc { width: 220px; height: 320px; }
+      .gc { width: 220px; height: 380px; }
       .gc-flavor { font-size: 0.5rem; padding: 3px 8px; }
       .gc-name { font-size: 0.55rem; }
       .gc-nameplate { padding: 4px 8px 3px; }
       .panel { padding: 1rem; }
-      .screen-bezel { margin: 4px 6px 0; }
+      .screen-bezel { margin: 2px 4px 0; }
       .card-carousel { gap: 0.8rem; padding: 0.5rem 0.3rem 1rem; }
       .cg { grid-template-columns: 1fr; }
       .about-g { grid-template-columns: 1fr; }
       .about-ph { max-width: 150px; margin: 0 auto; }
       .pg-imgs { grid-template-columns: 1fr; }
+    }
+
+    /* Loading screen */
+    .load-screen {
+      position: fixed; inset: 0; z-index: 10000;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.5s ease;
+    }
+
+    .load-screen.fade-out {
+      opacity: 0; pointer-events: none;
+    }
+
+    .load-sprite {
+      width: 64px; height: 64px;
+      background: url('img/character-spritesheet.png') 0 -704px;
+      background-size: 832px 3456px;
+      image-rendering: pixelated;
+      animation: spriteWalk 0.8s steps(9) infinite;
+      margin-bottom: 1.5rem;
+    }
+
+    .load-text {
+      font-family: 'Silkscreen', cursive;
+      font-size: 1rem;
+      color: var(--blue-light);
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .load-bar {
+      width: 200px; height: 4px;
+      background: rgba(74,144,217,0.15);
+      border-radius: 2px; overflow: hidden;
+    }
+
+    .load-fill {
+      height: 100%; width: 0%;
+      background: var(--blue-light);
+      border-radius: 2px;
+      transition: width 1.2s ease;
+    }
+
+    .load-hint {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      margin-top: 1rem;
+      opacity: 0.5;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -777,6 +819,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous">
 </head>
 <body>
+
+<div class="load-screen" id="load-screen">
+  <div class="load-sprite"></div>
+  <div class="load-text">LOADING</div>
+  <div class="load-bar"><div class="load-fill" id="load-fill"></div></div>
+  <div class="load-hint">Preparing the arcade...</div>
+</div>
 
 <div class="layout">
   <!-- ARCADE SCREEN -->
@@ -829,45 +878,45 @@
 
       <div class="tab-panel active" id="w-blizzard">
         <div class="card-carousel">
-          <div class="gc" style="--card-color:#148EFF;--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(20,142,255,0.06),rgba(20,142,255,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:rgba(20,142,255,0.5);">B</div></div><div class="gc-nameplate"><div class="gc-name">Hearthstone</div><div class="gc-type">Client Team</div></div><div class="gc-flavor">Managing SDKs. Modernizing platform support.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Blizzard Entertainment</div><div class="gc-back-role">Senior Software Engineer · 2025—Current</div><div class="gc-back-text">Part of the Hearthstone Client Team. Managing critical SDKs — Firebase, AppsFlyer, Braze, and China-specific integrations. Modernizing macOS and iOS platform support.</div><div class="gc-back-links"><a href="https://www.blizzard.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#148EFF;--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Blizzard/Hearthstone_Apple.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">App Store</div><div class="gc-type">Hearthstone</div></div><div class="gc-flavor">iOS listing.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Hearthstone — iOS</div><div class="gc-back-text">Hearthstone on the Apple App Store. One of the most iconic digital card games, running on iOS since 2014.</div><div class="gc-back-links"><a href="https://apps.apple.com/us/app/hearthstone/id625257520" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#148EFF;--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Blizzard/Hearthstone_Google.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Google Play</div><div class="gc-type">Hearthstone</div></div><div class="gc-flavor">Android listing.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Hearthstone — Android</div><div class="gc-back-text">Hearthstone on the Google Play Store.</div><div class="gc-back-links"><a href="https://play.google.com/store/apps/details?id=com.blizzard.wtcg.hearthstone" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#148EFF;--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">B</div></div><div class="gc-nameplate"><div class="gc-name">Hearthstone</div><div class="gc-type">Client Team</div></div><div class="gc-flavor">Managing SDKs. Modernizing platform support.</div><div class="gc-front-links"><a href="https://www.blizzard.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Blizzard Entertainment</div><div class="gc-back-role">Senior Software Engineer · 2025—Current</div><div class="gc-back-text">Part of the Hearthstone Client Team. Managing critical SDKs — Firebase, AppsFlyer, Braze, and China-specific integrations. Modernizing macOS and iOS platform support.</div><div class="gc-back-links"><a href="https://www.blizzard.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#148EFF;--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Blizzard/Hearthstone_Apple.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">App Store</div><div class="gc-type">Hearthstone</div></div><div class="gc-flavor">iOS listing.</div><div class="gc-front-links"><a href="https://apps.apple.com/us/app/hearthstone/id625257520" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Hearthstone — iOS</div><div class="gc-back-text">Hearthstone on the Apple App Store. One of the most iconic digital card games, running on iOS since 2014.</div><div class="gc-back-links"><a href="https://apps.apple.com/us/app/hearthstone/id625257520" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#148EFF;--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Blizzard/Hearthstone_Google.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Google Play</div><div class="gc-type">Hearthstone</div></div><div class="gc-flavor">Android listing.</div><div class="gc-front-links"><a href="https://play.google.com/store/apps/details?id=com.blizzard.wtcg.hearthstone" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Hearthstone — Android</div><div class="gc-back-text">Hearthstone on the Google Play Store.</div><div class="gc-back-links"><a href="https://play.google.com/store/apps/details?id=com.blizzard.wtcg.hearthstone" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
           <div class="gc" style="--card-color:#148EFF;--float-dur:4.1s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Blizzard/Hearthstone_Credits_Card.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Credits Card</div><div class="gc-type">In-Game</div></div><div class="gc-flavor">Official Hearthstone credits card.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Official Credits Card</div><div class="gc-back-text">Andrew Steven Chau's official in-game Hearthstone credits card, awarded to team members.</div><div class="gc-back-gallery"><img src="img/work-projects/Blizzard/Hearthstone_Credits_Card_Golden.png" loading="lazy"></div></div></div></div></div>
         </div>
       </div>
 
       <div class="tab-panel" id="w-mw">
         <div class="card-carousel">
-          <div class="gc" style="--card-color:#f26835;--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(242,104,53,0.06),rgba(242,104,53,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1rem;color:rgba(242,104,53,0.5);">MW</div></div><div class="gc-nameplate"><div class="gc-name">MobilityWare</div><div class="gc-type">Spark Studio</div></div><div class="gc-flavor">30+ titles. Privacy/compliance lead.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare</div><div class="gc-back-role">Software Engineer II · 2020—2025</div><div class="gc-back-text">Spark Studio — Yellow Team. Engineering across 30+ shipped titles. Studio point person for privacy/compliance — GDPR, CCPA, Privacy Sandbox. Worked with Technical Director and CTO.</div><div class="gc-back-links"><a href="https://www.mobilityware.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#f26835;--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/MobilityWare/Mobilityware_Apple.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">App Store</div><div class="gc-type">MobilityWare</div></div><div class="gc-flavor">30+ titles on iOS.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare — iOS</div><div class="gc-back-text">MobilityWare's full catalog on the Apple App Store, including Solitaire, Mahjong, and more.</div><div class="gc-back-links"><a href="https://apps.apple.com/cg/developer/mobilityware/id284117362" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#f26835;--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/MobilityWare/Mobilityware_Google.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Google Play</div><div class="gc-type">MobilityWare</div></div><div class="gc-flavor">30+ titles on Android.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare — Android</div><div class="gc-back-text">MobilityWare's full catalog on Google Play.</div><div class="gc-back-links"><a href="https://play.google.com/store/apps/dev?id=7125885284350687141" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#f26835;--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">MW</div></div><div class="gc-nameplate"><div class="gc-name">MobilityWare</div><div class="gc-type">Spark Studio</div></div><div class="gc-flavor">30+ titles. Privacy/compliance lead.</div><div class="gc-front-links"><a href="https://www.mobilityware.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare</div><div class="gc-back-role">Software Engineer II · 2020—2025</div><div class="gc-back-text">Spark Studio — Yellow Team. Engineering across 30+ shipped titles. Studio point person for privacy/compliance — GDPR, CCPA, Privacy Sandbox. Worked with Technical Director and CTO.</div><div class="gc-back-links"><a href="https://www.mobilityware.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#f26835;--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/MobilityWare/Mobilityware_Apple.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">App Store</div><div class="gc-type">MobilityWare</div></div><div class="gc-flavor">30+ titles on iOS.</div><div class="gc-front-links"><a href="https://apps.apple.com/cg/developer/mobilityware/id284117362" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare — iOS</div><div class="gc-back-text">MobilityWare's full catalog on the Apple App Store, including Solitaire, Mahjong, and more.</div><div class="gc-back-links"><a href="https://apps.apple.com/cg/developer/mobilityware/id284117362" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#f26835;--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/MobilityWare/Mobilityware_Google.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Google Play</div><div class="gc-type">MobilityWare</div></div><div class="gc-flavor">30+ titles on Android.</div><div class="gc-front-links"><a href="https://play.google.com/store/apps/dev?id=7125885284350687141" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare — Android</div><div class="gc-back-text">MobilityWare's full catalog on Google Play.</div><div class="gc-back-links"><a href="https://play.google.com/store/apps/dev?id=7125885284350687141" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
         </div>
       </div>
 
       <div class="tab-panel" id="w-sega">
         <div class="card-carousel">
-          <div class="gc" style="--card-color:#0060A8;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/persona5Royal.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Persona 5: The Royal</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">The definitive edition of one of the highest-rated JRPGs.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Persona 5: The Royal</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">Quality assurance on the expanded Persona 5, ensuring localization accuracy and gameplay polish across hundreds of hours of content.</div><div class="gc-back-links"><a href="https://persona.atlus.com/p5r/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#0060A8;--float-dur:4.2s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/yakuza5.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Yakuza 5 Remastered</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">Five protagonists, five cities, one epic saga.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Yakuza 5 Remastered</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">QA on the remastered western release, covering five interweaving storylines across Japan.</div><div class="gc-back-links"><a href="https://store.steampowered.com/app/1105510/Yakuza_5_Remastered/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#0060A8;--float-dur:3.6s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/catherineFullBodySwitch.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Catherine: Full Body</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">Puzzle-platformer meets romantic horror on Switch.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Catherine: Full Body (Switch)</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">QA on the Switch port, ensuring feature parity and performance.</div><div class="gc-back-links"><a href="https://www.catherinethegame.com/fullbody/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#0060A8;--float-dur:4s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/yakuza0.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Yakuza 0</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">1988 Japan in all its neon glory.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Yakuza 0</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">QA on the prequel entry, set in late-1980s Tokyo and Osaka.</div><div class="gc-back-links"><a href="https://games.sega.com/yakuza0/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#0060A8;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/persona5Royal.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Persona 5: The Royal</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">The definitive edition of one of the highest-rated JRPGs.</div><div class="gc-front-links"><a href="https://persona.atlus.com/p5r/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Persona 5: The Royal</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">Quality assurance on the expanded Persona 5, ensuring localization accuracy and gameplay polish across hundreds of hours of content.</div><div class="gc-back-links"><a href="https://persona.atlus.com/p5r/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#0060A8;--float-dur:4.2s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/yakuza5.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Yakuza 5 Remastered</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">Five protagonists, five cities, one epic saga.</div><div class="gc-front-links"><a href="https://store.steampowered.com/app/1105510/Yakuza_5_Remastered/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Yakuza 5 Remastered</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">QA on the remastered western release, covering five interweaving storylines across Japan.</div><div class="gc-back-links"><a href="https://store.steampowered.com/app/1105510/Yakuza_5_Remastered/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#0060A8;--float-dur:3.6s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/catherineFullBodySwitch.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Catherine: Full Body</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">Puzzle-platformer meets romantic horror on Switch.</div><div class="gc-front-links"><a href="https://www.catherinethegame.com/fullbody/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Catherine: Full Body (Switch)</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">QA on the Switch port, ensuring feature parity and performance.</div><div class="gc-back-links"><a href="https://www.catherinethegame.com/fullbody/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#0060A8;--float-dur:4s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/yakuza0.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Yakuza 0</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">1988 Japan in all its neon glory.</div><div class="gc-front-links"><a href="https://games.sega.com/yakuza0/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Yakuza 0</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">QA on the prequel entry, set in late-1980s Tokyo and Osaka.</div><div class="gc-back-links"><a href="https://games.sega.com/yakuza0/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
         </div>
       </div>
 
       <div class="tab-panel" id="w-trigger">
         <div class="card-carousel">
-          <div class="gc" style="--card-color:#00C9DB;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/starviewYardlineStat.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">NFL AR — Starview</div><div class="gc-type">Main Developer</div></div><div class="gc-flavor">Live AR stat overlays at AT&T Stadium.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">NFL AR — Starview</div><div class="gc-back-role">Main Developer · Jun—Oct 2019</div><div class="gc-back-text">Engineered live AR stat overlays for Dallas Cowboys games in Unity 3D. Deployed on-site at NFL stadiums.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/starviewFootballTransition.jpg" loading="lazy"><img src="img/work-projects/Trigger/starviewGenericStat.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/starview/starview.html" class="gc-ln">Details</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#00C9DB;--float-dur:4.1s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/nhlARSplash.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">NHL AR</div><div class="gc-type">Main Developer</div></div><div class="gc-flavor">AR hockey rink at NHL arenas with Intel.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">NHL AR</div><div class="gc-back-role">Main Developer · Nov 2018—Jan 2019</div><div class="gc-back-text">Prototype live AR hockey rink in Unity 3D. Deployed with Sharks and Golden Knights + Intel.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/nhlARHome.jpg" loading="lazy"><img src="img/work-projects/Trigger/nhlARExample.jpg" loading="lazy"><img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/nhlAR/nhlAR.html" class="gc-ln">Details</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#00C9DB;--float-dur:3.6s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/nbaARMain.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">NBA AR</div><div class="gc-type">Main Developer</div></div><div class="gc-flavor">Mobile AR basketball via ARKit and ARCore.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">NBA AR</div><div class="gc-back-role">Main Developer · Mar 2018—Sep 2019</div><div class="gc-back-text">Shipped a mobile AR game and portal experience built with Unity 3D.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/nbaARTiles.jpg" loading="lazy"><img src="img/work-projects/Trigger/nbaARExample.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/nbaAR/nbaAR.html" class="gc-ln">Details</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#00C9DB;--float-dur:4.3s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/lenovoMirageARMain.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Lenovo Mirage AR</div><div class="gc-type">Developer</div></div><div class="gc-flavor">AR for the Lenovo Mirage headset.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Lenovo Mirage AR</div><div class="gc-back-role">Developer/Support · Oct 2018</div><div class="gc-back-text">AR applications developed for the Lenovo Mirage headset with Unity 3D.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/lenovoMirageARExample.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/lenovoMirageAR/lenovoMirageAR.html" class="gc-ln">Details</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#00C9DB;--float-dur:3.9s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/generalmills-starwar_main_01.jpeg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Star Wars AR</div><div class="gc-type">Developer</div></div><div class="gc-flavor">That Star Wars feeling in AR.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">General Mills — Star Wars AR</div><div class="gc-back-role">Developer · 2019</div><div class="gc-back-text">Several iterations of AR placement flow and post-processing effects.</div><div class="gc-back-links"><a href="https://www.triggerxr.com/work/general-mills-do-good-for-the-galaxy-ar" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#00C9DB;--float-dur:4.4s;--float-del:1.5s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/moviebill_feature_main_v02.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Moviebill</div><div class="gc-type">Developer</div></div><div class="gc-flavor">Asset management for the Moviebill app.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Moviebill</div><div class="gc-back-role">Developer · 2018</div><div class="gc-back-text">Asset downloading/management, feature releases, bug fixes.</div><div class="gc-back-links"><a href="https://www.triggerxr.com/work/moviebill" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/starviewYardlineStat.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">NFL AR — Starview</div><div class="gc-type">Main Developer</div></div><div class="gc-flavor">Live AR stat overlays at AT&T Stadium.</div><div class="gc-front-links"><a href="projects/work/starview/starview.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">NFL AR — Starview</div><div class="gc-back-role">Main Developer · Jun—Oct 2019</div><div class="gc-back-text">Engineered live AR stat overlays for Dallas Cowboys games in Unity 3D. Deployed on-site at NFL stadiums.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/starviewFootballTransition.jpg" loading="lazy"><img src="img/work-projects/Trigger/starviewGenericStat.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/starview/starview.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:4.1s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/nhlARSplash.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">NHL AR</div><div class="gc-type">Main Developer</div></div><div class="gc-flavor">AR hockey rink at NHL arenas with Intel.</div><div class="gc-front-links"><a href="projects/work/nhlAR/nhlAR.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">NHL AR</div><div class="gc-back-role">Main Developer · Nov 2018—Jan 2019</div><div class="gc-back-text">Prototype live AR hockey rink in Unity 3D. Deployed with Sharks and Golden Knights + Intel.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/nhlARHome.jpg" loading="lazy"><img src="img/work-projects/Trigger/nhlARExample.jpg" loading="lazy"><img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/nhlAR/nhlAR.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:3.6s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/nbaARMain.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">NBA AR</div><div class="gc-type">Main Developer</div></div><div class="gc-flavor">Mobile AR basketball via ARKit and ARCore.</div><div class="gc-front-links"><a href="projects/work/nbaAR/nbaAR.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">NBA AR</div><div class="gc-back-role">Main Developer · Mar 2018—Sep 2019</div><div class="gc-back-text">Shipped a mobile AR game and portal experience built with Unity 3D.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/nbaARTiles.jpg" loading="lazy"><img src="img/work-projects/Trigger/nbaARExample.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/nbaAR/nbaAR.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:4.3s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/lenovoMirageARMain.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Lenovo Mirage AR</div><div class="gc-type">Developer</div></div><div class="gc-flavor">AR for the Lenovo Mirage headset.</div><div class="gc-front-links"><a href="projects/work/lenovoMirageAR/lenovoMirageAR.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Lenovo Mirage AR</div><div class="gc-back-role">Developer/Support · Oct 2018</div><div class="gc-back-text">AR applications developed for the Lenovo Mirage headset with Unity 3D.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/lenovoMirageARExample.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/lenovoMirageAR/lenovoMirageAR.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:3.9s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/generalmills-starwar_main_01.jpeg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Star Wars AR</div><div class="gc-type">Developer</div></div><div class="gc-flavor">That Star Wars feeling in AR.</div><div class="gc-front-links"><a href="https://www.triggerxr.com/work/general-mills-do-good-for-the-galaxy-ar" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">General Mills — Star Wars AR</div><div class="gc-back-role">Developer · 2019</div><div class="gc-back-text">Several iterations of AR placement flow and post-processing effects.</div><div class="gc-back-links"><a href="https://www.triggerxr.com/work/general-mills-do-good-for-the-galaxy-ar" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:4.4s;--float-del:1.5s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/moviebill_feature_main_v02.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Moviebill</div><div class="gc-type">Developer</div></div><div class="gc-flavor">Asset management for the Moviebill app.</div><div class="gc-front-links"><a href="https://www.triggerxr.com/work/moviebill" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Moviebill</div><div class="gc-back-role">Developer · 2018</div><div class="gc-back-text">Asset downloading/management, feature releases, bug fixes.</div><div class="gc-back-links"><a href="https://www.triggerxr.com/work/moviebill" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
         </div>
       </div>
 
       <div class="tab-panel" id="w-stb">
         <div class="card-carousel">
-          <div class="gc" style="--card-color:#FF6B35;--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SuperToyBox/stb-cap-subaru2.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Subaru Wheelstand</div><div class="gc-type">Sole Client Developer</div></div><div class="gc-flavor">Show floor app with dynamic CMS by VIN.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Subaru Wheelstand</div><div class="gc-back-role">Sole Client Developer</div><div class="gc-back-text">Client app from start to release for the show floor. Dynamic content pulled from CMS based on VIN.</div><div class="gc-back-gallery"><img src="img/work-projects/SuperToyBox/subaru2-1-p-2600.jpg" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-2-p-2600.jpg" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-3.png" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-4.png" loading="lazy"></div><div class="gc-back-links"><a href="https://www.offekt.com/archive/work/subaru-wheelstand.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#FF6B35;--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SuperToyBox/vrFactory.PNG" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">VR Factory</div><div class="gc-type">Client Developer</div></div><div class="gc-flavor">CMS integration for custom VR builds.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">VR Factory</div><div class="gc-back-role">Client Developer</div><div class="gc-back-text">Unity client pulling from custom CMS to deploy builds. Flexible layouts coordinated with design and artists.</div><div class="gc-back-links"><a href="https://www.offekt.com/archive/supertoybox.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FF6B35;--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SuperToyBox/stb-cap-subaru2.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Subaru Wheelstand</div><div class="gc-type">Sole Client Developer</div></div><div class="gc-flavor">Show floor app with dynamic CMS by VIN.</div><div class="gc-front-links"><a href="https://www.offekt.com/archive/work/subaru-wheelstand.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Subaru Wheelstand</div><div class="gc-back-role">Sole Client Developer</div><div class="gc-back-text">Client app from start to release for the show floor. Dynamic content pulled from CMS based on VIN.</div><div class="gc-back-gallery"><img src="img/work-projects/SuperToyBox/subaru2-1-p-2600.jpg" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-2-p-2600.jpg" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-3.png" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-4.png" loading="lazy"></div><div class="gc-back-links"><a href="https://www.offekt.com/archive/work/subaru-wheelstand.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FF6B35;--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SuperToyBox/vrFactory.PNG" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">VR Factory</div><div class="gc-type">Client Developer</div></div><div class="gc-flavor">CMS integration for custom VR builds.</div><div class="gc-front-links"><a href="https://www.offekt.com/archive/supertoybox.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">VR Factory</div><div class="gc-back-role">Client Developer</div><div class="gc-back-text">Unity client pulling from custom CMS to deploy builds. Flexible layouts coordinated with design and artists.</div><div class="gc-back-links"><a href="https://www.offekt.com/archive/supertoybox.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
         </div>
       </div>
     </div>
@@ -885,9 +934,9 @@
 
       <div class="tab-panel active" id="pp-fc">
         <div class="card-carousel">
-          <div class="gc" style="--card-color:#c13e5d;--float-dur:3.7s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/friendCastleRainbow.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Friend Castle</div><div class="gc-type">Co-Founder</div></div><div class="gc-flavor">Indie game dev LLC.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Friend Castle</div><div class="gc-back-role">Co-Founder · 2023—Present</div><div class="gc-back-text">Indie game development LLC co-founded with friends. Design, engineering, production, and publishing.</div><div class="gc-back-links"><a href="https://friendcastle.org/home" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#c13e5d;--float-dur:3.9s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/schedazzle_promo.webp" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Schedazzle</div><div class="gc-type">Engineer/Lead</div></div><div class="gc-flavor">Event scheduling for conventions.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Schedazzle</div><div class="gc-back-role">Engineer/Lead, Technical Producer</div><div class="gc-back-text">Free event scheduling companion app. Promoters input schedules, attendees customize their itinerary on-device.</div><div class="gc-back-links"><a href="https://apps.apple.com/us/app/schedazzle/id6642688721" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a><a href="https://play.google.com/store/apps/details?id=com.FriendCastle.Schedazzle" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#c13e5d;--float-dur:4.2s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art-contain" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(193,62,93,0.08),rgba(193,62,93,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:0.7rem;color:rgba(193,62,93,0.4);text-align:center;line-height:1.6;">BOX<br>DOG</div></div><div class="gc-nameplate"><div class="gc-name">Box Dog</div><div class="gc-type">Engineer/Lead</div></div><div class="gc-flavor">Hidden object with hand-drawn levels.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Box Dog</div><div class="gc-back-role">Engineer/Lead, Technical Producer</div><div class="gc-back-text">Guide Joget and Box Dog through vibrant worlds searching for mischievous Imps.</div><div class="gc-back-links"><a href="https://store.steampowered.com/app/2991630/" target="_blank" rel="noopener noreferrer" class="gc-ln">Steam</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#c13e5d;--float-dur:3.7s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/friendCastleRainbow.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Friend Castle</div><div class="gc-type">Co-Founder</div></div><div class="gc-flavor">Indie game dev LLC.</div><div class="gc-front-links"><a href="https://friendcastle.org/home" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Friend Castle</div><div class="gc-back-role">Co-Founder · 2023—Present</div><div class="gc-back-text">Indie game development LLC co-founded with friends. Design, engineering, production, and publishing.</div><div class="gc-back-links"><a href="https://friendcastle.org/home" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#c13e5d;--float-dur:3.9s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/schedazzle_promo.webp" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Schedazzle</div><div class="gc-type">Engineer/Lead</div></div><div class="gc-flavor">Event scheduling for conventions.</div><div class="gc-front-links"><a href="https://apps.apple.com/us/app/schedazzle/id6642688721" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a><a href="https://play.google.com/store/apps/details?id=com.FriendCastle.Schedazzle" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Schedazzle</div><div class="gc-back-role">Engineer/Lead, Technical Producer</div><div class="gc-back-text">Free event scheduling companion app. Promoters input schedules, attendees customize their itinerary on-device.</div><div class="gc-back-links"><a href="https://apps.apple.com/us/app/schedazzle/id6642688721" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a><a href="https://play.google.com/store/apps/details?id=com.FriendCastle.Schedazzle" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#c13e5d;--float-dur:4.2s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art-contain" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(193,62,93,0.08),rgba(193,62,93,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:0.7rem;color:rgba(193,62,93,0.4);text-align:center;line-height:1.6;">BOX<br>DOG</div></div><div class="gc-nameplate"><div class="gc-name">Box Dog</div><div class="gc-type">Engineer/Lead</div></div><div class="gc-flavor">Hidden object with hand-drawn levels.</div><div class="gc-front-links"><a href="https://store.steampowered.com/app/2991630/" target="_blank" rel="noopener noreferrer" class="gc-ln">Steam</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Box Dog</div><div class="gc-back-role">Engineer/Lead, Technical Producer</div><div class="gc-back-text">Guide Joget and Box Dog through vibrant worlds searching for mischievous Imps.</div><div class="gc-back-links"><a href="https://store.steampowered.com/app/2991630/" target="_blank" rel="noopener noreferrer" class="gc-ln">Steam</a></div></div></div></div></div>
           <div class="gc" style="--card-color:#c13e5d;--float-dur:4s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><iframe class="gc-vid-front" src="https://www.youtube.com/embed/GnhbABKCzQs" loading="lazy" title="Gnome Hunt" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="gc-nameplate"><div class="gc-name">Gnome Hunt</div><div class="gc-type">Niantic Contract</div></div><div class="gc-flavor">AR game for Lightship SDK.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Gnome Hunt</div><div class="gc-back-role">Engineer/Lead · Niantic</div><div class="gc-back-text">AR game built as contract work for Niantic to showcase their Lightship SDK/API.</div></div></div></div></div>
           <div class="gc" style="--card-color:#c13e5d;--float-dur:4.3s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><iframe class="gc-vid-front" src="https://www.youtube.com/embed/26JofclHeZc" loading="lazy" title="Fairy Finder" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="gc-nameplate"><div class="gc-name">Fairy Finder</div><div class="gc-type">Niantic Contract</div></div><div class="gc-flavor">AR creature finder experience.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Fairy Finder</div><div class="gc-back-role">Engineer/Lead · Niantic</div><div class="gc-back-text">AR game built as contract work for Niantic to showcase their Lightship SDK/API.</div></div></div></div></div>
         </div>
@@ -895,7 +944,7 @@
 
       <div class="tab-panel" id="pp-wh">
         <div class="card-carousel">
-          <div class="gc" style="--card-color:#8B6DAF;--float-dur:3.7s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheartSplash.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Waxheart</div><div class="gc-type">DevOps / Producer</div></div><div class="gc-flavor">Built the entire infrastructure.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Waxheart</div><div class="gc-back-role">DevOps / Technical Producer · 2024—Present</div><div class="gc-back-text">Built Jenkins CI/CD, Discord bot, QA department from scratch. Sprint planning and release management.</div><div class="gc-back-links"><a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#8B6DAF;--float-dur:3.7s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheartSplash.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Waxheart</div><div class="gc-type">DevOps / Producer</div></div><div class="gc-flavor">Built the entire infrastructure.</div><div class="gc-front-links"><a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Waxheart</div><div class="gc-back-role">DevOps / Technical Producer · 2024—Present</div><div class="gc-back-text">Built Jenkins CI/CD, Discord bot, QA department from scratch. Sprint planning and release management.</div><div class="gc-back-links"><a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
           <div class="gc" style="--card-color:#8B6DAF;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheart%20jenkins%20pipeline.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Jenkins Pipeline</div><div class="gc-type">Build Infrastructure</div></div><div class="gc-flavor">Full CI/CD from scratch.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Jenkins Build Pipeline</div><div class="gc-back-text">Complete Jenkins CI/CD pipeline for Unity builds including Steamworks integration.</div></div></div></div></div>
           <div class="gc" style="--card-color:#8B6DAF;--float-dur:4.1s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheart%20discord%20bot%20instructions.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Discord Bot</div><div class="gc-type">Build Notifications</div></div><div class="gc-flavor">Triggers and coordination.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Discord Bot</div><div class="gc-back-text">Build notifications, triggers, and team coordination via Discord.</div></div></div></div></div>
           <div class="gc" style="--card-color:#8B6DAF;--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheart%20jenkins%20discord%20bot%20error.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Error Reporting</div><div class="gc-type">Bot Integration</div></div><div class="gc-flavor">Automated failure alerts.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Error Reporting</div><div class="gc-back-text">Jenkins-to-Discord error pipeline with formatted build failure reports.</div></div></div></div></div>
@@ -905,30 +954,30 @@
 
       <div class="tab-panel" id="pp-ai">
         <div class="card-carousel">
-          <div class="gc" style="--card-color:var(--teal);--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="tools/misery-index/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Misery Index</div><div class="gc-type">Dashboard</div></div><div class="gc-flavor">Dev sentiment when Claude goes down.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Claude Developer Misery Index</div><div class="gc-back-role">Real-time Dashboard</div><div class="gc-back-text">Combines status page, incidents, Reddit, Bluesky into a 0-10 misery score. Discord bot alerts on changes.</div><div class="gc-back-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:var(--teal);--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="tools/snaplayout/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">SnapLayout</div><div class="gc-type">Planning Tool</div></div><div class="gc-flavor">Drag furniture with real dimensions.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">SnapLayout</div><div class="gc-back-role">Room Layout Planner</div><div class="gc-back-text">Import floorplan or draw rooms. Scale calibration, furniture library, undo/redo, PNG export.</div><div class="gc-back-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:var(--teal);--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><img src="games/philosophy/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Examined</div><div class="gc-type">Philosophy Quiz</div></div><div class="gc-flavor">Which philosopher thinks like you?</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Examined</div><div class="gc-back-role">Alignment Quiz</div><div class="gc-back-text">12 dilemmas, 5 schools, 20 archetypes. Interactive compass, shareable ID cards.</div><div class="gc-back-links"><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Take Quiz</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:var(--teal);--float-dur:4.1s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="games/parsed/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Parsed</div><div class="gc-type">Daily Code Puzzle</div></div><div class="gc-flavor">Swap tokens to debug code.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Parsed</div><div class="gc-back-role">Daily Puzzle</div><div class="gc-back-text">365 daily puzzles with themed narratives, execution animations, explanations, scoring.</div><div class="gc-back-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:var(--teal);--float-dur:3.9s;--float-del:1.6s;"><div class="gc-inner"><div class="gc-front"><img src="games/beamlab/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Beamlab</div><div class="gc-type">Daily Laser Puzzle</div></div><div class="gc-flavor">Route lasers with mirrors.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Beamlab</div><div class="gc-back-role">Daily Puzzle</div><div class="gc-back-text">365 puzzles across 3 tiers. Mirrors, beam splitters, gem collectibles, daily streaks.</div><div class="gc-back-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:var(--teal);--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="tools/misery-index/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Misery Index</div><div class="gc-type">Dashboard</div></div><div class="gc-flavor">Dev sentiment when Claude goes down.</div><div class="gc-front-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Claude Developer Misery Index</div><div class="gc-back-role">Real-time Dashboard</div><div class="gc-back-text">Combines status page, incidents, Reddit, Bluesky into a 0-10 misery score. Discord bot alerts on changes.</div><div class="gc-back-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:var(--teal);--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="tools/snaplayout/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">SnapLayout</div><div class="gc-type">Planning Tool</div></div><div class="gc-flavor">Drag furniture with real dimensions.</div><div class="gc-front-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">SnapLayout</div><div class="gc-back-role">Room Layout Planner</div><div class="gc-back-text">Import floorplan or draw rooms. Scale calibration, furniture library, undo/redo, PNG export.</div><div class="gc-back-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:var(--teal);--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><img src="games/philosophy/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Examined</div><div class="gc-type">Philosophy Quiz</div></div><div class="gc-flavor">Which philosopher thinks like you?</div><div class="gc-front-links"><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Take Quiz</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Examined</div><div class="gc-back-role">Alignment Quiz</div><div class="gc-back-text">12 dilemmas, 5 schools, 20 archetypes. Interactive compass, shareable ID cards.</div><div class="gc-back-links"><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Take Quiz</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:var(--teal);--float-dur:4.1s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="games/parsed/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Parsed</div><div class="gc-type">Daily Code Puzzle</div></div><div class="gc-flavor">Swap tokens to debug code.</div><div class="gc-front-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Parsed</div><div class="gc-back-role">Daily Puzzle</div><div class="gc-back-text">365 daily puzzles with themed narratives, execution animations, explanations, scoring.</div><div class="gc-back-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:var(--teal);--float-dur:3.9s;--float-del:1.6s;"><div class="gc-inner"><div class="gc-front"><img src="games/beamlab/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Beamlab</div><div class="gc-type">Daily Laser Puzzle</div></div><div class="gc-flavor">Route lasers with mirrors.</div><div class="gc-front-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Beamlab</div><div class="gc-back-role">Daily Puzzle</div><div class="gc-back-text">365 puzzles across 3 tiers. Mirrors, beam splitters, gem collectibles, daily streaks.</div><div class="gc-back-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
         </div>
       </div>
 
       <div class="tab-panel" id="pp-web">
         <div class="card-carousel">
-          <div class="gc" style="--card-color:var(--blue);--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(74,144,217,0.06),rgba(74,144,217,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1rem;color:rgba(74,144,217,0.5);">WWW</div></div><div class="gc-nameplate"><div class="gc-name">raggedydoc.com</div><div class="gc-type">2016 — Present</div></div><div class="gc-flavor">My longest-running project.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">This Website</div><div class="gc-back-role">raggedydoc.com</div><div class="gc-back-text">Started as a UCI course project in 2016. Always plain HTML/CSS/JS. Current version: glassmorphism, sprite timeline, particles, achievements. Built with Claude Code.</div><div class="gc-back-links"><a href="projects/personal/portfolio.html" class="gc-ln">Original Research</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:var(--blue);--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">WWW</div></div><div class="gc-nameplate"><div class="gc-name">raggedydoc.com</div><div class="gc-type">2016 — Present</div></div><div class="gc-flavor">My longest-running project.</div><div class="gc-front-links"><a href="projects/personal/portfolio.html" class="gc-ln">Original Research</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">This Website</div><div class="gc-back-role">raggedydoc.com</div><div class="gc-back-text">Started as a UCI course project in 2016. Always plain HTML/CSS/JS. Current version: glassmorphism, sprite timeline, particles, achievements. Built with Claude Code.</div><div class="gc-back-links"><a href="projects/personal/portfolio.html" class="gc-ln">Original Research</a></div></div></div></div></div>
         </div>
       </div>
 
       <div class="tab-panel" id="pp-col">
         <div class="card-carousel">
-          <div class="gc" style="--card-color:#FFD100;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/spookyspoils.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Spooky Spoils</div><div class="gc-type">Engineer</div></div><div class="gc-flavor">Eye-tracking horror puzzle.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Spooky Spoils</div><div class="gc-back-role">Engineer</div><div class="gc-back-text">Award for Creativity — IEEE GameSig 2016. Best Game Design — VGDC at UCI 2016.</div><div class="gc-back-links"><a href="https://youtu.be/mqumUz5ktdY" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/spookyspoils.html" class="gc-ln">Details</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#FFD100;--float-dur:4.2s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/goinghome.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Going Home</div><div class="gc-type">Engineer</div></div><div class="gc-flavor">Rogue-like survival at sea.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Going Home</div><div class="gc-back-role">Engineer · Python/Pygame</div><div class="gc-back-text">Make it home in rough seas with limited power!</div><div class="gc-back-links"><a href="https://youtu.be/bB11x5bz4Wk" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/goinghome.html" class="gc-ln">Details</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#FFD100;--float-dur:3.6s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/Left To Die.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Left 2 Die</div><div class="gc-type">Engineer, Designer</div></div><div class="gc-flavor">Invert the level to solve it.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Left 2 Die</div><div class="gc-back-role">Engineer, Designer</div><div class="gc-back-text">2nd Place — VGDC at UCI 2015. Turn left and right to invert the level!</div><div class="gc-back-links"><a href="https://youtu.be/Pw06Zx9Awik" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/lefttodie.html" class="gc-ln">Details</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#FFD100;--float-dur:4s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/monochrome.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Monochrome Memories</div><div class="gc-type">Lead Engineer</div></div><div class="gc-flavor">5 stages of grief.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Monochrome Memories</div><div class="gc-back-role">Lead Engineer, Producer</div><div class="gc-back-text">Puzzle platformer. Walk through grief with your counterpart.</div><div class="gc-back-links"><a href="projects/personal/monochrome.html" class="gc-ln">Details</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#FFD100;--float-dur:4.3s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/scuminvaders.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Scuminvaders</div><div class="gc-type">Lead Engineer</div></div><div class="gc-flavor">Multiplayer space invaders.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Scuminvaders</div><div class="gc-back-role">Lead Engineer, Producer</div><div class="gc-back-text">Python/Pygame TCP multiplayer. Space invaders with pizzazz!</div><div class="gc-back-links"><a href="https://youtu.be/-R9o7FAty8o" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#FFD100;--float-dur:3.7s;--float-del:1.5s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/lifeofpymenu.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Life of Py</div><div class="gc-type">Lead Engineer</div></div><div class="gc-flavor">Teach kids Python.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Life of Py</div><div class="gc-back-role">Lead Engineer, Designer, Producer</div><div class="gc-back-text">Educational game teaching Python basics in a fun way.</div><div class="gc-back-links"><a href="projects/personal/lifeofpy.html" class="gc-ln">Details</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#FFD100;--float-dur:4.1s;--float-del:1.8s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/scallywags.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Scallywags</div><div class="gc-type">Designer</div></div><div class="gc-flavor">Competitive pirate cards.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Scallywags</div><div class="gc-back-role">Designer</div><div class="gc-back-text">Competitive solitaire. Stack against pirates for the title of Captain!</div><div class="gc-back-links"><a href="projects/personal/scallywags.html" class="gc-ln">Details</a></div></div></div></div></div>
-          <div class="gc" style="--card-color:#FFD100;--float-dur:3.9s;--float-del:2.1s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/Date or Die Title.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Date or Die</div><div class="gc-type">Designer</div></div><div class="gc-flavor">Love or die trying!</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Date or Die</div><div class="gc-back-role">Designer</div><div class="gc-back-text">Dating simulator visual novel. Fall madly in love... or die trying!</div><div class="gc-back-links"><a href="projects/personal/dateordie.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/spookyspoils.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Spooky Spoils</div><div class="gc-type">Engineer</div></div><div class="gc-flavor">Eye-tracking horror puzzle.</div><div class="gc-front-links"><a href="https://youtu.be/mqumUz5ktdY" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/spookyspoils.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Spooky Spoils</div><div class="gc-back-role">Engineer</div><div class="gc-back-text">Award for Creativity — IEEE GameSig 2016. Best Game Design — VGDC at UCI 2016.</div><div class="gc-back-links"><a href="https://youtu.be/mqumUz5ktdY" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/spookyspoils.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:4.2s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/goinghome.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Going Home</div><div class="gc-type">Engineer</div></div><div class="gc-flavor">Rogue-like survival at sea.</div><div class="gc-front-links"><a href="https://youtu.be/bB11x5bz4Wk" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/goinghome.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Going Home</div><div class="gc-back-role">Engineer · Python/Pygame</div><div class="gc-back-text">Make it home in rough seas with limited power!</div><div class="gc-back-links"><a href="https://youtu.be/bB11x5bz4Wk" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/goinghome.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:3.6s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/Left To Die.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Left 2 Die</div><div class="gc-type">Engineer, Designer</div></div><div class="gc-flavor">Invert the level to solve it.</div><div class="gc-front-links"><a href="https://youtu.be/Pw06Zx9Awik" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/lefttodie.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Left 2 Die</div><div class="gc-back-role">Engineer, Designer</div><div class="gc-back-text">2nd Place — VGDC at UCI 2015. Turn left and right to invert the level!</div><div class="gc-back-links"><a href="https://youtu.be/Pw06Zx9Awik" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/lefttodie.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:4s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/monochrome.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Monochrome Memories</div><div class="gc-type">Lead Engineer</div></div><div class="gc-flavor">5 stages of grief.</div><div class="gc-front-links"><a href="projects/personal/monochrome.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Monochrome Memories</div><div class="gc-back-role">Lead Engineer, Producer</div><div class="gc-back-text">Puzzle platformer. Walk through grief with your counterpart.</div><div class="gc-back-links"><a href="projects/personal/monochrome.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:4.3s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/scuminvaders.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Scuminvaders</div><div class="gc-type">Lead Engineer</div></div><div class="gc-flavor">Multiplayer space invaders.</div><div class="gc-front-links"><a href="https://youtu.be/-R9o7FAty8o" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Scuminvaders</div><div class="gc-back-role">Lead Engineer, Producer</div><div class="gc-back-text">Python/Pygame TCP multiplayer. Space invaders with pizzazz!</div><div class="gc-back-links"><a href="https://youtu.be/-R9o7FAty8o" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:3.7s;--float-del:1.5s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/lifeofpymenu.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Life of Py</div><div class="gc-type">Lead Engineer</div></div><div class="gc-flavor">Teach kids Python.</div><div class="gc-front-links"><a href="projects/personal/lifeofpy.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Life of Py</div><div class="gc-back-role">Lead Engineer, Designer, Producer</div><div class="gc-back-text">Educational game teaching Python basics in a fun way.</div><div class="gc-back-links"><a href="projects/personal/lifeofpy.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:4.1s;--float-del:1.8s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/scallywags.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Scallywags</div><div class="gc-type">Designer</div></div><div class="gc-flavor">Competitive pirate cards.</div><div class="gc-front-links"><a href="projects/personal/scallywags.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Scallywags</div><div class="gc-back-role">Designer</div><div class="gc-back-text">Competitive solitaire. Stack against pirates for the title of Captain!</div><div class="gc-back-links"><a href="projects/personal/scallywags.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:3.9s;--float-del:2.1s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/Date or Die Title.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Date or Die</div><div class="gc-type">Designer</div></div><div class="gc-flavor">Love or die trying!</div><div class="gc-front-links"><a href="projects/personal/dateordie.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Date or Die</div><div class="gc-back-role">Designer</div><div class="gc-back-text">Dating simulator visual novel. Fall madly in love... or die trying!</div><div class="gc-back-links"><a href="projects/personal/dateordie.html" class="gc-ln">Details</a></div></div></div></div></div>
         </div>
       </div>
     </div>
@@ -939,20 +988,7 @@
       <div class="card-carousel">
         <div class="gc" style="--card-color:var(--green);--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/about-me/me.JPG" alt="Andrew Steven Chau" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Andrew Steven Chau</div><div class="gc-type">Senior Software Engineer</div></div><div class="gc-flavor">Blizzard Entertainment · Hearthstone</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">About Me</div><div class="gc-back-text">Senior Software Engineer at Blizzard on the Hearthstone Client Team. Co-founder of Friend Castle, an indie game studio LLC. UCI Computer Game Science grad who went from QA to shipping AR for the NBA to maintaining one of the most iconic card games ever made.</div></div></div></div></div>
         <div class="gc" style="--card-color:var(--blue-light);--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(74,144,217,0.06),rgba(74,144,217,0.15));gap:8px;"><div class="about-sn" style="font-size:2.5rem;">10+</div><div class="about-sl">Years in Games</div></div><div class="gc-nameplate"><div class="gc-name">Career Stats</div><div class="gc-type">By the Numbers</div></div><div class="gc-flavor">30+ titles shipped across 5 studios.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Stats</div><div class="gc-back-text" style="font-size:0.9rem;"><div style="margin-bottom:12px;"><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">10+</span><br><span style="font-size:0.6rem;color:var(--text-dim);">YEARS IN GAMES</span></div><div style="margin-bottom:12px;"><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">30+</span><br><span style="font-size:0.6rem;color:var(--text-dim);">TITLES SHIPPED</span></div><div><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">5</span><br><span style="font-size:0.6rem;color:var(--text-dim);">STUDIOS</span></div></div></div></div></div></div>
-        <div class="gc" style="--card-color:var(--purple);--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(155,109,255,0.06),rgba(155,109,255,0.15));gap:6px;padding:8px;"><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;"><a href="https://www.linkedin.com/in/andrewstevenchau/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-linkedin"></i></a><a href="https://www.youtube.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-youtube"></i></a><a href="https://www.twitch.tv/raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-twitch"></i></a><a href="https://www.instagram.com/raggedydoc/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-instagram"></i></a><a href="https://www.tiktok.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-tiktok"></i></a><a href="https://bsky.app/profile/raggedydoctv.bsky.social" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-bluesky"></i></a></div></div><div class="gc-nameplate"><div class="gc-name">Connect</div><div class="gc-type">Social Links</div></div><div class="gc-flavor">Find me everywhere @raggedydoc</div><div class="gc-rarity"></div></div></div></div>
-      </div>
-    </div>
-
-    <!-- SKILLS -->
-    <div class="panel" id="p-skills">
-      <div class="p-tag">// expertise</div><h2 class="p-title"">Skills & Stack</h2>
-      <div class="card-carousel">
-        <div class="gc" style="--card-color:#5b7fff;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(91,127,255,0.06),rgba(91,127,255,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1.3rem;color:rgba(91,127,255,0.5);">{}</div></div><div class="gc-nameplate"><div class="gc-name">Languages</div><div class="gc-type">Core Skills</div></div><div class="gc-flavor">C#, Python, C++, Java</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Languages</div><div class="gc-back-text" style="font-size:0.85rem;"><b style="color:var(--blue-light);">C#</b> — Unity, Hearthstone, MobilityWare<br><b style="color:var(--blue-light);">Python</b> — Pygame, tooling, automation<br><b style="color:var(--blue-light);">C++</b> — Systems, performance<br><b style="color:var(--blue-light);">Java</b> — Android, backend</div></div></div></div></div>
-        <div class="gc" style="--card-color:var(--teal);--float-dur:4.2s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(78,205,196,0.06),rgba(78,205,196,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1.3rem;color:rgba(78,205,196,0.5);">&#9654;</div></div><div class="gc-nameplate"><div class="gc-name">Engines</div><div class="gc-type">Game Dev</div></div><div class="gc-flavor">Unity 3D, Pygame</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Engines & Frameworks</div><div class="gc-back-text" style="font-size:0.85rem;"><b style="color:var(--blue-light);">Unity 3D</b> — 8+ years, AR/VR, mobile, PC<br><b style="color:var(--blue-light);">Pygame</b> — Rapid prototyping, game jams</div></div></div></div></div>
-        <div class="gc" style="--card-color:var(--pink);--float-dur:3.6s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(255,107,157,0.06),rgba(255,107,157,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1rem;color:rgba(255,107,157,0.5);">&#9743;</div></div><div class="gc-nameplate"><div class="gc-name">Platforms</div><div class="gc-type">Cross-Platform</div></div><div class="gc-flavor">iOS, Android, macOS, Windows</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Platforms</div><div class="gc-back-text" style="font-size:0.85rem;">Full cross-platform experience. Hearthstone ships on all four. Managed build environments, SDK integrations, and platform-specific tooling.</div></div></div></div></div>
-        <div class="gc" style="--card-color:var(--yellow);--float-dur:4s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(255,209,102,0.06),rgba(255,209,102,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1.3rem;color:rgba(255,209,102,0.5);">&#9881;</div></div><div class="gc-nameplate"><div class="gc-name">Tools</div><div class="gc-type">Dev Ops</div></div><div class="gc-flavor">Git, Jenkins, Xcode, AS, Discord.js</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Tools</div><div class="gc-back-text" style="font-size:0.85rem;"><b style="color:var(--blue-light);">Git</b> — Version control across all projects<br><b style="color:var(--blue-light);">Jenkins</b> — CI/CD pipeline architecture<br><b style="color:var(--blue-light);">Xcode/AS</b> — Native build tooling<br><b style="color:var(--blue-light);">Discord.js</b> — Bot development</div></div></div></div></div>
-        <div class="gc" style="--card-color:var(--purple);--float-dur:4.3s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(155,109,255,0.06),rgba(155,109,255,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1rem;color:rgba(155,109,255,0.5);">SDK</div></div><div class="gc-nameplate"><div class="gc-name">SDKs</div><div class="gc-type">Integrations</div></div><div class="gc-flavor">Firebase, AppsFlyer, Braze, AR</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">SDKs</div><div class="gc-back-text" style="font-size:0.85rem;"><b style="color:var(--blue-light);">Firebase</b> — Analytics, remote config<br><b style="color:var(--blue-light);">AppsFlyer</b> — Attribution, privacy<br><b style="color:var(--blue-light);">Braze</b> — Engagement, messaging<br><b style="color:var(--blue-light);">ARCore/ARKit</b> — Spatial computing</div></div></div></div></div>
-        <div class="gc" style="--card-color:var(--green);--float-dur:3.9s;--float-del:1.5s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(80,227,164,0.06),rgba(80,227,164,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1rem;color:rgba(80,227,164,0.5);">&#9733;</div></div><div class="gc-nameplate"><div class="gc-name">Production</div><div class="gc-type">Leadership</div></div><div class="gc-flavor">Agile, Sprint Planning, QA, Jira</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Production & Leadership</div><div class="gc-back-text" style="font-size:0.85rem;">Agile/Scrum methodologies. Sprint planning and roadmap ownership. QA team formation and RC test cycles. Cross-team coordination.</div></div></div></div></div>
+        <div class="gc no-flip" style="--card-color:var(--purple);--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(155,109,255,0.06),rgba(155,109,255,0.15));gap:8px;padding:12px;"><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;"><a href="https://www.linkedin.com/in/andrewstevenchau/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-linkedin"></i></a><a href="https://www.youtube.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-youtube"></i></a><a href="https://www.twitch.tv/raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-twitch"></i></a><a href="https://www.instagram.com/raggedydoc/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-instagram"></i></a><a href="https://www.tiktok.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-tiktok"></i></a><a href="https://bsky.app/profile/raggedydoctv.bsky.social" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-bluesky"></i></a></div></div><div class="gc-nameplate"><div class="gc-name">Connect</div><div class="gc-type">Social Links</div></div><div class="gc-flavor">Click the icons above to connect.</div><div class="gc-rarity"></div></div></div></div>
       </div>
     </div>
 
@@ -960,11 +996,11 @@
     <div class="panel" id="p-play">
       <div class="p-tag">// play</div><h2 class="p-title"">Games & Tools</h2>
       <div class="card-carousel">
-        <div class="gc" style="--card-color:var(--purple);--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="games/beamlab/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Beamlab</div><div class="gc-type">Daily Laser Puzzle</div></div><div class="gc-flavor">365 puzzles across 3 tiers.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Beamlab</div><div class="gc-back-role">Daily Puzzle Game</div><div class="gc-back-text">Place mirrors and beam splitters on a 6x6 grid to route lasers to all targets. Gem collectibles, daily streaks, shareable results.</div><div class="gc-back-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
-        <div class="gc" style="--card-color:var(--teal);--float-dur:4.3s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="games/parsed/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Parsed</div><div class="gc-type">Daily Code Puzzle</div></div><div class="gc-flavor">Swap tokens to debug code.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Parsed</div><div class="gc-back-role">Daily Puzzle Game</div><div class="gc-back-text">365 themed puzzles with real-world narratives, execution animations, step-by-step explanations, and scoring tiers.</div><div class="gc-back-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
-        <div class="gc" style="--card-color:var(--pink);--float-dur:3.7s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="games/philosophy/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Examined</div><div class="gc-type">Philosophy Quiz</div></div><div class="gc-flavor">Which philosopher thinks like you?</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Examined</div><div class="gc-back-role">Alignment Quiz</div><div class="gc-back-text">12 moral dilemmas, 5 philosophical schools, 20 archetypes. Interactive compass, shareable ID cards.</div><div class="gc-back-links"><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Take Quiz</a></div></div></div></div></div>
-        <div class="gc" style="--card-color:var(--orange);--float-dur:4.1s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="tools/snaplayout/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">SnapLayout</div><div class="gc-type">Room Planner</div></div><div class="gc-flavor">Drag furniture with real dimensions.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">SnapLayout</div><div class="gc-back-role">Planning Tool</div><div class="gc-back-text">Import floorplan or draw rooms. Scale calibration, furniture library across 6 categories, undo/redo, PNG export.</div><div class="gc-back-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div></div></div></div></div>
-        <div class="gc" style="--card-color:var(--blue);--float-dur:3.9s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="tools/misery-index/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Misery Index</div><div class="gc-type">Dashboard</div></div><div class="gc-flavor">Claude outage sentiment tracker.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Claude Developer Misery Index</div><div class="gc-back-role">Real-time Dashboard</div><div class="gc-back-text">Status page + Reddit + Bluesky combined into a 0-10 misery score. Discord bot alerts on level changes.</div><div class="gc-back-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--purple);--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="games/beamlab/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Beamlab</div><div class="gc-type">Daily Laser Puzzle</div></div><div class="gc-flavor">365 puzzles across 3 tiers.</div><div class="gc-front-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Beamlab</div><div class="gc-back-role">Daily Puzzle Game</div><div class="gc-back-text">Place mirrors and beam splitters on a 6x6 grid to route lasers to all targets. Gem collectibles, daily streaks, shareable results.</div><div class="gc-back-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--teal);--float-dur:4.3s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="games/parsed/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Parsed</div><div class="gc-type">Daily Code Puzzle</div></div><div class="gc-flavor">Swap tokens to debug code.</div><div class="gc-front-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Parsed</div><div class="gc-back-role">Daily Puzzle Game</div><div class="gc-back-text">365 themed puzzles with real-world narratives, execution animations, step-by-step explanations, and scoring tiers.</div><div class="gc-back-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--pink);--float-dur:3.7s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="games/philosophy/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Examined</div><div class="gc-type">Philosophy Quiz</div></div><div class="gc-flavor">Which philosopher thinks like you?</div><div class="gc-front-links"><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Take Quiz</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Examined</div><div class="gc-back-role">Alignment Quiz</div><div class="gc-back-text">12 moral dilemmas, 5 philosophical schools, 20 archetypes. Interactive compass, shareable ID cards.</div><div class="gc-back-links"><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Take Quiz</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--orange);--float-dur:4.1s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="tools/snaplayout/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">SnapLayout</div><div class="gc-type">Room Planner</div></div><div class="gc-flavor">Drag furniture with real dimensions.</div><div class="gc-front-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">SnapLayout</div><div class="gc-back-role">Planning Tool</div><div class="gc-back-text">Import floorplan or draw rooms. Scale calibration, furniture library across 6 categories, undo/redo, PNG export.</div><div class="gc-back-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--blue);--float-dur:3.9s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="tools/misery-index/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Misery Index</div><div class="gc-type">Dashboard</div></div><div class="gc-flavor">Claude outage sentiment tracker.</div><div class="gc-front-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Claude Developer Misery Index</div><div class="gc-back-role">Real-time Dashboard</div><div class="gc-back-text">Status page + Reddit + Bluesky combined into a 0-10 misery score. Discord bot alerts on level changes.</div><div class="gc-back-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
       </div>
     </div>
   </div>
@@ -974,17 +1010,14 @@
   <div class="world">
     <div class="sky"></div>
     <div class="stars" id="stars"></div>
-    <div class="mountains-far" id="mtn-far"></div>
-    <div class="mountains-near" id="mtn-near"></div>
     <div class="ground"><div class="ground-grid"></div></div>
     <div class="character idle" id="character"></div>
     <div class="world-strip" id="world-strip">
       <div class="cabinet active" data-id="home" style="--cc:var(--blue-light);"><div class="cab-screen"><div class="cab-icon">&#9670;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Home</div></div>
+      <div class="cabinet" data-id="about" style="--cc:var(--green);"><div class="cab-screen"><div class="cab-icon">&#9786;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">About</div></div>
       <div class="cabinet" data-id="journey" style="--cc:var(--teal);"><div class="cab-screen"><div class="cab-icon">&#9654;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Journey</div></div>
       <div class="cabinet" data-id="work" style="--cc:var(--orange);"><div class="cab-screen"><div class="cab-icon">&#9733;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Work</div></div>
       <div class="cabinet" data-id="personal" style="--cc:var(--pink);"><div class="cab-screen"><div class="cab-icon">&#9829;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Personal</div></div>
-      <div class="cabinet" data-id="about" style="--cc:var(--green);"><div class="cab-screen"><div class="cab-icon">&#9786;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">About</div></div>
-      <div class="cabinet" data-id="skills" style="--cc:var(--yellow);"><div class="cab-screen"><div class="cab-icon">&#9881;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Skills</div></div>
       <div class="cabinet" data-id="play" style="--cc:var(--purple);"><div class="cab-screen"><div class="cab-icon">&#9684;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Play</div></div>
     </div>
 
@@ -1017,7 +1050,7 @@
 
 <script>
   var cabinets = document.querySelectorAll('.cabinet');
-  var panelIds = ['home','journey','work','personal','about','skills','play'];
+  var panelIds = ['home','about','journey','work','personal','play'];
   var character = document.getElementById('character');
   var strip = document.getElementById('world-strip');
   var modeLabel = document.getElementById('ctrl-mode-label');
@@ -1031,22 +1064,20 @@
 
   var ambients = {
     home: 'radial-gradient(ellipse at 40% 30%, #4a90d9, transparent 70%)',
+    about: 'radial-gradient(ellipse at 50% 30%, #50e3a4, transparent 70%)',
     journey: 'radial-gradient(ellipse at 50% 40%, #4ecdc4, transparent 70%)',
     work: 'radial-gradient(ellipse at 60% 30%, #ff8a50, transparent 70%)',
     personal: 'radial-gradient(ellipse at 40% 50%, #ff6b9d, transparent 70%)',
-    about: 'radial-gradient(ellipse at 50% 30%, #50e3a4, transparent 70%)',
-    skills: 'radial-gradient(ellipse at 40% 40%, #ffd166, transparent 70%)',
     play: 'radial-gradient(ellipse at 50% 30%, #9b6dff, transparent 70%)'
   };
 
   // Themed subtle patterns per section
   var patterns = {
     home: '',
+    about: 'repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(80,227,164,0.015) 50px, rgba(80,227,164,0.015) 52px), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(80,227,164,0.015) 50px, rgba(80,227,164,0.015) 52px)',
     journey: 'repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(78,205,196,0.02) 40px, rgba(78,205,196,0.02) 42px)',
     work: 'repeating-linear-gradient(-45deg, transparent, transparent 30px, rgba(255,138,80,0.02) 30px, rgba(255,138,80,0.02) 32px), repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,138,80,0.015) 30px, rgba(255,138,80,0.015) 32px)',
     personal: 'radial-gradient(circle at 20% 80%, rgba(255,107,157,0.03) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,107,157,0.03) 0%, transparent 50%)',
-    about: 'repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(80,227,164,0.015) 50px, rgba(80,227,164,0.015) 52px), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(80,227,164,0.015) 50px, rgba(80,227,164,0.015) 52px)',
-    skills: 'repeating-conic-gradient(rgba(255,209,102,0.015) 0% 25%, transparent 25% 50%) 0 0 / 60px 60px',
     play: 'repeating-linear-gradient(60deg, transparent, transparent 25px, rgba(155,109,255,0.02) 25px, rgba(155,109,255,0.02) 27px), repeating-linear-gradient(-60deg, transparent, transparent 25px, rgba(155,109,255,0.015) 25px, rgba(155,109,255,0.015) 27px)'
   };
 
@@ -1128,7 +1159,8 @@
     character.style.opacity = '0.3';
     contentSprite.classList.remove('walk-right','walk-left');
     contentSprite.classList.add('visible','idle');
-    positionSpriteBottom();
+    // Delay positioning to after scrollIntoView settles
+    setTimeout(positionSpriteBottom, 400);
   }
 
   function hideContentSprite() {
@@ -1211,9 +1243,6 @@
     var viewCenter = window.innerWidth / 2;
     strip.style.transform = 'translateX(' + (-(cabCenter - viewCenter)) + 'px)';
 
-    var ratio = idx / (cabinets.length - 1);
-    document.getElementById('mtn-far').style.transform = 'translateX(' + (-ratio * 60) + 'px)';
-    document.getElementById('mtn-near').style.transform = 'translateX(' + (-ratio * 100) + 'px)';
 
     var charTarget = cabCenter + (-(cabCenter - viewCenter)) - 32;
     character.classList.remove('idle','walk-right','walk-left');
@@ -1336,7 +1365,7 @@
   function flipActive() {
     if (layer !== 1) return;
     var cards = getCards();
-    if (cards[currentCard]) {
+    if (cards[currentCard] && !cards[currentCard].classList.contains('no-flip')) {
       cards[currentCard].classList.toggle('flipped');
       // Sprite jump
       if (contentSprite) {
@@ -1413,7 +1442,7 @@
       if (wasWorld) { layer = 1; updateModeLabel(); }
       currentCard = idx;
       highlightCard(idx);
-      card.classList.toggle('flipped');
+      if (!card.classList.contains('no-flip')) card.classList.toggle('flipped');
 
       if (wasWorld) {
         // Entering card mode — show sprite after scroll settles
@@ -1466,10 +1495,27 @@
       setTimeout(function() { strip.style.transition = ''; character.style.transition = ''; }, 50);
     }
 
-    if (document.readyState === 'complete') positionInit();
-    else window.addEventListener('load', positionInit);
+    // Start loading bar animation immediately
+    requestAnimationFrame(function() {
+      var fill = document.getElementById('load-fill');
+      if (fill) fill.style.width = '100%';
+    });
 
-    updateModeLabel();
+    function finishLoad() {
+      positionInit();
+      updateModeLabel();
+      // Fade out loading screen
+      setTimeout(function() {
+        var ls = document.getElementById('load-screen');
+        if (ls) {
+          ls.classList.add('fade-out');
+          setTimeout(function() { ls.remove(); }, 500);
+        }
+      }, 300);
+    }
+
+    if (document.readyState === 'complete') finishLoad();
+    else window.addEventListener('load', finishLoad);
   })();
 
   window.addEventListener('resize', function() {

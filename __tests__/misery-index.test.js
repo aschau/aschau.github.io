@@ -314,6 +314,28 @@ describe('computeBreakdown', () => {
         // Only 1 real bad component (API), info-banner excluded
         expect(result.status).toBe(0.5);
     });
+
+    test('excludes stale Reddit data from score (>30 min old)', () => {
+        const now = Date.now();
+        const staleTime = new Date(now - 31 * 60 * 1000).toISOString();
+        const data = {
+            social: { recentPosts: 0, recentComments: 0, topPosts: [] },
+            reddit: { lastFetched: staleTime, recentPosts: 10, topPosts: [], outagePosts: 10, usagePosts: 0 }
+        };
+        const result = computeBreakdown(data, 'all', now);
+        expect(result.reddit).toBe(0);
+    });
+
+    test('includes fresh Reddit data in score (<30 min old)', () => {
+        const now = Date.now();
+        const freshTime = new Date(now - 10 * 60 * 1000).toISOString();
+        const data = {
+            social: { recentPosts: 0, recentComments: 0, topPosts: [] },
+            reddit: { lastFetched: freshTime, recentPosts: 10, topPosts: [], outagePosts: 10, usagePosts: 0 }
+        };
+        const result = computeBreakdown(data, 'all', now);
+        expect(result.reddit).toBe(3);
+    });
 });
 
 // =============================================

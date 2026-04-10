@@ -295,6 +295,22 @@ async function getRecentIncidents() {
   }
 }
 
+// ── Misery Levels ───────────────────────────────────────────
+var MISERY_LEVELS = [
+  { max: 1, label: "ALL CLEAR" },
+  { max: 3, label: "MINOR GRUMBLING" },
+  { max: 6, label: "GROWING UNREST" },
+  { max: 8, label: "FULL MELTDOWN" },
+  { max: 10, label: "APOCALYPSE" }
+];
+
+function getMiseryLevel(index) {
+  for (var i = 0; i < MISERY_LEVELS.length; i++) {
+    if (index <= MISERY_LEVELS[i].max) return MISERY_LEVELS[i].label;
+  }
+  return MISERY_LEVELS[MISERY_LEVELS.length - 1].label;
+}
+
 // ── Misery Calculation ───────────────────────────────────────
 var REDDIT_STALE_MS = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -437,9 +453,41 @@ async function main() {
     existing.history = existing.history.slice(-MAX_HISTORY);
   }
 
+  // Track when misery levels last changed (for stable RSS GUIDs/pubDates)
+  var currentLevel = getMiseryLevel(miseryIndex);
+  var prevLevel = existing.lastLevel || null;
+  var lastLevelChangeTime = (currentLevel !== prevLevel)
+    ? now
+    : (existing.lastLevelChangeTime || now);
+
+  // Official-only score for level tracking
+  var officialScore = 0;
+  if (statusData && statusData.status) {
+    var indicator = statusData.status.indicator;
+    if (indicator === "minor") officialScore += 2;
+    else if (indicator === "major") officialScore += 4;
+    else if (indicator === "critical") officialScore += 6;
+    if (statusData.components) {
+      var badComps = statusData.components.filter(function (c) {
+        return c.status !== "operational" &&
+          c.name !== "Visit https://status.claude.com for more information";
+      });
+      officialScore += Math.min(badComps.length * 0.5, 2);
+    }
+  }
+  var currentOfficialLevel = getMiseryLevel(officialScore);
+  var prevOfficialLevel = existing.lastOfficialLevel || null;
+  var lastOfficialLevelChangeTime = (currentOfficialLevel !== prevOfficialLevel)
+    ? now
+    : (existing.lastOfficialLevelChangeTime || now);
+
   const output = {
     lastUpdated: now,
     miseryIndex: miseryIndex,
+    lastLevel: currentLevel,
+    lastLevelChangeTime: lastLevelChangeTime,
+    lastOfficialLevel: currentOfficialLevel,
+    lastOfficialLevelChangeTime: lastOfficialLevelChangeTime,
     status: statusData || null,
     social: {
       recentPosts: postCount,
@@ -460,20 +508,6 @@ async function main() {
 
 // ── RSS Feed Generation ─────────────────────────────────────
 function generateRssFeeds(data) {
-  var LEVELS = [
-    { max: 1, label: "ALL CLEAR" },
-    { max: 3, label: "MINOR GRUMBLING" },
-    { max: 6, label: "GROWING UNREST" },
-    { max: 8, label: "FULL MELTDOWN" },
-    { max: 10, label: "APOCALYPSE" }
-  ];
-
-  function getLevel(index) {
-    for (var i = 0; i < LEVELS.length; i++) {
-      if (index <= LEVELS[i].max) return LEVELS[i].label;
-    }
-    return LEVELS[LEVELS.length - 1].label;
-  }
 
   function escapeXml(str) {
     if (!str) return "";
@@ -524,12 +558,12 @@ function generateRssFeeds(data) {
   }
 
   var now = data.lastUpdated || new Date().toISOString();
-  var dateKey = now.slice(0, 10);
   var statusDesc = data.status && data.status.status ? data.status.status.description : "Unknown";
   var incidentItems = buildIncidentItems(data.incidents);
 
   // ── All Sources feed ────────────────────────────────────────
-  var allLevel = getLevel(data.miseryIndex);
+  var allLevel = data.lastLevel || getMiseryLevel(data.miseryIndex);
+  var allLevelChangeTime = data.lastLevelChangeTime || now;
   var allItems = [];
 
   var apiStatus = "Unknown";
@@ -544,8 +578,8 @@ function generateRssFeeds(data) {
     "    <item>\n" +
     "      <title>Misery Index: " + escapeXml(data.miseryIndex.toFixed(1)) + "/10 — " + escapeXml(allLevel) + "</title>\n" +
     "      <link>https://www.raggedydoc.com/tools/misery-index/</link>\n" +
-    "      <guid isPermaLink=\"false\">misery-" + dateKey + "-" + escapeXml(allLevel) + "</guid>\n" +
-    "      <pubDate>" + new Date(now).toUTCString() + "</pubDate>\n" +
+    "      <guid isPermaLink=\"false\">misery-" + escapeXml(allLevel) + "</guid>\n" +
+    "      <pubDate>" + new Date(allLevelChangeTime).toUTCString() + "</pubDate>\n" +
     "      <description>" + escapeXml(
       "Score: " + data.miseryIndex.toFixed(1) + "/10 (" + allLevel + "). " +
       "Status: " + statusDesc + ". " +
@@ -567,7 +601,7 @@ function generateRssFeeds(data) {
   console.log("RSS feed written to", FEED_FILE);
 
   // ── Official Only feed ──────────────────────────────────────
-  // Compute status-only score (same logic as calculateMisery, status portion only)
+  // Official score already computed in main() and stored in data
   var officialScore = 0;
   if (data.status && data.status.status) {
     var indicator = data.status.status.indicator;
@@ -582,15 +616,16 @@ function generateRssFeeds(data) {
       officialScore += Math.min(badComps.length * 0.5, 2);
     }
   }
-  var officialLevel = getLevel(officialScore);
+  var officialLevel = data.lastOfficialLevel || getMiseryLevel(officialScore);
+  var officialLevelChangeTime = data.lastOfficialLevelChangeTime || now;
   var officialItems = [];
 
   officialItems.push(
     "    <item>\n" +
     "      <title>Official Status: " + escapeXml(officialScore.toFixed(1)) + "/10 — " + escapeXml(officialLevel) + "</title>\n" +
     "      <link>https://www.raggedydoc.com/tools/misery-index/</link>\n" +
-    "      <guid isPermaLink=\"false\">official-" + dateKey + "-" + escapeXml(officialLevel) + "</guid>\n" +
-    "      <pubDate>" + new Date(now).toUTCString() + "</pubDate>\n" +
+    "      <guid isPermaLink=\"false\">official-" + escapeXml(officialLevel) + "</guid>\n" +
+    "      <pubDate>" + new Date(officialLevelChangeTime).toUTCString() + "</pubDate>\n" +
     "      <description>" + escapeXml(
       "Official score: " + officialScore.toFixed(1) + "/10 (" + officialLevel + "). " +
       "Status: " + statusDesc + "."

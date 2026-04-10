@@ -315,9 +315,9 @@ describe('computeBreakdown', () => {
         expect(result.status).toBe(0.5);
     });
 
-    test('excludes stale Reddit data from score (>30 min old)', () => {
+    test('excludes Reddit data older than 24 hours from score', () => {
         const now = Date.now();
-        const staleTime = new Date(now - 31 * 60 * 1000).toISOString();
+        const staleTime = new Date(now - 25 * 60 * 60 * 1000).toISOString();
         const data = {
             social: { recentPosts: 0, recentComments: 0, topPosts: [] },
             reddit: { lastFetched: staleTime, recentPosts: 10, topPosts: [], outagePosts: 10, usagePosts: 0 }
@@ -326,9 +326,9 @@ describe('computeBreakdown', () => {
         expect(result.reddit).toBe(0);
     });
 
-    test('includes fresh Reddit data in score (<30 min old)', () => {
+    test('includes Reddit data from earlier today in score', () => {
         const now = Date.now();
-        const freshTime = new Date(now - 10 * 60 * 1000).toISOString();
+        const freshTime = new Date(now - 6 * 60 * 60 * 1000).toISOString();
         const data = {
             social: { recentPosts: 0, recentComments: 0, topPosts: [] },
             reddit: { lastFetched: freshTime, recentPosts: 10, topPosts: [], outagePosts: 10, usagePosts: 0 }

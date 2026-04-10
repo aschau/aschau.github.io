@@ -148,7 +148,6 @@
     document.getElementById("commentary-text").textContent = pickRandom(COMMENTARY[level.key]);
   }
 
-  var REDDIT_STALE_MS = 30 * 60 * 1000;
   function computeBreakdown(data, sf) {
     var statusScore = 0;
     var bskyScore = 0;
@@ -181,7 +180,7 @@
 
       if (data.reddit && data.reddit.lastFetched) {
         var redditAge = Date.now() - new Date(data.reddit.lastFetched).getTime();
-        if (redditAge < REDDIT_STALE_MS) {
+        if (redditAge < 24 * 60 * 60 * 1000) {
           var megas = (data.reddit.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
           var rPosts = (data.reddit.recentPosts || 0) + (megas * 4);
           var redditTotal = 0;

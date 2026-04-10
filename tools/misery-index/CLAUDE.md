@@ -13,7 +13,7 @@ Real-time dashboard tracking Claude AI outage and degradation sentiment by combi
 1. **Anthropic Status Page** (`status.claude.com/api/v2/summary.json`) — official component status
 2. **Anthropic Incidents** (`status.claude.com/api/v2/incidents.json`) — last 7 days of incidents with updates
 3. **Bluesky** (authenticated API via GitHub Action) — searches for Claude outage/degradation/limit posts. Requires `BSKY_HANDLE` and `BSKY_APP_PASSWORD` GitHub secrets.
-4. **Reddit** (via Discord bot) — searches r/ClaudeAI and r/ChatGPT. Reddit blocks cloud IPs, so this runs from the Discord bot and pushes data to the `misery-data` branch. The Action preserves Reddit data across runs; it goes stale (displayed but not scored) after 30 minutes.
+4. **Reddit** (via Discord bot) — searches r/ClaudeAI and r/ChatGPT. Reddit blocks cloud IPs, so this runs from the Discord bot and pushes data to the `misery-data` branch. The Action preserves Reddit data across runs; it goes stale (displayed but not scored) after 24 hours.
 
 ## Bluesky Post Filtering (Human-Level Analysis)
 

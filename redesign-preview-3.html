@@ -69,24 +69,32 @@
     }
 
     /* Bezel screws / decorative corners */
+    /* Corner brackets — retro CRT bezel marks */
     .bezel-corner {
       position: absolute;
-      width: 6px;
-      height: 6px;
-      min-width: 6px;
-      min-height: 6px;
-      max-width: 6px;
-      max-height: 6px;
-      border-radius: 50%;
-      background: #1a1e35;
-      border: 1px solid rgba(255,255,255,0.06);
+      width: 14px; height: 14px;
       z-index: 7;
-      flex: none;
+      pointer-events: none;
     }
-    .bezel-corner.tl { top: 6px; left: 6px; }
-    .bezel-corner.tr { top: 6px; right: 6px; }
-    .bezel-corner.bl { bottom: 6px; left: 6px; }
-    .bezel-corner.br { bottom: 6px; right: 6px; }
+    .bezel-corner::before, .bezel-corner::after {
+      content: '';
+      position: absolute;
+      background: rgba(122,184,255,0.1);
+    }
+    /* Horizontal bar */
+    .bezel-corner::before { width: 14px; height: 1px; }
+    /* Vertical bar */
+    .bezel-corner::after { width: 1px; height: 14px; }
+    .bezel-corner.tl { display: none; }
+    .bezel-corner.tr { top: 8px; right: 8px; }
+    .bezel-corner.tr::before { top: 0; right: 0; }
+    .bezel-corner.tr::after { top: 0; right: 0; }
+    .bezel-corner.bl { bottom: 8px; left: 8px; }
+    .bezel-corner.bl::before { bottom: 0; left: 0; }
+    .bezel-corner.bl::after { bottom: 0; left: 0; }
+    .bezel-corner.br { bottom: 8px; right: 8px; }
+    .bezel-corner.br::before { bottom: 0; right: 0; }
+    .bezel-corner.br::after { bottom: 0; right: 0; }
 
     /* Screen label */
     .bezel-label {
@@ -95,8 +103,8 @@
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Silkscreen', cursive;
-      font-size: 0.35rem;
-      color: rgba(122,184,255,0.15);
+      font-size: 0.45rem;
+      color: rgba(122,184,255,0.2);
       letter-spacing: 0.2em;
       z-index: 7;
       text-transform: uppercase;
@@ -145,13 +153,15 @@
       overflow-y: auto;
       overflow-x: hidden;
       padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
       opacity: 0;
       transform: translateX(40px);
       pointer-events: none;
       transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16,1,0.3,1);
     }
 
-    .panel.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+    .panel.active { opacity: 1; transform: translateX(0); pointer-events: auto; display: flex; }
     .panel.exit-left { transform: translateX(-40px); opacity: 0; }
     .panel.exit-right { transform: translateX(40px); opacity: 0; }
 
@@ -220,9 +230,9 @@
       position: absolute; bottom: 24px; width: 64px; height: 64px;
       background: url('img/character-spritesheet.png') 0 -640px; background-size: 832px 3456px;
       image-rendering: pixelated; z-index: 10; pointer-events: none;
-      transition: left 0.8s cubic-bezier(0.25,1,0.5,1);
+      transition: left 1.2s cubic-bezier(0.25,1,0.5,1), opacity 0.3s ease;
     }
-    .character.walking { animation: spriteWalk 0.6s steps(9) infinite; }
+    .character.walking { animation: spriteWalk 0.8s steps(9) infinite; }
     .character.idle { animation: none; background-position: 0 -640px; }
     .character.walk-right { background-position-y: -704px; }
     .character.walk-left { background-position-y: -576px; }
@@ -264,7 +274,7 @@
     }
 
     .ctrl-label {
-      font-family: 'Silkscreen', cursive; font-size: 0.4rem; color: var(--text-dim); opacity: 0.4;
+      font-family: 'Silkscreen', cursive; font-size: 0.6rem; color: var(--text-dim); opacity: 0.5;
       letter-spacing: 0.1em;
     }
 
@@ -278,7 +288,7 @@
     .p-desc { font-size: 0.88rem; color: var(--text-dim); max-width: 600px; line-height: 1.6; margin-bottom: 1.5rem; }
 
     /* Home */
-    .home-center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 100%; }
+    .home-center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; flex: 1; }
     .home-sprite { width: 96px; height: 96px; background: url('img/character-spritesheet.png') 0 -1280px; background-size: 1664px 6912px; image-rendering: pixelated; margin-bottom: 1.5rem; }
     .home-name { font-family: 'Silkscreen', cursive; font-size: clamp(1.6rem,4vw,2.5rem); color: var(--blue-light); margin-bottom: 0.4rem; text-shadow: 0 0 30px rgba(74,144,217,0.2); }
     .home-typing { font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-soft); min-height: 1.5rem; margin-bottom: 0.8rem; }
@@ -322,6 +332,10 @@
     }
 
     .tab-btn:hover { border-color: var(--border-glow); color: var(--text-soft); }
+    .tab-btn.tab-focused {
+      outline: 2px solid rgba(122,184,255,0.5);
+      outline-offset: 2px;
+    }
     .tab-btn.active {
       border-color: var(--tab-color, var(--blue));
       color: var(--tab-color, var(--blue-light));
@@ -329,16 +343,20 @@
       box-shadow: 0 0 10px color-mix(in srgb, var(--tab-color, var(--blue)) 12%, transparent);
     }
 
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
+    .tab-panel { display: none; flex-direction: column; flex: 1; }
+    .tab-panel.active { display: flex; }
 
     /* Card carousel within tabs */
     .card-carousel {
       display: flex; gap: 1.5rem; overflow-x: auto;
-      padding: 1.5rem 1rem 2rem; scroll-snap-type: x mandatory;
+      padding: 1rem 2rem 2.5rem; scroll-snap-type: x mandatory;
       scrollbar-width: thin; scrollbar-color: rgba(74,144,217,0.2) transparent;
-      justify-content: center; flex-wrap: wrap;
+      justify-content: center; flex-wrap: nowrap;
+      flex: 1; align-items: center;
     }
+
+    /* When too many cards to fit, left-align and scroll */
+    .card-carousel.scrollable { justify-content: flex-start; }
     .card-carousel::-webkit-scrollbar { height: 4px; }
     .card-carousel::-webkit-scrollbar-track { background: transparent; }
     .card-carousel::-webkit-scrollbar-thumb { background: rgba(74,144,217,0.2); border-radius: 2px; }
@@ -384,9 +402,55 @@
     .cg { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 1rem; justify-content: flex-start; }
 
     .gc {
-      width: 280px; height: 400px; perspective: 800px; cursor: pointer; flex-shrink: 0;
+      width: min(280px, 40vw); height: min(420px, calc(100vh - 380px)); perspective: 800px; cursor: pointer; flex-shrink: 0;
       animation: cardFloat var(--float-dur, 4s) ease-in-out infinite;
       animation-delay: var(--float-del, 0s);
+    }
+
+    /* Active card highlight */
+    .gc.card-active {
+      filter: brightness(1.15);
+    }
+
+    .gc.card-active .gc-front,
+    .gc.card-active .gc-back {
+      box-shadow:
+        0 0 25px color-mix(in srgb, var(--card-color, var(--blue)) 25%, transparent),
+        0 0 50px color-mix(in srgb, var(--card-color, var(--blue)) 10%, transparent),
+        inset 0 0 15px rgba(0,0,0,0.3);
+    }
+
+    /* Floating sprite in card area */
+    .content-sprite {
+      width: 48px; height: 48px;
+      background: url('img/character-spritesheet.png') 0 -640px;
+      background-size: 624px 2592px;
+      image-rendering: pixelated;
+      position: fixed;
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0;
+      transition: left 0.7s cubic-bezier(0.25,1,0.5,1), bottom 0.5s ease, opacity 0.3s ease;
+    }
+
+    .content-sprite.visible { opacity: 1; }
+    .content-sprite.walk-right { background-position-y: -528px; animation: spriteWalkSmall 0.6s steps(9) infinite; }
+    .content-sprite.walk-left { background-position-y: -432px; animation: spriteWalkSmall 0.6s steps(9) infinite; }
+    .content-sprite.idle { background-position: 0 -480px; animation: none; }
+
+    @keyframes spriteWalkSmall {
+      from { background-position-x: 0; }
+      to { background-position-x: -432px; }
+    }
+
+    .content-sprite.jumping {
+      animation: spriteJump 0.4s ease;
+    }
+
+    @keyframes spriteJump {
+      0% { transform: translateY(0); }
+      40% { transform: translateY(-16px); }
+      100% { transform: translateY(0); }
     }
 
     .gc-inner {
@@ -433,6 +497,57 @@
       width: calc(100% - 12px); aspect-ratio: 4/3;
       margin: 6px auto 0; display: block; border-radius: 4px;
       border: 1px solid rgba(255,255,255,0.08); border: none;
+    }
+
+    /* Stylized journey card art — pixel border + big abbreviation */
+    .gc-emblem {
+      width: calc(100% - 12px); aspect-ratio: 4/3;
+      margin: 6px auto 0; border-radius: 4px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--card-color) 6%, transparent), color-mix(in srgb, var(--card-color) 15%, transparent));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .gc-emblem::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 2px solid color-mix(in srgb, var(--card-color) 20%, transparent);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .gc-emblem::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 10px 10px, var(--card-color) 1.5px, transparent 1.5px),
+        radial-gradient(circle at calc(100% - 10px) 10px, var(--card-color) 1.5px, transparent 1.5px),
+        radial-gradient(circle at 10px calc(100% - 10px), var(--card-color) 1.5px, transparent 1.5px),
+        radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), var(--card-color) 1.5px, transparent 1.5px);
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    .gc-emblem-text {
+      font-family: 'Silkscreen', cursive;
+      font-size: 2.2rem;
+      color: var(--card-color);
+      opacity: 0.7;
+      text-shadow: 0 0 20px color-mix(in srgb, var(--card-color) 30%, transparent);
+      z-index: 1;
+    }
+
+    .gc-emblem-sub {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.5rem;
+      color: var(--card-color);
+      opacity: 0.4;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+      z-index: 1;
     }
 
     .gc-nameplate {
@@ -491,11 +606,9 @@
 
     .gc-back-text {
       font-size: 0.78rem; color: var(--text-soft); line-height: 1.65;
-      flex: 1; overflow-y: auto;
+      flex: 1; overflow: hidden;
     }
 
-    .gc-back-text::-webkit-scrollbar { width: 3px; }
-    .gc-back-text::-webkit-scrollbar-thumb { background: rgba(74,144,217,0.2); border-radius: 2px; }
 
     .gc-back-links {
       margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border);
@@ -590,7 +703,7 @@
       .cabinet:last-child { margin-right: max(calc(50vw - 75px), 30px); }
       .controls { height: 40px; min-height: 40px; }
       .ctrl-btn { width: 32px; height: 32px; }
-      .gc { width: 190px; height: 280px; }
+      .gc { width: 200px; height: calc(100vh - 350px); min-height: 240px; max-height: 320px; }
       .gc-flavor { font-size: 0.5rem; padding: 3px 8px; }
       .gc-name { font-size: 0.55rem; }
       .gc-nameplate { padding: 4px 8px 3px; }
@@ -622,6 +735,7 @@
     <div class="content-area">
     <!-- HOME -->
     <div class="panel active" id="p-home">
+      <div class="p-tag" style="position:absolute;top:1.5rem;left:2rem;">// home</div>
       <div class="home-center">
         <div class="home-sprite"></div>
         <h1 class="home-name">Andrew Steven Chau</h1>
@@ -633,16 +747,16 @@
 
     <!-- JOURNEY -->
     <div class="panel" id="p-journey">
-      <div class="p-tag">// career</div><h2 class="p-title">The Journey</h2><div class="p-desc">From college games to Hearthstone.</div>
-      <div class="tl">
-        <div class="tl-i" style="--nc:#FFD100;"><div class="tl-n"></div><div class="tl-c"><div class="tl-date">2013 — 2017</div><div class="tl-co">UC Irvine</div><div class="tl-role">B.S. Computer Game Science</div><div class="tl-d">Built award-winning games in Python and Unity.</div><div class="tl-tags"><span class="tl-tag">Python</span><span class="tl-tag">Unity</span></div></div></div>
-        <div class="tl-i" style="--nc:#FF6B35;"><div class="tl-n"></div><div class="tl-c"><div class="tl-date">2016 — 2017</div><div class="tl-co">Super Toy Box</div><div class="tl-role">Client Developer</div><div class="tl-d">Subaru Wheelstand showroom and VR Factory.</div><div class="tl-tags"><span class="tl-tag">Unity</span><span class="tl-tag">VR</span></div></div></div>
-        <div class="tl-i" style="--nc:#0060A8;"><div class="tl-n"></div><div class="tl-c"><div class="tl-date">2016 — 2020</div><div class="tl-co">Sega Atlus</div><div class="tl-role">QA Tester</div><div class="tl-d">Persona 5 Royal, Yakuza 5, Catherine: Full Body.</div><div class="tl-tags"><span class="tl-tag">QA</span><span class="tl-tag">AAA</span></div></div></div>
-        <div class="tl-i" style="--nc:#00C9DB;"><div class="tl-n"></div><div class="tl-c"><div class="tl-date">2018 — 2019</div><div class="tl-co">Trigger Global</div><div class="tl-role">AR Developer</div><div class="tl-d">AR for NBA, NHL, NFL. On-site at stadiums with Intel.</div><div class="tl-tags"><span class="tl-tag">ARKit</span><span class="tl-tag">ARCore</span></div></div></div>
-        <div class="tl-i" style="--nc:#f26835;"><div class="tl-n"></div><div class="tl-c"><div class="tl-date">2020 — 2025</div><div class="tl-co">MobilityWare</div><div class="tl-role">Software Engineer II</div><div class="tl-d">30+ shipped titles. Studio privacy/compliance lead.</div><div class="tl-tags"><span class="tl-tag">Mobile</span><span class="tl-tag">SDK</span></div></div></div>
-        <div class="tl-i" style="--nc:#8B6DAF;"><div class="tl-n"></div><div class="tl-c"><div class="tl-date">Current</div><div class="tl-co">Waxheart <span class="tl-now">NOW</span></div><div class="tl-role">DevOps / Technical Producer</div><div class="tl-d">Jenkins CI/CD, QA department, Discord bot.</div></div></div>
-        <div class="tl-i" style="--nc:#c13e5d;"><div class="tl-n"></div><div class="tl-c"><div class="tl-date">Current</div><div class="tl-co">Friend Castle <span class="tl-now">NOW</span></div><div class="tl-role">Co-Founder</div><div class="tl-d">Indie game studio LLC.</div></div></div>
-        <div class="tl-i" style="--nc:#148EFF;"><div class="tl-n"></div><div class="tl-c"><div class="tl-date">2025 — Current</div><div class="tl-co">Blizzard <span class="tl-now">NOW</span></div><div class="tl-role">Senior Software Engineer</div><div class="tl-d">Hearthstone Client Team. SDKs, platform modernization.</div></div></div>
+      <div class="p-tag">// career</div><h2 class="p-title" style="text-align:center;">The Journey</h2>
+      <div class="card-carousel">
+        <div class="gc" style="--card-color:#FFD100;--float-dur:3.8s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">UCI</div><div class="gc-emblem-sub">IRVINE</div></div><div class="gc-nameplate"><div class="gc-name">UC Irvine</div><div class="gc-type">2013 — 2017</div></div><div class="gc-flavor">B.S. Computer Game Science</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">UC Irvine</div><div class="gc-back-role">B.S. Computer Game Science</div><div class="gc-back-text">Built award-winning games in Python and Unity. Foundation in game design, programming, and UX.</div></div></div></div></div>
+        <div class="gc" style="--card-color:#FF6B35;--float-dur:4.1s;--float-del:0.3s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">STB</div><div class="gc-emblem-sub">SUPER TOY BOX</div></div><div class="gc-nameplate"><div class="gc-name">Super Toy Box</div><div class="gc-type">2016 — 2017</div></div><div class="gc-flavor">Client Developer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Super Toy Box</div><div class="gc-back-role">Client Developer</div><div class="gc-back-text">Built client apps from scratch including the Subaru Wheelstand showroom experience and VR Factory.</div></div></div></div></div>
+        <div class="gc" style="--card-color:#0060A8;--float-dur:3.6s;--float-del:0.6s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">SA</div><div class="gc-emblem-sub">SEGA ATLUS</div></div><div class="gc-nameplate"><div class="gc-name">Sega Atlus</div><div class="gc-type">2016 — 2020</div></div><div class="gc-flavor">QA Tester</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Sega Atlus</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">QA tested AAA titles: Persona 5 Royal, Yakuza 5, Catherine: Full Body, Yakuza 0.</div></div></div></div></div>
+        <div class="gc" style="--card-color:#00C9DB;--float-dur:4.3s;--float-del:0.9s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">TG</div><div class="gc-emblem-sub">TRIGGER GLOBAL</div></div><div class="gc-nameplate"><div class="gc-name">Trigger Global</div><div class="gc-type">2018 — 2019</div></div><div class="gc-flavor">AR Developer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Trigger Global</div><div class="gc-back-role">AR Developer</div><div class="gc-back-text">Shipped AR experiences for the NBA, NHL, NFL, and major brands. Deployed on-site at stadiums with Intel.</div></div></div></div></div>
+        <div class="gc" style="--card-color:#f26835;--float-dur:3.9s;--float-del:1.2s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">MW</div><div class="gc-emblem-sub">MOBILITYWARE</div></div><div class="gc-nameplate"><div class="gc-name">MobilityWare</div><div class="gc-type">2020 — 2025</div></div><div class="gc-flavor">Software Engineer II</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare</div><div class="gc-back-role">Software Engineer II</div><div class="gc-back-text">Supported 30+ shipped titles. Led studio-wide privacy and compliance initiatives working with the CTO.</div></div></div></div></div>
+        <div class="gc" style="--card-color:#8B6DAF;--float-dur:4.2s;--float-del:1.5s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">WH</div><div class="gc-emblem-sub">WAXHEART</div></div><div class="gc-nameplate"><div class="gc-name">Waxheart</div><div class="gc-type">Current</div></div><div class="gc-flavor">DevOps / Technical Producer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Waxheart</div><div class="gc-back-role">DevOps / Technical Producer</div><div class="gc-back-text">Built Jenkins CI/CD, QA department, Discord bot from scratch. Sprint planning and release management.</div></div></div></div></div>
+        <div class="gc" style="--card-color:#c13e5d;--float-dur:3.7s;--float-del:1.8s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">FC</div><div class="gc-emblem-sub">FRIEND CASTLE</div></div><div class="gc-nameplate"><div class="gc-name">Friend Castle</div><div class="gc-type">Current</div></div><div class="gc-flavor">Co-Founder</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Friend Castle</div><div class="gc-back-role">Co-Founder</div><div class="gc-back-text">Co-founded an indie game studio LLC. Design, engineering, production, and publishing.</div></div></div></div></div>
+        <div class="gc" style="--card-color:#148EFF;--float-dur:4.4s;--float-del:2.1s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">B</div><div class="gc-emblem-sub">BLIZZARD</div></div><div class="gc-nameplate"><div class="gc-name">Blizzard</div><div class="gc-type">2025 — Current</div></div><div class="gc-flavor">Senior Software Engineer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Blizzard Entertainment</div><div class="gc-back-role">Senior Software Engineer</div><div class="gc-back-text">Hearthstone Client Team. Managing SDKs and modernizing platform support for macOS and iOS.</div></div></div></div></div>
       </div>
     </div>
 
@@ -658,15 +772,20 @@
       </div>
 
       <div class="tab-panel active" id="w-blizzard">
-        <div class="tab-info">Part of the <b>Hearthstone Client Team</b>. Managing SDKs — Firebase, AppsFlyer, Braze. Modernizing macOS/iOS platform support.<br><a href="https://www.blizzard.com/" target="_blank" rel="noopener noreferrer" class="tab-info-link">Blizzard Website →</a></div>
-        <div class="pg-imgs"><a href="https://apps.apple.com/us/app/hearthstone/id625257520" target="_blank" rel="noopener noreferrer"><img src="img/work-projects/Blizzard/Hearthstone_Apple.png" loading="lazy"></a><a href="https://play.google.com/store/apps/details?id=com.blizzard.wtcg.hearthstone" target="_blank" rel="noopener noreferrer"><img src="img/work-projects/Blizzard/Hearthstone_Google.png" loading="lazy"></a></div>
-        <div class="pg-sub">Official Credits Card</div>
-        <div class="pg-imgs"><img src="img/work-projects/Blizzard/Hearthstone_Credits_Card.png" loading="lazy"><img src="img/work-projects/Blizzard/Hearthstone_Credits_Card_Golden.png" loading="lazy"></div>
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:#148EFF;--float-dur:4s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(20,142,255,0.06),rgba(20,142,255,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:rgba(20,142,255,0.5);">B</div></div><div class="gc-nameplate"><div class="gc-name">Hearthstone</div><div class="gc-type">Client Team</div></div><div class="gc-flavor">Managing SDKs. Modernizing platform support.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Blizzard Entertainment</div><div class="gc-back-role">Senior Software Engineer · 2025—Current</div><div class="gc-back-text">Part of the Hearthstone Client Team. Managing critical SDKs — Firebase, AppsFlyer, Braze, and China-specific integrations. Modernizing macOS and iOS platform support.</div><div class="gc-back-links"><a href="https://www.blizzard.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#148EFF;--float-dur:4.3s;--float-del:0.4s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Blizzard/Hearthstone_Apple.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">App Store</div><div class="gc-type">Hearthstone</div></div><div class="gc-flavor">iOS listing.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Hearthstone — iOS</div><div class="gc-back-text">Hearthstone on the Apple App Store. One of the most iconic digital card games, running on iOS since 2014.</div><div class="gc-back-links"><a href="https://apps.apple.com/us/app/hearthstone/id625257520" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#148EFF;--float-dur:3.7s;--float-del:0.8s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Blizzard/Hearthstone_Google.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Google Play</div><div class="gc-type">Hearthstone</div></div><div class="gc-flavor">Android listing.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Hearthstone — Android</div><div class="gc-back-text">Hearthstone on the Google Play Store.</div><div class="gc-back-links"><a href="https://play.google.com/store/apps/details?id=com.blizzard.wtcg.hearthstone" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#148EFF;--float-dur:4.1s;--float-del:1.2s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Blizzard/Hearthstone_Credits_Card.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Credits Card</div><div class="gc-type">In-Game</div></div><div class="gc-flavor">Official Hearthstone credits card.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Official Credits Card</div><div class="gc-back-text">Andrew Steven Chau's official in-game Hearthstone credits card, awarded to team members.</div><div class="gc-back-gallery"><img src="img/work-projects/Blizzard/Hearthstone_Credits_Card_Golden.png" loading="lazy"></div></div></div></div></div>
+        </div>
       </div>
 
       <div class="tab-panel" id="w-mw">
-        <div class="tab-info"><b>Spark Studio — Yellow Team</b>. Engineering support across 30+ shipped titles. <b>Studio point person for privacy/compliance</b> — GDPR, CCPA, Privacy Sandbox. Worked directly with the Technical Director and CTO.<br><a href="https://www.mobilityware.com/" target="_blank" rel="noopener noreferrer" class="tab-info-link">MobilityWare Website →</a></div>
-        <div class="pg-imgs"><a href="https://apps.apple.com/cg/developer/mobilityware/id284117362" target="_blank" rel="noopener noreferrer"><img src="img/work-projects/MobilityWare/Mobilityware_Apple.png" loading="lazy"></a><a href="https://play.google.com/store/apps/dev?id=7125885284350687141" target="_blank" rel="noopener noreferrer"><img src="img/work-projects/MobilityWare/Mobilityware_Google.png" loading="lazy"></a></div>
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:#f26835;--float-dur:4s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(242,104,53,0.06),rgba(242,104,53,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1rem;color:rgba(242,104,53,0.5);">MW</div></div><div class="gc-nameplate"><div class="gc-name">MobilityWare</div><div class="gc-type">Spark Studio</div></div><div class="gc-flavor">30+ titles. Privacy/compliance lead.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare</div><div class="gc-back-role">Software Engineer II · 2020—2025</div><div class="gc-back-text">Spark Studio — Yellow Team. Engineering across 30+ shipped titles. Studio point person for privacy/compliance — GDPR, CCPA, Privacy Sandbox. Worked with Technical Director and CTO.</div><div class="gc-back-links"><a href="https://www.mobilityware.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#f26835;--float-dur:4.3s;--float-del:0.4s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/MobilityWare/Mobilityware_Apple.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">App Store</div><div class="gc-type">MobilityWare</div></div><div class="gc-flavor">30+ titles on iOS.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare — iOS</div><div class="gc-back-text">MobilityWare's full catalog on the Apple App Store, including Solitaire, Mahjong, and more.</div><div class="gc-back-links"><a href="https://apps.apple.com/cg/developer/mobilityware/id284117362" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#f26835;--float-dur:3.7s;--float-del:0.8s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/MobilityWare/Mobilityware_Google.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Google Play</div><div class="gc-type">MobilityWare</div></div><div class="gc-flavor">30+ titles on Android.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare — Android</div><div class="gc-back-text">MobilityWare's full catalog on Google Play.</div><div class="gc-back-links"><a href="https://play.google.com/store/apps/dev?id=7125885284350687141" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
+        </div>
       </div>
 
       <div class="tab-panel" id="w-sega">
@@ -709,8 +828,8 @@
       </div>
 
       <div class="tab-panel active" id="pp-fc">
-        <div class="tab-info"><img src="img/personal-projects/friendCastleRainbow.png" loading="lazy" class="splash-img" style="max-width:140px;">Indie game development LLC I co-founded with friends.<br><a href="https://friendcastle.org/home" target="_blank" rel="noopener noreferrer" class="tab-info-link">Website →</a></div>
         <div class="card-carousel">
+          <div class="gc" style="--card-color:#c13e5d;--float-dur:3.7s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/friendCastleRainbow.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Friend Castle</div><div class="gc-type">Co-Founder</div></div><div class="gc-flavor">Indie game dev LLC.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Friend Castle</div><div class="gc-back-role">Co-Founder · 2023—Present</div><div class="gc-back-text">Indie game development LLC co-founded with friends. Design, engineering, production, and publishing.</div><div class="gc-back-links"><a href="https://friendcastle.org/home" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
           <div class="gc" style="--card-color:#c13e5d;--float-dur:3.9s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/schedazzle_promo.webp" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Schedazzle</div><div class="gc-type">Engineer/Lead</div></div><div class="gc-flavor">Event scheduling for conventions.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Schedazzle</div><div class="gc-back-role">Engineer/Lead, Technical Producer</div><div class="gc-back-text">Free event scheduling companion app. Promoters input schedules, attendees customize their itinerary on-device.</div><div class="gc-back-links"><a href="https://apps.apple.com/us/app/schedazzle/id6642688721" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a><a href="https://play.google.com/store/apps/details?id=com.FriendCastle.Schedazzle" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
           <div class="gc" style="--card-color:#c13e5d;--float-dur:4.2s;--float-del:0.4s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art-contain" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(193,62,93,0.08),rgba(193,62,93,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:0.7rem;color:rgba(193,62,93,0.4);text-align:center;line-height:1.6;">BOX<br>DOG</div></div><div class="gc-nameplate"><div class="gc-name">Box Dog</div><div class="gc-type">Engineer/Lead</div></div><div class="gc-flavor">Hidden object with hand-drawn levels.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Box Dog</div><div class="gc-back-role">Engineer/Lead, Technical Producer</div><div class="gc-back-text">Guide Joget and Box Dog through vibrant worlds searching for mischievous Imps.</div><div class="gc-back-links"><a href="https://store.steampowered.com/app/2991630/" target="_blank" rel="noopener noreferrer" class="gc-ln">Steam</a></div></div></div></div></div>
           <div class="gc" style="--card-color:#c13e5d;--float-dur:4s;--float-del:0.8s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><iframe class="gc-vid-front" src="https://www.youtube.com/embed/GnhbABKCzQs" loading="lazy" title="Gnome Hunt" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="gc-nameplate"><div class="gc-name">Gnome Hunt</div><div class="gc-type">Niantic Contract</div></div><div class="gc-flavor">AR game for Lightship SDK.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Gnome Hunt</div><div class="gc-back-role">Engineer/Lead · Niantic</div><div class="gc-back-text">AR game built as contract work for Niantic to showcase their Lightship SDK/API.</div></div></div></div></div>
@@ -719,8 +838,8 @@
       </div>
 
       <div class="tab-panel" id="pp-wh">
-        <div class="tab-info"><img src="img/personal-projects/waxheartSplash.jpg" loading="lazy" class="splash-img" style="max-width:200px;border:1px solid var(--border);">DevOps engineer and technical producer. Built Jenkins CI/CD, Discord bot, QA department from scratch.<br><a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="tab-info-link">View Game →</a></div>
         <div class="card-carousel">
+          <div class="gc" style="--card-color:#8B6DAF;--float-dur:3.7s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheartSplash.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Waxheart</div><div class="gc-type">DevOps / Producer</div></div><div class="gc-flavor">Built the entire infrastructure.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Waxheart</div><div class="gc-back-role">DevOps / Technical Producer · 2024—Present</div><div class="gc-back-text">Built Jenkins CI/CD, Discord bot, QA department from scratch. Sprint planning and release management.</div><div class="gc-back-links"><a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
           <div class="gc" style="--card-color:#8B6DAF;--float-dur:3.8s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheart%20jenkins%20pipeline.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Jenkins Pipeline</div><div class="gc-type">Build Infrastructure</div></div><div class="gc-flavor">Full CI/CD from scratch.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Jenkins Build Pipeline</div><div class="gc-back-text">Complete Jenkins CI/CD pipeline for Unity builds including Steamworks integration.</div></div></div></div></div>
           <div class="gc" style="--card-color:#8B6DAF;--float-dur:4.1s;--float-del:0.4s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheart%20discord%20bot%20instructions.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Discord Bot</div><div class="gc-type">Build Notifications</div></div><div class="gc-flavor">Triggers and coordination.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Discord Bot</div><div class="gc-back-text">Build notifications, triggers, and team coordination via Discord.</div></div></div></div></div>
           <div class="gc" style="--card-color:#8B6DAF;--float-dur:3.7s;--float-del:0.8s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheart%20jenkins%20discord%20bot%20error.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Error Reporting</div><div class="gc-type">Bot Integration</div></div><div class="gc-flavor">Automated failure alerts.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Error Reporting</div><div class="gc-back-text">Jenkins-to-Discord error pipeline with formatted build failure reports.</div></div></div></div></div>
@@ -729,7 +848,6 @@
       </div>
 
       <div class="tab-panel" id="pp-ai">
-        <div class="tab-info"><b>AI closes the gap between idea and reality.</b> I bring creative direction; Claude handles implementation.</div>
         <div class="card-carousel">
           <div class="gc" style="--card-color:var(--teal);--float-dur:4s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="tools/misery-index/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Misery Index</div><div class="gc-type">Dashboard</div></div><div class="gc-flavor">Dev sentiment when Claude goes down.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Claude Developer Misery Index</div><div class="gc-back-role">Real-time Dashboard</div><div class="gc-back-text">Combines status page, incidents, Reddit, Bluesky into a 0-10 misery score. Discord bot alerts on changes.</div><div class="gc-back-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
           <div class="gc" style="--card-color:var(--teal);--float-dur:4.3s;--float-del:0.4s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="tools/snaplayout/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">SnapLayout</div><div class="gc-type">Planning Tool</div></div><div class="gc-flavor">Drag furniture with real dimensions.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">SnapLayout</div><div class="gc-back-role">Room Layout Planner</div><div class="gc-back-text">Import floorplan or draw rooms. Scale calibration, furniture library, undo/redo, PNG export.</div><div class="gc-back-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div></div></div></div></div>
@@ -740,8 +858,9 @@
       </div>
 
       <div class="tab-panel" id="pp-web">
-        <div class="tab-info">What started as a UCI course project in 2016 has become my longest-running project. Always plain HTML/CSS/JS.<br><a href="projects/personal/portfolio.html" class="tab-info-link">View Original Research</a></div>
-        <ul class="evo"><li><b>2016</b>UCI informatics course. Static HTML/CSS with space-themed background.</li><li><b>2017—2025</b>Grew alongside the career. New projects, new iterations.</li><li><b>2026</b>Dark glassmorphism, animated sprite timeline, floating particles, achievements, game-style loading screen.</li><li><b>Now</b>Built with Claude Code. AI accelerates execution without replacing creative direction.</li></ul>
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:var(--blue);--float-dur:4s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(74,144,217,0.06),rgba(74,144,217,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1rem;color:rgba(74,144,217,0.5);">WWW</div></div><div class="gc-nameplate"><div class="gc-name">raggedydoc.com</div><div class="gc-type">2016 — Present</div></div><div class="gc-flavor">My longest-running project.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">This Website</div><div class="gc-back-role">raggedydoc.com</div><div class="gc-back-text">Started as a UCI course project in 2016. Always plain HTML/CSS/JS. Current version: glassmorphism, sprite timeline, particles, achievements. Built with Claude Code.</div><div class="gc-back-links"><a href="projects/personal/portfolio.html" class="gc-ln">Original Research</a></div></div></div></div></div>
+        </div>
       </div>
 
       <div class="tab-panel" id="pp-col">
@@ -760,51 +879,36 @@
 
     <!-- ABOUT -->
     <div class="panel" id="p-about">
-      <div class="p-tag">// about</div><h2 class="p-title">About Me</h2>
-      <div class="about-g" style="margin-top:1rem;">
-        <div><img src="img/about-me/me.JPG" alt="Andrew Steven Chau" class="about-ph"></div>
-        <div>
-          <h3 class="about-h3">Building games,<br>shipping experiences</h3>
-          <p class="about-p">Senior Software Engineer at Blizzard on the Hearthstone Client Team. Co-founder of Friend Castle. UCI Computer Game Science grad.</p>
-          <div class="soc-row">
-            <a href="https://www.linkedin.com/in/andrewstevenchau/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-linkedin"></i></a>
-            <a href="https://www.youtube.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-youtube"></i></a>
-            <a href="https://www.twitch.tv/raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-twitch"></i></a>
-            <a href="https://www.instagram.com/raggedydoc/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-instagram"></i></a>
-            <a href="https://www.tiktok.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-tiktok"></i></a>
-            <a href="https://bsky.app/profile/raggedydoctv.bsky.social" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-bluesky"></i></a>
-          </div>
-          <div class="about-stats">
-            <div><div class="about-sn">10+</div><div class="about-sl">Years</div></div>
-            <div><div class="about-sn">30+</div><div class="about-sl">Titles</div></div>
-            <div><div class="about-sn">5</div><div class="about-sl">Studios</div></div>
-          </div>
-        </div>
+      <div class="p-tag">// about</div><h2 class="p-title" style="text-align:center;">About Me</h2>
+      <div class="card-carousel">
+        <div class="gc" style="--card-color:var(--green);--float-dur:4s;--float-del:0s;width:280px;height:400px;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/about-me/me.JPG" alt="Andrew Steven Chau" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Andrew Steven Chau</div><div class="gc-type">Senior Software Engineer</div></div><div class="gc-flavor">Blizzard Entertainment · Hearthstone</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">About Me</div><div class="gc-back-text">Senior Software Engineer at Blizzard on the Hearthstone Client Team. Co-founder of Friend Castle, an indie game studio LLC. UCI Computer Game Science grad who went from QA to shipping AR for the NBA to maintaining one of the most iconic card games ever made.</div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--blue-light);--float-dur:4.3s;--float-del:0.4s;width:280px;height:400px;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(74,144,217,0.06),rgba(74,144,217,0.15));gap:8px;"><div class="about-sn" style="font-size:2.5rem;">10+</div><div class="about-sl">Years in Games</div></div><div class="gc-nameplate"><div class="gc-name">Career Stats</div><div class="gc-type">By the Numbers</div></div><div class="gc-flavor">30+ titles shipped across 5 studios.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Stats</div><div class="gc-back-text" style="font-size:0.9rem;"><div style="margin-bottom:12px;"><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">10+</span><br><span style="font-size:0.6rem;color:var(--text-dim);">YEARS IN GAMES</span></div><div style="margin-bottom:12px;"><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">30+</span><br><span style="font-size:0.6rem;color:var(--text-dim);">TITLES SHIPPED</span></div><div><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">5</span><br><span style="font-size:0.6rem;color:var(--text-dim);">STUDIOS</span></div></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--purple);--float-dur:3.7s;--float-del:0.8s;width:280px;height:400px;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(155,109,255,0.06),rgba(155,109,255,0.15));gap:6px;padding:8px;"><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;"><a href="https://www.linkedin.com/in/andrewstevenchau/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-linkedin"></i></a><a href="https://www.youtube.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-youtube"></i></a><a href="https://www.twitch.tv/raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-twitch"></i></a><a href="https://www.instagram.com/raggedydoc/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-instagram"></i></a><a href="https://www.tiktok.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-tiktok"></i></a><a href="https://bsky.app/profile/raggedydoctv.bsky.social" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-bluesky"></i></a></div></div><div class="gc-nameplate"><div class="gc-name">Connect</div><div class="gc-type">Social Links</div></div><div class="gc-flavor">Find me everywhere @raggedydoc</div><div class="gc-rarity"></div></div></div></div>
       </div>
     </div>
 
     <!-- SKILLS -->
     <div class="panel" id="p-skills">
-      <div class="p-tag">// expertise</div><h2 class="p-title">Skills & Stack</h2>
-      <div class="sk-g" style="margin-top:1.5rem;">
-        <div class="sk-c" style="--sc:#5b7fff;"><div class="sk-ct">Languages</div><div class="sk-pills"><span class="sk-p">C#</span><span class="sk-p">Python</span><span class="sk-p">C++</span><span class="sk-p">Java</span></div></div>
-        <div class="sk-c" style="--sc:var(--teal);"><div class="sk-ct">Engines</div><div class="sk-pills"><span class="sk-p">Unity 3D</span><span class="sk-p">Pygame</span></div></div>
-        <div class="sk-c" style="--sc:var(--pink);"><div class="sk-ct">Platforms</div><div class="sk-pills"><span class="sk-p">iOS</span><span class="sk-p">Android</span><span class="sk-p">macOS</span><span class="sk-p">Windows</span></div></div>
-        <div class="sk-c" style="--sc:var(--yellow);"><div class="sk-ct">Tools</div><div class="sk-pills"><span class="sk-p">Git</span><span class="sk-p">Jenkins</span><span class="sk-p">Xcode</span><span class="sk-p">Android Studio</span><span class="sk-p">Discord.js</span></div></div>
-        <div class="sk-c" style="--sc:var(--purple);"><div class="sk-ct">SDKs</div><div class="sk-pills"><span class="sk-p">Firebase</span><span class="sk-p">AppsFlyer</span><span class="sk-p">Braze</span><span class="sk-p">ARCore</span><span class="sk-p">ARKit</span></div></div>
-        <div class="sk-c" style="--sc:var(--teal);"><div class="sk-ct">Production</div><div class="sk-pills"><span class="sk-p">Agile</span><span class="sk-p">Sprint Planning</span><span class="sk-p">QA</span><span class="sk-p">Jira</span><span class="sk-p">Trello</span></div></div>
+      <div class="p-tag">// expertise</div><h2 class="p-title" style="text-align:center;">Skills & Stack</h2>
+      <div class="card-carousel">
+        <div class="gc" style="--card-color:#5b7fff;--float-dur:3.8s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(91,127,255,0.06),rgba(91,127,255,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1.3rem;color:rgba(91,127,255,0.5);">{}</div></div><div class="gc-nameplate"><div class="gc-name">Languages</div><div class="gc-type">Core Skills</div></div><div class="gc-flavor">C#, Python, C++, Java</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Languages</div><div class="gc-back-text" style="font-size:0.85rem;"><b style="color:var(--blue-light);">C#</b> — Unity, Hearthstone, MobilityWare<br><b style="color:var(--blue-light);">Python</b> — Pygame, tooling, automation<br><b style="color:var(--blue-light);">C++</b> — Systems, performance<br><b style="color:var(--blue-light);">Java</b> — Android, backend</div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--teal);--float-dur:4.2s;--float-del:0.3s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(78,205,196,0.06),rgba(78,205,196,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1.3rem;color:rgba(78,205,196,0.5);">&#9654;</div></div><div class="gc-nameplate"><div class="gc-name">Engines</div><div class="gc-type">Game Dev</div></div><div class="gc-flavor">Unity 3D, Pygame</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Engines & Frameworks</div><div class="gc-back-text" style="font-size:0.85rem;"><b style="color:var(--blue-light);">Unity 3D</b> — 8+ years, AR/VR, mobile, PC<br><b style="color:var(--blue-light);">Pygame</b> — Rapid prototyping, game jams</div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--pink);--float-dur:3.6s;--float-del:0.6s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(255,107,157,0.06),rgba(255,107,157,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1rem;color:rgba(255,107,157,0.5);">&#9743;</div></div><div class="gc-nameplate"><div class="gc-name">Platforms</div><div class="gc-type">Cross-Platform</div></div><div class="gc-flavor">iOS, Android, macOS, Windows</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Platforms</div><div class="gc-back-text" style="font-size:0.85rem;">Full cross-platform experience. Hearthstone ships on all four. Managed build environments, SDK integrations, and platform-specific tooling.</div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--yellow);--float-dur:4s;--float-del:0.9s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(255,209,102,0.06),rgba(255,209,102,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1.3rem;color:rgba(255,209,102,0.5);">&#9881;</div></div><div class="gc-nameplate"><div class="gc-name">Tools</div><div class="gc-type">Dev Ops</div></div><div class="gc-flavor">Git, Jenkins, Xcode, AS, Discord.js</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Tools</div><div class="gc-back-text" style="font-size:0.85rem;"><b style="color:var(--blue-light);">Git</b> — Version control across all projects<br><b style="color:var(--blue-light);">Jenkins</b> — CI/CD pipeline architecture<br><b style="color:var(--blue-light);">Xcode/AS</b> — Native build tooling<br><b style="color:var(--blue-light);">Discord.js</b> — Bot development</div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--purple);--float-dur:4.3s;--float-del:1.2s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(155,109,255,0.06),rgba(155,109,255,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1rem;color:rgba(155,109,255,0.5);">SDK</div></div><div class="gc-nameplate"><div class="gc-name">SDKs</div><div class="gc-type">Integrations</div></div><div class="gc-flavor">Firebase, AppsFlyer, Braze, AR</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">SDKs</div><div class="gc-back-text" style="font-size:0.85rem;"><b style="color:var(--blue-light);">Firebase</b> — Analytics, remote config<br><b style="color:var(--blue-light);">AppsFlyer</b> — Attribution, privacy<br><b style="color:var(--blue-light);">Braze</b> — Engagement, messaging<br><b style="color:var(--blue-light);">ARCore/ARKit</b> — Spatial computing</div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--green);--float-dur:3.9s;--float-del:1.5s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(80,227,164,0.06),rgba(80,227,164,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1rem;color:rgba(80,227,164,0.5);">&#9733;</div></div><div class="gc-nameplate"><div class="gc-name">Production</div><div class="gc-type">Leadership</div></div><div class="gc-flavor">Agile, Sprint Planning, QA, Jira</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Production & Leadership</div><div class="gc-back-text" style="font-size:0.85rem;">Agile/Scrum methodologies. Sprint planning and roadmap ownership. QA team formation and RC test cycles. Cross-team coordination.</div></div></div></div></div>
       </div>
     </div>
 
     <!-- PLAY -->
     <div class="panel" id="p-play">
-      <div class="p-tag">// play</div><h2 class="p-title">Games & Tools</h2><div class="p-desc">Try them out.</div>
-      <div class="sh-g">
-        <div class="sh-c" onclick="window.open('games/beamlab/','_blank')"><img src="games/beamlab/og-image.png" loading="lazy"><div class="sh-bd"><div class="sh-tp">Daily Puzzle</div><div class="sh-nm">Beamlab</div><div class="sh-ds">365 laser-reflection puzzles.</div></div></div>
-        <div class="sh-c" onclick="window.open('games/parsed/','_blank')"><img src="games/parsed/og-image.png" loading="lazy"><div class="sh-bd"><div class="sh-tp">Code Puzzle</div><div class="sh-nm">Parsed</div><div class="sh-ds">365 themed code puzzles.</div></div></div>
-        <div class="sh-c" onclick="window.open('games/philosophy/','_blank')"><img src="games/philosophy/og-image.png" loading="lazy"><div class="sh-bd"><div class="sh-tp">Quiz</div><div class="sh-nm">Examined</div><div class="sh-ds">Philosophy alignment quiz.</div></div></div>
-        <div class="sh-c" onclick="window.open('tools/snaplayout/','_blank')"><img src="tools/snaplayout/og-image.png" loading="lazy"><div class="sh-bd"><div class="sh-tp">Tool</div><div class="sh-nm">SnapLayout</div><div class="sh-ds">Room layout planner.</div></div></div>
-        <div class="sh-c" onclick="window.open('tools/misery-index/','_blank')"><img src="tools/misery-index/og-image.png" loading="lazy"><div class="sh-bd"><div class="sh-tp">Dashboard</div><div class="sh-nm">Misery Index</div><div class="sh-ds">Claude outage tracker.</div></div></div>
+      <div class="p-tag">// play</div><h2 class="p-title" style="text-align:center;">Games & Tools</h2>
+      <div class="card-carousel">
+        <div class="gc" style="--card-color:var(--purple);--float-dur:4s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="games/beamlab/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Beamlab</div><div class="gc-type">Daily Laser Puzzle</div></div><div class="gc-flavor">365 puzzles across 3 tiers.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Beamlab</div><div class="gc-back-role">Daily Puzzle Game</div><div class="gc-back-text">Place mirrors and beam splitters on a 6x6 grid to route lasers to all targets. Gem collectibles, daily streaks, shareable results.</div><div class="gc-back-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--teal);--float-dur:4.3s;--float-del:0.3s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="games/parsed/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Parsed</div><div class="gc-type">Daily Code Puzzle</div></div><div class="gc-flavor">Swap tokens to debug code.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Parsed</div><div class="gc-back-role">Daily Puzzle Game</div><div class="gc-back-text">365 themed puzzles with real-world narratives, execution animations, step-by-step explanations, and scoring tiers.</div><div class="gc-back-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--pink);--float-dur:3.7s;--float-del:0.6s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="games/philosophy/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Examined</div><div class="gc-type">Philosophy Quiz</div></div><div class="gc-flavor">Which philosopher thinks like you?</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Examined</div><div class="gc-back-role">Alignment Quiz</div><div class="gc-back-text">12 moral dilemmas, 5 philosophical schools, 20 archetypes. Interactive compass, shareable ID cards.</div><div class="gc-back-links"><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Take Quiz</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--orange);--float-dur:4.1s;--float-del:0.9s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="tools/snaplayout/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">SnapLayout</div><div class="gc-type">Room Planner</div></div><div class="gc-flavor">Drag furniture with real dimensions.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">SnapLayout</div><div class="gc-back-role">Planning Tool</div><div class="gc-back-text">Import floorplan or draw rooms. Scale calibration, furniture library across 6 categories, undo/redo, PNG export.</div><div class="gc-back-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--blue);--float-dur:3.9s;--float-del:1.2s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="tools/misery-index/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Misery Index</div><div class="gc-type">Dashboard</div></div><div class="gc-flavor">Claude outage sentiment tracker.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Claude Developer Misery Index</div><div class="gc-back-role">Real-time Dashboard</div><div class="gc-back-text">Status page + Reddit + Bluesky combined into a 0-10 misery score. Discord bot alerts on level changes.</div><div class="gc-back-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
       </div>
     </div>
   </div>
@@ -830,22 +934,54 @@
 
   </div>
 
+  <!-- Content sprite (moves up from world into card area) -->
+  <div class="content-sprite idle" id="content-sprite"></div>
+
   <!-- CONTROL PANEL -->
   <div class="controls">
     <div class="ctrl-section">
-      <span class="ctrl-label">NAV</span>
+      <button class="ctrl-btn" id="ctrl-up">&#9650;</button>
+      <button class="ctrl-btn" id="ctrl-down">&#9660;</button>
+    </div>
+    <div class="ctrl-sep"></div>
+    <div class="ctrl-section">
       <button class="ctrl-btn" id="ctrl-left">&#9664;</button>
       <button class="ctrl-btn" id="ctrl-right">&#9654;</button>
     </div>
+    <div class="ctrl-sep"></div>
+    <div class="ctrl-section">
+      <button class="ctrl-btn" id="ctrl-action" style="border-radius:50%;width:42px;height:42px;font-family:'Silkscreen',cursive;font-size:0.6rem;border-color:rgba(155,109,255,0.3);color:rgba(155,109,255,0.5);" title="Space to flip">FLIP</button>
+    </div>
+    <div class="ctrl-sep"></div>
+    <span class="ctrl-label" id="ctrl-mode-label">WORLD</span>
+    <div class="ctrl-sep"></div>
+    <span class="ctrl-label" style="opacity:0.3;">SPACE=FLIP &middot; ARROWS=MOVE &middot; UP/DOWN=LAYER</span>
   </div>
 </div>
 
 <script>
   var cabinets = document.querySelectorAll('.cabinet');
-  var panels = ['home','journey','work','personal','about','skills','play'];
+  var panelIds = ['home','journey','work','personal','about','skills','play'];
   var character = document.getElementById('character');
   var strip = document.getElementById('world-strip');
-  var currentIdx = 0;
+  var modeLabel = document.getElementById('ctrl-mode-label');
+
+  // Navigation state
+  var contentSprite = document.getElementById('content-sprite');
+  var currentCab = 0;     // which cabinet
+  var currentCard = 0;    // which card in carousel
+  var currentTab = 0;     // which tab
+  var layer = 0;          // 0=world, 1=cards, 2=tabs
+
+  var ambients = {
+    home: 'radial-gradient(ellipse at 40% 30%, #4a90d9, transparent 70%)',
+    journey: 'radial-gradient(ellipse at 50% 40%, #4ecdc4, transparent 70%)',
+    work: 'radial-gradient(ellipse at 60% 30%, #ff8a50, transparent 70%)',
+    personal: 'radial-gradient(ellipse at 40% 50%, #ff6b9d, transparent 70%)',
+    about: 'radial-gradient(ellipse at 50% 30%, #50e3a4, transparent 70%)',
+    skills: 'radial-gradient(ellipse at 40% 40%, #ffd166, transparent 70%)',
+    play: 'radial-gradient(ellipse at 50% 30%, #9b6dff, transparent 70%)'
+  };
 
   // Stars
   (function() {
@@ -874,94 +1010,337 @@
     tick();
   })();
 
-  function goTo(idx) {
-    if (idx < 0 || idx >= cabinets.length || idx === currentIdx) return;
-    var oldIdx = currentIdx;
+  // Get cards in the active carousel of current panel
+  function getCards() {
+    var panel = document.getElementById('p-' + panelIds[currentCab]);
+    if (!panel) return [];
+    var activeTab = panel.querySelector('.tab-panel.active');
+    var container = activeTab || panel;
+    return Array.from(container.querySelectorAll('.gc'));
+  }
+
+  // Get tabs in current panel
+  function getTabs() {
+    var panel = document.getElementById('p-' + panelIds[currentCab]);
+    if (!panel) return [];
+    return Array.from(panel.querySelectorAll('.tab-btn'));
+  }
+
+  // Highlight active card
+  function highlightCard(idx) {
+    var cards = getCards();
+    cards.forEach(function(c, i) { c.classList.toggle('card-active', i === idx); });
+    if (cards[idx]) {
+      cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      // Reposition sprite after scroll settles
+      if (layer === 1) {
+        setTimeout(function() { positionSprite(cards[idx], true); }, 350);
+      }
+    }
+  }
+
+  function clearCardHighlight() {
+    document.querySelectorAll('.gc.card-active').forEach(function(c) { c.classList.remove('card-active'); });
+  }
+
+  // Position sprite below active card
+  function positionSprite(cardEl, animate) {
+    if (!cardEl || !contentSprite) return;
+    var rect = cardEl.getBoundingClientRect();
+    var targetLeft = rect.left + rect.width / 2 - 24;
+    var targetBottom = window.innerHeight - rect.bottom - 52;
+
+    if (!animate) contentSprite.style.transition = 'none';
+    contentSprite.style.left = targetLeft + 'px';
+    contentSprite.style.bottom = targetBottom + 'px';
+    if (!animate) { contentSprite.offsetHeight; contentSprite.style.transition = ''; }
+  }
+
+  function showContentSprite(cardEl) {
+    character.style.opacity = '0.3';
+    contentSprite.classList.add('visible');
+    positionSprite(cardEl, false);
+    setTimeout(function() {
+      contentSprite.classList.remove('walk-right','walk-left');
+      contentSprite.classList.add('idle');
+    }, 50);
+  }
+
+  function hideContentSprite() {
+    character.style.opacity = '1';
+    contentSprite.classList.remove('visible');
+  }
+
+  function moveSpriteTo(cardEl, goingRight) {
+    contentSprite.classList.remove('idle','walk-right','walk-left');
+    contentSprite.classList.add(goingRight ? 'walk-right' : 'walk-left');
+    positionSprite(cardEl, true);
+    setTimeout(function() {
+      contentSprite.classList.remove('walk-right','walk-left');
+      contentSprite.classList.add('idle');
+    }, 700);
+  }
+
+  // Highlight active tab
+  function highlightTab(idx) {
+    var tabs = getTabs();
+    tabs.forEach(function(t, i) { t.classList.toggle('tab-focused', i === idx); });
+  }
+
+  function clearTabHighlight() {
+    document.querySelectorAll('.tab-btn.tab-focused').forEach(function(t) { t.classList.remove('tab-focused'); });
+  }
+
+  function updateModeLabel() {
+    var labels = ['WORLD', 'CARDS', 'TABS'];
+    if (modeLabel) modeLabel.textContent = labels[layer] || 'WORLD';
+  }
+
+  // Switch cabinet (layer 0 left/right)
+  function goToCab(idx) {
+    if (idx < 0 || idx >= cabinets.length || idx === currentCab) return;
+    var oldIdx = currentCab;
     var goingRight = idx > oldIdx;
+    var oldPanel = document.getElementById('p-' + panelIds[oldIdx]);
+    var newPanel = document.getElementById('p-' + panelIds[idx]);
 
-    // Switch panel
-    var oldPanel = document.getElementById('p-' + panels[oldIdx]);
-    var newPanel = document.getElementById('p-' + panels[idx]);
-
-    // Exit old panel
     oldPanel.classList.remove('active');
     oldPanel.style.transform = goingRight ? 'translateX(-40px)' : 'translateX(40px)';
     oldPanel.style.opacity = '0';
-
-    // Prepare new panel at offset, then animate in
     newPanel.style.transition = 'none';
     newPanel.style.transform = goingRight ? 'translateX(40px)' : 'translateX(-40px)';
     newPanel.style.opacity = '0';
-    newPanel.offsetHeight; // force reflow
+    newPanel.offsetHeight;
     newPanel.style.transition = '';
     newPanel.classList.add('active');
     newPanel.style.transform = '';
     newPanel.style.opacity = '';
-    newPanel.scrollTop = 0;
+    setTimeout(function() { oldPanel.style.transform = ''; oldPanel.style.opacity = ''; }, 400);
 
-    // Clean up old
-    setTimeout(function() {
-      oldPanel.style.transform = '';
-      oldPanel.style.opacity = '';
-    }, 400);
-
-    // Update cabinets
     cabinets.forEach(function(c,i) { c.classList.toggle('active', i === idx); });
 
-    // Scroll strip
     var cab = cabinets[idx];
     var cabCenter = cab.offsetLeft + cab.offsetWidth / 2;
     var viewCenter = window.innerWidth / 2;
     strip.style.transform = 'translateX(' + (-(cabCenter - viewCenter)) + 'px)';
 
-    // Parallax
     var ratio = idx / (cabinets.length - 1);
     document.getElementById('mtn-far').style.transform = 'translateX(' + (-ratio * 60) + 'px)';
     document.getElementById('mtn-near').style.transform = 'translateX(' + (-ratio * 100) + 'px)';
 
-    // Character walk
     var charTarget = cabCenter + (-(cabCenter - viewCenter)) - 32;
-    var currentLeft = parseFloat(character.style.left) || (viewCenter - 32);
     character.classList.remove('idle','walk-right','walk-left');
     character.classList.add('walking', goingRight ? 'walk-right' : 'walk-left');
     character.style.left = charTarget + 'px';
-    setTimeout(function() { character.classList.remove('walking','walk-right','walk-left'); character.classList.add('idle'); }, 800);
+    function onWalkEnd() {
+      character.removeEventListener('transitionend', onWalkEnd);
+      character.classList.remove('walking','walk-right','walk-left');
+      character.classList.add('idle');
+    }
+    character.addEventListener('transitionend', onWalkEnd);
 
-    currentIdx = idx;
-    triggerPeekFlip(panels[idx]);
+    currentCab = idx;
+    currentCard = 0;
+    currentTab = 0;
+    updateHash();
 
-    // Ambient background per section
-    var ambients = {
-      home: 'radial-gradient(ellipse at 40% 30%, #4a90d9, transparent 70%)',
-      journey: 'radial-gradient(ellipse at 50% 40%, #4ecdc4, transparent 70%)',
-      work: 'radial-gradient(ellipse at 60% 30%, #ff8a50, transparent 70%)',
-      personal: 'radial-gradient(ellipse at 40% 50%, #ff6b9d, transparent 70%)',
-      about: 'radial-gradient(ellipse at 50% 30%, #50e3a4, transparent 70%)',
-      skills: 'radial-gradient(ellipse at 40% 40%, #ffd166, transparent 70%)',
-      play: 'radial-gradient(ellipse at 50% 30%, #9b6dff, transparent 70%)'
-    };
     var ambient = document.getElementById('screen-ambient');
-    if (ambient) ambient.style.background = ambients[panels[idx]] || ambients.home;
+    if (ambient) ambient.style.background = ambients[panelIds[idx]] || ambients.home;
+
+    // Peek flip on first visit
+    if (!peeked[idx]) {
+      peeked[idx] = true;
+      var firstCard = newPanel.querySelector('.gc');
+      if (firstCard) {
+        setTimeout(function() {
+          firstCard.classList.add('peek');
+          firstCard.addEventListener('animationend', function() { firstCard.classList.remove('peek'); }, { once: true });
+        }, 400);
+      }
+    }
+
+    clearCardHighlight();
+    clearTabHighlight();
   }
 
-  // Cabinet clicks
+  // Navigate up a layer
+  function goUp() {
+    if (layer === 0) {
+      var cards = getCards();
+      if (cards.length === 0) return;
+      layer = 1;
+      currentCard = 0;
+      highlightCard(0);
+      showContentSprite(cards[0]);
+    } else if (layer === 1) {
+      // Cards → Tabs (if tabs exist)
+      var tabs = getTabs();
+      if (tabs.length === 0) return;
+      layer = 2;
+      // Find the currently active tab
+      currentTab = tabs.findIndex(function(t) { return t.classList.contains('active'); });
+      if (currentTab < 0) currentTab = 0;
+      highlightTab(currentTab);
+      clearCardHighlight();
+    }
+    updateModeLabel();
+  }
+
+  // Navigate down a layer
+  function goDown() {
+    if (layer === 2) {
+      layer = 1;
+      clearTabHighlight();
+      currentCard = 0;
+      highlightCard(0);
+      var cards = getCards();
+      if (cards[0]) showContentSprite(cards[0]);
+    } else if (layer === 1) {
+      layer = 0;
+      clearCardHighlight();
+      clearTabHighlight();
+      hideContentSprite();
+    }
+    updateModeLabel();
+  }
+
+  // Left/right based on current layer
+  function goLeft() {
+    if (layer === 0) {
+      goToCab(currentCab - 1);
+    } else if (layer === 1) {
+      var cards = getCards();
+      if (currentCard > 0) { currentCard--; highlightCard(currentCard); moveSpriteTo(cards[currentCard], false); }
+    } else if (layer === 2) {
+      var tabs = getTabs();
+      if (currentTab > 0) {
+        currentTab--;
+        highlightTab(currentTab);
+        tabs[currentTab].click();
+      }
+    }
+  }
+
+  function goRight() {
+    if (layer === 0) {
+      goToCab(currentCab + 1);
+    } else if (layer === 1) {
+      var cards = getCards();
+      if (currentCard < cards.length - 1) { currentCard++; highlightCard(currentCard); moveSpriteTo(cards[currentCard], true); }
+    } else if (layer === 2) {
+      var tabs = getTabs();
+      if (currentTab < tabs.length - 1) {
+        currentTab++;
+        highlightTab(currentTab);
+        tabs[currentTab].click();
+      }
+    }
+  }
+
+  // Flip active card
+  function flipActive() {
+    if (layer !== 1) return;
+    var cards = getCards();
+    if (cards[currentCard]) {
+      cards[currentCard].classList.toggle('flipped');
+      // Sprite jump
+      if (contentSprite) {
+        contentSprite.classList.add('jumping');
+        contentSprite.addEventListener('animationend', function() {
+          contentSprite.classList.remove('jumping');
+        }, { once: true });
+      }
+    }
+  }
+
+  var peeked = {};
+
+  // Cabinet clicks — go to cab and enter card layer
   cabinets.forEach(function(cab, i) {
-    cab.addEventListener('click', function() { goTo(i); });
+    cab.addEventListener('click', function() {
+      if (currentCab !== i) { layer = 0; updateModeLabel(); goToCab(i); }
+    });
   });
 
-  // D-pad clicks
-  document.getElementById('ctrl-left').addEventListener('click', function() { this.classList.add('pressed'); var self=this; setTimeout(function(){self.classList.remove('pressed');},150); goTo(currentIdx - 1); });
-  document.getElementById('ctrl-right').addEventListener('click', function() { this.classList.add('pressed'); var self=this; setTimeout(function(){self.classList.remove('pressed');},150); goTo(currentIdx + 1); });
+  // Control buttons
+  function pressBtn(id, fn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', function() {
+      el.classList.add('pressed');
+      setTimeout(function() { el.classList.remove('pressed'); }, 150);
+      fn();
+    });
+  }
+  pressBtn('ctrl-left', goLeft);
+  pressBtn('ctrl-right', goRight);
+  pressBtn('ctrl-up', goUp);
+  pressBtn('ctrl-down', goDown);
+  pressBtn('ctrl-action', flipActive);
 
   // Keyboard
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); goTo(currentIdx + 1); }
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goTo(currentIdx - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); goRight(); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); goLeft(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); goUp(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); goDown(); }
+    else if (e.key === ' ') { e.preventDefault(); flipActive(); }
   });
 
-  // Init position
+  // Tab clicks — also update state
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = btn.dataset.tab;
+      var bar = btn.closest('.tab-bar') || btn.parentElement;
+      var tabs = Array.from(bar.querySelectorAll('.tab-btn'));
+      tabs.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = btn.closest('.panel');
+      panel.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      var target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+      currentTab = tabs.indexOf(btn);
+      currentCard = 0;
+      if (layer === 1) {
+        highlightCard(0);
+        // Reposition sprite to first card after tab content renders
+        setTimeout(function() {
+          var cards = getCards();
+          if (cards[0]) positionSprite(cards[0], true);
+        }, 100);
+      }
+    });
+  });
+
+  // Card clicks — set as active and flip
+  document.addEventListener('click', function(e) {
+    var card = e.target.closest('.gc');
+    if (!card) return;
+    if (e.target.closest('a') || e.target.closest('iframe')) return;
+    var cards = getCards();
+    var idx = cards.indexOf(card);
+    if (idx >= 0) {
+      if (layer === 0) { layer = 1; updateModeLabel(); showContentSprite(card); }
+      currentCard = idx;
+      highlightCard(idx);
+      moveSpriteTo(card, idx > currentCard);
+      card.classList.toggle('flipped');
+    }
+  });
+
+  // Update URL hash when switching cabinets
+  function updateHash() {
+    history.replaceState(null, '', '#' + panelIds[currentCab]);
+  }
+
+  // Init — restore from hash or start at home
   window.addEventListener('load', function() {
-    var cab = cabinets[0];
+    var hash = location.hash.replace('#', '');
+    var startIdx = panelIds.indexOf(hash);
+    if (startIdx < 0) startIdx = 0;
+
+    // Position at start cabinet without animation
+    var cab = cabinets[startIdx];
     var cabCenter = cab.offsetLeft + cab.offsetWidth / 2;
     var viewCenter = window.innerWidth / 2;
     var offset = -(cabCenter - viewCenter);
@@ -970,11 +1349,26 @@
     character.style.transition = 'none';
     character.style.left = (cabCenter + offset - 32) + 'px';
     character.classList.add('idle');
+
+    if (startIdx !== 0) {
+      // Activate the right panel
+      document.getElementById('p-home').classList.remove('active');
+      document.getElementById('p-' + panelIds[startIdx]).classList.add('active');
+      cabinets.forEach(function(c,i) { c.classList.toggle('active', i === startIdx); });
+      currentCab = startIdx;
+      var ambient = document.getElementById('screen-ambient');
+      if (ambient) ambient.style.background = ambients[panelIds[startIdx]] || ambients.home;
+      var ratio = startIdx / (cabinets.length - 1);
+      document.getElementById('mtn-far').style.transform = 'translateX(' + (-ratio * 60) + 'px)';
+      document.getElementById('mtn-near').style.transform = 'translateX(' + (-ratio * 100) + 'px)';
+    }
+
     setTimeout(function() { strip.style.transition = ''; character.style.transition = ''; }, 50);
+    updateModeLabel();
   });
 
   window.addEventListener('resize', function() {
-    var cab = cabinets[currentIdx];
+    var cab = cabinets[currentCab];
     var cabCenter = cab.offsetLeft + cab.offsetWidth / 2;
     var viewCenter = window.innerWidth / 2;
     var offset = -(cabCenter - viewCenter);
@@ -982,41 +1376,10 @@
     character.style.left = (cabCenter + offset - 32) + 'px';
   });
 
-  // Prevent links/iframes inside cards from triggering flip
+  // Prevent links/iframes from triggering card flip
   document.querySelectorAll('.gc a, .gc iframe').forEach(function(el) {
     el.addEventListener('click', function(e) { e.stopPropagation(); });
   });
-
-  // Tab switching
-  document.querySelectorAll('.tab-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var tabId = btn.dataset.tab;
-      var bar = btn.closest('.tab-bar') || btn.parentElement;
-      bar.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-      var panel = btn.closest('.panel');
-      panel.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
-      var target = document.getElementById(tabId);
-      if (target) target.classList.add('active');
-    });
-  });
-
-  // Peek-flip hint: first card in each carousel does a brief flip on panel enter
-  var peekedPanels = {};
-  function triggerPeekFlip(panelId) {
-    if (peekedPanels[panelId]) return;
-    peekedPanels[panelId] = true;
-    var panel = document.getElementById('p-' + panelId);
-    if (!panel) return;
-    var firstCard = panel.querySelector('.gc');
-    if (!firstCard) return;
-    setTimeout(function() {
-      firstCard.classList.add('peek');
-      firstCard.addEventListener('animationend', function() {
-        firstCard.classList.remove('peek');
-      }, { once: true });
-    }, 400);
-  }
 </script>
 
 </body>

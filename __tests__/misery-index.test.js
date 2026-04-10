@@ -205,9 +205,9 @@ describe('calculateMisery', () => {
         expect(result.breakdown.redditOutage + result.breakdown.redditUsage).toBe(2);
     });
 
-    test('stale reddit data (>30min) → score 0', () => {
+    test('stale reddit data (>24h) → score 0', () => {
         const staleReddit = {
-            lastFetched: new Date(NOW - 35 * 60000).toISOString(),
+            lastFetched: new Date(NOW - 25 * 60 * 60000).toISOString(),
             recentPosts: 50,
             topPosts: []
         };

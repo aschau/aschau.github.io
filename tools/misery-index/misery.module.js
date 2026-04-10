@@ -28,7 +28,7 @@ function getLevel(index) {
 
 // ── Backend score calculation (from fetch-misery-data.js) ──
 
-var REDDIT_STALE_MS = 30 * 60 * 1000;
+var REDDIT_STALE_MS = 24 * 60 * 60 * 1000;
 
 function calculateMisery(statusData, bskyPosts, bskyComments, redditData, nowMs) {
     var statusScore = 0;
@@ -133,7 +133,7 @@ function computeBreakdown(data, sourceFilter, nowMs) {
 
         if (data.reddit && data.reddit.lastFetched) {
             var redditAge = (nowMs || Date.now()) - new Date(data.reddit.lastFetched).getTime();
-            if (redditAge < 24 * 60 * 60 * 1000) {
+            if (redditAge < REDDIT_STALE_MS) {
                 var megas = (data.reddit.topPosts || []).filter(function (p) { return p.isMegathread; }).length;
                 var rPosts = (data.reddit.recentPosts || 0) + (megas * 4);
                 var redditTotal = 0;

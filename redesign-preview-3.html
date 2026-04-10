@@ -152,7 +152,7 @@
       inset: 0;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 1.5rem 2rem;
+      padding: 0.8rem 1.5rem;
       display: flex;
       flex-direction: column;
       opacity: 0;
@@ -194,7 +194,7 @@
     .world-strip {
       position: absolute; bottom: 0; left: 0; height: 100%;
       display: flex; align-items: flex-end; padding-bottom: 12px;
-      transition: transform 0.8s cubic-bezier(0.25,1,0.5,1);
+      transition: transform 1.4s cubic-bezier(0.25,1,0.5,1);
     }
 
     /* Cabinets */
@@ -230,9 +230,9 @@
       position: absolute; bottom: 24px; width: 64px; height: 64px;
       background: url('img/character-spritesheet.png') 0 -640px; background-size: 832px 3456px;
       image-rendering: pixelated; z-index: 10; pointer-events: none;
-      transition: left 1.2s cubic-bezier(0.25,1,0.5,1), opacity 0.3s ease;
+      transition: left 1.6s cubic-bezier(0.25,1,0.5,1), opacity 0.3s ease;
     }
-    .character.walking { animation: spriteWalk 0.8s steps(9) infinite; }
+    .character.walking { animation: spriteWalk 1s steps(9) infinite; }
     .character.idle { animation: none; background-position: 0 -640px; }
     .character.walk-right { background-position-y: -704px; }
     .character.walk-left { background-position-y: -576px; }
@@ -283,8 +283,8 @@
     }
 
     /* ===== CONTENT STYLES (same as before, compressed) ===== */
-    .p-tag { font-family: 'Fira Code', monospace; font-size: 0.6rem; color: var(--teal); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.4rem; }
-    .p-title { font-family: 'Silkscreen', cursive; font-size: clamp(1.3rem,3vw,1.8rem); margin-bottom: 0.5rem; }
+    .p-tag { font-family: 'Fira Code', monospace; font-size: 0.6rem; color: var(--teal); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.2rem; }
+    .p-title { font-family: 'Silkscreen', cursive; font-size: clamp(1.3rem,3vw,1.8rem); margin-bottom: 0.3rem; }
     .p-desc { font-size: 0.88rem; color: var(--text-dim); max-width: 600px; line-height: 1.6; margin-bottom: 1.5rem; }
 
     /* Home */
@@ -316,9 +316,9 @@
 
     /* Tab system for project sections */
     .tab-bar {
-      display: flex; gap: 4px; margin-bottom: 1.2rem;
+      display: flex; gap: 4px; margin-bottom: 0.5rem;
       overflow-x: auto; scrollbar-width: none;
-      padding-bottom: 4px; justify-content: center;
+      padding-bottom: 2px; justify-content: center;
     }
     .tab-bar::-webkit-scrollbar { display: none; }
 
@@ -349,19 +349,16 @@
     /* Card carousel within tabs */
     .card-carousel {
       display: flex; gap: 1.5rem; overflow-x: auto;
-      padding: 1rem 2rem 2.5rem; scroll-snap-type: x mandatory;
+      padding: 0.5rem calc(50% - 170px) 0.5rem; scroll-snap-type: x mandatory;
       scrollbar-width: thin; scrollbar-color: rgba(74,144,217,0.2) transparent;
-      justify-content: center; flex-wrap: nowrap;
+      flex-wrap: nowrap;
       flex: 1; align-items: center;
     }
-
-    /* When too many cards to fit, left-align and scroll */
-    .card-carousel.scrollable { justify-content: flex-start; }
     .card-carousel::-webkit-scrollbar { height: 4px; }
     .card-carousel::-webkit-scrollbar-track { background: transparent; }
     .card-carousel::-webkit-scrollbar-thumb { background: rgba(74,144,217,0.2); border-radius: 2px; }
 
-    .card-carousel .gc { scroll-snap-align: start; }
+    .card-carousel .gc { scroll-snap-align: center; }
 
     /* Legacy project group (for non-card sections like "This Website") */
     .pg { margin-bottom: 0.8rem; }
@@ -402,7 +399,7 @@
     .cg { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 1rem; justify-content: flex-start; }
 
     .gc {
-      width: min(280px, 40vw); height: min(420px, calc(100vh - 380px)); perspective: 800px; cursor: pointer; flex-shrink: 0;
+      width: min(340px, 23vw); height: min(520px, calc(100vh - 310px)); perspective: 900px; cursor: pointer; flex-shrink: 0;
       animation: cardFloat var(--float-dur, 4s) ease-in-out infinite;
       animation-delay: var(--float-del, 0s);
     }
@@ -420,22 +417,42 @@
         inset 0 0 15px rgba(0,0,0,0.3);
     }
 
-    /* Floating sprite in card area */
+    /* Floating sprite in card area — fixed center, cards scroll to it */
     .content-sprite {
       width: 48px; height: 48px;
       background: url('img/character-spritesheet.png') 0 -640px;
       background-size: 624px 2592px;
       image-rendering: pixelated;
       position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 50;
       pointer-events: none;
       opacity: 0;
-      transition: left 0.7s cubic-bezier(0.25,1,0.5,1), bottom 0.5s ease, opacity 0.3s ease;
+      transition: bottom 0.3s ease, opacity 0.3s ease;
     }
 
     .content-sprite.visible { opacity: 1; }
-    .content-sprite.walk-right { background-position-y: -528px; animation: spriteWalkSmall 0.6s steps(9) infinite; }
-    .content-sprite.walk-left { background-position-y: -432px; animation: spriteWalkSmall 0.6s steps(9) infinite; }
+
+    /* Space bar hint below sprite */
+    .content-sprite::after {
+      content: 'SPACE';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.5rem;
+      color: rgba(122,184,255,0.35);
+      letter-spacing: 0.1em;
+      padding: 2px 12px;
+      border: 1px solid rgba(122,184,255,0.15);
+      border-radius: 4px;
+      background: rgba(10,12,26,0.6);
+      white-space: nowrap;
+    }
+    .content-sprite.walk-right { background-position-y: -528px; animation: spriteWalkSmall 0.8s steps(9) infinite; }
+    .content-sprite.walk-left { background-position-y: -432px; animation: spriteWalkSmall 0.8s steps(9) infinite; }
     .content-sprite.idle { background-position: 0 -480px; animation: none; }
 
     @keyframes spriteWalkSmall {
@@ -448,9 +465,9 @@
     }
 
     @keyframes spriteJump {
-      0% { transform: translateY(0); }
-      40% { transform: translateY(-16px); }
-      100% { transform: translateY(0); }
+      0% { transform: translateX(-50%) translateY(0); }
+      40% { transform: translateX(-50%) translateY(-16px); }
+      100% { transform: translateX(-50%) translateY(0); }
     }
 
     .gc-inner {
@@ -557,19 +574,19 @@
     }
 
     .gc-name {
-      font-family: 'Silkscreen', cursive; font-size: 0.7rem; color: var(--text);
+      font-family: 'Silkscreen', cursive; font-size: 0.85rem; color: var(--text);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     .gc-type {
-      font-family: 'Fira Code', monospace; font-size: 0.45rem;
-      color: var(--card-color, var(--purple)); letter-spacing: 0.06em;
-      text-transform: uppercase; margin-top: 3px;
+      font-family: 'Fira Code', monospace; font-size: 0.65rem;
+      color: var(--card-color, var(--purple)); letter-spacing: 0.04em;
+      text-transform: uppercase; margin-top: 4px;
     }
 
     .gc-flavor {
-      padding: 6px 12px; font-size: 0.62rem; color: var(--text-dim);
-      line-height: 1.45; flex: 1; overflow: hidden;
+      padding: 8px 14px; font-size: 0.82rem; color: var(--text-dim);
+      line-height: 1.55; flex: 1; overflow: hidden;
       font-style: italic; opacity: 0.7;
     }
 
@@ -589,23 +606,23 @@
 
     /* Back face */
     .gc-back-content {
-      padding: 14px; height: 100%; display: flex; flex-direction: column;
+      padding: 16px; height: 100%; display: flex; flex-direction: column;
     }
 
     .gc-back-title {
-      font-family: 'Silkscreen', cursive; font-size: 0.8rem;
+      font-family: 'Silkscreen', cursive; font-size: 1.05rem;
       color: var(--card-color, var(--blue)); margin-bottom: 10px;
-      padding-bottom: 8px; border-bottom: 1px solid var(--border);
+      padding-bottom: 10px; border-bottom: 1px solid var(--border);
     }
 
     .gc-back-role {
-      font-family: 'Fira Code', monospace; font-size: 0.55rem;
-      color: var(--purple); letter-spacing: 0.06em; text-transform: uppercase;
-      margin-bottom: 10px;
+      font-family: 'Fira Code', monospace; font-size: 0.75rem;
+      color: var(--purple); letter-spacing: 0.04em; text-transform: uppercase;
+      margin-bottom: 12px;
     }
 
     .gc-back-text {
-      font-size: 0.78rem; color: var(--text-soft); line-height: 1.65;
+      font-size: 1rem; color: var(--text-soft); line-height: 1.75;
       flex: 1; overflow: hidden;
     }
 
@@ -616,9 +633,9 @@
     }
 
     .gc-ln {
-      display: inline-block; font-family: 'Fira Code', monospace; font-size: 0.45rem;
+      display: inline-block; font-family: 'Fira Code', monospace; font-size: 0.7rem;
       color: var(--blue-light); text-decoration: none; border: 1px solid var(--border);
-      padding: 0.2rem 0.5rem; border-radius: 3px; transition: all 0.2s;
+      padding: 0.35rem 0.8rem; border-radius: 3px; transition: all 0.2s;
     }
     .gc-ln:hover { border-color: var(--border-glow); background: var(--blue-dim); }
 
@@ -747,16 +764,16 @@
 
     <!-- JOURNEY -->
     <div class="panel" id="p-journey">
-      <div class="p-tag">// career</div><h2 class="p-title" style="text-align:center;">The Journey</h2>
+      <div class="p-tag">// career</div><h2 class="p-title"">The Journey</h2>
       <div class="card-carousel">
-        <div class="gc" style="--card-color:#FFD100;--float-dur:3.8s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">UCI</div><div class="gc-emblem-sub">IRVINE</div></div><div class="gc-nameplate"><div class="gc-name">UC Irvine</div><div class="gc-type">2013 — 2017</div></div><div class="gc-flavor">B.S. Computer Game Science</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">UC Irvine</div><div class="gc-back-role">B.S. Computer Game Science</div><div class="gc-back-text">Built award-winning games in Python and Unity. Foundation in game design, programming, and UX.</div></div></div></div></div>
-        <div class="gc" style="--card-color:#FF6B35;--float-dur:4.1s;--float-del:0.3s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">STB</div><div class="gc-emblem-sub">SUPER TOY BOX</div></div><div class="gc-nameplate"><div class="gc-name">Super Toy Box</div><div class="gc-type">2016 — 2017</div></div><div class="gc-flavor">Client Developer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Super Toy Box</div><div class="gc-back-role">Client Developer</div><div class="gc-back-text">Built client apps from scratch including the Subaru Wheelstand showroom experience and VR Factory.</div></div></div></div></div>
-        <div class="gc" style="--card-color:#0060A8;--float-dur:3.6s;--float-del:0.6s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">SA</div><div class="gc-emblem-sub">SEGA ATLUS</div></div><div class="gc-nameplate"><div class="gc-name">Sega Atlus</div><div class="gc-type">2016 — 2020</div></div><div class="gc-flavor">QA Tester</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Sega Atlus</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">QA tested AAA titles: Persona 5 Royal, Yakuza 5, Catherine: Full Body, Yakuza 0.</div></div></div></div></div>
-        <div class="gc" style="--card-color:#00C9DB;--float-dur:4.3s;--float-del:0.9s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">TG</div><div class="gc-emblem-sub">TRIGGER GLOBAL</div></div><div class="gc-nameplate"><div class="gc-name">Trigger Global</div><div class="gc-type">2018 — 2019</div></div><div class="gc-flavor">AR Developer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Trigger Global</div><div class="gc-back-role">AR Developer</div><div class="gc-back-text">Shipped AR experiences for the NBA, NHL, NFL, and major brands. Deployed on-site at stadiums with Intel.</div></div></div></div></div>
-        <div class="gc" style="--card-color:#f26835;--float-dur:3.9s;--float-del:1.2s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">MW</div><div class="gc-emblem-sub">MOBILITYWARE</div></div><div class="gc-nameplate"><div class="gc-name">MobilityWare</div><div class="gc-type">2020 — 2025</div></div><div class="gc-flavor">Software Engineer II</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare</div><div class="gc-back-role">Software Engineer II</div><div class="gc-back-text">Supported 30+ shipped titles. Led studio-wide privacy and compliance initiatives working with the CTO.</div></div></div></div></div>
-        <div class="gc" style="--card-color:#8B6DAF;--float-dur:4.2s;--float-del:1.5s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">WH</div><div class="gc-emblem-sub">WAXHEART</div></div><div class="gc-nameplate"><div class="gc-name">Waxheart</div><div class="gc-type">Current</div></div><div class="gc-flavor">DevOps / Technical Producer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Waxheart</div><div class="gc-back-role">DevOps / Technical Producer</div><div class="gc-back-text">Built Jenkins CI/CD, QA department, Discord bot from scratch. Sprint planning and release management.</div></div></div></div></div>
-        <div class="gc" style="--card-color:#c13e5d;--float-dur:3.7s;--float-del:1.8s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">FC</div><div class="gc-emblem-sub">FRIEND CASTLE</div></div><div class="gc-nameplate"><div class="gc-name">Friend Castle</div><div class="gc-type">Current</div></div><div class="gc-flavor">Co-Founder</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Friend Castle</div><div class="gc-back-role">Co-Founder</div><div class="gc-back-text">Co-founded an indie game studio LLC. Design, engineering, production, and publishing.</div></div></div></div></div>
-        <div class="gc" style="--card-color:#148EFF;--float-dur:4.4s;--float-del:2.1s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">B</div><div class="gc-emblem-sub">BLIZZARD</div></div><div class="gc-nameplate"><div class="gc-name">Blizzard</div><div class="gc-type">2025 — Current</div></div><div class="gc-flavor">Senior Software Engineer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Blizzard Entertainment</div><div class="gc-back-role">Senior Software Engineer</div><div class="gc-back-text">Hearthstone Client Team. Managing SDKs and modernizing platform support for macOS and iOS.</div></div></div></div></div>
+        <div class="gc" style="--card-color:#FFD100;--float-dur:3.8s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">UCI</div><div class="gc-emblem-sub">IRVINE</div></div><div class="gc-nameplate"><div class="gc-name">UC Irvine</div><div class="gc-type">2013 — 2017</div></div><div class="gc-flavor">B.S. Computer Game Science</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">UC Irvine</div><div class="gc-back-role">B.S. Computer Game Science · 2013—2017</div><div class="gc-back-text">Studied Computer Game Science at UC Irvine. Built award-winning games in Python and Unity. Foundation in game design, programming, UX research, and iterative development.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('personal','pp-col')">View College Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#FF6B35;--float-dur:4.1s;--float-del:0.3s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">STB</div><div class="gc-emblem-sub">SUPER TOY BOX</div></div><div class="gc-nameplate"><div class="gc-name">Super Toy Box</div><div class="gc-type">2016 — 2017</div></div><div class="gc-flavor">Client Developer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Super Toy Box</div><div class="gc-back-role">Client Developer · Dec 2016—Dec 2017</div><div class="gc-back-text">Built the Subaru Wheelstand showroom app from start to release — dynamic CMS content by VIN, showcased on the show floor. Also developed VR Factory with flexible layouts.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-stb')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#0060A8;--float-dur:3.6s;--float-del:0.6s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">SA</div><div class="gc-emblem-sub">SEGA ATLUS</div></div><div class="gc-nameplate"><div class="gc-name">Sega Atlus</div><div class="gc-type">2016 — 2020</div></div><div class="gc-flavor">QA Tester</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Sega Atlus</div><div class="gc-back-role">Quality Assurance Tester · 2016—2020</div><div class="gc-back-text">QA tested AAA titles including Persona 5 Royal, Yakuza 5 Remastered, Catherine: Full Body (Switch), and Yakuza 0. Ensured localization accuracy and gameplay polish.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-sega')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#00C9DB;--float-dur:4.3s;--float-del:0.9s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">TG</div><div class="gc-emblem-sub">TRIGGER GLOBAL</div></div><div class="gc-nameplate"><div class="gc-name">Trigger Global</div><div class="gc-type">2018 — 2019</div></div><div class="gc-flavor">AR Developer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Trigger Global</div><div class="gc-back-role">AR Developer · Jan 2018—Oct 2019</div><div class="gc-back-text">Shipped AR experiences for the NBA, NHL, NFL, and major brands including Lenovo and General Mills. Deployed on-site at stadiums working with Intel.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-trigger')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#f26835;--float-dur:3.9s;--float-del:1.2s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">MW</div><div class="gc-emblem-sub">MOBILITYWARE</div></div><div class="gc-nameplate"><div class="gc-name">MobilityWare</div><div class="gc-type">2020 — 2025</div></div><div class="gc-flavor">Software Engineer II</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare</div><div class="gc-back-role">Software Engineer II · 2020—2025</div><div class="gc-back-text">Spark Studio — Yellow Team. Engineering across 30+ shipped titles. Studio point person for privacy/compliance — GDPR, CCPA, Google Privacy Sandbox. Worked with Technical Director and CTO.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-mw')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#8B6DAF;--float-dur:4.2s;--float-del:1.5s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">WH</div><div class="gc-emblem-sub">WAXHEART</div></div><div class="gc-nameplate"><div class="gc-name">Waxheart</div><div class="gc-type">Current</div></div><div class="gc-flavor">DevOps / Technical Producer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Waxheart</div><div class="gc-back-role">DevOps / Technical Producer · 2024—Present</div><div class="gc-back-text">Built the team's entire build infrastructure from scratch — Jenkins CI/CD pipeline, Discord bot for build notifications, and Steamworks operations. Formed the QA department. Driving sprint planning and release management.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('personal','pp-wh')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#c13e5d;--float-dur:3.7s;--float-del:1.8s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">FC</div><div class="gc-emblem-sub">FRIEND CASTLE</div></div><div class="gc-nameplate"><div class="gc-name">Friend Castle</div><div class="gc-type">Current</div></div><div class="gc-flavor">Co-Founder</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Friend Castle</div><div class="gc-back-role">Co-Founder · 2023—Present</div><div class="gc-back-text">Co-founded an indie game development LLC. Shipped Schedazzle and Box Dog. Contract AR work for Niantic. Handling everything from design and engineering to production and publishing.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('personal','pp-fc')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#148EFF;--float-dur:4.4s;--float-del:2.1s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">B</div><div class="gc-emblem-sub">BLIZZARD</div></div><div class="gc-nameplate"><div class="gc-name">Blizzard</div><div class="gc-type">2025 — Current</div></div><div class="gc-flavor">Senior Software Engineer</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Blizzard Entertainment</div><div class="gc-back-role">Senior Software Engineer · 2025—Present</div><div class="gc-back-text">Part of the Hearthstone Client Team — maintaining and evolving an over-a-decade-old codebase. Managing critical SDKs including Firebase, AppsFlyer, Braze. Modernizing macOS and iOS platform support.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-blizzard')">View Projects →</a></div></div></div></div></div>
       </div>
     </div>
 
@@ -879,7 +896,7 @@
 
     <!-- ABOUT -->
     <div class="panel" id="p-about">
-      <div class="p-tag">// about</div><h2 class="p-title" style="text-align:center;">About Me</h2>
+      <div class="p-tag">// about</div><h2 class="p-title"">About Me</h2>
       <div class="card-carousel">
         <div class="gc" style="--card-color:var(--green);--float-dur:4s;--float-del:0s;width:280px;height:400px;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="img/about-me/me.JPG" alt="Andrew Steven Chau" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Andrew Steven Chau</div><div class="gc-type">Senior Software Engineer</div></div><div class="gc-flavor">Blizzard Entertainment · Hearthstone</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">About Me</div><div class="gc-back-text">Senior Software Engineer at Blizzard on the Hearthstone Client Team. Co-founder of Friend Castle, an indie game studio LLC. UCI Computer Game Science grad who went from QA to shipping AR for the NBA to maintaining one of the most iconic card games ever made.</div></div></div></div></div>
         <div class="gc" style="--card-color:var(--blue-light);--float-dur:4.3s;--float-del:0.4s;width:280px;height:400px;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(74,144,217,0.06),rgba(74,144,217,0.15));gap:8px;"><div class="about-sn" style="font-size:2.5rem;">10+</div><div class="about-sl">Years in Games</div></div><div class="gc-nameplate"><div class="gc-name">Career Stats</div><div class="gc-type">By the Numbers</div></div><div class="gc-flavor">30+ titles shipped across 5 studios.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Stats</div><div class="gc-back-text" style="font-size:0.9rem;"><div style="margin-bottom:12px;"><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">10+</span><br><span style="font-size:0.6rem;color:var(--text-dim);">YEARS IN GAMES</span></div><div style="margin-bottom:12px;"><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">30+</span><br><span style="font-size:0.6rem;color:var(--text-dim);">TITLES SHIPPED</span></div><div><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">5</span><br><span style="font-size:0.6rem;color:var(--text-dim);">STUDIOS</span></div></div></div></div></div></div>
@@ -889,7 +906,7 @@
 
     <!-- SKILLS -->
     <div class="panel" id="p-skills">
-      <div class="p-tag">// expertise</div><h2 class="p-title" style="text-align:center;">Skills & Stack</h2>
+      <div class="p-tag">// expertise</div><h2 class="p-title"">Skills & Stack</h2>
       <div class="card-carousel">
         <div class="gc" style="--card-color:#5b7fff;--float-dur:3.8s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(91,127,255,0.06),rgba(91,127,255,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1.3rem;color:rgba(91,127,255,0.5);">{}</div></div><div class="gc-nameplate"><div class="gc-name">Languages</div><div class="gc-type">Core Skills</div></div><div class="gc-flavor">C#, Python, C++, Java</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Languages</div><div class="gc-back-text" style="font-size:0.85rem;"><b style="color:var(--blue-light);">C#</b> — Unity, Hearthstone, MobilityWare<br><b style="color:var(--blue-light);">Python</b> — Pygame, tooling, automation<br><b style="color:var(--blue-light);">C++</b> — Systems, performance<br><b style="color:var(--blue-light);">Java</b> — Android, backend</div></div></div></div></div>
         <div class="gc" style="--card-color:var(--teal);--float-dur:4.2s;--float-del:0.3s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(78,205,196,0.06),rgba(78,205,196,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:1.3rem;color:rgba(78,205,196,0.5);">&#9654;</div></div><div class="gc-nameplate"><div class="gc-name">Engines</div><div class="gc-type">Game Dev</div></div><div class="gc-flavor">Unity 3D, Pygame</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Engines & Frameworks</div><div class="gc-back-text" style="font-size:0.85rem;"><b style="color:var(--blue-light);">Unity 3D</b> — 8+ years, AR/VR, mobile, PC<br><b style="color:var(--blue-light);">Pygame</b> — Rapid prototyping, game jams</div></div></div></div></div>
@@ -902,7 +919,7 @@
 
     <!-- PLAY -->
     <div class="panel" id="p-play">
-      <div class="p-tag">// play</div><h2 class="p-title" style="text-align:center;">Games & Tools</h2>
+      <div class="p-tag">// play</div><h2 class="p-title"">Games & Tools</h2>
       <div class="card-carousel">
         <div class="gc" style="--card-color:var(--purple);--float-dur:4s;--float-del:0s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="games/beamlab/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Beamlab</div><div class="gc-type">Daily Laser Puzzle</div></div><div class="gc-flavor">365 puzzles across 3 tiers.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Beamlab</div><div class="gc-back-role">Daily Puzzle Game</div><div class="gc-back-text">Place mirrors and beam splitters on a 6x6 grid to route lasers to all targets. Gem collectibles, daily streaks, shareable results.</div><div class="gc-back-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
         <div class="gc" style="--card-color:var(--teal);--float-dur:4.3s;--float-del:0.3s;" onclick="this.classList.toggle('flipped')"><div class="gc-inner"><div class="gc-front"><img src="games/parsed/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Parsed</div><div class="gc-type">Daily Code Puzzle</div></div><div class="gc-flavor">Swap tokens to debug code.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Parsed</div><div class="gc-back-role">Daily Puzzle Game</div><div class="gc-back-text">365 themed puzzles with real-world narratives, execution animations, step-by-step explanations, and scoring tiers.</div><div class="gc-back-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
@@ -955,7 +972,7 @@
     <div class="ctrl-sep"></div>
     <span class="ctrl-label" id="ctrl-mode-label">WORLD</span>
     <div class="ctrl-sep"></div>
-    <span class="ctrl-label" style="opacity:0.3;">SPACE=FLIP &middot; ARROWS=MOVE &middot; UP/DOWN=LAYER</span>
+    <span class="ctrl-label" style="opacity:0.3;">SPACE/ENTER=FLIP &middot; ARROWS=MOVE &middot; UP/DOWN=LAYER</span>
   </div>
 </div>
 
@@ -1026,16 +1043,12 @@
     return Array.from(panel.querySelectorAll('.tab-btn'));
   }
 
-  // Highlight active card
+  // Highlight active card — scrolls the card to center
   function highlightCard(idx) {
     var cards = getCards();
     cards.forEach(function(c, i) { c.classList.toggle('card-active', i === idx); });
     if (cards[idx]) {
       cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-      // Reposition sprite after scroll settles
-      if (layer === 1) {
-        setTimeout(function() { positionSprite(cards[idx], true); }, 350);
-      }
     }
   }
 
@@ -1043,42 +1056,45 @@
     document.querySelectorAll('.gc.card-active').forEach(function(c) { c.classList.remove('card-active'); });
   }
 
-  // Position sprite below active card
-  function positionSprite(cardEl, animate) {
-    if (!cardEl || !contentSprite) return;
-    var rect = cardEl.getBoundingClientRect();
-    var targetLeft = rect.left + rect.width / 2 - 24;
-    var targetBottom = window.innerHeight - rect.bottom - 52;
-
-    if (!animate) contentSprite.style.transition = 'none';
-    contentSprite.style.left = targetLeft + 'px';
-    contentSprite.style.bottom = targetBottom + 'px';
-    if (!animate) { contentSprite.offsetHeight; contentSprite.style.transition = ''; }
+  // Sprite stays centered — cards scroll to it
+  function positionSpriteBottom() {
+    if (!contentSprite) return;
+    // Position just below the active card (tight gap)
+    var activeCard = document.querySelector('.gc.card-active');
+    if (activeCard) {
+      var rect = activeCard.getBoundingClientRect();
+      contentSprite.style.bottom = (window.innerHeight - rect.bottom - 54) + 'px';
+    } else {
+      // Fallback: just above the world strip
+      var world = document.querySelector('.world');
+      if (world) {
+        var rect = world.getBoundingClientRect();
+        contentSprite.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+      }
+    }
   }
 
-  function showContentSprite(cardEl) {
+  function showContentSprite() {
     character.style.opacity = '0.3';
-    contentSprite.classList.add('visible');
-    positionSprite(cardEl, false);
-    setTimeout(function() {
-      contentSprite.classList.remove('walk-right','walk-left');
-      contentSprite.classList.add('idle');
-    }, 50);
+    contentSprite.classList.remove('walk-right','walk-left');
+    contentSprite.classList.add('visible','idle');
+    positionSpriteBottom();
   }
 
   function hideContentSprite() {
     character.style.opacity = '1';
-    contentSprite.classList.remove('visible');
+    contentSprite.classList.remove('visible','walk-right','walk-left');
+    contentSprite.classList.add('idle');
   }
 
-  function moveSpriteTo(cardEl, goingRight) {
+  // Brief walk animation when scrolling cards
+  function spriteWalkBrief(goingRight) {
     contentSprite.classList.remove('idle','walk-right','walk-left');
     contentSprite.classList.add(goingRight ? 'walk-right' : 'walk-left');
-    positionSprite(cardEl, true);
     setTimeout(function() {
       contentSprite.classList.remove('walk-right','walk-left');
       contentSprite.classList.add('idle');
-    }, 700);
+    }, 500);
   }
 
   // Highlight active tab
@@ -1097,8 +1113,29 @@
   }
 
   // Switch cabinet (layer 0 left/right)
+  // Navigate to a specific cabinet and optionally activate a tab
+  function goToSection(cabId, tabId) {
+    var cabIdx = panelIds.indexOf(cabId);
+    if (cabIdx < 0) return;
+    goToCab(cabIdx);
+    if (tabId) {
+      setTimeout(function() {
+        var btn = document.querySelector('[data-tab="' + tabId + '"]');
+        if (btn) btn.click();
+      }, 500);
+    }
+  }
+
   function goToCab(idx) {
     if (idx < 0 || idx >= cabinets.length || idx === currentCab) return;
+
+    // Reset to world layer
+    layer = 0;
+    hideContentSprite();
+    clearCardHighlight();
+    clearTabHighlight();
+    updateModeLabel();
+
     var oldIdx = currentCab;
     var goingRight = idx > oldIdx;
     var oldPanel = document.getElementById('p-' + panelIds[oldIdx]);
@@ -1132,12 +1169,19 @@
     character.classList.remove('idle','walk-right','walk-left');
     character.classList.add('walking', goingRight ? 'walk-right' : 'walk-left');
     character.style.left = charTarget + 'px';
-    function onWalkEnd() {
+    function onWalkEnd(e) {
+      if (e && e.propertyName !== 'left') return;
       character.removeEventListener('transitionend', onWalkEnd);
       character.classList.remove('walking','walk-right','walk-left');
       character.classList.add('idle');
     }
     character.addEventListener('transitionend', onWalkEnd);
+    // Fallback in case transitionend doesn't fire
+    setTimeout(function() {
+      character.removeEventListener('transitionend', onWalkEnd);
+      character.classList.remove('walking','walk-right','walk-left');
+      character.classList.add('idle');
+    }, 1800);
 
     currentCab = idx;
     currentCard = 0;
@@ -1171,7 +1215,7 @@
       layer = 1;
       currentCard = 0;
       highlightCard(0);
-      showContentSprite(cards[0]);
+      showContentSprite();
     } else if (layer === 1) {
       // Cards → Tabs (if tabs exist)
       var tabs = getTabs();
@@ -1193,8 +1237,7 @@
       clearTabHighlight();
       currentCard = 0;
       highlightCard(0);
-      var cards = getCards();
-      if (cards[0]) showContentSprite(cards[0]);
+      showContentSprite();
     } else if (layer === 1) {
       layer = 0;
       clearCardHighlight();
@@ -1210,7 +1253,7 @@
       goToCab(currentCab - 1);
     } else if (layer === 1) {
       var cards = getCards();
-      if (currentCard > 0) { currentCard--; highlightCard(currentCard); moveSpriteTo(cards[currentCard], false); }
+      if (currentCard > 0) { currentCard--; highlightCard(currentCard); spriteWalkBrief(false); }
     } else if (layer === 2) {
       var tabs = getTabs();
       if (currentTab > 0) {
@@ -1226,7 +1269,7 @@
       goToCab(currentCab + 1);
     } else if (layer === 1) {
       var cards = getCards();
-      if (currentCard < cards.length - 1) { currentCard++; highlightCard(currentCard); moveSpriteTo(cards[currentCard], true); }
+      if (currentCard < cards.length - 1) { currentCard++; highlightCard(currentCard); spriteWalkBrief(true); }
     } else if (layer === 2) {
       var tabs = getTabs();
       if (currentTab < tabs.length - 1) {
@@ -1284,7 +1327,7 @@
     else if (e.key === 'ArrowLeft') { e.preventDefault(); goLeft(); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); goUp(); }
     else if (e.key === 'ArrowDown') { e.preventDefault(); goDown(); }
-    else if (e.key === ' ') { e.preventDefault(); flipActive(); }
+    else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipActive(); }
   });
 
   // Tab clicks — also update state
@@ -1301,14 +1344,7 @@
       if (target) target.classList.add('active');
       currentTab = tabs.indexOf(btn);
       currentCard = 0;
-      if (layer === 1) {
-        highlightCard(0);
-        // Reposition sprite to first card after tab content renders
-        setTimeout(function() {
-          var cards = getCards();
-          if (cards[0]) positionSprite(cards[0], true);
-        }, 100);
-      }
+      if (layer === 1) { highlightCard(0); }
     });
   });
 
@@ -1320,10 +1356,10 @@
     var cards = getCards();
     var idx = cards.indexOf(card);
     if (idx >= 0) {
-      if (layer === 0) { layer = 1; updateModeLabel(); showContentSprite(card); }
+      var wasWorld = layer === 0;
+      if (wasWorld) { layer = 1; updateModeLabel(); showContentSprite(); }
       currentCard = idx;
       highlightCard(idx);
-      moveSpriteTo(card, idx > currentCard);
       card.classList.toggle('flipped');
     }
   });
@@ -1333,39 +1369,46 @@
     history.replaceState(null, '', '#' + panelIds[currentCab]);
   }
 
-  // Init — restore from hash or start at home
-  window.addEventListener('load', function() {
+  // Init — restore from hash immediately (no waiting for load)
+  (function() {
     var hash = location.hash.replace('#', '');
     var startIdx = panelIds.indexOf(hash);
     if (startIdx < 0) startIdx = 0;
 
-    // Position at start cabinet without animation
-    var cab = cabinets[startIdx];
-    var cabCenter = cab.offsetLeft + cab.offsetWidth / 2;
-    var viewCenter = window.innerWidth / 2;
-    var offset = -(cabCenter - viewCenter);
-    strip.style.transition = 'none';
-    strip.style.transform = 'translateX(' + offset + 'px)';
-    character.style.transition = 'none';
-    character.style.left = (cabCenter + offset - 32) + 'px';
-    character.classList.add('idle');
-
+    // Immediately swap active panel before any paint
     if (startIdx !== 0) {
-      // Activate the right panel
       document.getElementById('p-home').classList.remove('active');
       document.getElementById('p-' + panelIds[startIdx]).classList.add('active');
       cabinets.forEach(function(c,i) { c.classList.toggle('active', i === startIdx); });
       currentCab = startIdx;
       var ambient = document.getElementById('screen-ambient');
       if (ambient) ambient.style.background = ambients[panelIds[startIdx]] || ambients.home;
-      var ratio = startIdx / (cabinets.length - 1);
-      document.getElementById('mtn-far').style.transform = 'translateX(' + (-ratio * 60) + 'px)';
-      document.getElementById('mtn-near').style.transform = 'translateX(' + (-ratio * 100) + 'px)';
     }
 
-    setTimeout(function() { strip.style.transition = ''; character.style.transition = ''; }, 50);
+    // Position strip and character after layout is ready
+    function positionInit() {
+      var cab = cabinets[startIdx];
+      var cabCenter = cab.offsetLeft + cab.offsetWidth / 2;
+      var viewCenter = window.innerWidth / 2;
+      var offset = -(cabCenter - viewCenter);
+      strip.style.transition = 'none';
+      strip.style.transform = 'translateX(' + offset + 'px)';
+      character.style.transition = 'none';
+      character.style.left = (cabCenter + offset - 32) + 'px';
+      character.classList.add('idle');
+      if (startIdx !== 0) {
+        var ratio = startIdx / (cabinets.length - 1);
+        document.getElementById('mtn-far').style.transform = 'translateX(' + (-ratio * 60) + 'px)';
+        document.getElementById('mtn-near').style.transform = 'translateX(' + (-ratio * 100) + 'px)';
+      }
+      setTimeout(function() { strip.style.transition = ''; character.style.transition = ''; }, 50);
+    }
+
+    if (document.readyState === 'complete') positionInit();
+    else window.addEventListener('load', positionInit);
+
     updateModeLabel();
-  });
+  })();
 
   window.addEventListener('resize', function() {
     var cab = cabinets[currentCab];

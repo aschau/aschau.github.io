@@ -460,21 +460,7 @@ async function main() {
     ? now
     : (existing.lastLevelChangeTime || now);
 
-  // Official-only score for level tracking
-  var officialScore = 0;
-  if (statusData && statusData.status) {
-    var indicator = statusData.status.indicator;
-    if (indicator === "minor") officialScore += 2;
-    else if (indicator === "major") officialScore += 4;
-    else if (indicator === "critical") officialScore += 6;
-    if (statusData.components) {
-      var badComps = statusData.components.filter(function (c) {
-        return c.status !== "operational" &&
-          c.name !== "Visit https://status.claude.com for more information";
-      });
-      officialScore += Math.min(badComps.length * 0.5, 2);
-    }
-  }
+  var officialScore = miseryResult.breakdown.status;
   var currentOfficialLevel = getMiseryLevel(officialScore);
   var prevOfficialLevel = existing.lastOfficialLevel || null;
   var lastOfficialLevelChangeTime = (currentOfficialLevel !== prevOfficialLevel)
@@ -488,6 +474,7 @@ async function main() {
     lastLevelChangeTime: lastLevelChangeTime,
     lastOfficialLevel: currentOfficialLevel,
     lastOfficialLevelChangeTime: lastOfficialLevelChangeTime,
+    officialScore: officialScore,
     status: statusData || null,
     social: {
       recentPosts: postCount,
@@ -562,8 +549,8 @@ function generateRssFeeds(data) {
   var incidentItems = buildIncidentItems(data.incidents);
 
   // ── All Sources feed ────────────────────────────────────────
-  var allLevel = data.lastLevel || getMiseryLevel(data.miseryIndex);
-  var allLevelChangeTime = data.lastLevelChangeTime || now;
+  var allLevel = data.lastLevel;
+  var allLevelChangeTime = data.lastLevelChangeTime;
   var allItems = [];
 
   var apiStatus = "Unknown";
@@ -601,23 +588,9 @@ function generateRssFeeds(data) {
   console.log("RSS feed written to", FEED_FILE);
 
   // ── Official Only feed ──────────────────────────────────────
-  // Official score already computed in main() and stored in data
-  var officialScore = 0;
-  if (data.status && data.status.status) {
-    var indicator = data.status.status.indicator;
-    if (indicator === "minor") officialScore += 2;
-    else if (indicator === "major") officialScore += 4;
-    else if (indicator === "critical") officialScore += 6;
-    if (data.status.components) {
-      var badComps = data.status.components.filter(function (c) {
-        return c.status !== "operational" &&
-          c.name !== "Visit https://status.claude.com for more information";
-      });
-      officialScore += Math.min(badComps.length * 0.5, 2);
-    }
-  }
-  var officialLevel = data.lastOfficialLevel || getMiseryLevel(officialScore);
-  var officialLevelChangeTime = data.lastOfficialLevelChangeTime || now;
+  var officialScore = data.officialScore;
+  var officialLevel = data.lastOfficialLevel;
+  var officialLevelChangeTime = data.lastOfficialLevelChangeTime;
   var officialItems = [];
 
   officialItems.push(

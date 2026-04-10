@@ -677,9 +677,27 @@
     /* Gallery thumbnails on back */
     .gc-back-gallery {
       display: flex; gap: 3px; margin-top: 8px;
-      flex: 1; min-height: 0; align-items: center; justify-content: center;
+      flex: 1; min-height: 0; align-items: flex-start; justify-content: center;
     }
-    .gc-back-gallery img { width: 100%; object-fit: contain; border-radius: 2px; flex: 1; min-height: 0; }
+    .gc-back-gallery img { max-width: 100%; object-fit: contain; border-radius: 2px; cursor: zoom-in; }
+
+    /* Lightbox for expanding images */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 10001;
+      background: rgba(0,0,0,0.9);
+      display: flex; align-items: center; justify-content: center;
+      cursor: zoom-out; opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+    .lightbox.open { opacity: 1; pointer-events: auto; }
+    .lightbox img {
+      max-width: 90vw; max-height: 90vh; object-fit: contain;
+      border-radius: 6px; box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    }
+
+    /* Also make front card images expandable */
+    .gc-art, .gc-art-contain { cursor: zoom-in; }
 
     @keyframes cardFloat {
       0%, 100% { transform: translateY(0); }
@@ -821,6 +839,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous">
 </head>
 <body>
+
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('open')"><img id="lightbox-img" src="" alt=""></div>
 
 <div class="load-screen" id="load-screen">
   <div class="load-sprite"></div>
@@ -1578,6 +1598,25 @@
     var offset = -(cabCenter - viewCenter);
     strip.style.transform = 'translateX(' + offset + 'px)';
     character.style.left = (cabCenter + offset - 32) + 'px';
+  });
+
+  // Lightbox — click any card image to expand
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightbox-img');
+  document.addEventListener('click', function(e) {
+    var img = e.target;
+    if (!img.matches('.gc-art, .gc-art-contain, .gc-back-gallery img')) return;
+    if (!img.src) return;
+    e.stopPropagation();
+    lightboxImg.src = img.src;
+    lightboxImg.alt = img.alt || '';
+    lightbox.classList.add('open');
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+      lightbox.classList.remove('open');
+      e.stopPropagation();
+    }
   });
 
   // Prevent links/iframes from triggering card flip

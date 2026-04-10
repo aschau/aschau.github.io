@@ -602,8 +602,11 @@
 
   // ── Data Fetching ──────────────────────────────────────────
   var INCIDENTS_API = "https://status.claude.com/api/v2/incidents.json";
+  var fetchInFlight = false;
 
   function fetchData() {
+    if (fetchInFlight) return;
+    fetchInFlight = true;
     var isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
       || window.location.protocol === "file:";
 
@@ -683,7 +686,7 @@
       if (data.lastUpdated) {
         document.getElementById("last-updated").textContent = timeAgo(data.lastUpdated);
       }
-    });
+    }).finally(function () { fetchInFlight = false; });
   }
 
   function renderDemo(liveStatus, liveIncidents) {
@@ -812,6 +815,5 @@
   document.getElementById("theme-btn").addEventListener("click", toggleTheme);
   fetchData();
 
-  // Auto-refresh every 5 minutes
   setInterval(fetchData, 5 * 60 * 1000);
 })();

@@ -95,7 +95,7 @@
     .screen-ambient {
       position: absolute;
       inset: 0;
-      opacity: 0.06;
+      opacity: 0.1;
       transition: background 0.8s ease, opacity 0.8s ease;
       pointer-events: none;
       z-index: 0;
@@ -187,13 +187,13 @@
       min-height: var(--world-h);
       position: relative;
       overflow: hidden;
-      background: #0c1020;
+      background: #0e1430;
       margin-top: -12px;
       padding-top: 12px;
     }
 
     /* Sky in world strip */
-    .sky { position: absolute; inset: 0; background: linear-gradient(180deg, #0c1020 0%, #0e1428 40%, #141a35 100%); }
+    .sky { position: absolute; inset: 0; background: linear-gradient(180deg, #0e1430 0%, #121a40 40%, #1a2450 100%); }
     .stars { position: absolute; inset: 0; }
     .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--d,3s) ease-in-out infinite alternate; }
     @keyframes twinkle { 0%, 100% { opacity: var(--o, 0.3); } 50% { opacity: 0.08; } }
@@ -621,9 +621,10 @@
     }
 
     .gc-flip-hint {
-      position: absolute; bottom: 6px; left: 8px;
-      font-family: 'Fira Code', monospace; font-size: 0.35rem;
-      color: var(--text-dim); opacity: 0.4;
+      position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+      font-family: 'Fira Code', monospace; font-size: 0.55rem;
+      color: var(--text-dim); opacity: 0.5;
+      padding: 2px 10px; border: 1px solid rgba(255,255,255,0.06); border-radius: 3px;
     }
 
     /* Front face link bar */
@@ -635,6 +636,7 @@
     /* Back face */
     .gc-back-content {
       padding: 16px; height: 100%; display: flex; flex-direction: column;
+      overflow: hidden;
     }
 
     .gc-back-title {
@@ -650,13 +652,13 @@
     }
 
     .gc-back-text {
-      font-size: 1rem; color: var(--text-soft); line-height: 1.75;
+      font-size: 1rem; color: var(--text-soft); line-height: 1.8;
       flex: 1; overflow: hidden;
     }
 
 
     .gc-back-links {
-      margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border);
+      margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border);
       display: flex; flex-wrap: wrap; gap: 4px;
     }
 
@@ -674,10 +676,10 @@
 
     /* Gallery thumbnails on back */
     .gc-back-gallery {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-      gap: 3px; margin-bottom: 6px;
+      display: flex; gap: 3px; margin-top: 8px;
+      flex: 1; min-height: 0; align-items: center; justify-content: center;
     }
-    .gc-back-gallery img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 2px; }
+    .gc-back-gallery img { width: 100%; object-fit: contain; border-radius: 2px; flex: 1; min-height: 0; }
 
     @keyframes cardFloat {
       0%, 100% { transform: translateY(0); }
@@ -984,11 +986,59 @@
 
     <!-- ABOUT -->
     <div class="panel" id="p-about">
-      <div class="p-tag">// about</div><h2 class="p-title"">About Me</h2>
+      <div class="p-tag">// about</div><h2 class="p-title">About Me</h2>
       <div class="card-carousel">
-        <div class="gc" style="--card-color:var(--green);--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/about-me/me.JPG" alt="Andrew Steven Chau" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Andrew Steven Chau</div><div class="gc-type">Senior Software Engineer</div></div><div class="gc-flavor">Blizzard Entertainment · Hearthstone</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">About Me</div><div class="gc-back-text">Senior Software Engineer at Blizzard on the Hearthstone Client Team. Co-founder of Friend Castle, an indie game studio LLC. UCI Computer Game Science grad who went from QA to shipping AR for the NBA to maintaining one of the most iconic card games ever made.</div></div></div></div></div>
-        <div class="gc" style="--card-color:var(--blue-light);--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(74,144,217,0.06),rgba(74,144,217,0.15));gap:8px;"><div class="about-sn" style="font-size:2.5rem;">10+</div><div class="about-sl">Years in Games</div></div><div class="gc-nameplate"><div class="gc-name">Career Stats</div><div class="gc-type">By the Numbers</div></div><div class="gc-flavor">30+ titles shipped across 5 studios.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Stats</div><div class="gc-back-text" style="font-size:0.9rem;"><div style="margin-bottom:12px;"><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">10+</span><br><span style="font-size:0.6rem;color:var(--text-dim);">YEARS IN GAMES</span></div><div style="margin-bottom:12px;"><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">30+</span><br><span style="font-size:0.6rem;color:var(--text-dim);">TITLES SHIPPED</span></div><div><span style="font-family:'Silkscreen',cursive;font-size:1.5rem;color:var(--blue-light);">5</span><br><span style="font-size:0.6rem;color:var(--text-dim);">STUDIOS</span></div></div></div></div></div></div>
-        <div class="gc no-flip" style="--card-color:var(--purple);--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(155,109,255,0.06),rgba(155,109,255,0.15));gap:8px;padding:12px;"><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;"><a href="https://www.linkedin.com/in/andrewstevenchau/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-linkedin"></i></a><a href="https://www.youtube.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-youtube"></i></a><a href="https://www.twitch.tv/raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-twitch"></i></a><a href="https://www.instagram.com/raggedydoc/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-instagram"></i></a><a href="https://www.tiktok.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-tiktok"></i></a><a href="https://bsky.app/profile/raggedydoctv.bsky.social" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-bluesky"></i></a></div></div><div class="gc-nameplate"><div class="gc-name">Connect</div><div class="gc-type">Social Links</div></div><div class="gc-flavor">Click the icons above to connect.</div><div class="gc-rarity"></div></div></div></div>
+        <!-- Character Card -->
+        <div class="gc" style="--card-color:var(--green);--float-dur:4s;--float-del:0s;">
+          <div class="gc-inner">
+            <div class="gc-front">
+              <img src="img/about-me/me.JPG" alt="Andrew Steven Chau" class="gc-art" loading="lazy">
+              <div class="gc-nameplate"><div class="gc-name">Andrew Steven Chau</div><div class="gc-type">Senior Software Engineer</div></div>
+              <div class="gc-flavor">Senior Software Engineer at Blizzard on Hearthstone. Co-founder of Friend Castle. 10+ years in games, 30+ titles shipped.</div>
+              <div class="gc-rarity"></div>
+              <div class="gc-flip-hint">click to flip</div>
+            </div>
+            <div class="gc-back">
+              <div class="gc-back-content">
+                <div class="gc-back-title">Andrew Steven Chau</div>
+                <div class="gc-back-role">Blizzard · Friend Castle · UCI</div>
+                <div class="gc-back-text" style="font-size:0.85rem;line-height:1.6;">
+                  <b style="color:var(--green);">Languages:</b> C#, Python, C++, Java<br>
+                  <b style="color:var(--green);">Engines:</b> Unity 3D, Pygame<br>
+                  <b style="color:var(--green);">Platforms:</b> iOS, Android, macOS, Win<br>
+                  <b style="color:var(--green);">Tools:</b> Git, Jenkins, Xcode, Discord.js<br>
+                  <b style="color:var(--green);">SDKs:</b> Firebase, AppsFlyer, Braze, AR<br>
+                  <b style="color:var(--green);">Production:</b> Agile, Sprint, QA, Jira
+                  <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-around;text-align:center;">
+                    <span><b style="color:var(--green);font-family:'Silkscreen',cursive;font-size:1.3rem;">10+</b><br><span style="font-size:0.5rem;color:var(--text-dim);">YEARS</span></span>
+                    <span><b style="color:var(--green);font-family:'Silkscreen',cursive;font-size:1.3rem;">30+</b><br><span style="font-size:0.5rem;color:var(--text-dim);">TITLES</span></span>
+                    <span><b style="color:var(--green);font-family:'Silkscreen',cursive;font-size:1.3rem;">5</b><br><span style="font-size:0.5rem;color:var(--text-dim);">STUDIOS</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Connect Card -->
+        <div class="gc no-flip" style="--card-color:var(--purple);--float-dur:3.7s;--float-del:0.5s;">
+          <div class="gc-inner">
+            <div class="gc-front">
+              <div class="gc-art" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(155,109,255,0.06),rgba(155,109,255,0.15));gap:10px;padding:14px;">
+                <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+                  <a href="https://www.linkedin.com/in/andrewstevenchau/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-linkedin"></i></a>
+                  <a href="https://www.youtube.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-youtube"></i></a>
+                  <a href="https://www.twitch.tv/raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-twitch"></i></a>
+                  <a href="https://www.instagram.com/raggedydoc/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-instagram"></i></a>
+                  <a href="https://www.tiktok.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-tiktok"></i></a>
+                  <a href="https://bsky.app/profile/raggedydoctv.bsky.social" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-bluesky"></i></a>
+                </div>
+              </div>
+              <div class="gc-nameplate"><div class="gc-name">Connect</div><div class="gc-type">Social Links</div></div>
+              <div class="gc-flavor">Click the icons above to connect.</div>
+              <div class="gc-rarity"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1073,7 +1123,7 @@
 
   // Themed subtle patterns per section
   var patterns = {
-    home: '',
+    home: 'radial-gradient(circle at 30% 70%, rgba(74,144,217,0.03) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(122,184,255,0.02) 0%, transparent 50%)',
     about: 'repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(80,227,164,0.015) 50px, rgba(80,227,164,0.015) 52px), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(80,227,164,0.015) 50px, rgba(80,227,164,0.015) 52px)',
     journey: 'repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(78,205,196,0.02) 40px, rgba(78,205,196,0.02) 42px)',
     work: 'repeating-linear-gradient(-45deg, transparent, transparent 30px, rgba(255,138,80,0.02) 30px, rgba(255,138,80,0.02) 32px), repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,138,80,0.015) 30px, rgba(255,138,80,0.015) 32px)',
@@ -1488,9 +1538,7 @@
       character.style.left = (cabCenter + offset - 32) + 'px';
       character.classList.add('idle');
       if (startIdx !== 0) {
-        var ratio = startIdx / (cabinets.length - 1);
-        document.getElementById('mtn-far').style.transform = 'translateX(' + (-ratio * 60) + 'px)';
-        document.getElementById('mtn-near').style.transform = 'translateX(' + (-ratio * 100) + 'px)';
+        // Mountains removed — no parallax needed
       }
       setTimeout(function() { strip.style.transition = ''; character.style.transition = ''; }, 50);
     }
@@ -1501,9 +1549,12 @@
       if (fill) fill.style.width = '100%';
     });
 
+    var loaded = false;
     function finishLoad() {
-      positionInit();
-      updateModeLabel();
+      if (loaded) return;
+      loaded = true;
+      try { positionInit(); } catch(e) { console.error('positionInit error:', e); }
+      try { updateModeLabel(); } catch(e) { console.error('updateModeLabel error:', e); }
       // Fade out loading screen
       setTimeout(function() {
         var ls = document.getElementById('load-screen');
@@ -1516,6 +1567,8 @@
 
     if (document.readyState === 'complete') finishLoad();
     else window.addEventListener('load', finishLoad);
+    // Fallback: dismiss loading screen after 3s no matter what
+    setTimeout(finishLoad, 3000);
   })();
 
   window.addEventListener('resize', function() {

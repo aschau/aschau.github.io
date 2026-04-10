@@ -871,6 +871,35 @@
       margin-bottom: 0.2rem;
     }
 
+    .project-card-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.5rem;
+      padding: 0.5rem;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .project-card-gallery img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border-radius: 2px;
+      display: block;
+    }
+
+    .project-card-video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: none;
+      display: block;
+    }
+
+    .splash-img {
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
     @media (max-width: 480px) {
       .project-cards { grid-template-columns: 1fr; }
       .project-images-row { grid-template-columns: 1fr; }
@@ -1125,7 +1154,7 @@
     <div class="hero-content">
       <div class="hero-eyebrow">Senior Software Engineer at Blizzard</div>
       <h1 class="hero-name">
-        Andrew<br>Steven <span class="highlight">Chau</span>
+        <span class="highlight">Andrew<br>Steven Chau</span>
       </h1>
       <p class="hero-subtitle">
         From QA to shipping AR experiences to maintaining some of the
@@ -1403,6 +1432,10 @@
         <div class="project-cards">
           <div class="project-card">
             <img src="img/work-projects/Trigger/starviewYardlineStat.jpg" alt="NFL Starview AR" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-gallery">
+              <img src="img/work-projects/Trigger/starviewFootballTransition.jpg" alt="Starview football transition" loading="lazy">
+              <img src="img/work-projects/Trigger/starviewGenericStat.jpg" alt="Starview generic stat" loading="lazy">
+            </div>
             <div class="project-card-body">
               <div class="project-card-title">NFL AR — Starview</div>
               <div class="project-card-role">Main Developer &middot; Jun—Oct 2019</div>
@@ -1411,7 +1444,12 @@
             </div>
           </div>
           <div class="project-card">
-            <img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" alt="NHL AR" class="project-card-img-cover" loading="lazy">
+            <img src="img/work-projects/Trigger/nhlARSplash.jpg" alt="NHL AR splash" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-gallery">
+              <img src="img/work-projects/Trigger/nhlARHome.jpg" alt="NHL AR home" loading="lazy">
+              <img src="img/work-projects/Trigger/nhlARExample.jpg" alt="NHL AR tabletop rink" loading="lazy">
+              <img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" alt="NHL AR player stats" loading="lazy">
+            </div>
             <div class="project-card-body">
               <div class="project-card-title">NHL AR</div>
               <div class="project-card-role">Main Developer &middot; Nov 2018—Jan 2019</div>
@@ -1420,7 +1458,11 @@
             </div>
           </div>
           <div class="project-card">
-            <img src="img/work-projects/Trigger/nbaARTiles.jpg" alt="NBA AR" class="project-card-img-cover" loading="lazy">
+            <img src="img/work-projects/Trigger/nbaARMain.jpg" alt="NBA AR main menu" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-gallery">
+              <img src="img/work-projects/Trigger/nbaARTiles.jpg" alt="NBA AR portal tiles" loading="lazy">
+              <img src="img/work-projects/Trigger/nbaARExample.jpg" alt="NBA AR experience" loading="lazy">
+            </div>
             <div class="project-card-body">
               <div class="project-card-title">NBA AR</div>
               <div class="project-card-role">Main Developer &middot; Mar 2018—Sep 2019</div>
@@ -1429,7 +1471,10 @@
             </div>
           </div>
           <div class="project-card">
-            <img src="img/work-projects/Trigger/lenovoMirageARExample.jpg" alt="Lenovo Mirage AR Games" class="project-card-img-cover" loading="lazy">
+            <img src="img/work-projects/Trigger/lenovoMirageARMain.jpg" alt="Lenovo Mirage AR" class="project-card-img-cover" loading="lazy">
+            <div class="project-card-gallery">
+              <img src="img/work-projects/Trigger/lenovoMirageARExample.jpg" alt="Lenovo Mirage AR gameplay" loading="lazy">
+            </div>
             <div class="project-card-body">
               <div class="project-card-title">Lenovo Mirage AR Games</div>
               <div class="project-card-role">Developer/Support &middot; Oct 2018</div>
@@ -1475,6 +1520,12 @@
         <div class="project-cards">
           <div class="project-card">
             <img src="img/work-projects/SuperToyBox/stb-cap-subaru2.png" alt="Subaru Wheelstand" class="project-card-img" loading="lazy">
+            <div class="project-card-gallery">
+              <img src="img/work-projects/SuperToyBox/subaru2-1-p-2600.jpg" alt="Subaru vehicle detail" loading="lazy">
+              <img src="img/work-projects/SuperToyBox/subaru2-2-p-2600.jpg" alt="Subaru feature highlights" loading="lazy">
+              <img src="img/work-projects/SuperToyBox/subaru2-3.png" alt="Subaru CMS content" loading="lazy">
+              <img src="img/work-projects/SuperToyBox/subaru2-4.png" alt="Subaru VIN-based content" loading="lazy">
+            </div>
             <div class="project-card-body">
               <div class="project-card-title">Subaru Wheelstand</div>
               <div class="project-card-role">Sole Client Developer</div>
@@ -1519,6 +1570,7 @@
       </div>
       <div class="project-group-body">
         <div class="project-group-desc">
+          <img src="img/personal-projects/friendCastleRainbow.png" alt="Friend Castle" loading="lazy" class="splash-img" style="max-width: 240px;">
           An indie game development LLC I co-founded with friends. We handle everything from design and engineering to production and publishing.
         </div>
         <a href="https://friendcastle.org/home" target="_blank" rel="noopener noreferrer" class="project-group-link">Friend Castle Website &rarr;</a>
@@ -1545,19 +1597,19 @@
         <div class="project-subsection">Contract Work</div>
         <div class="project-cards">
           <div class="project-card">
+            <iframe class="project-card-video" src="https://www.youtube.com/embed/GnhbABKCzQs" title="Gnome Hunt gameplay video" loading="lazy" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
             <div class="project-card-body">
               <div class="project-card-title">Gnome Hunt</div>
               <div class="project-card-role">Engineer/Lead, Technical Producer</div>
               <div class="project-card-text">AR game built as contract work for Niantic to showcase their Lightship SDK/API.</div>
-              <a href="https://youtu.be/GnhbABKCzQs" target="_blank" rel="noopener noreferrer" class="project-card-link">Watch Video</a>
             </div>
           </div>
           <div class="project-card">
+            <iframe class="project-card-video" src="https://www.youtube.com/embed/26JofclHeZc" title="Fairy Finder gameplay video" loading="lazy" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
             <div class="project-card-body">
               <div class="project-card-title">Fairy Finder</div>
               <div class="project-card-role">Engineer/Lead, Technical Producer</div>
               <div class="project-card-text">AR game built as contract work for Niantic to showcase their Lightship SDK/API.</div>
-              <a href="https://youtu.be/26JofclHeZc" target="_blank" rel="noopener noreferrer" class="project-card-link">Watch Video</a>
             </div>
           </div>
         </div>
@@ -1584,6 +1636,7 @@
           <br>Drive engineering roadmap, sprint planning, release management, and task coordination.
           <br>Using AI-assisted tooling (Claude) to accelerate development across pipeline and operations work.
         </div>
+        <img src="img/personal-projects/waxheartSplash.jpg" alt="Waxheart" loading="lazy" class="splash-img" style="max-width: 320px; border: 1px solid var(--border-subtle);">
         <a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="project-group-link">View the Game &rarr;</a>
         <div class="project-cards">
           <div class="project-card">

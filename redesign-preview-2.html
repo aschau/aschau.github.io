@@ -1094,6 +1094,35 @@
       }
     }
 
+    .pg-card-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 0.4rem;
+      padding: 0.4rem;
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .pg-card-gallery img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border-radius: 3px;
+      display: block;
+    }
+
+    .pg-card-video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: none;
+      display: block;
+    }
+
+    .splash-img {
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
     @media (max-width: 480px) {
       .hero-badges { gap: 0.4rem; }
       .hero-badge { font-size: 0.55rem; padding: 0.35rem 0.7rem; }
@@ -1146,7 +1175,7 @@
   <section class="hero">
     <div class="hero-content">
       <div class="hero-sprite"></div>
-      <h1 class="hero-name">Andrew Steven <span class="accent">Chau</span></h1>
+      <h1 class="hero-name"><span class="accent">Andrew Steven Chau</span></h1>
       <div class="hero-typing">
         <span id="typing-text"></span><span class="hero-cursor">_</span>
       </div>
@@ -1336,10 +1365,10 @@
       </div>
       <div class="pg-body">
         <div class="pg-cards">
-          <div class="pg-card"><img src="img/work-projects/Trigger/starviewYardlineStat.jpg" alt="NFL Starview AR" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">NFL AR — Starview</div><div class="pg-card-role">Main Developer · Jun—Oct 2019</div><div class="pg-card-text">Live AR stat overlays for Dallas Cowboys games. Deployed on-site at NFL stadiums.</div><a href="projects/work/starview/starview.html" class="pg-link">Details</a></div></div>
-          <div class="pg-card"><img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" alt="NHL AR" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">NHL AR</div><div class="pg-card-role">Main Developer · Nov 2018—Jan 2019</div><div class="pg-card-text">Prototype live AR hockey rink rendering real-time game data. Deployed with Sharks and Golden Knights + Intel.</div><a href="projects/work/nhlAR/nhlAR.html" class="pg-link">Details</a></div></div>
-          <div class="pg-card"><img src="img/work-projects/Trigger/nbaARTiles.jpg" alt="NBA AR" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">NBA AR</div><div class="pg-card-role">Main Developer · Mar 2018—Sep 2019</div><div class="pg-card-text">Mobile AR game and portal via ARKit and ARCore.</div><a href="projects/work/nbaAR/nbaAR.html" class="pg-link">Details</a></div></div>
-          <div class="pg-card"><img src="img/work-projects/Trigger/lenovoMirageARExample.jpg" alt="Lenovo Mirage" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Lenovo Mirage AR</div><div class="pg-card-role">Developer/Support · Oct 2018</div><a href="projects/work/lenovoMirageAR/lenovoMirageAR.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/Trigger/starviewYardlineStat.jpg" alt="NFL Starview AR" class="pg-card-img-cover" loading="lazy"><div class="pg-card-gallery"><img src="img/work-projects/Trigger/starviewFootballTransition.jpg" alt="Starview transition" loading="lazy"><img src="img/work-projects/Trigger/starviewGenericStat.jpg" alt="Starview stat" loading="lazy"></div><div class="pg-card-body"><div class="pg-card-title">NFL AR — Starview</div><div class="pg-card-role">Main Developer · Jun—Oct 2019</div><div class="pg-card-text">Live AR stat overlays for Dallas Cowboys games. Deployed on-site at NFL stadiums.</div><a href="projects/work/starview/starview.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/Trigger/nhlARSplash.jpg" alt="NHL AR splash" class="pg-card-img-cover" loading="lazy"><div class="pg-card-gallery"><img src="img/work-projects/Trigger/nhlARHome.jpg" alt="NHL AR home" loading="lazy"><img src="img/work-projects/Trigger/nhlARExample.jpg" alt="NHL AR rink" loading="lazy"><img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" alt="NHL AR player" loading="lazy"></div><div class="pg-card-body"><div class="pg-card-title">NHL AR</div><div class="pg-card-role">Main Developer · Nov 2018—Jan 2019</div><div class="pg-card-text">Prototype live AR hockey rink rendering real-time game data. Deployed with Sharks and Golden Knights + Intel.</div><a href="projects/work/nhlAR/nhlAR.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/Trigger/nbaARMain.jpg" alt="NBA AR main" class="pg-card-img-cover" loading="lazy"><div class="pg-card-gallery"><img src="img/work-projects/Trigger/nbaARTiles.jpg" alt="NBA AR tiles" loading="lazy"><img src="img/work-projects/Trigger/nbaARExample.jpg" alt="NBA AR experience" loading="lazy"></div><div class="pg-card-body"><div class="pg-card-title">NBA AR</div><div class="pg-card-role">Main Developer · Mar 2018—Sep 2019</div><div class="pg-card-text">Mobile AR game and portal via ARKit and ARCore.</div><a href="projects/work/nbaAR/nbaAR.html" class="pg-link">Details</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/Trigger/lenovoMirageARMain.jpg" alt="Lenovo Mirage" class="pg-card-img-cover" loading="lazy"><div class="pg-card-gallery"><img src="img/work-projects/Trigger/lenovoMirageARExample.jpg" alt="Lenovo gameplay" loading="lazy"></div><div class="pg-card-body"><div class="pg-card-title">Lenovo Mirage AR</div><div class="pg-card-role">Developer/Support · Oct 2018</div><a href="projects/work/lenovoMirageAR/lenovoMirageAR.html" class="pg-link">Details</a></div></div>
           <div class="pg-card"><img src="img/work-projects/Trigger/generalmills-starwar_main_01.jpeg" alt="Star Wars AR" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">General Mills — Star Wars AR</div><div class="pg-card-role">Developer · 2019</div><a href="https://www.triggerxr.com/work/general-mills-do-good-for-the-galaxy-ar" target="_blank" rel="noopener noreferrer" class="pg-link">View Project</a></div></div>
           <div class="pg-card"><img src="img/work-projects/Trigger/moviebill_feature_main_v02.jpg" alt="Moviebill" class="pg-card-img-cover" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Moviebill</div><div class="pg-card-role">Developer · 2018</div><a href="https://www.triggerxr.com/work/moviebill" target="_blank" rel="noopener noreferrer" class="pg-link">View Project</a></div></div>
         </div>
@@ -1356,7 +1385,7 @@
       </div>
       <div class="pg-body">
         <div class="pg-cards">
-          <div class="pg-card"><img src="img/work-projects/SuperToyBox/stb-cap-subaru2.png" alt="Subaru Wheelstand" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Subaru Wheelstand</div><div class="pg-card-role">Sole Client Developer</div><div class="pg-card-text">Client app from start to release for the show floor. Dynamic CMS content by VIN.</div><a href="https://www.offekt.com/archive/work/subaru-wheelstand.html" target="_blank" rel="noopener noreferrer" class="pg-link">View Project</a></div></div>
+          <div class="pg-card"><img src="img/work-projects/SuperToyBox/stb-cap-subaru2.png" alt="Subaru Wheelstand" class="pg-card-img" loading="lazy"><div class="pg-card-gallery"><img src="img/work-projects/SuperToyBox/subaru2-1-p-2600.jpg" alt="Vehicle detail" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-2-p-2600.jpg" alt="Feature highlights" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-3.png" alt="CMS content" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-4.png" alt="VIN content" loading="lazy"></div><div class="pg-card-body"><div class="pg-card-title">Subaru Wheelstand</div><div class="pg-card-role">Sole Client Developer</div><div class="pg-card-text">Client app from start to release for the show floor. Dynamic CMS content by VIN.</div><a href="https://www.offekt.com/archive/work/subaru-wheelstand.html" target="_blank" rel="noopener noreferrer" class="pg-link">View Project</a></div></div>
           <div class="pg-card"><img src="img/work-projects/SuperToyBox/vrFactory.PNG" alt="VR Factory" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">VR Factory</div><div class="pg-card-role">Client Developer</div><div class="pg-card-text">Unity client pulling from custom CMS to deploy custom builds.</div><a href="https://www.offekt.com/archive/supertoybox.html" target="_blank" rel="noopener noreferrer" class="pg-link">View Project</a></div></div>
         </div>
       </div>
@@ -1381,6 +1410,7 @@
         <div class="pg-arrow">&#9662;</div>
       </div>
       <div class="pg-body">
+        <img src="img/personal-projects/friendCastleRainbow.png" alt="Friend Castle" loading="lazy" class="splash-img" style="max-width: 200px;">
         <div class="pg-desc">An indie game development LLC I co-founded with friends. We handle everything from design and engineering to production and publishing.</div>
         <a href="https://friendcastle.org/home" target="_blank" rel="noopener noreferrer" class="pg-link">Friend Castle Website →</a>
         <div class="pg-cards">
@@ -1389,8 +1419,8 @@
         </div>
         <div class="pg-subsection">Contract Work</div>
         <div class="pg-cards">
-          <div class="pg-card"><div class="pg-card-body"><div class="pg-card-title">Gnome Hunt</div><div class="pg-card-role">Engineer/Lead · Niantic Lightship</div><a href="https://youtu.be/GnhbABKCzQs" target="_blank" rel="noopener noreferrer" class="pg-link">Watch Video</a></div></div>
-          <div class="pg-card"><div class="pg-card-body"><div class="pg-card-title">Fairy Finder</div><div class="pg-card-role">Engineer/Lead · Niantic Lightship</div><a href="https://youtu.be/26JofclHeZc" target="_blank" rel="noopener noreferrer" class="pg-link">Watch Video</a></div></div>
+          <div class="pg-card"><iframe class="pg-card-video" src="https://www.youtube.com/embed/GnhbABKCzQs" title="Gnome Hunt gameplay video" loading="lazy" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="pg-card-body"><div class="pg-card-title">Gnome Hunt</div><div class="pg-card-role">Engineer/Lead · Niantic Lightship</div></div></div>
+          <div class="pg-card"><iframe class="pg-card-video" src="https://www.youtube.com/embed/26JofclHeZc" title="Fairy Finder gameplay video" loading="lazy" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="pg-card-body"><div class="pg-card-title">Fairy Finder</div><div class="pg-card-role">Engineer/Lead · Niantic Lightship</div></div></div>
         </div>
       </div>
     </div>
@@ -1405,6 +1435,7 @@
       </div>
       <div class="pg-body">
         <div class="pg-desc">DevOps engineer and technical producer for a distributed indie game team. Built entire build infrastructure from scratch — Jenkins CI/CD, Discord bot integration, Steamworks operations. Formed and lead the QA department.</div>
+        <img src="img/personal-projects/waxheartSplash.jpg" alt="Waxheart" loading="lazy" class="splash-img" style="max-width: 280px; border: 1px solid var(--border-dim);">
         <a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="pg-link">View the Game →</a>
         <div class="pg-cards">
           <div class="pg-card"><img src="img/personal-projects/waxheart%20jenkins%20pipeline.png" alt="Jenkins pipeline" class="pg-card-img" loading="lazy"><div class="pg-card-body"><div class="pg-card-title">Jenkins Build Pipeline</div></div></div>

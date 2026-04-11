@@ -311,6 +311,14 @@ function getMiseryLevel(index) {
   return MISERY_LEVELS[MISERY_LEVELS.length - 1].label;
 }
 
+function trackLevelChange(score, prevLevel, prevChangeTime, now) {
+  var level = getMiseryLevel(score);
+  return {
+    level: level,
+    changeTime: (level !== prevLevel) ? now : (prevChangeTime || now)
+  };
+}
+
 // ── Misery Calculation ───────────────────────────────────────
 var REDDIT_STALE_MS = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -454,26 +462,17 @@ async function main() {
   }
 
   // Track when misery levels last changed (for stable RSS GUIDs/pubDates)
-  var currentLevel = getMiseryLevel(miseryIndex);
-  var prevLevel = existing.lastLevel || null;
-  var lastLevelChangeTime = (currentLevel !== prevLevel)
-    ? now
-    : (existing.lastLevelChangeTime || now);
-
+  var allLevel = trackLevelChange(miseryIndex, existing.lastLevel || null, existing.lastLevelChangeTime, now);
   var officialScore = miseryResult.breakdown.status;
-  var currentOfficialLevel = getMiseryLevel(officialScore);
-  var prevOfficialLevel = existing.lastOfficialLevel || null;
-  var lastOfficialLevelChangeTime = (currentOfficialLevel !== prevOfficialLevel)
-    ? now
-    : (existing.lastOfficialLevelChangeTime || now);
+  var offLevel = trackLevelChange(officialScore, existing.lastOfficialLevel || null, existing.lastOfficialLevelChangeTime, now);
 
   const output = {
     lastUpdated: now,
     miseryIndex: miseryIndex,
-    lastLevel: currentLevel,
-    lastLevelChangeTime: lastLevelChangeTime,
-    lastOfficialLevel: currentOfficialLevel,
-    lastOfficialLevelChangeTime: lastOfficialLevelChangeTime,
+    lastLevel: allLevel.level,
+    lastLevelChangeTime: allLevel.changeTime,
+    lastOfficialLevel: offLevel.level,
+    lastOfficialLevelChangeTime: offLevel.changeTime,
     officialScore: officialScore,
     status: statusData || null,
     social: {
@@ -553,14 +552,6 @@ function generateRssFeeds(data) {
   var allLevelChangeTime = data.lastLevelChangeTime;
   var allItems = [];
 
-  var apiStatus = "Unknown";
-  if (data.status && data.status.components) {
-    var apiComp = data.status.components.find(function (c) {
-      return c.name.toLowerCase().indexOf("api") !== -1;
-    });
-    if (apiComp) apiStatus = apiComp.status.replace(/_/g, " ");
-  }
-
   allItems.push(
     "    <item>\n" +
     "      <title>Misery Index: " + escapeXml(data.miseryIndex.toFixed(1)) + "/10 — " + escapeXml(allLevel) + "</title>\n" +
@@ -569,10 +560,7 @@ function generateRssFeeds(data) {
     "      <pubDate>" + new Date(allLevelChangeTime).toUTCString() + "</pubDate>\n" +
     "      <description>" + escapeXml(
       "Score: " + data.miseryIndex.toFixed(1) + "/10 (" + allLevel + "). " +
-      "Status: " + statusDesc + ". " +
-      "API: " + apiStatus + ". " +
-      "Bluesky: " + (data.social ? data.social.recentPosts : 0) + " posts. " +
-      (data.reddit ? "Reddit: " + (data.reddit.recentPosts || 0) + " posts." : "")
+      "Status: " + statusDesc + "."
     ) + "</description>\n" +
     "      <category>misery-score</category>\n" +
     "    </item>"

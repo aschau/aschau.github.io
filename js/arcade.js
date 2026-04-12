@@ -12,6 +12,7 @@ var cabinets = document.querySelectorAll('.cabinet');
   var currentCard = 0;    // which card in carousel
   var currentTab = 0;     // which tab
   var layer = 0;          // 0=world, 1=cards, 2=tabs
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var ambients = {
     home: 'radial-gradient(ellipse at 40% 30%, #4a90d9, transparent 70%)',
@@ -54,10 +55,11 @@ var cabinets = document.querySelectorAll('.cabinet');
     if (!el) return;
     typingStarted = true;
     var roles = ["Senior Software Engineer","AR/XR Developer","Game Developer","Indie Developer"];
+    if (prefersReducedMotion) { el.textContent = roles[0]; return; }
     var ri=0,ci=0,del=false;
     function tick() {
       var el2 = document.getElementById("typing-text");
-      if (!el2) return; // stop if element removed (navigated away)
+      if (!el2) return;
       if(!del){el2.textContent=roles[ri].substring(0,ci+1);ci++;if(ci===roles[ri].length){del=true;setTimeout(tick,1800);return;}setTimeout(tick,80);}
       else{el2.textContent=roles[ri].substring(0,ci-1);ci--;if(ci===0){del=false;ri=(ri+1)%roles.length;setTimeout(tick,400);return;}setTimeout(tick,40);}
     }
@@ -83,7 +85,7 @@ var cabinets = document.querySelectorAll('.cabinet');
     var cards = getCards();
     cards.forEach(function(c, i) { c.classList.toggle('card-active', i === idx); });
     if (cards[idx]) {
-      cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      cards[idx].scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
     }
     // Journey section: swap jacket at MobilityWare (index 4)
     if (panelIds[currentCab] === 'journey' && contentSprite) {
@@ -201,8 +203,8 @@ var cabinets = document.querySelectorAll('.cabinet');
         var tabId = btn.dataset.tab;
         var bar = btn.closest('.tab-bar') || btn.parentElement;
         var tabs = Array.from(bar.querySelectorAll('.tab-btn'));
-        tabs.forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
+        tabs.forEach(function(b) { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+        btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
         contentEl.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
         var target = document.getElementById(tabId);
         if (target) target.classList.add('active');
@@ -405,6 +407,7 @@ var cabinets = document.querySelectorAll('.cabinet');
     if (layer !== 1) return;
     var cards = getCards();
     if (cards[currentCard] && !cards[currentCard].classList.contains('no-flip')) {
+      cards[currentCard].classList.remove('peek');
       cards[currentCard].classList.toggle('flipped');
       // Sprite jump
       if (contentSprite) {
@@ -447,7 +450,12 @@ var cabinets = document.querySelectorAll('.cabinet');
     else if (e.key === 'ArrowLeft') { e.preventDefault(); goLeft(); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); goUp(); }
     else if (e.key === 'ArrowDown') { e.preventDefault(); goDown(); }
-    else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipActive(); }
+    else if (e.key === ' ' || e.key === 'Enter') {
+      // Don't hijack Space/Enter on links, buttons, or iframes inside cards
+      var focused = document.activeElement;
+      if (focused && (focused.tagName === 'A' || focused.tagName === 'BUTTON' || focused.tagName === 'IFRAME')) return;
+      e.preventDefault(); flipActive();
+    }
   });
 
   // Card clicks — set as active and flip
@@ -455,6 +463,8 @@ var cabinets = document.querySelectorAll('.cabinet');
     var card = e.target.closest('.gc');
     if (!card) return;
     if (e.target.closest('a') || e.target.closest('iframe')) return;
+    // Don't flip when clicking an image — lightbox handles that
+    if (e.target.matches('.gc-art, .gc-art-contain, .gc-back-gallery img')) return;
     var cards = getCards();
     var idx = cards.indexOf(card);
     if (idx >= 0) {
@@ -463,6 +473,8 @@ var cabinets = document.querySelectorAll('.cabinet');
       if (wasWorld) { layer = 1; updateModeLabel(); }
       currentCard = idx;
       highlightCard(idx);
+      // Cancel peek animation if it's playing
+      card.classList.remove('peek');
       if (!card.classList.contains('no-flip')) card.classList.toggle('flipped');
 
       if (wasWorld) {

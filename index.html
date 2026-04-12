@@ -9,7 +9,9 @@
 </head>
 <body>
 
-<div class="lightbox" id="lightbox" onclick="this.classList.remove('open')"><img id="lightbox-img" src="" alt=""></div>
+<a href="#section-content" class="skip-nav">Skip to content</a>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Image viewer" onclick="this.classList.remove('open')"><img id="lightbox-img" src="" alt="Expanded image"></div>
 
 <div class="load-screen" id="load-screen">
   <div class="load-sprite"></div>
@@ -29,7 +31,7 @@
     <div class="screen-static"></div>
     <div class="screen-flicker"></div>
     <div class="content-area">
-    <div class="panel active" id="section-content"></div>
+    <div class="panel active" id="section-content" aria-live="polite"></div>
     </div><!-- /content-area -->
   </div><!-- /screen-bezel -->
 
@@ -56,20 +58,20 @@
   <!-- CONTROL PANEL -->
   <div class="controls">
     <div class="ctrl-section">
-      <button class="ctrl-btn" id="ctrl-up">&#9650;</button>
-      <button class="ctrl-btn" id="ctrl-down">&#9660;</button>
+      <button class="ctrl-btn" id="ctrl-up" aria-label="Navigate up">&#9650;</button>
+      <button class="ctrl-btn" id="ctrl-down" aria-label="Navigate down">&#9660;</button>
     </div>
     <div class="ctrl-sep"></div>
     <div class="ctrl-section">
-      <button class="ctrl-btn" id="ctrl-left">&#9664;</button>
-      <button class="ctrl-btn" id="ctrl-right">&#9654;</button>
+      <button class="ctrl-btn" id="ctrl-left" aria-label="Navigate left">&#9664;</button>
+      <button class="ctrl-btn" id="ctrl-right" aria-label="Navigate right">&#9654;</button>
     </div>
     <div class="ctrl-sep"></div>
     <div class="ctrl-section">
-      <button class="ctrl-btn ctrl-btn-action" id="ctrl-action" title="Space to flip">FLIP</button>
+      <button class="ctrl-btn ctrl-btn-action" id="ctrl-action" aria-label="Flip card">FLIP</button>
     </div>
     <div class="ctrl-sep"></div>
-    <span class="ctrl-label" id="ctrl-mode-label">WORLD</span>
+    <span class="ctrl-label" id="ctrl-mode-label" aria-live="polite">WORLD</span>
     <div class="ctrl-sep"></div>
     <span class="ctrl-label ctrl-hint">SPACE/ENTER=FLIP &middot; ARROWS=MOVE &middot; UP/DOWN=LAYER</span>
     <a href="privacy.html" class="ctrl-label ctrl-privacy">Privacy</a>

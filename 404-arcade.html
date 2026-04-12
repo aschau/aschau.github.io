@@ -19,10 +19,12 @@
     // Otherwise: show the 404 page below
   </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Outfit:wght@300;400;500;600&display=swap');
+    @font-face { font-family: 'Silkscreen'; font-weight: 400; font-display: swap; src: url('fonts/Silkscreen-Regular.woff2') format('woff2'); }
+    @font-face { font-family: 'Silkscreen'; font-weight: 700; font-display: swap; src: url('fonts/Silkscreen-Bold.woff2') format('woff2'); }
+    @font-face { font-family: 'Outfit'; font-weight: 300 700; font-display: swap; src: url('fonts/Outfit-Variable.woff2') format('woff2'); }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      height: 100vh; display: flex; flex-direction: column;
+      height: 100vh; height: 100dvh; display: flex; flex-direction: column;
       align-items: center; justify-content: center; text-align: center;
       background: #0c1020; color: #e4e8f7; font-family: 'Outfit', sans-serif;
     }

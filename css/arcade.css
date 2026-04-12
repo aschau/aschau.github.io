@@ -41,6 +41,30 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; overflow: hidden; background: var(--bg); font-family: 'Outfit', sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
 
+    /* Focus indicators for keyboard users */
+    :focus-visible {
+      outline: 2px solid var(--blue-light);
+      outline-offset: 2px;
+    }
+    .ctrl-btn:focus-visible { outline-offset: 1px; }
+    .gc-ln:focus-visible, .soc-btn:focus-visible { outline-offset: 0; }
+
+    /* Touch :active feedback */
+    .gc-ln:active { background: var(--blue-dim); border-color: var(--border-glow); }
+    .soc-btn:active { border-color: var(--border-glow); color: var(--blue-light); background: var(--blue-dim); }
+    .tab-btn:active { border-color: var(--border-glow); color: var(--text-soft); }
+    .cabinet:active { transform: translateY(-3px); }
+
+    /* Skip navigation */
+    .skip-nav {
+      position: absolute; top: -100%; left: 50%; transform: translateX(-50%);
+      font-family: 'Silkscreen', cursive; font-size: 0.7rem;
+      color: var(--bg); background: var(--blue-light);
+      padding: 0.5rem 1.2rem; border-radius: 0 0 6px 6px;
+      z-index: 10002; text-decoration: none;
+    }
+    .skip-nav:focus { top: 0; }
+
     /* ===== SPLIT LAYOUT ===== */
     .layout { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 
@@ -289,6 +313,7 @@
       border-top: 1px solid rgba(255,255,255,0.04);
       display: flex; align-items: center; justify-content: center; gap: 12px;
       position: relative; z-index: 20;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     .controls::before {
@@ -724,9 +749,13 @@
     /* Gallery thumbnails on back */
     .gc-back-gallery {
       display: flex; gap: 3px; margin-top: 8px;
-      flex: 1; min-height: 0; align-items: flex-start; justify-content: center;
+      flex: 2; min-height: 0; align-items: center; justify-content: center;
+      overflow: hidden;
     }
-    .gc-back-gallery img { max-width: 100%; object-fit: contain; border-radius: 2px; cursor: zoom-in; }
+    .gc-back-gallery img {
+      flex: 1; min-width: 0; max-height: 100%; object-fit: contain;
+      border-radius: 2px; cursor: zoom-in;
+    }
 
     /* Lightbox for expanding images */
     .lightbox {
@@ -846,7 +875,7 @@
       .p-title { font-size: 1.1rem; margin-bottom: 0.25rem; }
 
       /* Cards — fill width, leave room for sprite below */
-      .gc { width: min(280px, 72vw); height: calc(100vh - 330px); min-height: 260px; max-height: 400px; }
+      .gc { width: min(280px, 72vw); height: calc(100vh - 330px); height: calc(100dvh - 330px); min-height: 260px; max-height: 400px; }
       .gc-name { font-size: 0.7rem; }
       .gc-type { font-size: 0.45rem; }
       .gc-flavor { font-size: 0.65rem; padding: 5px 10px; line-height: 1.45; }
@@ -900,7 +929,7 @@
       .ctrl-sep { height: 18px; margin: 0 1px; }
       .ctrl-label { font-size: 0.38rem; }
       .ctrl-hint { display: none; }
-      .ctrl-privacy { display: none; }
+      .ctrl-privacy { font-size: 0.3rem; right: 4px; }
 
       /* Content sprite — big enough to see clearly */
       .content-sprite { transform: translateX(-50%) scale(1); }
@@ -931,7 +960,7 @@
 
     /* Small phones (iPhone SE: 375px) */
     @media (max-width: 400px) {
-      .gc { width: 200px; height: calc(100vh - 400px); min-height: 180px; max-height: 280px; }
+      .gc { width: 200px; height: calc(100vh - 400px); height: calc(100dvh - 400px); min-height: 180px; max-height: 280px; }
       .card-carousel { padding: 0rem calc(50% - 100px) 0rem; }
       .p-title { font-size: 0.95rem; margin-bottom: 0.2rem; }
       .panel { padding: 0.45rem 0.5rem 0.1rem; }
@@ -949,7 +978,7 @@
       .panel { padding: 0.3rem 1rem; }
       .p-tag { font-size: 0.55rem; }
       .p-title { font-size: 1.3rem; margin-bottom: 0.15rem; }
-      .gc { width: 240px; height: calc(100vh - 370px); min-height: 320px; max-height: 480px; }
+      .gc { width: 240px; height: calc(100vh - 370px); height: calc(100dvh - 370px); min-height: 320px; max-height: 480px; }
       .card-carousel { padding: 0rem calc(50% - 120px) 0rem; }
       .tab-bar { margin-top: 0.1rem; margin-bottom: 0.1rem; }
       .tab-btn { font-size: 0.6rem; padding: 0.4rem 0.8rem; }

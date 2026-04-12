@@ -579,6 +579,13 @@ var cabinets = document.querySelectorAll('.cabinet');
         // Start typing if home loaded
         startTyping();
 
+        // Mobile: "click to flip" → "tap to flip"
+        if ('ontouchstart' in window || window.innerWidth <= 768) {
+          contentEl.querySelectorAll('.gc-flip-hint').forEach(function(el) {
+            el.textContent = 'tap to flip';
+          });
+        }
+
         // Fade out loading screen
         setTimeout(function() {
           var ls = document.getElementById('load-screen');

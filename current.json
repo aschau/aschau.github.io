@@ -1,0 +1,5201 @@
+{
+  "lastUpdated": "2026-04-12T19:23:28.426Z",
+  "miseryIndex": 0.5,
+  "lastLevel": "ALL CLEAR",
+  "lastLevelChangeTime": "2026-04-11T19:06:33.541Z",
+  "lastOfficialLevel": "ALL CLEAR",
+  "lastOfficialLevelChangeTime": "2026-04-10T23:22:12.932Z",
+  "officialScore": 0,
+  "status": {
+    "page": {
+      "id": "tymt9n04zgry",
+      "name": "Claude",
+      "url": "https://status.claude.com",
+      "time_zone": "Etc/UTC",
+      "updated_at": "2026-04-12T17:22:43.508Z"
+    },
+    "components": [
+      {
+        "id": "rwppv331jlwc",
+        "name": "claude.ai",
+        "status": "operational",
+        "created_at": "2023-07-11T17:52:24.275Z",
+        "updated_at": "2026-04-10T16:51:44.065Z",
+        "position": 1,
+        "description": null,
+        "showcase": true,
+        "start_date": "2023-07-11",
+        "group_id": null,
+        "page_id": "tymt9n04zgry",
+        "group": false,
+        "only_show_if_degraded": false
+      },
+      {
+        "id": "0qbwn08sd68x",
+        "name": "platform.claude.com (formerly console.anthropic.com)",
+        "status": "operational",
+        "created_at": "2023-07-11T17:52:49.982Z",
+        "updated_at": "2026-04-10T16:51:44.086Z",
+        "position": 2,
+        "description": null,
+        "showcase": true,
+        "start_date": "2023-07-11",
+        "group_id": null,
+        "page_id": "tymt9n04zgry",
+        "group": false,
+        "only_show_if_degraded": false
+      },
+      {
+        "id": "k8w3r06qmzrp",
+        "name": "Claude API (api.anthropic.com)",
+        "status": "operational",
+        "created_at": "2023-07-11T17:53:10.880Z",
+        "updated_at": "2026-04-10T16:51:44.106Z",
+        "position": 3,
+        "description": null,
+        "showcase": true,
+        "start_date": "2023-07-11",
+        "group_id": null,
+        "page_id": "tymt9n04zgry",
+        "group": false,
+        "only_show_if_degraded": false
+      },
+      {
+        "id": "yyzkbfz2thpt",
+        "name": "Claude Code",
+        "status": "operational",
+        "created_at": "2025-05-22T21:35:29.822Z",
+        "updated_at": "2026-04-10T16:51:44.128Z",
+        "position": 4,
+        "description": null,
+        "showcase": true,
+        "start_date": "2025-02-06",
+        "group_id": null,
+        "page_id": "tymt9n04zgry",
+        "group": false,
+        "only_show_if_degraded": false
+      },
+      {
+        "id": "bpp5gb3hpjcl",
+        "name": "Claude Cowork",
+        "status": "operational",
+        "created_at": "2026-04-01T17:39:47.692Z",
+        "updated_at": "2026-04-10T16:51:44.147Z",
+        "position": 5,
+        "description": null,
+        "showcase": true,
+        "start_date": "2026-04-01",
+        "group_id": null,
+        "page_id": "tymt9n04zgry",
+        "group": false,
+        "only_show_if_degraded": false
+      },
+      {
+        "id": "0scnb50nvy53",
+        "name": "Claude for Government",
+        "status": "operational",
+        "created_at": "2026-02-17T23:24:51.249Z",
+        "updated_at": "2026-03-27T11:04:15.334Z",
+        "position": 6,
+        "description": null,
+        "showcase": true,
+        "start_date": "2026-02-17",
+        "group_id": null,
+        "page_id": "tymt9n04zgry",
+        "group": false,
+        "only_show_if_degraded": false
+      }
+    ],
+    "incidents": [],
+    "scheduled_maintenances": [],
+    "status": {
+      "indicator": "none",
+      "description": "All Systems Operational"
+    }
+  },
+  "social": {
+    "recentPosts": 4,
+    "recentComments": 3,
+    "topPosts": [
+      {
+        "title": "Evergreen post: “I use Claude Code every day and this week it’s totally unusable.” I need to make an agent that just pos...",
+        "author": "fullstackdrip.com",
+        "score": 1,
+        "url": "https://bsky.app/profile/did:plc:2ix7s7cptdhudyxla3hwf4zd/post/3mjauw25hh22l",
+        "created": "2026-04-11T22:24:54.658Z",
+        "source": "bluesky",
+        "category": "outage"
+      },
+      {
+        "title": "The Claude outage today is a reminder for solo founders: don't let your marketing rely on a single point of failure. 🛠️...",
+        "author": "blogburst.bsky.social",
+        "score": 0,
+        "url": "https://bsky.app/profile/did:plc:ze7jmgvxw7bidbr2ikr4hkhl/post/3mjctz2jxcw22",
+        "created": "2026-04-12T17:14:01.360Z",
+        "source": "bluesky",
+        "category": "outage"
+      },
+      {
+        "title": "$120M total into code verification while every foundation model lab is racing to make code gen more reliable. Qodo's bet...",
+        "author": "rigorvc.bsky.social",
+        "score": 0,
+        "url": "https://bsky.app/profile/did:plc:gm6vzcved5mpt6x27bqbpica/post/3mjbxrpqqu22v",
+        "created": "2026-04-12T08:48:51.055Z",
+        "source": "bluesky",
+        "category": "outage"
+      },
+      {
+        "title": "And Claude is still unusable to write proficient code. Still find flaws from 3 day vibe coding. Happy hackers.",
+        "author": "quiz.baby",
+        "score": 0,
+        "url": "https://bsky.app/profile/did:plc:3ogtdpewjoxcdwyxy2nylpxb/post/3mjanunh4pk2x",
+        "created": "2026-04-11T20:18:52.252Z",
+        "source": "bluesky",
+        "category": "outage"
+      }
+    ]
+  },
+  "reddit": {
+    "lastFetched": "2026-04-10T18:07:31.032Z",
+    "recentPosts": 8,
+    "outagePosts": 6,
+    "usagePosts": 2,
+    "recentComments": 85,
+    "topPosts": [
+      {
+        "title": "Claude tried to end 3 work sessions for me this week and now I can't tell if it's \"wellbeing\" or quiet rate limiting",
+        "author": "Ambitious-Garbage-73",
+        "score": 20,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1shp2i3/claude_tried_to_end_3_work_sessions_for_me_this/",
+        "created": "2026-04-10T15:02:18.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "usage",
+        "topComments": [
+          {
+            "author": "AutomataManifold",
+            "score": 12,
+            "body": "I've mostly been assuming that it's a sign that the context is getting too full to continue without compacting or switching to a different session.",
+            "created": "2026-04-10T15:17:08.000Z"
+          },
+          {
+            "author": "geek_fit",
+            "score": 9,
+            "body": "I also got tired of it discounting ideas because they were \"a lot of work.\". And then me having to remind it that I don't care how much work it has to...",
+            "created": "2026-04-10T15:15:14.000Z"
+          },
+          {
+            "author": "martin1744",
+            "score": 8,
+            "body": "Anthropic reinvented rate limits as self-care",
+            "created": "2026-04-10T15:31:46.000Z"
+          }
+        ]
+      },
+      {
+        "title": "Opus 4.6 Extended thinking... not thinking anymore?",
+        "author": "Just_Magazine_6051",
+        "score": 18,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1shkq5y/opus_46_extended_thinking_not_thinking_anymore/",
+        "created": "2026-04-10T12:11:13.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "outage",
+        "topComments": [
+          {
+            "author": "5eans4mazing",
+            "score": 6,
+            "body": "Mine stopped thinking this morning. It’s like talking to GPT 3. It just pumps out a block of text fairly quickly with no steps in its process like it ...",
+            "created": "2026-04-10T13:06:53.000Z"
+          }
+        ]
+      },
+      {
+        "title": "New \"Token Budget\" Feature?",
+        "author": "i_maq",
+        "score": 4,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1shq1rz/new_token_budget_feature/",
+        "created": "2026-04-10T15:37:09.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "outage"
+      },
+      {
+        "title": "I run Claude Code on my server over SSH — built a mobile IDE so I stop app-switching",
+        "author": "kweizaa",
+        "score": 1,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sht8ls/i_run_claude_code_on_my_server_over_ssh_built_a/",
+        "created": "2026-04-10T17:29:15.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "outage"
+      },
+      {
+        "title": "Your AI coding agent doesn't know your business rules. How are you dealing with that?",
+        "author": "rahulmahibananto",
+        "score": 1,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1shibls/your_ai_coding_agent_doesnt_know_your_business/",
+        "created": "2026-04-10T10:09:14.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "outage"
+      },
+      {
+        "title": "My Claude.md file",
+        "author": "Buffaloherde",
+        "score": 1,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sgrl3a/my_claudemd_file/",
+        "created": "2026-04-09T14:42:30.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "outage"
+      },
+      {
+        "title": "How to save 80% on your claude bill with better context",
+        "author": "Illustrious_Elk3705",
+        "score": 0,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1shmmb8/how_to_save_80_on_your_claude_bill_with_better/",
+        "created": "2026-04-10T13:30:32.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "usage"
+      },
+      {
+        "title": "Anthropic's new AI escaped a sandbox, emailed the researcher, then bragged about it on public forums",
+        "author": "karmendra_choudhary",
+        "score": 0,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sh0yz6/anthropics_new_ai_escaped_a_sandbox_emailed_the/",
+        "created": "2026-04-09T20:15:25.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "outage"
+      }
+    ]
+  },
+  "incidents": [
+    {
+      "name": "Email login down",
+      "status": "resolved",
+      "impact": "major",
+      "createdAt": "2026-04-11T00:00:20.098Z",
+      "updatedAt": "2026-04-11T00:00:59.545Z",
+      "url": "https://stspg.io/tp29skc2n4p9",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "Email login was broken between approximately 3:46 PM and 4:52 PM PDT on April 10, 2026.",
+          "createdAt": "2026-04-11T00:00:20.140Z"
+        }
+      ]
+    },
+    {
+      "name": "Elevated errors on requests to Claude models",
+      "status": "resolved",
+      "impact": "minor",
+      "createdAt": "2026-04-10T16:30:38.844Z",
+      "updatedAt": "2026-04-10T16:51:44.204Z",
+      "url": "https://stspg.io/hfbfvplmg5s1",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "The issue affecting requests to non-Opus models has been resolved.",
+          "createdAt": "2026-04-10T16:51:44.183Z"
+        },
+        {
+          "status": "identified",
+          "body": "We have identified the current issue as affecting requests to models other than Claude Opus 4.6, and are working to fully resolve this issue. We will provide additional updates shortly.",
+          "createdAt": "2026-04-10T16:42:05.152Z"
+        },
+        {
+          "status": "investigating",
+          "body": "We are investigating reports of elevated errors on requests to Claude across all products. We will provide an update as soon as possible.",
+          "createdAt": "2026-04-10T16:30:39.029Z"
+        }
+      ]
+    },
+    {
+      "name": "Some Claude.ai share links were inaccessible",
+      "status": "resolved",
+      "impact": "minor",
+      "createdAt": "2026-04-10T14:00:00.000Z",
+      "updatedAt": "2026-04-10T17:38:28.361Z",
+      "url": "https://stspg.io/x2g8g3pkcqtk",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "Between April 2 and April 10, some users who were not signed in to Claude.ai (web, mobile, desktop) were not able to access some Claude.ai sharing links.",
+          "createdAt": "2026-04-10T17:38:16.464Z"
+        }
+      ]
+    },
+    {
+      "name": "Degraded Performance on Vaults",
+      "status": "resolved",
+      "impact": "minor",
+      "createdAt": "2026-04-10T04:28:06.379Z",
+      "updatedAt": "2026-04-10T04:38:02.142Z",
+      "url": "https://stspg.io/fzv1qyjb3j1b",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-04-10T04:38:02.124Z"
+        },
+        {
+          "status": "monitoring",
+          "body": "A fix has been implemented and we are monitoring the results.",
+          "createdAt": "2026-04-10T04:36:07.730Z"
+        },
+        {
+          "status": "investigating",
+          "body": "We are currently investigating this issue.",
+          "createdAt": "2026-04-10T04:28:06.449Z"
+        }
+      ]
+    },
+    {
+      "name": "Elevated Connector Error Rates",
+      "status": "resolved",
+      "impact": "minor",
+      "createdAt": "2026-04-09T16:54:18.801Z",
+      "updatedAt": "2026-04-09T17:34:00.068Z",
+      "url": "https://stspg.io/3qh7qtgrvprd",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-04-09T17:34:00.052Z"
+        },
+        {
+          "status": "monitoring",
+          "body": "A fix has been implemented and we are monitoring the results.",
+          "createdAt": "2026-04-09T17:33:33.263Z"
+        },
+        {
+          "status": "investigating",
+          "body": "Certain connectors are experiencing higher error rates. We are investigating the issue.",
+          "createdAt": "2026-04-09T16:54:18.955Z"
+        }
+      ]
+    },
+    {
+      "name": "Sonnet 4.6 elevated rate of errors",
+      "status": "resolved",
+      "impact": "minor",
+      "createdAt": "2026-04-09T08:07:21.160Z",
+      "updatedAt": "2026-04-09T08:53:20.043Z",
+      "url": "https://stspg.io/f2kvgw1r8ky0",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-04-09T08:53:20.029Z"
+        },
+        {
+          "status": "identified",
+          "body": "The issue has been identified and a fix is being implemented.",
+          "createdAt": "2026-04-09T08:07:21.297Z"
+        }
+      ]
+    },
+    {
+      "name": "Errors when connecting to Claude.ai",
+      "status": "resolved",
+      "impact": "none",
+      "createdAt": "2026-04-08T23:57:07.068Z",
+      "updatedAt": "2026-04-08T23:57:07.131Z",
+      "url": "https://stspg.io/7kl6qq3lldmg",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "Some users experienced an error when trying to access Claude.ai on desktop and the web from 23:22–23:50 UTC. This issue has now been resolved.",
+          "createdAt": "2026-04-08T23:57:07.118Z"
+        }
+      ]
+    },
+    {
+      "name": "Outage affecting Workspace Creation",
+      "status": "resolved",
+      "impact": "none",
+      "createdAt": "2026-04-08T19:22:09.645Z",
+      "updatedAt": "2026-04-08T19:40:06.658Z",
+      "url": "https://stspg.io/vxzqkwltrx9k",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "The issue affecting API workspace creation has been resolved. Impact occurred from approximately 4:15 PM to 7:30 PM UTC.",
+          "createdAt": "2026-04-08T19:40:06.642Z"
+        },
+        {
+          "status": "monitoring",
+          "body": "A fix has been deployed for the issue affecting API workspace creation and we are monitoring for recovery.",
+          "createdAt": "2026-04-08T19:28:25.387Z"
+        },
+        {
+          "status": "investigating",
+          "body": "We are investigating errors related to creating workspaces via the Claude Console at platform.claude.com and via the admin API\n\nOther functionality including inference and the messages API is not impacted",
+          "createdAt": "2026-04-08T19:22:09.688Z"
+        }
+      ]
+    },
+    {
+      "name": "Elevated errors on Claude.ai, API, Claude Code",
+      "status": "resolved",
+      "impact": "minor",
+      "createdAt": "2026-04-08T17:46:29.202Z",
+      "updatedAt": "2026-04-08T17:50:17.855Z",
+      "url": "https://stspg.io/klpxt3yk80m8",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "From 17:25–17:44 UTC, we saw elevated errors on attempts to log into Claude.ai (mobile, web, and desktop) and platform.claude.com, as well as /login attempts via Claude Code. This issue is now resolved.",
+          "createdAt": "2026-04-08T17:50:17.838Z"
+        },
+        {
+          "status": "investigating",
+          "body": "We are currently investigating an issue with authentication across multiple product surfaces.",
+          "createdAt": "2026-04-08T17:46:29.370Z"
+        }
+      ]
+    },
+    {
+      "name": "Sonnet 4.6 elevated rate of errors",
+      "status": "resolved",
+      "impact": "major",
+      "createdAt": "2026-04-08T06:23:25.066Z",
+      "updatedAt": "2026-04-08T09:33:39.675Z",
+      "url": "https://stspg.io/9p1s3snnkxrj",
+      "updates": [
+        {
+          "status": "resolved",
+          "body": "The incident is now resolved. Sonnet 4.6 exhibited errors above baseline between 23:00 PT / 7:00 UTC and 1:50 PT / 9:50 UTC.",
+          "createdAt": "2026-04-08T09:33:39.659Z"
+        },
+        {
+          "status": "monitoring",
+          "body": "A fix has been implemented and we are monitoring the results.",
+          "createdAt": "2026-04-08T09:01:05.880Z"
+        },
+        {
+          "status": "identified",
+          "body": "The issue has been identified and a fix is being implemented.",
+          "createdAt": "2026-04-08T07:59:02.384Z"
+        }
+      ]
+    }
+  ],
+  "history": [
+    {
+      "timestamp": "2026-04-05T07:44:16.518Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-05T07:52:20.282Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T08:07:20.230Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T08:22:20.138Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T08:27:13.722Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-05T08:37:20.264Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T08:52:20.594Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T09:07:22.277Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T09:10:51.354Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T09:22:22.268Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T09:37:22.347Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T09:52:21.990Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T09:58:25.972Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T10:07:21.779Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T10:22:23.262Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T10:37:22.608Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T10:49:32.175Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T10:52:23.141Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T11:07:24.614Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T11:22:23.192Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T11:36:28.401Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T11:37:23.128Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T11:52:22.847Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T12:00:56.828Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T12:07:23.835Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T12:22:24.280Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T12:37:23.230Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T12:52:23.056Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T13:07:22.140Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T13:22:22.977Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T13:31:16.119Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T13:37:22.666Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T13:52:23.941Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T14:07:22.656Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T14:22:26.816Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T14:37:24.236Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T14:52:23.613Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T15:03:42.221Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T15:07:23.034Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T15:22:27.669Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T15:37:24.777Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T15:49:06.658Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T15:52:25.802Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T16:07:26.166Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T16:22:26.320Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T16:37:26.283Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T16:43:57.031Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T16:52:26.364Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T17:07:27.681Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T17:17:47.501Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T17:22:27.257Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T17:37:26.246Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T17:52:25.688Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T17:59:14.010Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T18:07:24.638Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T18:22:25.009Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T18:37:24.045Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T18:52:23.159Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T19:00:51.051Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T19:07:25.264Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T19:22:25.745Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T19:37:24.959Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T19:50:12.651Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T19:52:23.508Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T20:07:24.070Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T20:22:25.301Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T20:37:24.645Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T20:41:21.797Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T20:52:24.486Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-05T21:07:24.780Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T21:16:15.095Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T21:22:23.907Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T21:37:25.500Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T21:52:24.314Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T21:56:53.214Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T22:07:24.019Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T22:22:23.678Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T22:37:25.782Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T22:42:27.239Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T22:52:23.555Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T23:07:24.411Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T23:18:46.444Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T23:22:24.743Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T23:37:25.797Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T23:52:30.018Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-05T23:59:26.145Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T00:07:23.826Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T00:22:20.002Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T00:37:20.584Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T00:52:17.468Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T01:07:18.119Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T01:22:18.407Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T01:37:17.428Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T01:52:17.871Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T02:07:17.853Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-06T02:22:18.148Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-06T02:37:19.448Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-06T02:52:18.783Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T03:07:18.002Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T03:22:17.610Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T03:35:52.857Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T03:37:18.471Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T03:52:17.340Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T04:07:17.457Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T04:22:18.231Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T04:37:19.462Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T04:52:20.530Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T05:07:19.874Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T05:22:19.422Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T05:37:20.169Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T05:52:13.426Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T05:52:19.951Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T06:07:20.058Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T06:22:19.419Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T06:37:20.061Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T06:52:20.641Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T07:07:20.623Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T07:22:19.812Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T07:37:19.787Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T07:52:20.999Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T07:54:51.358Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-06T08:07:20.721Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T08:22:19.833Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T08:37:20.982Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T08:52:20.432Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T09:07:20.212Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T09:16:27.465Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T09:22:20.772Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T09:37:20.455Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T09:52:20.259Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T10:07:20.409Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T10:22:21.300Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T10:37:19.766Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T10:38:17.908Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T10:52:20.646Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T11:07:21.199Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T11:22:21.138Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T11:36:17.716Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T11:37:21.256Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T11:52:20.413Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T12:07:21.313Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T12:22:20.722Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T12:37:22.494Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T12:38:18.538Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T12:52:23.208Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T13:07:22.525Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T13:22:21.407Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T13:37:23.762Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T13:52:22.976Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T14:00:52.218Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T14:07:20.486Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T14:22:22.556Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T14:37:21.787Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T14:52:20.214Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T15:07:32.220Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-06T15:22:20.921Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-06T15:37:21.464Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-06T15:52:22.979Z",
+      "miseryIndex": 5.5,
+      "statusIndicator": "minor",
+      "postCount": 8,
+      "commentCount": 6
+    },
+    {
+      "timestamp": "2026-04-06T16:02:55.828Z",
+      "miseryIndex": 6.5,
+      "statusIndicator": "minor",
+      "postCount": 11,
+      "commentCount": 7
+    },
+    {
+      "timestamp": "2026-04-06T16:07:24.272Z",
+      "miseryIndex": 6.5,
+      "statusIndicator": "minor",
+      "postCount": 14,
+      "commentCount": 7
+    },
+    {
+      "timestamp": "2026-04-06T16:22:21.510Z",
+      "miseryIndex": 7.5,
+      "statusIndicator": "minor",
+      "postCount": 15,
+      "commentCount": 10
+    },
+    {
+      "timestamp": "2026-04-06T16:37:21.173Z",
+      "miseryIndex": 7.5,
+      "statusIndicator": "minor",
+      "postCount": 20,
+      "commentCount": 10
+    },
+    {
+      "timestamp": "2026-04-06T16:52:22.541Z",
+      "miseryIndex": 7.5,
+      "statusIndicator": "minor",
+      "postCount": 20,
+      "commentCount": 10
+    },
+    {
+      "timestamp": "2026-04-06T17:07:22.254Z",
+      "miseryIndex": 7.5,
+      "statusIndicator": "minor",
+      "postCount": 27,
+      "commentCount": 11
+    },
+    {
+      "timestamp": "2026-04-06T17:08:27.847Z",
+      "miseryIndex": 7.5,
+      "statusIndicator": "minor",
+      "postCount": 27,
+      "commentCount": 11
+    },
+    {
+      "timestamp": "2026-04-06T17:22:18.840Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 29,
+      "commentCount": 13
+    },
+    {
+      "timestamp": "2026-04-06T17:37:18.298Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 32,
+      "commentCount": 16
+    },
+    {
+      "timestamp": "2026-04-06T17:52:20.687Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 35,
+      "commentCount": 19
+    },
+    {
+      "timestamp": "2026-04-06T18:06:21.411Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 35,
+      "commentCount": 19
+    },
+    {
+      "timestamp": "2026-04-06T18:07:18.036Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 36,
+      "commentCount": 19
+    },
+    {
+      "timestamp": "2026-04-06T18:22:20.279Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 37,
+      "commentCount": 19
+    },
+    {
+      "timestamp": "2026-04-06T18:37:18.996Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 39,
+      "commentCount": 19
+    },
+    {
+      "timestamp": "2026-04-06T18:52:15.077Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 45,
+      "commentCount": 22
+    },
+    {
+      "timestamp": "2026-04-06T19:07:13.018Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 46,
+      "commentCount": 21
+    },
+    {
+      "timestamp": "2026-04-06T19:22:19.216Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 46,
+      "commentCount": 25
+    },
+    {
+      "timestamp": "2026-04-06T19:31:20.611Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 47,
+      "commentCount": 28
+    },
+    {
+      "timestamp": "2026-04-06T19:37:19.152Z",
+      "miseryIndex": 4,
+      "statusIndicator": "none",
+      "postCount": 48,
+      "commentCount": 28
+    },
+    {
+      "timestamp": "2026-04-06T19:52:21.131Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 51,
+      "commentCount": 30
+    },
+    {
+      "timestamp": "2026-04-06T20:07:19.899Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 32
+    },
+    {
+      "timestamp": "2026-04-06T20:22:21.557Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 58,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-06T20:24:52.514Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 59,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-06T20:37:22.762Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 57,
+      "commentCount": 32
+    },
+    {
+      "timestamp": "2026-04-06T20:52:22.659Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 34
+    },
+    {
+      "timestamp": "2026-04-06T21:06:48.328Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-06T21:07:22.765Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 34
+    },
+    {
+      "timestamp": "2026-04-06T21:22:22.921Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 32
+    },
+    {
+      "timestamp": "2026-04-06T21:37:18.002Z",
+      "miseryIndex": 8.5,
+      "statusIndicator": "minor",
+      "postCount": 54,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-06T21:52:18.971Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 38
+    },
+    {
+      "timestamp": "2026-04-06T21:52:53.158Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 39
+    },
+    {
+      "timestamp": "2026-04-06T22:07:17.519Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 56,
+      "commentCount": 44
+    },
+    {
+      "timestamp": "2026-04-06T22:22:19.815Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 56,
+      "commentCount": 46
+    },
+    {
+      "timestamp": "2026-04-06T22:37:17.197Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 57,
+      "commentCount": 47
+    },
+    {
+      "timestamp": "2026-04-06T22:43:29.888Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 57,
+      "commentCount": 49
+    },
+    {
+      "timestamp": "2026-04-06T22:52:19.001Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 57,
+      "commentCount": 49
+    },
+    {
+      "timestamp": "2026-04-06T23:07:17.323Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 57,
+      "commentCount": 48
+    },
+    {
+      "timestamp": "2026-04-06T23:22:17.305Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 57,
+      "commentCount": 48
+    },
+    {
+      "timestamp": "2026-04-06T23:22:40.382Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 57,
+      "commentCount": 48
+    },
+    {
+      "timestamp": "2026-04-06T23:37:17.595Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 56,
+      "commentCount": 48
+    },
+    {
+      "timestamp": "2026-04-06T23:52:20.071Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 45
+    },
+    {
+      "timestamp": "2026-04-07T00:01:17.714Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 45
+    },
+    {
+      "timestamp": "2026-04-07T00:07:18.638Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 45
+    },
+    {
+      "timestamp": "2026-04-07T00:22:17.104Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 44
+    },
+    {
+      "timestamp": "2026-04-07T00:37:18.483Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 44
+    },
+    {
+      "timestamp": "2026-04-07T00:52:17.463Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 39
+    },
+    {
+      "timestamp": "2026-04-07T01:07:18.452Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 39
+    },
+    {
+      "timestamp": "2026-04-07T01:22:18.027Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 39
+    },
+    {
+      "timestamp": "2026-04-07T01:37:17.379Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 39
+    },
+    {
+      "timestamp": "2026-04-07T01:52:18.001Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 39
+    },
+    {
+      "timestamp": "2026-04-07T02:07:18.540Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 39
+    },
+    {
+      "timestamp": "2026-04-07T02:22:18.837Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 39
+    },
+    {
+      "timestamp": "2026-04-07T02:37:17.508Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 40
+    },
+    {
+      "timestamp": "2026-04-07T02:52:18.270Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 40
+    },
+    {
+      "timestamp": "2026-04-07T03:07:18.230Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 42
+    },
+    {
+      "timestamp": "2026-04-07T03:22:17.986Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 42
+    },
+    {
+      "timestamp": "2026-04-07T03:32:21.448Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 42
+    },
+    {
+      "timestamp": "2026-04-07T03:37:18.091Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 42
+    },
+    {
+      "timestamp": "2026-04-07T03:52:17.474Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T04:07:17.526Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T04:22:18.947Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T04:37:17.341Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T04:52:17.904Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T05:07:18.613Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T05:22:18.705Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T05:30:24.429Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T05:37:22.065Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T05:52:21.154Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T06:07:21.167Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T06:22:20.025Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T06:37:20.435Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T06:52:21.642Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 56,
+      "commentCount": 45
+    },
+    {
+      "timestamp": "2026-04-07T06:56:34.567Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 56,
+      "commentCount": 45
+    },
+    {
+      "timestamp": "2026-04-07T07:07:25.028Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T07:22:27.711Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 42
+    },
+    {
+      "timestamp": "2026-04-07T07:37:23.307Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 41
+    },
+    {
+      "timestamp": "2026-04-07T07:52:22.512Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 41
+    },
+    {
+      "timestamp": "2026-04-07T08:07:22.671Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 41
+    },
+    {
+      "timestamp": "2026-04-07T08:17:50.462Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 41
+    },
+    {
+      "timestamp": "2026-04-07T08:22:21.971Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 41
+    },
+    {
+      "timestamp": "2026-04-07T08:37:22.543Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 41
+    },
+    {
+      "timestamp": "2026-04-07T08:52:24.054Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 41
+    },
+    {
+      "timestamp": "2026-04-07T09:07:23.140Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 41
+    },
+    {
+      "timestamp": "2026-04-07T09:22:23.810Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 42
+    },
+    {
+      "timestamp": "2026-04-07T09:37:24.482Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T09:46:13.463Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T09:52:23.079Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T10:07:22.903Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T10:22:23.368Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T10:37:22.384Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T10:52:22.442Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T11:04:22.897Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T11:07:23.340Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T11:22:27.142Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T11:37:22.982Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T11:52:28.564Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T12:03:57.866Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T12:07:34.176Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T12:22:23.948Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T12:37:25.857Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T12:52:24.976Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T13:07:35.050Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T13:22:24.708Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T13:37:28.940Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T13:52:28.937Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T14:02:50.056Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T14:07:30.052Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 54,
+      "commentCount": 43
+    },
+    {
+      "timestamp": "2026-04-07T14:22:26.499Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 45
+    },
+    {
+      "timestamp": "2026-04-07T14:37:36.384Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 45
+    },
+    {
+      "timestamp": "2026-04-07T14:52:32.980Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 55,
+      "commentCount": 45
+    },
+    {
+      "timestamp": "2026-04-07T15:07:37.569Z",
+      "miseryIndex": 10,
+      "statusIndicator": "major",
+      "postCount": 54,
+      "commentCount": 41
+    },
+    {
+      "timestamp": "2026-04-07T15:22:28.202Z",
+      "miseryIndex": 10,
+      "statusIndicator": "major",
+      "postCount": 54,
+      "commentCount": 38
+    },
+    {
+      "timestamp": "2026-04-07T15:37:26.624Z",
+      "miseryIndex": 10,
+      "statusIndicator": "major",
+      "postCount": 55,
+      "commentCount": 38
+    },
+    {
+      "timestamp": "2026-04-07T15:46:01.068Z",
+      "miseryIndex": 10,
+      "statusIndicator": "major",
+      "postCount": 55,
+      "commentCount": 38
+    },
+    {
+      "timestamp": "2026-04-07T15:52:25.993Z",
+      "miseryIndex": 10,
+      "statusIndicator": "major",
+      "postCount": 55,
+      "commentCount": 36
+    },
+    {
+      "timestamp": "2026-04-07T16:07:28.837Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-07T16:22:22.137Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 53,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-07T16:37:31.497Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 50,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-07T16:52:22.749Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 49,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-07T17:07:29.300Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 46,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-07T17:09:17.178Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 46,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-07T17:22:26.746Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 45,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-07T17:37:25.664Z",
+      "miseryIndex": 4.5,
+      "statusIndicator": "none",
+      "postCount": 45,
+      "commentCount": 35
+    },
+    {
+      "timestamp": "2026-04-07T17:52:21.693Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 42,
+      "commentCount": 31
+    },
+    {
+      "timestamp": "2026-04-07T18:07:31.261Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 42,
+      "commentCount": 31
+    },
+    {
+      "timestamp": "2026-04-07T18:10:26.246Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 42,
+      "commentCount": 31
+    },
+    {
+      "timestamp": "2026-04-07T18:22:24.372Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 41,
+      "commentCount": 29
+    },
+    {
+      "timestamp": "2026-04-07T18:37:21.305Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 39,
+      "commentCount": 29
+    },
+    {
+      "timestamp": "2026-04-07T18:52:21.839Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 39,
+      "commentCount": 29
+    },
+    {
+      "timestamp": "2026-04-07T19:07:20.047Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 38,
+      "commentCount": 28
+    },
+    {
+      "timestamp": "2026-04-07T19:22:19.946Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 38,
+      "commentCount": 28
+    },
+    {
+      "timestamp": "2026-04-07T19:34:03.503Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 37,
+      "commentCount": 27
+    },
+    {
+      "timestamp": "2026-04-07T19:37:22.173Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 36,
+      "commentCount": 27
+    },
+    {
+      "timestamp": "2026-04-07T19:52:19.488Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 34,
+      "commentCount": 26
+    },
+    {
+      "timestamp": "2026-04-07T20:07:18.173Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 31,
+      "commentCount": 24
+    },
+    {
+      "timestamp": "2026-04-07T20:22:17.509Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 29,
+      "commentCount": 22
+    },
+    {
+      "timestamp": "2026-04-07T20:27:18.708Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 28,
+      "commentCount": 20
+    },
+    {
+      "timestamp": "2026-04-07T20:37:19.046Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 27,
+      "commentCount": 19
+    },
+    {
+      "timestamp": "2026-04-07T20:52:19.992Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 27,
+      "commentCount": 19
+    },
+    {
+      "timestamp": "2026-04-07T21:07:18.466Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 28,
+      "commentCount": 19
+    },
+    {
+      "timestamp": "2026-04-07T21:22:20.034Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 28,
+      "commentCount": 19
+    },
+    {
+      "timestamp": "2026-04-07T21:25:39.529Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 28,
+      "commentCount": 19
+    },
+    {
+      "timestamp": "2026-04-07T21:37:19.178Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 27,
+      "commentCount": 19
+    },
+    {
+      "timestamp": "2026-04-07T21:52:18.713Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 25,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-07T22:06:49.555Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 24,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-07T22:07:18.698Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 24,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-07T22:22:18.063Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 23,
+      "commentCount": 5
+    },
+    {
+      "timestamp": "2026-04-07T22:37:18.743Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-07T22:52:23.817Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 23,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-07T23:00:22.121Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-07T23:07:21.370Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-07T23:22:22.218Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-07T23:37:20.674Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-07T23:52:11.670Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-07T23:52:30.626Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T00:07:21.288Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T00:22:18.223Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T00:37:18.776Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T00:52:20.002Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 20,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T01:07:18.716Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 19,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T01:22:18.872Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T01:37:19.577Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T01:52:21.240Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T02:07:21.013Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T02:22:19.678Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T02:37:19.006Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 4
+    },
+    {
+      "timestamp": "2026-04-08T02:52:18.413Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T02:56:52.741Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T03:07:18.489Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T03:22:17.824Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T03:37:19.349Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T03:52:17.991Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T04:07:17.573Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T04:22:17.678Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T04:37:18.016Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T04:52:19.296Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 15,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T05:07:18.383Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 15,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T05:20:04.795Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 15,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T05:22:18.050Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 15,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T05:37:18.311Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 15,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T05:52:18.094Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 15,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T06:07:18.922Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 15,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T06:22:19.272Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 15,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T06:37:17.503Z",
+      "miseryIndex": 6,
+      "statusIndicator": "minor",
+      "postCount": 15,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T06:52:19.349Z",
+      "miseryIndex": 5.5,
+      "statusIndicator": "minor",
+      "postCount": 14,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T06:56:05.179Z",
+      "miseryIndex": 5.5,
+      "statusIndicator": "minor",
+      "postCount": 14,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T07:07:18.399Z",
+      "miseryIndex": 5.5,
+      "statusIndicator": "minor",
+      "postCount": 14,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T07:22:18.120Z",
+      "miseryIndex": 5.5,
+      "statusIndicator": "minor",
+      "postCount": 14,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T07:37:18.239Z",
+      "miseryIndex": 6,
+      "statusIndicator": "minor",
+      "postCount": 17,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T07:52:19.203Z",
+      "miseryIndex": 6,
+      "statusIndicator": "minor",
+      "postCount": 19,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T08:07:19.548Z",
+      "miseryIndex": 6,
+      "statusIndicator": "minor",
+      "postCount": 21,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T08:16:10.748Z",
+      "miseryIndex": 6,
+      "statusIndicator": "minor",
+      "postCount": 21,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T08:22:20.385Z",
+      "miseryIndex": 6,
+      "statusIndicator": "minor",
+      "postCount": 22,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T08:37:18.892Z",
+      "miseryIndex": 6,
+      "statusIndicator": "minor",
+      "postCount": 22,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T08:52:19.646Z",
+      "miseryIndex": 6,
+      "statusIndicator": "minor",
+      "postCount": 22,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T09:07:19.029Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-08T09:22:18.396Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T09:37:18.315Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T09:46:20.004Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T09:52:18.303Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T10:07:18.749Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T10:22:19.646Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T10:37:18.460Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T10:52:22.154Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T11:05:10.059Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T11:07:19.091Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T11:22:19.223Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T11:37:19.922Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T11:52:19.577Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T12:04:33.410Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T12:07:22.044Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T12:22:22.123Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T12:37:18.647Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T12:52:19.494Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T13:07:23.522Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T13:22:20.717Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T13:37:22.824Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T13:52:21.238Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T14:03:33.799Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T14:07:23.507Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T14:22:23.541Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T14:37:23.268Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T14:52:23.461Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T15:07:32.620Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 22,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T15:22:25.439Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T15:37:24.295Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 20,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T15:48:06.280Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 21,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T15:52:26.178Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 20,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T16:07:22.270Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 19,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T16:22:22.647Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T16:37:22.859Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T16:52:27.765Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T17:07:22.906Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T17:12:29.056Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T17:22:23.373Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T17:37:22.782Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T17:52:23.713Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T18:07:24.062Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T18:19:50.555Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T18:22:24.461Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T18:37:22.623Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T18:52:22.980Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T19:07:22.594Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T19:22:22.356Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T19:37:22.576Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T19:48:06.136Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T19:52:24.803Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 14,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T20:07:22.902Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T20:22:29.103Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T20:37:22.399Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T20:52:26.829Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T20:53:50.901Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 18,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T21:07:26.536Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T21:22:26.361Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 15,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T21:37:22.361Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T21:51:03.052Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T21:52:24.804Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T22:07:25.437Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T22:22:26.693Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T22:37:23.905Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 17,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T22:50:54.302Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T22:52:25.295Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T23:07:28.578Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T23:22:26.510Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T23:37:25.592Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T23:45:06.752Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-08T23:52:28.024Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T00:07:25.566Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T00:22:25.264Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T00:37:24.077Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T00:52:25.286Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T00:56:00.659Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T01:07:23.848Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T01:22:23.995Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T01:37:25.803Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T01:52:24.161Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T02:07:23.717Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T02:22:24.450Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T02:37:24.535Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T02:52:24.233Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:07:25.495Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:22:25.147Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:37:24.486Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:51:26.398Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:52:24.845Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T04:07:25.256Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T04:22:25.924Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T04:37:24.479Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T04:52:25.123Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T05:07:25.472Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T05:22:24.501Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T05:37:26.426Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T05:51:51.393Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T05:52:24.553Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T06:07:25.452Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T06:22:25.379Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T06:37:24.309Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 16,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T06:52:26.586Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "none",
+      "postCount": 15,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T07:07:26.526Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "unknown",
+      "postCount": 15,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T07:22:25.159Z",
+      "miseryIndex": 3.5,
+      "statusIndicator": "unknown",
+      "postCount": 15,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T07:37:26.003Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 10,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T07:47:45.766Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 8,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T07:52:27.343Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 8,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T08:07:27.687Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T08:22:27.418Z",
+      "miseryIndex": 7,
+      "statusIndicator": "minor",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T08:37:29.634Z",
+      "miseryIndex": 7,
+      "statusIndicator": "minor",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T08:52:27.412Z",
+      "miseryIndex": 7,
+      "statusIndicator": "minor",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T09:07:29.714Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T09:17:59.499Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T09:22:29.986Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T09:37:33.391Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T09:52:31.874Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T10:07:27.524Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T10:22:28.185Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T10:37:27.194Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T10:41:51.247Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T10:52:30.618Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T11:07:33.727Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T11:22:29.989Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T11:37:31.128Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T11:40:16.485Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T11:52:30.188Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T12:07:36.146Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T12:22:27.453Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T12:37:28.086Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T12:48:26.328Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T12:52:35.402Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T13:07:28.786Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T13:22:33.507Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T13:37:30.206Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T13:52:35.109Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T14:07:29.899Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T14:22:38.024Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T14:37:33.870Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-09T14:52:29.553Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-09T15:01:07.072Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-09T15:07:29.484Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-09T15:22:45.008Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-09T15:37:33.813Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-09T15:52:29.680Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-09T16:07:31.893Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-09T16:22:29.666Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T16:24:48.203Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T16:37:29.474Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T16:52:29.786Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T17:07:41.800Z",
+      "miseryIndex": 5.5,
+      "statusIndicator": "minor",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T17:22:32.139Z",
+      "miseryIndex": 5.5,
+      "statusIndicator": "minor",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T17:37:29.939Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T17:43:02.029Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T17:52:33.111Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T18:07:30.217Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T18:22:29.720Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T18:37:30.073Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T18:41:41.100Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T18:52:28.892Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T19:07:28.819Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T19:22:29.049Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T19:37:29.600Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T19:52:30.685Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T19:53:38.048Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T20:07:28.352Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T20:22:28.378Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T20:37:27.979Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T20:52:27.188Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T20:58:47.355Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T21:07:31.179Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T21:22:27.343Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T21:37:25.125Z",
+      "miseryIndex": 1.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T21:52:25.414Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T21:54:07.946Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T22:07:25.039Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T22:22:27.686Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T22:37:24.760Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T22:51:00.659Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T22:52:24.285Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T23:07:25.593Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T23:22:25.573Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-09T23:37:25.392Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-09T23:42:37.742Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-09T23:52:24.848Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T00:07:23.949Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T00:22:27.282Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T00:37:25.535Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T00:52:24.180Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T01:04:48.337Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T01:07:26.465Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T01:22:24.004Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T01:37:24.257Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T01:52:23.856Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T02:07:24.308Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T02:22:25.736Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T02:37:26.070Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T02:52:29.052Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T03:07:24.904Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T03:22:24.049Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T03:37:24.017Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T03:52:24.497Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T04:07:25.120Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T04:19:35.323Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T04:22:24.687Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T04:37:25.817Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T04:52:24.774Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T05:07:25.852Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T05:22:26.725Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T05:37:27.812Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T05:52:25.072Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T06:07:27.372Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T06:17:23.816Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T06:22:25.073Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T06:37:25.303Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T06:52:24.841Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T07:07:25.909Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T07:22:25.831Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T07:37:24.873Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T07:52:25.475Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T08:07:25.089Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T08:09:09.143Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T08:22:26.072Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T08:37:27.123Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T08:52:27.859Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T09:07:25.104Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T09:22:24.888Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T09:37:24.996Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T09:40:08.462Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T09:52:24.493Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T10:07:25.523Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T10:22:26.099Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T10:37:24.771Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T10:40:02.258Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T10:52:28.355Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T11:07:25.617Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T11:22:26.263Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T11:35:59.305Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T11:37:25.788Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T11:52:25.664Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T12:07:26.651Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T12:22:25.669Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T12:36:50.246Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T12:37:28.337Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T12:52:32.789Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T13:07:27.189Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T13:22:26.963Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T13:37:25.867Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T13:52:28.578Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T14:05:17.953Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T14:07:30.256Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T14:22:33.011Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T14:37:28.593Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T14:52:29.930Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-10T15:07:29.983Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-10T15:08:47.532Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-10T15:22:31.760Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-10T15:37:31.812Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-10T15:52:32.699Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T16:07:34.068Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T16:08:55.533Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T16:22:30.291Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T16:37:35.391Z",
+      "miseryIndex": 6.5,
+      "statusIndicator": "minor",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T16:52:30.944Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-10T17:07:35.563Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T17:09:07.882Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T17:22:32.234Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T17:37:31.246Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T17:52:34.028Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T18:02:43.748Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T18:07:31.032Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T19:13:57.745Z",
+      "miseryIndex": 1,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T19:57:45.175Z",
+      "miseryIndex": 1,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T20:50:50.611Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T21:46:21.976Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T22:45:08.545Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-10T23:22:12.932Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T00:01:34.548Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T03:21:22.481Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T05:13:38.609Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T06:16:15.786Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T07:34:11.434Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T08:26:44.608Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T09:11:06.045Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T09:58:37.152Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T10:49:51.831Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T11:36:46.550Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T12:02:13.424Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T13:32:12.591Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T14:33:07.654Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 0,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-11T15:04:51.963Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T15:49:22.422Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 1
+    },
+    {
+      "timestamp": "2026-04-11T16:45:59.730Z",
+      "miseryIndex": 2.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-11T17:38:05.984Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 0,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-11T18:04:28.542Z",
+      "miseryIndex": 2,
+      "statusIndicator": "none",
+      "postCount": 0,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-11T19:06:33.541Z",
+      "miseryIndex": 0,
+      "statusIndicator": "none",
+      "postCount": 0,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-11T19:51:06.891Z",
+      "miseryIndex": 0,
+      "statusIndicator": "none",
+      "postCount": 0,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-11T20:41:28.139Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-11T21:17:26.779Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-11T21:57:58.224Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 1,
+      "commentCount": 0
+    },
+    {
+      "timestamp": "2026-04-11T22:45:16.918Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-11T23:19:48.024Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-12T00:00:42.380Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-12T03:47:47.133Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-12T05:58:07.007Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-12T07:38:48.328Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-12T08:31:14.696Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 2,
+      "commentCount": 2
+    },
+    {
+      "timestamp": "2026-04-12T09:32:06.942Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-12T10:24:58.838Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-12T11:08:49.249Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-12T11:49:35.493Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-12T13:14:35.407Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-12T14:06:08.647Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-12T14:58:48.370Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-12T15:48:39.820Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-12T16:49:35.698Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 3,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-12T17:40:58.191Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-12T18:25:42.658Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    },
+    {
+      "timestamp": "2026-04-12T19:23:28.426Z",
+      "miseryIndex": 0.5,
+      "statusIndicator": "none",
+      "postCount": 4,
+      "commentCount": 3
+    }
+  ]
+}

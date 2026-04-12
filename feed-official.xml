@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Claude Developer Misery Index — Official Only</title>
+    <link>https://www.raggedydoc.com/tools/misery-index/</link>
+    <description>Claude AI reliability based on official Anthropic status page only. No social chatter. Updated every 15 minutes.</description>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 12 Apr 2026 19:23:28 GMT</lastBuildDate>
+    <ttl>15</ttl>
+    <atom:link href="https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed-official.xml" rel="self" type="application/rss+xml"/>
+    <image>
+      <url>https://www.raggedydoc.com/tools/misery-index/favicon.png</url>
+      <title>Claude Developer Misery Index — Official Only</title>
+      <link>https://www.raggedydoc.com/tools/misery-index/</link>
+    </image>
+    <item>
+      <title>Official Status: 0.0/10 — ALL CLEAR</title>
+      <link>https://www.raggedydoc.com/tools/misery-index/</link>
+      <guid isPermaLink="false">official-ALL CLEAR</guid>
+      <pubDate>Fri, 10 Apr 2026 23:22:12 GMT</pubDate>
+      <description>Official score: 0.0/10 (ALL CLEAR). Status: All Systems Operational.</description>
+      <category>official-status</category>
+    </item>
+    <item>
+      <title>[MAJOR] Email login down</title>
+      <link>https://stspg.io/tp29skc2n4p9</link>
+      <guid isPermaLink="false">incident-https://stspg.io/tp29skc2n4p9</guid>
+      <pubDate>Sat, 11 Apr 2026 00:00:59 GMT</pubDate>
+      <description>Status: resolved. Impact: major. Latest: Email login was broken between approximately 3:46 PM and 4:52 PM PDT on April 10, 2026.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MINOR] Elevated errors on requests to Claude models</title>
+      <link>https://stspg.io/hfbfvplmg5s1</link>
+      <guid isPermaLink="false">incident-https://stspg.io/hfbfvplmg5s1</guid>
+      <pubDate>Fri, 10 Apr 2026 16:51:44 GMT</pubDate>
+      <description>Status: resolved. Impact: minor. Latest: The issue affecting requests to non-Opus models has been resolved.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MINOR] Some Claude.ai share links were inaccessible</title>
+      <link>https://stspg.io/x2g8g3pkcqtk</link>
+      <guid isPermaLink="false">incident-https://stspg.io/x2g8g3pkcqtk</guid>
+      <pubDate>Fri, 10 Apr 2026 17:38:28 GMT</pubDate>
+      <description>Status: resolved. Impact: minor. Latest: Between April 2 and April 10, some users who were not signed in to Claude.ai (web, mobile, desktop) were not able to access some Claude.ai sharing links.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MINOR] Degraded Performance on Vaults</title>
+      <link>https://stspg.io/fzv1qyjb3j1b</link>
+      <guid isPermaLink="false">incident-https://stspg.io/fzv1qyjb3j1b</guid>
+      <pubDate>Fri, 10 Apr 2026 04:38:02 GMT</pubDate>
+      <description>Status: resolved. Impact: minor. Latest: This incident has been resolved.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MINOR] Elevated Connector Error Rates</title>
+      <link>https://stspg.io/3qh7qtgrvprd</link>
+      <guid isPermaLink="false">incident-https://stspg.io/3qh7qtgrvprd</guid>
+      <pubDate>Thu, 09 Apr 2026 17:34:00 GMT</pubDate>
+      <description>Status: resolved. Impact: minor. Latest: This incident has been resolved.</description>
+      <category>incident</category>
+    </item>
+  </channel>
+</rss>

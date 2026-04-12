@@ -156,24 +156,25 @@ Section fragments cached in `sectionCache` object after first fetch. Navigation 
 - [x] Original index.html preserved as index-old.html
 
 ### Must-have before launch
-- [ ] **SEO**: Static SEO pages per route (`about/index.html`, `work/index.html`, etc.) with unique meta tags + noscript content
-- [ ] **SEO**: Update `sitemap.xml` with new URLs
+- [x] **SEO**: Static SEO pages per route (`about/index.html`, `work/index.html`, etc.) with unique meta tags + noscript content
+- [x] **SEO**: Update `sitemap.xml` with new URLs
 - [ ] **SEO**: Canonical URL handling
 - [ ] **Accessibility**: ARIA roles on cards, tabs, controls
 - [ ] **Accessibility**: Screen reader announcements on section change
 - [ ] **Accessibility**: Focus management + visible focus rings
 - [ ] **Accessibility**: Skip-to-content link
-- [ ] **Accessibility**: Reduced-motion: disable all animations, show content statically
+- [x] **Accessibility**: Reduced-motion: disable all animations, show content statically
 - [ ] **Mobile**: Touch swipe for card carousel
 - [ ] **Mobile**: Verify all card content fits without clipping on all breakpoints
 - [ ] **Performance**: Add `width`/`height` to all `<img>` tags
 - [ ] **Performance**: lite-youtube-embed for YouTube iframes
-- [ ] **Privacy**: Link to `privacy.html` from controls area
+- [x] **Privacy**: Link to `privacy.html` from controls area
 - [ ] **Content**: Verify all project descriptions are current
 - [ ] **Content**: Verify all external links work
 - [ ] **Content**: Image audit — no clipping, no overflow on any card front/back
 - [ ] **Content**: Portfolio evolution screenshots (Wayback Machine captures)
 - [ ] **Browser**: Test Firefox, Safari, Edge
+- [ ] **Detail pages**: Project detail pages (`projects/work/...`, `projects/personal/...`) still use old site format — decide whether to restyle or keep as-is with back-to-arcade nav
 
 ### Nice-to-have
 - [ ] Sound effects (cabinet select, card flip, sprite walk) with mute toggle
@@ -215,12 +216,16 @@ Old pages should remain accessible with a banner linking to the new site.
 ### Production
 | File | Description |
 |---|---|
-| `index.html` | Arcade shell — 81 lines, links to CSS/JS |
-| `css/arcade.css` | All styles — 900+ lines |
-| `js/arcade.js` | All interaction + routing — 620+ lines |
-| `sections/*.html` | 6 content fragments |
+| `index.html` | Arcade shell — links to CSS/JS |
+| `css/arcade.css` | All styles (self-hosted fonts, CRT effects, cards, responsive) |
+| `js/arcade.js` | All interaction + routing (~600 lines) |
+| `sections/*.html` | 6 content fragments (home, about, journey, work, personal, play) |
+| `about/index.html` etc. | Static SEO pages per route (meta tags, noscript fallback, redirect to SPA) |
 | `404-arcade.html` | SPA redirect + arcade-themed 404 |
 | `index-old.html` | Backup of original homepage |
+| `fonts/Silkscreen-*.woff2` | Self-hosted Silkscreen (pixel headings) |
+| `fonts/Outfit-Variable.woff2` | Self-hosted Outfit (body text) |
+| `fonts/FiraCode-Variable.woff2` | Self-hosted Fira Code (monospace/code) |
 
 ### Preview (reference only)
 | File | Description |

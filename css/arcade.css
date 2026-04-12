@@ -1,4 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500&display=swap');
+/* Self-hosted fonts (no external requests) */
+    @font-face {
+      font-family: 'Silkscreen';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('../fonts/Silkscreen-Regular.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Silkscreen';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url('../fonts/Silkscreen-Bold.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 300 700;
+      font-display: swap;
+      src: url('../fonts/Outfit-Variable.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Fira Code';
+      font-style: normal;
+      font-weight: 300 500;
+      font-display: swap;
+      src: url('../fonts/FiraCode-Variable.woff2') format('woff2');
+    }
 
     :root {
       --blue: #4a90d9; --blue-light: #7ab8ff; --blue-dim: rgba(74,144,217,0.12);
@@ -12,9 +40,6 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; overflow: hidden; background: var(--bg); font-family: 'Outfit', sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
-
-    /* Scanlines */
-    /* Scanline overlay removed — was causing dark band between bezel and world */
 
     /* ===== SPLIT LAYOUT ===== */
     .layout { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
@@ -31,20 +56,8 @@
       border: 2px solid rgba(74,144,217,0.12);
       z-index: 2;
       overflow: hidden;
-      overflow: hidden;
     }
 
-    /* CRT vignette */
-    /* Vignette removed — was causing dark band at bottom */
-
-    /* CRT phosphor glow on edges */
-    .screen-bezel::after {
-      content: none;
-      pointer-events: none;
-      z-index: 6;
-    }
-
-    /* Bezel screws / decorative corners */
     /* Corner brackets — retro CRT bezel marks */
     .bezel-corner {
       position: absolute;
@@ -313,6 +326,20 @@
       display: flex; align-items: center; gap: 6px;
     }
 
+    .ctrl-btn-action {
+      border-radius: 50%; width: 42px; height: 42px;
+      font-family: 'Silkscreen', cursive; font-size: 0.6rem;
+      border-color: rgba(155,109,255,0.3); color: rgba(155,109,255,0.5);
+    }
+
+    .ctrl-hint { opacity: 0.3; }
+
+    .ctrl-privacy {
+      position: absolute; right: 8px;
+      text-decoration: none; opacity: 0.3;
+    }
+    .ctrl-privacy:hover { opacity: 0.6; color: var(--blue-light); }
+
     /* ===== CONTENT STYLES (same as before, compressed) ===== */
     .p-tag { font-family: 'Fira Code', monospace; font-size: 0.55rem; color: var(--teal); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.1rem; }
     .p-title { font-family: 'Silkscreen', cursive; font-size: clamp(1.1rem,2.5vw,1.5rem); margin-bottom: 0.15rem; }
@@ -544,7 +571,7 @@
     .gc-vid-front {
       width: calc(100% - 12px); aspect-ratio: 4/3;
       margin: 6px auto 0; display: block; border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.08); border: none;
+      border: none;
     }
 
     /* Stylized journey card art — pixel border + big abbreviation */
@@ -748,6 +775,35 @@
     .soc-btn { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--border); background: none; color: var(--text-dim); display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.75rem; transition: all 0.2s; }
     .soc-btn:hover { border-color: var(--border-glow); color: var(--blue-light); background: var(--blue-dim); transform: translateY(-2px); }
 
+    /* About card back — skills + stats */
+    .gc-back-skills { font-size: 0.85rem; line-height: 1.6; }
+    .gc-back-skills b { color: var(--card-color, var(--green)); }
+    .gc-back-stats {
+      margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; text-align: center;
+    }
+    .gc-back-stat-num { color: var(--card-color, var(--green)); font-family: 'Silkscreen', cursive; font-size: 1.3rem; }
+    .gc-back-stat-label { font-size: 0.5rem; color: var(--text-dim); }
+
+    /* Connect card social grid */
+    .gc-social-art {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, rgba(155,109,255,0.06), rgba(155,109,255,0.15));
+      gap: 10px; padding: 14px;
+    }
+    .gc-social-grid { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+    /* Placeholder emblem text (Box Dog etc.) */
+    .gc-placeholder-text {
+      font-family: 'Silkscreen', cursive; font-size: 0.7rem;
+      color: color-mix(in srgb, var(--card-color) 40%, transparent);
+      text-align: center; line-height: 1.6;
+    }
+    .gc-placeholder-art {
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--card-color) 8%, transparent), color-mix(in srgb, var(--card-color) 15%, transparent));
+    }
+
     /* Skills */
     .sk-g { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px,1fr)); gap: 0.8rem; }
     .sk-c { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; transition: all 0.3s; position: relative; overflow: hidden; }
@@ -840,10 +896,11 @@
         gap: 5px; padding: 0 6px;
       }
       .ctrl-btn { width: 28px; height: 28px; font-size: 0.65rem; border-radius: 4px; }
-      .ctrl-btn#ctrl-action { width: 30px !important; height: 30px !important; font-size: 0.4rem !important; }
+      .ctrl-btn-action { width: 30px !important; height: 30px !important; font-size: 0.4rem !important; }
       .ctrl-sep { height: 18px; margin: 0 1px; }
       .ctrl-label { font-size: 0.38rem; }
-      .ctrl-label[style*="opacity:0.3"] { display: none; }
+      .ctrl-hint { display: none; }
+      .ctrl-privacy { display: none; }
 
       /* Content sprite — big enough to see clearly */
       .content-sprite { transform: translateX(-50%) scale(1); }
@@ -907,7 +964,7 @@
       .content-sprite { transform: translateX(-50%) scale(0.9); }
       .controls { height: 44px; min-height: 44px; }
       .ctrl-btn { width: 34px; height: 34px; }
-      .ctrl-label[style*="opacity:0.3"] { display: none; }
+      .ctrl-hint { display: none; }
     }
 
     /* Loading screen */

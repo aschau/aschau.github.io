@@ -6,6 +6,8 @@ var cabinets = document.querySelectorAll('.cabinet');
 
   // Navigation state
   var contentSprite = document.getElementById('content-sprite');
+  var ambientEl = document.getElementById('screen-ambient');
+  var patternEl = document.getElementById('screen-pattern');
   var currentCab = 0;     // which cabinet
   var currentCard = 0;    // which card in carousel
   var currentTab = 0;     // which tab
@@ -192,8 +194,38 @@ var cabinets = document.querySelectorAll('.cabinet');
       });
   }
 
+  // Bind event handlers on freshly injected section content
+  function bindSectionHandlers() {
+    contentEl.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var tabId = btn.dataset.tab;
+        var bar = btn.closest('.tab-bar') || btn.parentElement;
+        var tabs = Array.from(bar.querySelectorAll('.tab-btn'));
+        tabs.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        contentEl.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+        var target = document.getElementById(tabId);
+        if (target) target.classList.add('active');
+        currentTab = tabs.indexOf(btn);
+        currentCard = 0;
+        if (layer === 1) { highlightCard(0); }
+      });
+    });
+
+    contentEl.querySelectorAll('.gc a, .gc iframe').forEach(function(el) {
+      el.addEventListener('click', function(e) { e.stopPropagation(); });
+    });
+
+    startTyping();
+
+    if ('ontouchstart' in window || window.innerWidth <= 768) {
+      contentEl.querySelectorAll('.gc-flip-hint').forEach(function(el) {
+        el.textContent = 'tap to flip';
+      });
+    }
+  }
+
   function injectSection(html, goingRight) {
-    // Fade out old content
     contentEl.style.transform = goingRight ? 'translateX(-40px)' : 'translateX(40px)';
     contentEl.style.opacity = '0';
 
@@ -206,32 +238,9 @@ var cabinets = document.querySelectorAll('.cabinet');
       contentEl.style.transform = '';
       contentEl.style.opacity = '';
 
-      // Re-bind tab clicks for the new content
-      contentEl.querySelectorAll('.tab-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var tabId = btn.dataset.tab;
-          var bar = btn.closest('.tab-bar') || btn.parentElement;
-          var tabs = Array.from(bar.querySelectorAll('.tab-btn'));
-          tabs.forEach(function(b) { b.classList.remove('active'); });
-          btn.classList.add('active');
-          contentEl.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
-          var target = document.getElementById(tabId);
-          if (target) target.classList.add('active');
-          currentTab = tabs.indexOf(btn);
-          currentCard = 0;
-          if (layer === 1) { highlightCard(0); }
-        });
-      });
+      bindSectionHandlers();
 
-      // Re-bind link stopPropagation
-      contentEl.querySelectorAll('.gc a, .gc iframe').forEach(function(el) {
-        el.addEventListener('click', function(e) { e.stopPropagation(); });
-      });
-
-      // Start typing animation if home section loaded
-      startTyping();
-
-      // Peek flip
+      // Peek flip on first visit
       if (!peeked[currentCab]) {
         peeked[currentCab] = true;
         var firstCard = contentEl.querySelector('.gc');
@@ -241,13 +250,6 @@ var cabinets = document.querySelectorAll('.cabinet');
             firstCard.addEventListener('animationend', function() { firstCard.classList.remove('peek'); }, { once: true });
           }, 400);
         }
-      }
-
-      // Mobile: "click to flip" → "tap to flip"
-      if ('ontouchstart' in window || window.innerWidth <= 768) {
-        contentEl.querySelectorAll('.gc-flip-hint').forEach(function(el) {
-          el.textContent = 'tap to flip';
-        });
       }
     }, 300);
   }
@@ -316,18 +318,13 @@ var cabinets = document.querySelectorAll('.cabinet');
     if (!skipPush) updateRoute(sectionId, true);
 
     // Update ambient
-    var ambient = document.getElementById('screen-ambient');
-    if (ambient) ambient.style.background = ambients[sectionId] || ambients.home;
-    var patternEl = document.getElementById('screen-pattern');
+    if (ambientEl) ambientEl.style.background = ambients[sectionId] || ambients.home;
     if (patternEl) { patternEl.style.background = patterns[sectionId] || ''; patternEl.classList.toggle('visible', !!patterns[sectionId]); }
 
     // Load and inject section content
     loadSection(sectionId, function(html) {
       injectSection(html, goingRight);
     });
-
-    clearCardHighlight();
-    clearTabHighlight();
   }
 
   // Navigate up a layer
@@ -453,8 +450,6 @@ var cabinets = document.querySelectorAll('.cabinet');
     else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipActive(); }
   });
 
-  // Tab clicks are now bound dynamically in injectSection()
-
   // Card clicks — set as active and flip
   document.addEventListener('click', function(e) {
     var card = e.target.closest('.gc');
@@ -520,9 +515,7 @@ var cabinets = document.querySelectorAll('.cabinet');
     currentCab = startIdx;
 
     // Set initial ambient
-    var ambient = document.getElementById('screen-ambient');
-    if (ambient) ambient.style.background = ambients[startSection] || ambients.home;
-    var patternEl = document.getElementById('screen-pattern');
+    if (ambientEl) ambientEl.style.background = ambients[startSection] || ambients.home;
     if (patternEl && patterns[startSection]) { patternEl.style.background = patterns[startSection]; patternEl.classList.add('visible'); }
 
     // Update title
@@ -557,34 +550,7 @@ var cabinets = document.querySelectorAll('.cabinet');
       // Load initial section content
       loadSection(startSection, function(html) {
         contentEl.innerHTML = html;
-        // Bind tabs and link handlers
-        contentEl.querySelectorAll('.tab-btn').forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            var tabId = btn.dataset.tab;
-            var bar = btn.closest('.tab-bar') || btn.parentElement;
-            Array.from(bar.querySelectorAll('.tab-btn')).forEach(function(b) { b.classList.remove('active'); });
-            btn.classList.add('active');
-            contentEl.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
-            var target = document.getElementById(tabId);
-            if (target) target.classList.add('active');
-            currentTab = Array.from(bar.querySelectorAll('.tab-btn')).indexOf(btn);
-            currentCard = 0;
-            if (layer === 1) highlightCard(0);
-          });
-        });
-        contentEl.querySelectorAll('.gc a, .gc iframe').forEach(function(el) {
-          el.addEventListener('click', function(e) { e.stopPropagation(); });
-        });
-
-        // Start typing if home loaded
-        startTyping();
-
-        // Mobile: "click to flip" → "tap to flip"
-        if ('ontouchstart' in window || window.innerWidth <= 768) {
-          contentEl.querySelectorAll('.gc-flip-hint').forEach(function(el) {
-            el.textContent = 'tap to flip';
-          });
-        }
+        bindSectionHandlers();
 
         // Fade out loading screen
         setTimeout(function() {
@@ -632,5 +598,3 @@ var cabinets = document.querySelectorAll('.cabinet');
       e.stopPropagation();
     }
   });
-
-  // Link/iframe stopPropagation now bound dynamically in injectSection()

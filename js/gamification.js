@@ -1,361 +1,363 @@
-// ── Testable logic extracted to gamification.module.js — keep in sync ──
+// ============================================
+// Gamification — Arcade Edition
+// Achievement tracking, toast notifications, panel, and progress bar.
+// Hooks into arcade.js via DOM events (no direct coupling).
+// ── Logic must stay in sync with js/gamification.module.js ──
+// ============================================
+
 (function () {
-  // === Configuration ===
-  var MAIN_PAGES = ["index.html", "aboutMe.html", "workprojects.html", "personalprojects.html", "deep-dive"];
-  var STORAGE_ACHIEVEMENTS = "portfolio_achievements";
-  var STORAGE_PAGES = "portfolio_pages_visited";
+  'use strict';
+
+  // ── Achievement Definitions (mirror of module) ──
 
   var ACHIEVEMENTS = {
-    explorer:     { title: "Explorer",      desc: "Visited all 4 pages",              hint: "Visit every main page...",              icon: "\uD83E\uDDED" },
-    curious:      { title: "Curious",       desc: "Clicked an external link",         hint: "Follow a link to the outside...",       icon: "\uD83D\uDD0D" },
-    "night-owl":  { title: "Night Owl",     desc: "Visited after 10 PM",              hint: "Come back when the moon is out...",     icon: "\uD83C\uDF19" },
-    "speed-reader": { title: "Speed Reader", desc: "Scrolled to the bottom in under 10s", hint: "Reach the bottom before time runs out...", icon: "\u26A1" },
-    "deep-diver":   { title: "Deep Diver",   desc: "Visited a project detail page",     hint: "Go deeper into a project...",           icon: "\uD83E\uDD3F" },
-    "timeline-historian": { title: "Timeline Historian", desc: "Expanded all timeline entries", hint: "Explore every chapter of the journey...", icon: "\uD83D\uDCDC" },
-    "skill-scout":  { title: "Skill Scout",  desc: "Visited the About page",           hint: "Learn more about who I am...",          icon: "\uD83C\uDFAF" },
-    "social-butterfly": { title: "Social Butterfly", desc: "Clicked a social profile link", hint: "Connect on social media...",           icon: "\uD83E\uDD8B" },
-    "player-one":       { title: "Player One",      desc: "Launched a web game",             hint: "Ready Player One...",                   icon: "\uD83C\uDFAE" }
+    'cabinet-crawler':  { title: 'Cabinet Crawler',  desc: 'Visited all 6 sections',        hint: 'Visit every cabinet in the arcade...', icon: '\uD83D\uDD79\uFE0F' },
+    'card-collector':   { title: 'Card Collector',   desc: 'Flipped every card',            hint: 'There\'s something on the back...',    icon: '\uD83C\uDCCF' },
+    'tab-master':       { title: 'Tab Master',       desc: 'Clicked every tab',             hint: 'Check every category...',              icon: '\uD83D\uDCC1' },
+    'pixel-walker':     { title: 'Pixel Walker',     desc: 'Used keyboard navigation',      hint: 'Try the arrow keys...',                icon: '\u2328\uFE0F' },
+    curious:            { title: 'Curious',          desc: 'Clicked an external link',      hint: 'Follow a link to the outside...',      icon: '\uD83D\uDD0D' },
+    'night-owl':        { title: 'Night Owl',        desc: 'Visited after 10 PM',           hint: 'Come back when the moon is out...',    icon: '\uD83C\uDF19' },
+    'deep-diver':       { title: 'Deep Diver',       desc: 'Visited a project detail page', hint: 'Go deeper into a project...',          icon: '\uD83E\uDD3F' },
+    'social-butterfly': { title: 'Social Butterfly', desc: 'Clicked a social profile link', hint: 'Connect on social media...',           icon: '\uD83E\uDD8B' },
+    'player-one':       { title: 'Player One',       desc: 'Visited the Play section',      hint: 'Ready Player One...',                  icon: '\uD83C\uDFAE' }
   };
 
-  // === Storage Helpers ===
+  var SECTIONS = ['home', 'about', 'journey', 'work', 'personal', 'play'];
+  var ALL_TABS = ['w-blizzard', 'w-mw', 'w-sega', 'w-trigger', 'w-stb', 'pp-fc', 'pp-wh', 'pp-ai', 'pp-web', 'pp-col'];
+
+  var STORAGE_KEY = 'arcade_achievements';
+  var SECTIONS_KEY = 'arcade_sections_visited';
+  var CARDS_KEY = 'arcade_cards_flipped';
+  var TABS_KEY = 'arcade_tabs_clicked';
+
+  // ── Storage helpers ──
+
   function getJSON(key, fallback) {
-    try {
-      var val = localStorage.getItem(key);
-      return val ? JSON.parse(val) : fallback;
-    } catch (e) {
-      return fallback;
-    }
+    try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+    catch (e) { return fallback; }
   }
-
   function setJSON(key, val) {
-    try {
-      localStorage.setItem(key, JSON.stringify(val));
-    } catch (e) {}
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
   }
 
-  function getAchievements() {
-    return getJSON(STORAGE_ACHIEVEMENTS, {});
+  // ── Core unlock logic ──
+
+  function isUnlocked(id) {
+    return !!getJSON(STORAGE_KEY, {})[id];
   }
 
-  function saveAchievements(data) {
-    setJSON(STORAGE_ACHIEVEMENTS, data);
+  function unlockCount() {
+    return Object.keys(getJSON(STORAGE_KEY, {})).length;
   }
 
-  function getPagesVisited() {
-    return getJSON(STORAGE_PAGES, []);
+  function unlock(id) {
+    var data = getJSON(STORAGE_KEY, {});
+    if (data[id]) return false;
+    data[id] = { unlocked: true, date: new Date().toISOString() };
+    setJSON(STORAGE_KEY, data);
+    showToast(id);
+    updateBadge();
+    if (panelOpen) renderPanelContent();
+    return true;
   }
 
-  function savePagesVisited(pages) {
-    setJSON(STORAGE_PAGES, pages);
-  }
+  // ── UI: Toast ──
 
-  // === Toast System ===
-  var toastContainer = null;
+  var toastContainer;
 
   function createToastContainer() {
-    toastContainer = document.createElement("div");
-    toastContainer.id = "achievement-toast-container";
+    toastContainer = document.createElement('div');
+    toastContainer.className = 'ach-toast-container';
     document.body.appendChild(toastContainer);
   }
 
   function showToast(id) {
-    if (!toastContainer) return;
     var ach = ACHIEVEMENTS[id];
-    if (!ach) return;
-
-    var toast = document.createElement("div");
-    toast.className = "achievement-toast";
-    toast.innerHTML =
-      '<span class="achievement-icon">' + ach.icon + '</span>' +
-      '<div>' +
-        '<div class="achievement-label">Achievement Unlocked!</div>' +
-        '<div class="achievement-title">' + ach.title + '</div>' +
-        '<div class="achievement-desc">' + ach.desc + '</div>' +
-      '</div>';
-
-    toastContainer.appendChild(toast);
-
+    if (!ach || !toastContainer) return;
+    var el = document.createElement('div');
+    el.className = 'ach-toast';
+    el.innerHTML = '<span class="ach-toast-icon">' + ach.icon + '</span>' +
+      '<div class="ach-toast-label">Achievement Unlocked</div>' +
+      '<div class="ach-toast-title">' + ach.title + '</div>' +
+      '<div class="ach-toast-desc">' + ach.desc + '</div>';
+    toastContainer.appendChild(el);
     setTimeout(function () {
-      toast.classList.add("toast-exit");
-      setTimeout(function () {
-        if (toast.parentNode) toast.parentNode.removeChild(toast);
-      }, 500);
+      el.classList.add('out');
+      setTimeout(function () { el.remove(); }, 400);
     }, 4000);
   }
 
-  function unlockAchievement(id) {
-    var data = getAchievements();
-    if (data[id]) return;
-    data[id] = { unlocked: true, date: new Date().toISOString() };
-    saveAchievements(data);
-    showToast(id);
-    updateToggleBadge();
-    if (panel && panel.classList.contains("open")) renderPanel();
-  }
+  // ── UI: Toggle + Panel ──
 
-  // === Progress Bar ===
-  function createProgressBar() {
-    var bar = document.createElement("div");
-    bar.id = "exploration-progress";
-    var fill = document.createElement("div");
-    fill.className = "exploration-progress-fill";
-    var label = document.createElement("span");
-    label.className = "exploration-progress-label";
-    fill.appendChild(label);
-    bar.appendChild(fill);
-    document.body.appendChild(bar);
-  }
+  var panelOpen = false;
+  var toggleBtn, panel;
 
-  function updateProgress() {
-    var pages = getPagesVisited();
-    var fill = document.querySelector(".exploration-progress-fill");
-    var label = document.querySelector(".exploration-progress-label");
-    if (!fill) return;
-    var pct = Math.round((pages.length / MAIN_PAGES.length) * 100);
-    if (label) {
-      label.textContent = pct + "% Explored";
-    }
-    // Delay slightly so the transition animates on page load
-    setTimeout(function () {
-      fill.style.width = pct + "%";
-    }, 100);
-  }
-
-  // === Page Visit Tracking ===
-  function trackPageVisit() {
-    var path = window.location.pathname;
-    var page = path.substring(path.lastIndexOf("/") + 1) || "index.html";
-    var pages = getPagesVisited();
-
-    if (MAIN_PAGES.indexOf(page) !== -1 && pages.indexOf(page) === -1) {
-      pages.push(page);
-      savePagesVisited(pages);
-    }
-
-    // Check Explorer achievement (4 main pages, excluding deep-dive)
-    var mainCount = 0;
-    for (var i = 0; i < pages.length; i++) {
-      if (pages[i] !== "deep-dive") mainCount++;
-    }
-    if (mainCount >= 4) {
-      unlockAchievement("explorer");
-    }
-
-    // Skill Scout — visited aboutMe.html
-    if (page === "aboutMe.html") {
-      unlockAchievement("skill-scout");
-    }
-  }
-
-  // === Achievement Triggers ===
-  function checkNightOwl() {
-    var hour = new Date().getHours();
-    if (hour >= 22 || hour < 5) {
-      unlockAchievement("night-owl");
-    }
-  }
-
-  function initSpeedReader() {
-    // Only on pages that are actually scrollable
-    if (document.body.offsetHeight <= window.innerHeight + 100) return;
-
-    var startTime = Date.now();
-    var unlocked = false;
-
-    function onScroll() {
-      if (unlocked) return;
-      var atBottom = (window.innerHeight + window.pageYOffset) >= (document.body.offsetHeight - 100);
-      if (atBottom && (Date.now() - startTime) < 10000) {
-        unlocked = true;
-        unlockAchievement("speed-reader");
-        window.removeEventListener("scroll", onScroll);
-      }
-    }
-
-    window.addEventListener("scroll", onScroll);
-
-    // Clean up listener after threshold if not triggered
-    setTimeout(function () {
-      if (!unlocked) {
-        window.removeEventListener("scroll", onScroll);
-      }
-    }, 10000);
-  }
-
-  function checkDeepDiver() {
-    var path = window.location.pathname;
-    if (path.indexOf("projects/") !== -1) {
-      unlockAchievement("deep-diver");
-      // Track for progress bar
-      var pages = getPagesVisited();
-      if (pages.indexOf("deep-dive") === -1) {
-        pages.push("deep-dive");
-        savePagesVisited(pages);
-        updateProgress();
-      }
-    }
-  }
-
-  function initCuriousClick() {
-    document.addEventListener("click", function (e) {
-      var link = e.target.closest('a[target="_blank"]');
-      if (link && !link.closest('.dropdown-menu')) {
-        unlockAchievement("curious");
-      }
-    });
-  }
-
-  function initSocialButterfly() {
-    document.addEventListener("click", function (e) {
-      var link = e.target.closest('.social-icon, a.social-link');
-      if (link) {
-        unlockAchievement("social-butterfly");
-      }
-    });
-  }
-
-  function initPlayerOne() {
-    document.addEventListener("click", function (e) {
-      var link = e.target.closest('.dropdown-item[href*="games/"]');
-      if (link) {
-        unlockAchievement("player-one");
-      }
-    });
-  }
-
-  function initTimelineHistorian() {
-    // Only run on the home page
-    var path = window.location.pathname;
-    var page = path.substring(path.lastIndexOf("/") + 1) || "index.html";
-    if (page !== "index.html") return;
-
-    var expandedSet = {};
-
-    // Pre-seed with auto-expanded entry (Blizzard on desktop, UCI on mobile)
-    var timeline = document.getElementById("career-timeline");
-    if (timeline) {
-      var entries = timeline.querySelectorAll(".timeline-entry");
-      entries.forEach(function (entry, idx) {
-        if (entry.classList.contains("active")) {
-          expandedSet[idx] = true;
-        }
-      });
-    }
-
-    document.addEventListener("click", function (e) {
-      var entry = e.target.closest(".timeline-entry");
-      if (!entry) return;
-
-      var timeline = document.getElementById("career-timeline");
-      if (!timeline) return;
-
-      var entries = timeline.querySelectorAll(".timeline-entry");
-      var idx = Array.prototype.indexOf.call(entries, entry);
-      if (idx !== -1) {
-        expandedSet[idx] = true;
-      }
-
-      if (Object.keys(expandedSet).length >= entries.length) {
-        unlockAchievement("timeline-historian");
-      }
-    });
-  }
-
-  // === Achievement Panel & Toggle ===
-  var panel = null;
-  var toggleBtn = null;
-
-  function createAchievementToggle() {
-    toggleBtn = document.createElement("button");
-    toggleBtn.id = "achievement-toggle";
-    toggleBtn.setAttribute("aria-label", "View achievements");
-    toggleBtn.innerHTML = '\uD83C\uDFC6<span class="badge-count">0</span>';
-    document.body.appendChild(toggleBtn);
-
-    panel = document.createElement("div");
-    panel.id = "achievement-panel";
-    document.body.appendChild(panel);
-
-    toggleBtn.addEventListener("click", function () {
-      panel.classList.toggle("open");
-      if (panel.classList.contains("open")) renderPanel();
+  function createToggle() {
+    toggleBtn = document.createElement('button');
+    toggleBtn.className = 'ach-toggle';
+    toggleBtn.setAttribute('aria-label', 'Achievements');
+    toggleBtn.innerHTML = '\uD83C\uDFC6<span class="ach-badge" id="ach-badge"></span>';
+    toggleBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      panelOpen = !panelOpen;
+      panel.classList.toggle('open', panelOpen);
+      if (panelOpen) renderPanelContent();
     });
 
     // Close panel when clicking outside
-    document.addEventListener("click", function (e) {
-      if (panel.classList.contains("open") &&
-          !panel.contains(e.target) &&
-          e.target !== toggleBtn &&
-          !toggleBtn.contains(e.target)) {
-        panel.classList.remove("open");
+    document.addEventListener('click', function (e) {
+      if (!panelOpen) return;
+      if (panel.contains(e.target) || toggleBtn.contains(e.target)) return;
+      panelOpen = false;
+      panel.classList.remove('open');
+    });
+    var bezel = document.querySelector('.screen-bezel');
+    (bezel || document.body).appendChild(toggleBtn);
+    updateBadge();
+  }
+
+  function createPanel() {
+    panel = document.createElement('div');
+    panel.className = 'ach-panel';
+    panel.setAttribute('aria-label', 'Achievements panel');
+    document.body.appendChild(panel);
+  }
+
+  function renderPanelContent() {
+    var count = unlockCount();
+    var total = Object.keys(ACHIEVEMENTS).length;
+    var html = '<div class="ach-panel-header">Achievements (' + count + '/' + total + ')</div>';
+
+    var ids = Object.keys(ACHIEVEMENTS);
+    for (var i = 0; i < ids.length; i++) {
+      var id = ids[i];
+      var ach = ACHIEVEMENTS[id];
+      var got = isUnlocked(id);
+      html += '<div class="ach-tile ' + (got ? 'unlocked' : 'locked') + '">' +
+        '<span class="ach-tile-icon">' + ach.icon + '</span>' +
+        '<div class="ach-tile-info">' +
+        '<div class="ach-tile-title">' + ach.title + '</div>' +
+        '<div class="ach-tile-desc">' + (got ? ach.desc : ach.hint) + '</div>' +
+        '</div></div>';
+    }
+
+    html += '<button class="ach-clear" id="ach-clear">Clear All Progress</button>';
+    panel.innerHTML = html;
+
+    document.getElementById('ach-clear').addEventListener('click', function () {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(SECTIONS_KEY);
+      localStorage.removeItem(CARDS_KEY);
+      localStorage.removeItem(TABS_KEY);
+      renderPanelContent();
+      updateBadge();
+      updateProgress();
+    });
+  }
+
+  function updateBadge() {
+    var badge = document.getElementById('ach-badge');
+    if (badge) {
+      var c = unlockCount();
+      badge.textContent = c > 0 ? c : '';
+    }
+  }
+
+  // ── UI: Progress bar ──
+
+  function updateProgress() {
+    var fill = document.getElementById('ach-progress-fill');
+    if (!fill) return;
+    var visited = getJSON(SECTIONS_KEY, []);
+    var pct = Math.round((visited.length / SECTIONS.length) * 100);
+    fill.style.width = pct + '%';
+  }
+
+  // ── Tracking: Section visits ──
+
+  function trackSection(sectionId) {
+    if (SECTIONS.indexOf(sectionId) === -1) return;
+    var visited = getJSON(SECTIONS_KEY, []);
+    if (visited.indexOf(sectionId) === -1) {
+      visited.push(sectionId);
+      setJSON(SECTIONS_KEY, visited);
+      updateProgress();
+    }
+
+    if (visited.length >= SECTIONS.length) unlock('cabinet-crawler');
+    if (sectionId === 'play') unlock('player-one');
+  }
+
+  // ── Tracking: Card flips ──
+
+  var flippableCounts = {};
+
+  function trackCardFlip(key, cardIndex) {
+    var flipped = getJSON(CARDS_KEY, {});
+    if (!flipped[key]) flipped[key] = [];
+    if (flipped[key].indexOf(cardIndex) === -1) {
+      flipped[key].push(cardIndex);
+      setJSON(CARDS_KEY, flipped);
+    }
+    checkCardCollectorAchievement();
+  }
+
+  function checkCardCollectorAchievement() {
+    var flipped = getJSON(CARDS_KEY, {});
+    var keys = Object.keys(flippableCounts);
+    if (keys.length === 0) return;
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      if (flippableCounts[k] <= 0) continue;
+      if (!flipped[k]) return;
+      var unique = [];
+      for (var j = 0; j < flipped[k].length; j++) {
+        if (unique.indexOf(flipped[k][j]) === -1) unique.push(flipped[k][j]);
+      }
+      if (unique.length < flippableCounts[k]) return;
+    }
+    unlock('card-collector');
+  }
+
+  // ── Tracking: Tabs ──
+
+  function trackTab(tabId) {
+    var clicked = getJSON(TABS_KEY, []);
+    if (clicked.indexOf(tabId) === -1) {
+      clicked.push(tabId);
+      setJSON(TABS_KEY, clicked);
+    }
+    var allClicked = true;
+    for (var i = 0; i < ALL_TABS.length; i++) {
+      if (clicked.indexOf(ALL_TABS[i]) === -1) { allClicked = false; break; }
+    }
+    if (allClicked) unlock('tab-master');
+  }
+
+  // ── Helpers ──
+
+  function getCurrentSection() {
+    var params = new URLSearchParams(location.search);
+    var route = params.get('route');
+    if (route) {
+      var s = route.replace(/^\//, '').replace(/\/$/, '').split('/')[0];
+      if (SECTIONS.indexOf(s) >= 0) return s;
+    }
+    var path = location.pathname.replace(/^\//, '').replace(/\/$/, '').split('/')[0];
+    return SECTIONS.indexOf(path) >= 0 ? path : 'home';
+  }
+
+  function updateFlippableCounts() {
+    var activeCab = document.querySelector('.cabinet.active');
+    if (!activeCab) return;
+    var sectionId = activeCab.dataset.id;
+    var contentEl = document.getElementById('section-content');
+    if (!contentEl) return;
+
+    var tabPanels = contentEl.querySelectorAll('.tab-panel');
+    if (tabPanels.length > 0) {
+      for (var i = 0; i < tabPanels.length; i++) {
+        var tp = tabPanels[i];
+        var key = sectionId + ':' + tp.id;
+        flippableCounts[key] = tp.querySelectorAll('.gc:not(.no-flip)').length;
+      }
+    } else {
+      flippableCounts[sectionId] = contentEl.querySelectorAll('.gc:not(.no-flip)').length;
+    }
+  }
+
+  // ── Event listeners ──
+
+  function initListeners() {
+    // Keyboard → Pixel Walker
+    document.addEventListener('keydown', function (e) {
+      if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', ' ', 'Enter'].indexOf(e.key) !== -1) {
+        unlock('pixel-walker');
       }
     });
 
-    updateToggleBadge();
-  }
+    // External links → Curious
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('a[target="_blank"]')) unlock('curious');
+    });
 
-  function updateToggleBadge() {
-    if (!toggleBtn) return;
-    var data = getAchievements();
-    var count = 0;
-    for (var key in data) {
-      if (data[key]) count++;
-    }
-    var badge = toggleBtn.querySelector(".badge-count");
-    badge.textContent = count;
-    badge.style.display = count > 0 ? "flex" : "none";
-  }
+    // Social buttons → Social Butterfly
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('.soc-btn')) unlock('social-butterfly');
+    });
 
-  function renderPanel() {
-    if (!panel) return;
-    var data = getAchievements();
-    var keys = Object.keys(ACHIEVEMENTS);
-    var total = keys.length;
-    var unlocked = 0;
-    for (var k in data) { if (data[k]) unlocked++; }
+    // Detail page links → Deep Diver
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('a[href*="projects/"]')) unlock('deep-diver');
+    });
 
-    var html = '<h6>Achievements (' + unlocked + '/' + total + ')</h6>';
+    // Card flips
+    document.addEventListener('click', function (e) {
+      var card = e.target.closest('.gc');
+      if (!card || card.classList.contains('no-flip')) return;
+      if (e.target.closest('a') || e.target.closest('iframe') || e.target.closest('.gallery-arrow') || e.target.closest('.gallery-dots')) return;
+      if (e.target.matches('.gc-art, .gc-art-contain, .gc-back-gallery img')) return;
 
-    for (var i = 0; i < keys.length; i++) {
-      var id = keys[i];
-      var ach = ACHIEVEMENTS[id];
-      var isUnlocked = !!data[id];
-      var cls = isUnlocked ? "achievement-panel-item" : "achievement-panel-item locked";
-      html +=
-        '<div class="' + cls + '">' +
-          '<span class="achievement-icon">' + ach.icon + '</span>' +
-          '<div>' +
-            '<div class="achievement-title">' + ach.title + '</div>' +
-            '<div class="achievement-desc">' + (isUnlocked ? ach.desc : ach.hint) + '</div>' +
-          '</div>' +
-        '</div>';
-    }
+      var activeCab = document.querySelector('.cabinet.active');
+      if (!activeCab) return;
+      var sectionId = activeCab.dataset.id;
+      var contentEl = document.getElementById('section-content');
+      if (!contentEl) return;
+      var activeTab = contentEl.querySelector('.tab-panel.active');
+      var container = activeTab || contentEl;
+      var cards = Array.from(container.querySelectorAll('.gc:not(.no-flip)'));
+      var idx = cards.indexOf(card);
+      if (idx >= 0) {
+        var key = sectionId;
+        if (activeTab) key = sectionId + ':' + activeTab.id;
+        trackCardFlip(key, idx);
+      }
+    });
 
-    html += '<button id="achievement-clear">Clear All Progress</button>';
-    panel.innerHTML = html;
+    // Tab clicks
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.tab-btn');
+      if (btn && btn.dataset.tab) trackTab(btn.dataset.tab);
+    });
 
-    document.getElementById("achievement-clear").addEventListener("click", function () {
-      try {
-        localStorage.removeItem(STORAGE_ACHIEVEMENTS);
-        localStorage.removeItem(STORAGE_PAGES);
-      } catch (e) {}
-      updateToggleBadge();
-      updateProgress();
-      renderPanel();
+    // Section tracking via pushState
+    trackSection(getCurrentSection());
+
+    var origPush = history.pushState;
+    history.pushState = function () {
+      origPush.apply(history, arguments);
+      trackSection(getCurrentSection());
+      setTimeout(updateFlippableCounts, 500);
+    };
+
+    window.addEventListener('popstate', function () {
+      trackSection(getCurrentSection());
+      setTimeout(updateFlippableCounts, 500);
     });
   }
 
-  // === Init ===
-  createToastContainer();
-  createProgressBar();
-  createAchievementToggle();
-  trackPageVisit();
-  updateProgress();
-  checkNightOwl();
-  initSpeedReader();
-  initCuriousClick();
-  initSocialButterfly();
-  initTimelineHistorian();
-  checkDeepDiver();
-  initPlayerOne();
+  // ── Init ──
+
+  function init() {
+    createToastContainer();
+    createToggle();
+    createPanel();
+
+    // Night Owl
+    var hour = new Date().getHours();
+    if (hour >= 22 || hour < 5) unlock('night-owl');
+
+    // Wait for arcade to finish loading
+    setTimeout(function () {
+      initListeners();
+      updateProgress();
+      updateFlippableCounts();
+    }, 500);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();

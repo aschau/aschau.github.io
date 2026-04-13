@@ -436,8 +436,10 @@
       scrollbar-width: none;
       flex-wrap: nowrap;
       flex: 1; align-items: center;
+      cursor: grab;
     }
     .card-carousel::-webkit-scrollbar { display: none; }
+    .card-carousel.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 
     .card-carousel .gc { scroll-snap-align: center; }
 
@@ -757,6 +759,45 @@
       border-radius: 2px; cursor: zoom-in;
     }
 
+    /* Gallery slideshow (JS-enhanced when >1 image) */
+    .gallery-slideshow { position: relative; }
+    .gallery-slideshow .gallery-track {
+      position: relative; width: 100%; height: 100%;
+    }
+    .gallery-slideshow .gallery-slide {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: contain; opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .gallery-slideshow .gallery-slide.active { opacity: 1; }
+    .gallery-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-dim); font-size: 0.55rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 2; padding: 0;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .gallery-arrow:hover { border-color: var(--border-glow); color: var(--blue-light); }
+    .gallery-prev { left: 2px; }
+    .gallery-next { right: 2px; }
+    .gallery-dots {
+      position: absolute; bottom: 3px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 4px; z-index: 2;
+    }
+    .gallery-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--text-dim); opacity: 0.4;
+      transition: opacity 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+    .gallery-dot.active {
+      opacity: 1;
+      background: var(--card-color, var(--blue));
+    }
+
     /* Lightbox for expanding images */
     .lightbox {
       position: fixed; inset: 0; z-index: 10001;
@@ -896,6 +937,10 @@
         padding: 0rem calc(50% - min(140px, 36vw)) 0rem;
       }
 
+      .gallery-arrow { width: 22px; height: 22px; font-size: 0.45rem; }
+      .gallery-dot { width: 5px; height: 5px; }
+      .gallery-dots { gap: 3px; }
+
       /* Tabs — wrap with consistent 3+2 layout */
       .tab-bar {
         justify-content: center;
@@ -969,6 +1014,9 @@
       .home-name { font-size: 1.1rem; }
       .content-sprite { transform: translateX(-50%) scale(0.85); }
       .content-sprite::after { font-size: 0.4rem; bottom: -15px; padding: 1px 6px; }
+      .gallery-arrow { width: 20px; height: 20px; font-size: 0.4rem; }
+      .gallery-dot { width: 4px; height: 4px; }
+      .gallery-dots { gap: 3px; bottom: 2px; }
     }
 
     /* Tablet: 769px - 1024px */
@@ -1045,6 +1093,148 @@
       color: var(--text-dim);
       margin-top: 1rem;
       opacity: 0.5;
+    }
+
+    /* ===== ACHIEVEMENTS ===== */
+
+    /* Progress bar — between bezel and world */
+    .ach-progress {
+      height: 3px; flex-shrink: 0;
+      background: rgba(74,144,217,0.08);
+      position: relative; z-index: 3;
+    }
+    .ach-progress-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--blue), var(--blue-light));
+      border-radius: 0 2px 2px 0;
+      transition: width 0.8s ease;
+    }
+
+    /* Toggle button — inside screen bezel */
+    .ach-toggle {
+      position: absolute; top: 10px; right: 10px; z-index: 10;
+      width: 36px; height: 36px; border-radius: 6px;
+      background: linear-gradient(180deg, #1a1f3a, #12162d);
+      border: 2px solid var(--border);
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: var(--text-dim);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .ach-toggle:hover { border-color: var(--border-glow); color: var(--blue-light); }
+    .ach-toggle:active { transform: translateY(1px); }
+
+    .ach-badge {
+      position: absolute; top: -4px; right: -4px;
+      min-width: 16px; height: 16px; border-radius: 8px;
+      background: var(--purple); color: white;
+      font-family: 'Silkscreen', cursive; font-size: 0.4rem;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 3px;
+    }
+    .ach-badge:empty { display: none; }
+
+    /* Panel */
+    .ach-panel {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 199;
+      width: 280px; max-width: 85vw;
+      background: rgba(12,16,32,0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-left: 1px solid var(--border);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto; scrollbar-width: none;
+      display: flex; flex-direction: column;
+      padding: 1rem;
+    }
+    .ach-panel::-webkit-scrollbar { display: none; }
+    .ach-panel.open { transform: translateX(0); }
+
+    .ach-panel-header {
+      font-family: 'Silkscreen', cursive; font-size: 0.7rem;
+      color: var(--blue-light); margin-bottom: 0.8rem;
+      padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    }
+
+    .ach-tile {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 6px; padding: 0.7rem;
+      margin-bottom: 0.5rem; transition: all 0.2s;
+      display: flex; gap: 0.6rem; align-items: flex-start;
+    }
+    .ach-tile.unlocked { border-color: var(--border-glow); }
+    .ach-tile.unlocked:hover { box-shadow: 0 0 12px rgba(74,144,217,0.15); }
+    .ach-tile.locked { opacity: 0.4; }
+
+    .ach-tile-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1; }
+    .ach-tile-info { flex: 1; min-width: 0; }
+    .ach-tile-title { font-family: 'Silkscreen', cursive; font-size: 0.55rem; margin-bottom: 0.15rem; }
+    .ach-tile-desc { font-family: 'Fira Code', monospace; font-size: 0.5rem; color: var(--text-dim); line-height: 1.4; }
+    .ach-tile.locked .ach-tile-desc { font-style: italic; }
+
+    .ach-clear {
+      font-family: 'Fira Code', monospace; font-size: 0.5rem;
+      color: var(--text-dim); background: none; border: 1px solid var(--border);
+      border-radius: 3px; padding: 0.3rem 0.6rem; cursor: pointer;
+      margin-top: auto; align-self: center; transition: all 0.2s;
+    }
+    .ach-clear:hover { border-color: var(--pink); color: var(--pink); }
+
+    /* Toast notification */
+    .ach-toast-container {
+      position: fixed; top: 52px; right: 8px; z-index: 201;
+      pointer-events: none; display: flex; flex-direction: column; gap: 8px;
+    }
+
+    .ach-toast {
+      pointer-events: auto;
+      background: rgba(12,16,32,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glow);
+      border-radius: 6px; padding: 0.7rem 1rem;
+      box-shadow: 0 0 20px rgba(74,144,217,0.15);
+      animation: achToastIn 0.4s ease forwards;
+      min-width: 200px;
+    }
+
+    .ach-toast.out { animation: achToastOut 0.4s ease forwards; }
+
+    .ach-toast-label {
+      font-family: 'Silkscreen', cursive; font-size: 0.4rem;
+      color: var(--purple); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 0.2rem;
+    }
+
+    .ach-toast-title {
+      font-family: 'Silkscreen', cursive; font-size: 0.65rem;
+      color: var(--text); margin-bottom: 0.1rem;
+    }
+
+    .ach-toast-desc {
+      font-family: 'Fira Code', monospace; font-size: 0.45rem;
+      color: var(--text-dim);
+    }
+
+    .ach-toast-icon { float: left; font-size: 1.4rem; margin-right: 0.6rem; line-height: 1; }
+
+    @keyframes achToastIn {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes achToastOut {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      .ach-toggle { width: 26px; height: 26px; font-size: 0.75rem; top: 8px; right: 8px; }
+      .ach-toast-container { top: 40px; right: 4px; }
+      .ach-toast { min-width: 160px; padding: 0.5rem 0.7rem; }
+      .ach-toast-title { font-size: 0.55rem; }
+      .ach-toast-icon { font-size: 1.1rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {

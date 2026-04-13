@@ -1,5 +1,5 @@
 // ============================================
-// Gamification — Testable Logic
+// Gamification — Testable Logic (Arcade Edition)
 // Pure functions extracted from gamification.js for unit testing.
 // Browser code (gamification.js) keeps its own copies inside the IIFE;
 // this module is the canonical reference for tests.
@@ -9,18 +9,21 @@
 'use strict';
 
 var ACHIEVEMENTS = {
-    explorer:     { title: "Explorer",      desc: "Visited all 4 pages",              hint: "Visit every main page...",              icon: "\uD83E\uDDED" },
-    curious:      { title: "Curious",       desc: "Clicked an external link",         hint: "Follow a link to the outside...",       icon: "\uD83D\uDD0D" },
-    "night-owl":  { title: "Night Owl",     desc: "Visited after 10 PM",              hint: "Come back when the moon is out...",     icon: "\uD83C\uDF19" },
-    "speed-reader": { title: "Speed Reader", desc: "Scrolled to the bottom in under 10s", hint: "Reach the bottom before time runs out...", icon: "\u26A1" },
-    "deep-diver":   { title: "Deep Diver",   desc: "Visited a project detail page",     hint: "Go deeper into a project...",           icon: "\uD83E\uDD3F" },
-    "timeline-historian": { title: "Timeline Historian", desc: "Expanded all timeline entries", hint: "Explore every chapter of the journey...", icon: "\uD83D\uDCDC" },
-    "skill-scout":  { title: "Skill Scout",  desc: "Visited the About page",           hint: "Learn more about who I am...",          icon: "\uD83C\uDFAF" },
-    "social-butterfly": { title: "Social Butterfly", desc: "Clicked a social profile link", hint: "Connect on social media...",           icon: "\uD83E\uDD8B" },
-    "player-one":       { title: "Player One",      desc: "Launched a web game",             hint: "Ready Player One...",                   icon: "\uD83C\uDFAE" }
+    "cabinet-crawler":  { title: "Cabinet Crawler",  desc: "Visited all 6 sections",           hint: "Visit every cabinet in the arcade...",   icon: "\uD83D\uDD79\uFE0F" },
+    "card-collector":   { title: "Card Collector",   desc: "Flipped every card",               hint: "There's something on the back...",       icon: "\uD83C\uDCCF" },
+    "tab-master":       { title: "Tab Master",       desc: "Clicked every tab",                hint: "Check every category...",                icon: "\uD83D\uDCC1" },
+    "pixel-walker":     { title: "Pixel Walker",     desc: "Used keyboard navigation",         hint: "Try the arrow keys...",                  icon: "\u2328\uFE0F" },
+    curious:            { title: "Curious",          desc: "Clicked an external link",         hint: "Follow a link to the outside...",        icon: "\uD83D\uDD0D" },
+    "night-owl":        { title: "Night Owl",        desc: "Visited after 10 PM",              hint: "Come back when the moon is out...",      icon: "\uD83C\uDF19" },
+    "deep-diver":       { title: "Deep Diver",       desc: "Visited a project detail page",    hint: "Go deeper into a project...",            icon: "\uD83E\uDD3F" },
+    "social-butterfly": { title: "Social Butterfly", desc: "Clicked a social profile link",    hint: "Connect on social media...",             icon: "\uD83E\uDD8B" },
+    "player-one":       { title: "Player One",       desc: "Visited the Play section",         hint: "Ready Player One...",                    icon: "\uD83C\uDFAE" }
 };
 
-var MAIN_PAGES = ["index.html", "aboutMe.html", "workprojects.html", "personalprojects.html", "deep-dive"];
+var SECTIONS = ["home", "about", "journey", "work", "personal", "play"];
+
+// All tab IDs across Work and Personal sections
+var ALL_TABS = ["w-blizzard", "w-mw", "w-sega", "w-trigger", "w-stb", "pp-fc", "pp-wh", "pp-ai", "pp-web", "pp-col"];
 
 // === Storage Helpers ===
 
@@ -43,10 +46,6 @@ function setJSON(storage, key, val) {
 
 /**
  * Attempt to unlock an achievement. Returns true if newly unlocked, false if already had it.
- * @param {object} storage - localStorage-like object
- * @param {string} storageKey - key for achievements in storage
- * @param {string} id - achievement id
- * @returns {boolean} true if newly unlocked
  */
 function unlockAchievement(storage, storageKey, id) {
     var data = getJSON(storage, storageKey, {});
@@ -57,45 +56,73 @@ function unlockAchievement(storage, storageKey, id) {
 }
 
 /**
- * Determine which achievements should fire given a page visit.
- * Returns an array of achievement ids to unlock.
- * @param {string} page - current page filename (e.g. "aboutMe.html")
- * @param {string[]} previouslyVisited - pages already visited
- * @param {string} pathname - full window.location.pathname
- * @returns {{ pagesToSave: string[], achievementsToUnlock: string[] }}
+ * Process a section visit. Returns achievements to unlock.
+ * @param {string} section - section id (e.g. "work", "about")
+ * @param {string[]} previouslyVisited - sections already visited
+ * @returns {{ sectionsToSave: string[], achievementsToUnlock: string[] }}
  */
-function processPageVisit(page, previouslyVisited, pathname) {
-    var pages = previouslyVisited.slice(); // copy
+function processSectionVisit(section, previouslyVisited) {
+    var sections = previouslyVisited.slice();
     var achievements = [];
 
-    // Track new page visit
-    if (MAIN_PAGES.indexOf(page) !== -1 && pages.indexOf(page) === -1) {
-        pages.push(page);
+    if (SECTIONS.indexOf(section) !== -1 && sections.indexOf(section) === -1) {
+        sections.push(section);
     }
 
-    // Explorer: visited all 4 main pages (excluding deep-dive)
-    var mainCount = 0;
-    for (var i = 0; i < pages.length; i++) {
-        if (pages[i] !== "deep-dive") mainCount++;
-    }
-    if (mainCount >= 4) {
-        achievements.push("explorer");
+    // Cabinet Crawler: visited all 6 sections
+    if (sections.length >= SECTIONS.length) {
+        achievements.push("cabinet-crawler");
     }
 
-    // Skill Scout: visited aboutMe.html
-    if (page === "aboutMe.html") {
-        achievements.push("skill-scout");
+    // Player One: visited the play section
+    if (section === "play") {
+        achievements.push("player-one");
     }
 
-    // Deep Diver: visiting a project detail page
-    if (pathname.indexOf("projects/") !== -1) {
-        achievements.push("deep-diver");
-        if (pages.indexOf("deep-dive") === -1) {
-            pages.push("deep-dive");
-        }
-    }
+    return { sectionsToSave: sections, achievementsToUnlock: achievements };
+}
 
-    return { pagesToSave: pages, achievementsToUnlock: achievements };
+/**
+ * Check if all tabs have been clicked.
+ * @param {string[]} clickedTabs - tab IDs that have been clicked
+ * @returns {boolean}
+ */
+function checkTabMaster(clickedTabs) {
+    for (var i = 0; i < ALL_TABS.length; i++) {
+        if (clickedTabs.indexOf(ALL_TABS[i]) === -1) return false;
+    }
+    return true;
+}
+
+/**
+ * Check if all flippable cards in a section have been flipped.
+ * @param {number[]} flippedIndices - indices of flipped cards
+ * @param {number} totalFlippable - total number of flippable cards
+ * @returns {boolean}
+ */
+function checkSectionComplete(flippedIndices, totalFlippable) {
+    if (totalFlippable <= 0) return false;
+    var unique = [];
+    for (var i = 0; i < flippedIndices.length; i++) {
+        if (unique.indexOf(flippedIndices[i]) === -1) unique.push(flippedIndices[i]);
+    }
+    return unique.length >= totalFlippable;
+}
+
+/**
+ * Check if ALL sections' cards have been flipped (card collector).
+ * @param {object} flippedMap - { sectionId: [indices], ... }
+ * @param {object} totalMap - { sectionId: totalFlippable, ... }
+ * @returns {boolean}
+ */
+function checkCardCollector(flippedMap, totalMap) {
+    var sectionIds = Object.keys(totalMap);
+    for (var i = 0; i < sectionIds.length; i++) {
+        var id = sectionIds[i];
+        if (totalMap[id] <= 0) continue;
+        if (!flippedMap[id] || !checkSectionComplete(flippedMap[id], totalMap[id])) return false;
+    }
+    return true;
 }
 
 /**
@@ -108,44 +135,25 @@ function checkNightOwl(hour) {
 }
 
 /**
- * Check if speed-reader achievement should fire.
- * @param {number} elapsedMs - time since page load in milliseconds
- * @param {boolean} atBottom - whether user has scrolled to the bottom
- * @returns {boolean}
- */
-function checkSpeedReader(elapsedMs, atBottom) {
-    return atBottom && elapsedMs < 10000;
-}
-
-/**
  * Calculate exploration progress percentage.
- * @param {number} pagesVisited - number of pages visited
- * @param {number} totalPages - total number of trackable pages
+ * @param {number} sectionsVisited - number of sections visited
  * @returns {number} percentage (0-100)
  */
-function calculateProgress(pagesVisited, totalPages) {
-    return Math.round((pagesVisited / totalPages) * 100);
-}
-
-/**
- * Check timeline-historian: have all entries been expanded?
- * @param {object} expandedSet - map of entry indices that have been expanded
- * @param {number} totalEntries - total number of timeline entries
- * @returns {boolean}
- */
-function checkTimelineHistorian(expandedSet, totalEntries) {
-    return Object.keys(expandedSet).length >= totalEntries;
+function calculateProgress(sectionsVisited) {
+    return Math.round((sectionsVisited / SECTIONS.length) * 100);
 }
 
 module.exports = {
     ACHIEVEMENTS,
-    MAIN_PAGES,
+    SECTIONS,
+    ALL_TABS,
     getJSON,
     setJSON,
     unlockAchievement,
-    processPageVisit,
+    processSectionVisit,
+    checkTabMaster,
+    checkSectionComplete,
+    checkCardCollector,
     checkNightOwl,
-    checkSpeedReader,
     calculateProgress,
-    checkTimelineHistorian,
 };

@@ -85,7 +85,9 @@ var cabinets = document.querySelectorAll('.cabinet');
     var cards = getCards();
     cards.forEach(function(c, i) { c.classList.toggle('card-active', i === idx); });
     if (cards[idx]) {
+      programmaticScroll = true;
       cards[idx].scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
+      setTimeout(function() { programmaticScroll = false; }, 500);
     }
     // Journey section: swap jacket at MobilityWare (index 4)
     if (panelIds[currentCab] === 'journey' && contentSprite) {
@@ -141,10 +143,12 @@ var cabinets = document.querySelectorAll('.cabinet');
   }
 
   // Brief walk animation when scrolling cards
+  var walkTimer = null;
   function spriteWalkBrief(goingRight) {
+    clearTimeout(walkTimer);
     contentSprite.classList.remove('idle','walk-right','walk-left');
     contentSprite.classList.add(goingRight ? 'walk-right' : 'walk-left');
-    setTimeout(function() {
+    walkTimer = setTimeout(function() {
       contentSprite.classList.remove('walk-right','walk-left');
       contentSprite.classList.add('idle');
     }, 500);
@@ -196,6 +200,178 @@ var cabinets = document.querySelectorAll('.cabinet');
       });
   }
 
+  // Gallery slideshow — transform multi-image galleries into one-at-a-time slideshows
+  function initGalleries() {
+    contentEl.querySelectorAll('.gc-back-gallery').forEach(function(gallery) {
+      var imgs = Array.from(gallery.querySelectorAll('img'));
+      if (imgs.length <= 1) return;
+
+      // Inherit card color for dot highlight
+      var card = gallery.closest('.gc');
+      if (card) {
+        var cardColor = getComputedStyle(card).getPropertyValue('--card-color');
+        if (cardColor) gallery.style.setProperty('--card-color', cardColor.trim());
+      }
+
+      gallery.classList.add('gallery-slideshow');
+      gallery.dataset.galleryIdx = '0';
+
+      // Wrap images in track
+      var track = document.createElement('div');
+      track.className = 'gallery-track';
+      imgs.forEach(function(img, i) {
+        img.classList.add('gallery-slide');
+        if (i === 0) img.classList.add('active');
+        track.appendChild(img);
+      });
+      gallery.appendChild(track);
+
+      // Arrow buttons
+      var prev = document.createElement('button');
+      prev.className = 'gallery-arrow gallery-prev';
+      prev.setAttribute('aria-label', 'Previous image');
+      prev.innerHTML = '&#9664;';
+      var next = document.createElement('button');
+      next.className = 'gallery-arrow gallery-next';
+      next.setAttribute('aria-label', 'Next image');
+      next.innerHTML = '&#9654;';
+      gallery.appendChild(prev);
+      gallery.appendChild(next);
+
+      // Dots
+      var dots = document.createElement('div');
+      dots.className = 'gallery-dots';
+      imgs.forEach(function(_, i) {
+        var dot = document.createElement('span');
+        dot.className = 'gallery-dot' + (i === 0 ? ' active' : '');
+        dot.dataset.idx = i;
+        dots.appendChild(dot);
+      });
+      gallery.appendChild(dots);
+
+      function navigateTo(idx) {
+        var count = imgs.length;
+        idx = ((idx % count) + count) % count; // wrap
+        gallery.dataset.galleryIdx = idx;
+        imgs.forEach(function(img, i) { img.classList.toggle('active', i === idx); });
+        dots.querySelectorAll('.gallery-dot').forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+      }
+
+      prev.addEventListener('click', function(e) {
+        e.stopPropagation(); e.preventDefault();
+        navigateTo(parseInt(gallery.dataset.galleryIdx) - 1);
+      });
+      next.addEventListener('click', function(e) {
+        e.stopPropagation(); e.preventDefault();
+        navigateTo(parseInt(gallery.dataset.galleryIdx) + 1);
+      });
+      dots.addEventListener('click', function(e) {
+        e.stopPropagation(); e.preventDefault();
+        var dot = e.target.closest('.gallery-dot');
+        if (dot) navigateTo(parseInt(dot.dataset.idx));
+      });
+
+      // Touch swipe on gallery
+      var touchStartX = 0;
+      gallery.addEventListener('touchstart', function(e) {
+        touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+      gallery.addEventListener('touchend', function(e) {
+        var dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 30) {
+          e.stopPropagation();
+          navigateTo(parseInt(gallery.dataset.galleryIdx) + (dx < 0 ? 1 : -1));
+        }
+      });
+    });
+  }
+
+  // Drag-to-scroll for card carousels + scroll sync
+  function initCarouselDrag() {
+    contentEl.querySelectorAll('.card-carousel').forEach(function(carousel) {
+      var isDown = false, startX = 0, scrollStart = 0, hasDragged = false;
+
+      carousel.addEventListener('mousedown', function(e) {
+        if (e.target.closest('a, button, iframe')) return;
+        isDown = true; hasDragged = false;
+        startX = e.pageX;
+        scrollStart = carousel.scrollLeft;
+      });
+
+      carousel.addEventListener('mousemove', function(e) {
+        if (!isDown) return;
+        var dx = e.pageX - startX;
+        if (!hasDragged && Math.abs(dx) > 5) {
+          hasDragged = true;
+          carousel.classList.add('dragging');
+        }
+        if (hasDragged) {
+          e.preventDefault();
+          carousel.scrollLeft = scrollStart - dx;
+          // Live sprite update during drag
+          liveSync(carousel);
+        }
+      });
+
+      function endDrag() {
+        if (!isDown) return;
+        isDown = false;
+        carousel.classList.remove('dragging');
+        if (hasDragged) {
+          suppressClick = true;
+          setTimeout(function() { syncCardFromScroll(carousel); }, 80);
+        }
+      }
+
+      carousel.addEventListener('mouseup', endDrag);
+      carousel.addEventListener('mouseleave', endDrag);
+
+      // Sync currentCard during user-initiated scroll (touch swipe)
+      carousel.addEventListener('scroll', function() {
+        if (isDown || programmaticScroll) return;
+        liveSync(carousel);
+      }, { passive: true });
+    });
+  }
+
+  // Lightweight sync called frequently during drag/scroll — updates sprite + highlight
+  function liveSync(carousel) {
+    var cards = getCards();
+    if (cards.length === 0) return;
+    var centerX = carousel.scrollLeft + carousel.offsetWidth / 2;
+    var closest = 0, closestDist = Infinity;
+    cards.forEach(function(card, i) {
+      var cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      var dist = Math.abs(cardCenter - centerX);
+      if (dist < closestDist) { closestDist = dist; closest = i; }
+    });
+    // Enter card mode on first drag/swipe interaction
+    if (layer === 0) {
+      layer = 1;
+      updateModeLabel();
+      currentCard = closest;
+      cards.forEach(function(c, i) { c.classList.toggle('card-active', i === closest); });
+      showContentSprite();
+      return;
+    }
+    if (closest !== currentCard) {
+      var goingRight = closest > currentCard;
+      currentCard = closest;
+      cards.forEach(function(c, i) { c.classList.toggle('card-active', i === closest); });
+      if (contentSprite) {
+        spriteWalkBrief(goingRight);
+        if (panelIds[currentCab] === 'journey') {
+          contentSprite.classList.toggle('no-jacket', closest < 4);
+        }
+      }
+    }
+  }
+
+  function syncCardFromScroll(carousel) {
+    // Final settle after drag/swipe
+    liveSync(carousel);
+  }
+
   // Bind event handlers on freshly injected section content
   function bindSectionHandlers() {
     contentEl.querySelectorAll('.tab-btn').forEach(function(btn) {
@@ -225,6 +401,9 @@ var cabinets = document.querySelectorAll('.cabinet');
         el.textContent = 'tap to flip';
       });
     }
+
+    initGalleries();
+    initCarouselDrag();
   }
 
   function injectSection(html, goingRight) {
@@ -420,6 +599,8 @@ var cabinets = document.querySelectorAll('.cabinet');
   }
 
   var peeked = {};
+  var suppressClick = false;
+  var programmaticScroll = false;
 
   // Cabinet clicks — go to cab and enter card layer
   cabinets.forEach(function(cab, i) {
@@ -460,9 +641,10 @@ var cabinets = document.querySelectorAll('.cabinet');
 
   // Card clicks — set as active and flip
   document.addEventListener('click', function(e) {
+    if (suppressClick) { suppressClick = false; return; }
     var card = e.target.closest('.gc');
     if (!card) return;
-    if (e.target.closest('a') || e.target.closest('iframe')) return;
+    if (e.target.closest('a') || e.target.closest('iframe') || e.target.closest('.gallery-arrow') || e.target.closest('.gallery-dots')) return;
     // Don't flip when clicking an image — lightbox handles that
     if (e.target.matches('.gc-art, .gc-art-contain, .gc-back-gallery img')) return;
     var cards = getCards();

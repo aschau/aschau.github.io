@@ -1,0 +1,321 @@
+/* Detail page styles — arcade-themed standalone pages */
+
+/* Self-hosted fonts (same as arcade.css) */
+@font-face { font-family: 'Silkscreen'; font-weight: 400; font-display: swap; src: url('../fonts/Silkscreen-Regular.woff2') format('woff2'); }
+@font-face { font-family: 'Silkscreen'; font-weight: 700; font-display: swap; src: url('../fonts/Silkscreen-Bold.woff2') format('woff2'); }
+@font-face { font-family: 'Outfit'; font-weight: 300 700; font-display: swap; src: url('../fonts/Outfit-Variable.woff2') format('woff2'); }
+@font-face { font-family: 'Fira Code'; font-weight: 300 500; font-display: swap; src: url('../fonts/FiraCode-Variable.woff2') format('woff2'); }
+
+:root {
+  --blue: #4a90d9; --blue-light: #7ab8ff; --blue-dim: rgba(74,144,217,0.12);
+  --purple: #9b6dff; --pink: #ff6b9d; --green: #50e3a4;
+  --yellow: #ffd166; --orange: #ff8a50; --teal: #4ecdc4;
+  --bg: #0c1020; --bg-card: rgba(16,20,42,0.92);
+  --border: rgba(74,144,217,0.12); --border-glow: rgba(74,144,217,0.3);
+  --text: #e4e8f7; --text-dim: rgba(180,190,220,0.55); --text-soft: rgba(200,210,240,0.8);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  min-height: 100vh; min-height: 100dvh;
+  background: var(--bg);
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue-light);
+  outline-offset: 2px;
+}
+
+/* ===== BACK NAVIGATION ===== */
+.detail-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(12,16,32,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 1.5rem;
+}
+
+.detail-back {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: var(--blue-light);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.8rem;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.detail-back:hover { border-color: var(--border-glow); background: var(--blue-dim); }
+.detail-back:active { background: var(--blue-dim); border-color: var(--blue-light); }
+
+/* ===== PAGE LAYOUT ===== */
+.detail-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 2rem;
+}
+
+/* ===== PAGE HEADER ===== */
+.detail-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-title {
+  font-family: 'Silkscreen', cursive;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  color: var(--blue-light);
+  margin-bottom: 0.4rem;
+}
+
+.detail-subtitle {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.detail-subtitle a {
+  color: var(--blue-light);
+  text-decoration: none;
+}
+.detail-subtitle a:hover { text-decoration: underline; }
+
+/* ===== CONTENT SECTIONS (dark glass cards) ===== */
+.detail-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+
+.detail-section:hover { border-color: var(--border-glow); }
+
+.detail-section-title {
+  font-family: 'Silkscreen', cursive;
+  font-size: 0.75rem;
+  color: var(--text);
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== TYPOGRAPHY ===== */
+.detail-text {
+  font-size: 0.92rem;
+  color: var(--text-soft);
+  line-height: 1.8;
+  margin-bottom: 0.8rem;
+}
+
+.detail-text:last-child { margin-bottom: 0; }
+
+.detail-text b, .detail-text strong { color: var(--text); }
+
+.detail-subsection-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.78rem;
+  color: var(--text);
+  margin: 1.2rem 0 0.5rem;
+}
+
+.detail-subsection-title:first-child { margin-top: 0; }
+
+/* ===== TEAM ROSTER ===== */
+.detail-roster {
+  list-style: none;
+  padding: 0;
+}
+
+.detail-roster li {
+  position: relative;
+  padding: 0.3rem 0 0.3rem 1.2rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.detail-roster li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.65rem;
+  width: 5px; height: 5px;
+  background: var(--blue);
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+
+/* ===== AWARDS ===== */
+.detail-awards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.detail-award {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  color: var(--green);
+  border: 1px solid rgba(80,227,164,0.3);
+  padding: 0.3rem 0.7rem;
+  border-radius: 3px;
+  background: rgba(80,227,164,0.06);
+}
+
+/* ===== LINK BUTTONS ===== */
+.detail-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.detail-link {
+  display: inline-block;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.7rem;
+  color: var(--blue-light);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.8rem;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.detail-link:hover { border-color: var(--border-glow); background: var(--blue-dim); }
+.detail-link:active { background: var(--blue-dim); border-color: var(--blue-light); }
+
+/* ===== IMAGES ===== */
+.detail-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.detail-images img {
+  width: 100%;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  cursor: zoom-in;
+  transition: border-color 0.2s;
+}
+
+.detail-images img:hover { border-color: var(--border-glow); }
+
+.detail-images-3col { grid-template-columns: 1fr 1fr 1fr; }
+.detail-images-1col { grid-template-columns: 1fr; max-width: 500px; }
+
+/* ===== VIDEO EMBEDS ===== */
+.detail-video {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 */
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.8rem;
+  border: 1px solid var(--border);
+}
+
+.detail-video:last-child { margin-bottom: 0; }
+
+.detail-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.detail-video-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+/* ===== LIGHTBOX ===== */
+.detail-lightbox {
+  position: fixed; inset: 0; z-index: 10001;
+  background: rgba(0,0,0,0.9);
+  display: flex; align-items: center; justify-content: center;
+  cursor: zoom-out; opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.detail-lightbox.open { opacity: 1; pointer-events: auto; }
+
+.detail-lightbox img {
+  max-width: 90vw; max-height: 90vh; object-fit: contain;
+  border-radius: 6px; box-shadow: 0 0 40px rgba(0,0,0,0.5);
+}
+
+/* ===== FOOTER ===== */
+.detail-footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.detail-footer a {
+  color: var(--blue-light);
+  text-decoration: none;
+}
+.detail-footer a:hover { text-decoration: underline; }
+
+/* ===== RESPONSIVE ===== */
+
+/* Mobile */
+@media (max-width: 768px) {
+  .detail-nav { padding: 0.5rem 0.8rem; }
+  .detail-page { padding: 1rem 0.8rem 1.5rem; }
+  .detail-section { padding: 1rem; }
+  .detail-title { font-size: 1.3rem; }
+  .detail-text { font-size: 0.85rem; }
+  .detail-subsection-title { font-size: 0.72rem; }
+  .detail-images { grid-template-columns: 1fr; }
+  .detail-images-3col { grid-template-columns: 1fr 1fr; }
+  .detail-video-grid { grid-template-columns: 1fr; }
+  .detail-roster li { font-size: 0.65rem; }
+}
+
+/* Small phones (iPhone SE) */
+@media (max-width: 400px) {
+  .detail-page { padding: 0.8rem 0.6rem 1.2rem; }
+  .detail-section { padding: 0.8rem; }
+  .detail-title { font-size: 1.1rem; }
+  .detail-subtitle { font-size: 0.65rem; }
+  .detail-text { font-size: 0.8rem; }
+  .detail-section-title { font-size: 0.65rem; }
+  .detail-subsection-title { font-size: 0.65rem; }
+  .detail-link { font-size: 0.6rem; padding: 0.25rem 0.6rem; }
+  .detail-images-3col { grid-template-columns: 1fr; }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .detail-page { padding: 1.2rem 1rem 1.5rem; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

@@ -299,7 +299,7 @@
     }
     .cab-screen::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px); pointer-events: none; }
 
-    .cab-icon { font-size: 1.8rem; opacity: 0.45; color: var(--cc, var(--blue)); z-index: 1; }
+    .cab-icon { font-size: 1.8rem; opacity: 0.45; color: var(--cc, var(--blue)); z-index: 1; font-variant-emoji: text; }
     .cab-glow { position: absolute; bottom: -3px; left: 15%; right: 15%; height: 5px; background: var(--cc, var(--blue)); filter: blur(6px); opacity: 0.3; }
     .cab-base { width: 140px; height: 14px; background: linear-gradient(180deg, #1a1e35, #12152a); border: 1px solid rgba(255,255,255,0.04); border-top: none; border-radius: 0 0 5px 5px; }
     .cab-label { font-family: 'Silkscreen', cursive; font-size: 0.55rem; color: var(--cc, var(--blue)); margin-top: 6px; text-shadow: 0 0 8px color-mix(in srgb, var(--cc, var(--blue)) 25%, transparent); }
@@ -592,7 +592,11 @@
 
     .gc-inner {
       width: 100%; height: 100%; position: relative;
-      transform-style: preserve-3d; transition: transform 0.5s ease;
+      transform-style: preserve-3d;
+      /* ease-in-out keeps 50% time = 50% rotation (90°), so the iOS opacity
+         swap at 0.25s lines up with the natural backface flip point — no
+         mid-flip blank gap. */
+      transition: transform 0.5s ease-in-out;
     }
 
     .gc.flipped { animation-play-state: paused; }
@@ -600,12 +604,22 @@
     .gc.flipped .gc-inner { transform: rotateY(180deg); }
 
     .gc-front, .gc-back {
-      position: absolute; inset: 0; backface-visibility: hidden;
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden; /* iOS Safari needs the prefix */
       border-radius: 10px; overflow: hidden;
       border: 2px solid var(--card-color, var(--blue));
       background: linear-gradient(180deg, rgba(12,16,35,0.95), rgba(8,10,25,0.98));
       box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+      /* iOS Safari bug: descendants with their own animations (like the pulsing
+         .gc-emblem-text) promote to a separate compositor layer and ignore the
+         parent's backface-visibility — front content leaks through when flipped.
+         Toggle opacity at the flip midpoint (0.25s into the 0.5s rotation) to
+         blank out whichever face is pointing away. */
+      transition: opacity 0s linear 0.25s;
     }
+    .gc.flipped .gc-front,
+    .gc:not(.flipped) .gc-back { opacity: 0; }
 
     .gc-front::before, .gc-back::before {
       content: ''; position: absolute; inset: 3px; border-radius: 7px;
@@ -672,11 +686,17 @@
 
     .gc-emblem-text {
       font-family: 'Silkscreen', cursive;
-      font-size: 3.3rem;
+      font-size: 1.8rem;
       color: var(--card-color);
-      opacity: 0.8;
+      opacity: 0.85;
       text-shadow: 0 0 25px color-mix(in srgb, var(--card-color) 35%, transparent);
       z-index: 1;
+      text-align: center;
+      line-height: 1.1;
+      padding: 0 0.5rem;
+      max-width: 100%;
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }
 
     .gc-emblem-sub {
@@ -951,13 +971,27 @@
       .p-tag { font-size: 0.5rem; margin-bottom: 0; }
       .p-title { font-size: 1.1rem; margin-bottom: 0.25rem; }
 
-      /* Cards — fill width, leave room for sprite below */
-      .gc { width: min(280px, 72vw); height: calc(100vh - 330px); height: calc(100dvh - 330px); min-height: 260px; max-height: 400px; }
+      /* Cards — fill width, leave room for sprite below.
+         iOS Safari drops max-height inside flex containers when the calc()
+         resolves larger, so clamp via max()/min() directly. */
+      .gc {
+        width: min(280px, 72vw);
+        height: max(260px, min(400px, calc(100dvh - 330px)));
+      }
+      /* Work/Personal + About cards sit above a hand of decks (or a skills
+         grid on About), so they're shorter than Play cards to give the
+         pixel sprite room to walk between the card and the deck below. */
+      .hand-stage .gc,
+      .board-top-row .gc,
+      .bf-card {
+        width: min(225px, 58vw);
+        height: max(210px, min(315px, calc(100dvh - 430px)));
+      }
       .gc-name { font-size: 0.7rem; }
       .gc-type { font-size: 0.45rem; }
       .gc-flavor { font-size: 0.65rem; padding: 5px 10px; line-height: 1.45; }
       .gc-nameplate { padding: 4px 10px 3px; }
-      .gc-emblem-text { font-size: 1.8rem; }
+      .gc-emblem-text { font-size: 1.1rem; }
       .gc-emblem-sub { font-size: 0.4rem; }
       .gc-back-title { font-size: 0.8rem; }
       .gc-back-role { font-size: 0.55rem; }
@@ -971,6 +1005,14 @@
       .card-carousel {
         gap: 0.8rem;
         padding: 0rem calc(50% - min(140px, 36vw)) 0rem;
+      }
+      /* Work/Personal carousels use smaller cards (min(225,58vw)) — padding
+         must match so the first card centers under the sprite. Pull cards
+         up slightly so the sprite (pulled even further up in JS) visually
+         anchors to the card, distinct from the deck row below. */
+      .hand-stage .card-carousel {
+        padding: 0rem calc(50% - min(112.5px, 29vw)) 0rem;
+        margin-top: -10px;
       }
 
       .gallery-arrow { width: 22px; height: 22px; font-size: 0.45rem; }
@@ -1039,8 +1081,9 @@
 
     /* Small phones (iPhone SE: 375px) */
     @media (max-width: 400px) {
-      .gc { width: 200px; height: calc(100vh - 400px); height: calc(100dvh - 400px); min-height: 180px; max-height: 280px; }
+      .gc { width: 200px; height: max(200px, min(280px, calc(100dvh - 400px))); }
       .card-carousel { padding: 0rem calc(50% - 100px) 0rem; }
+      .hand-stage .card-carousel { padding: 0rem calc(50% - 80px) 0rem; }
       .p-title { font-size: 0.95rem; margin-bottom: 0.2rem; }
       .panel { padding: 0.45rem 0.5rem 0.1rem; }
       .tab-btn { font-size: 0.48rem; padding: 0.28rem 0.45rem; min-width: 27%; }
@@ -1080,7 +1123,7 @@
       /* About board: shrink flanks + battlefield cards so 6 bf-cards fit between commander and emblem */
       .board-commander .gc, .board-emblem .gc { width: 180px; }
       .bf-card { width: clamp(110px, 13vw, 150px); height: clamp(170px, 20vw, 230px); }
-      .bf-card .gc-emblem-text { font-size: 2.2rem; }
+      .bf-card .gc-emblem-text { font-size: 0.9rem; }
       .bf-card .gc-name { font-size: 0.78rem; }
       .bf-card .gc-flavor { font-size: 0.7rem; }
     }
@@ -1181,13 +1224,17 @@
     .board-emblem { justify-content: center; }
     .board-skills { width: 100%; margin-bottom: 28px; flex-shrink: 0; }
 
-    /* Commander and emblem cards fill their zone height */
-    .board-commander .gc,
-    .board-emblem .gc {
-      height: auto;
-      flex: 1;
-      min-height: 0;
-      width: 240px;
+    /* Commander and emblem cards fill their zone height (desktop only —
+       mobile flattens zones with display:contents and sizes cards via the
+       .board-top-row carousel rule). */
+    @media (min-width: 769px) {
+      .board-commander .gc,
+      .board-emblem .gc {
+        height: auto;
+        flex: 1;
+        min-height: 0;
+        width: 240px;
+      }
     }
 
     /* Commander P/T box (MTG-style, bottom-right corner) */
@@ -1345,6 +1392,7 @@
     }
     /* Base .gc font sizes already match bf-card; keep back-text smaller for the smaller card. */
     .bf-card .gc-emblem { aspect-ratio: 4/3; }
+    .bf-card .gc-emblem-text { font-size: 1.3rem; }
     .bf-card .gc-flavor { padding: 0.45rem 0.62rem; }
     .bf-card .gc-front-links { padding: 0.45rem 0.62rem; }
     .bf-card .gc-ln { padding: 0.3rem 0.62rem; }
@@ -1415,6 +1463,7 @@
       color: var(--land-color, var(--blue));
       margin-bottom: 0.2rem;
       line-height: 1;
+      font-variant-emoji: text;
     }
 
     .land-name {
@@ -1449,8 +1498,18 @@
         display: contents;
       }
 
-      /* Zone labels don't make sense in a flat carousel */
-      .board-top-row .zone-label { display: none; }
+      /* Zone labels show as vertical section dividers in the horizontal scroll —
+         narrow sideways-oriented text between zones. */
+      .board-top-row .zone-label {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        padding: 0.5rem 0.15rem;
+        font-size: 0.55rem;
+        letter-spacing: 0.2em;
+        flex-shrink: 0;
+        scroll-snap-align: none;
+        align-self: center;
+      }
 
       /* The top row becomes the single horizontal scroll carousel */
       .board-top-row {
@@ -1470,18 +1529,15 @@
       }
       .board-top-row::-webkit-scrollbar { display: none; }
 
-      /* Every card (commander, bf-cards, emblem) same size on mobile */
+      /* Carousel structural rules — sizing lives in the .hand-stage/.board-top-row/.bf-card
+         rule higher up so Work/Personal + About stay in sync. */
       .board-top-row .gc {
         flex: 0 0 auto;
-        width: clamp(220px, 68vw, 280px);
-        height: auto;
-        aspect-ratio: 5/7;
         max-width: none;
         min-width: 0;
         scroll-snap-align: center;
       }
-      .bf-card { width: clamp(220px, 68vw, 280px); height: auto; aspect-ratio: 5/7; }
-      .bf-card .gc-emblem-text { font-size: 2.6rem; }
+      .bf-card .gc-emblem-text { font-size: 1.2rem; }
       .bf-card .gc-name { font-size: 0.9rem; }
       .bf-card .gc-type { font-size: 0.6rem; }
       .bf-card .gc-flavor { font-size: 0.8rem; padding: 0.35rem 0.5rem; }
@@ -1489,29 +1545,36 @@
       .bf-card .gc-flip-hint { font-size: 0.55rem; }
       .bf-card .gc-nameplate { padding: 5px 10px; }
 
-      /* Skills: 3-col grid pinned at bottom */
+      /* Skills: single row of 6 pinned at bottom — frees vertical room for cards */
       .board-skills { margin-bottom: 10px; flex-shrink: 0; }
       .board-skills .zone-label { font-size: 0.55rem; margin: 0.1rem 0 0.2rem; display: block; }
       .land-cards {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.3rem;
-        padding: 0 0.3rem;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.25rem;
+        padding: 0 0.25rem;
       }
       .land-card {
         width: 100%;
         min-width: 0;
-        min-height: 72px;
-        padding: 0.35rem 0.3rem;
-        gap: 0.15rem;
+        min-height: 60px;
+        padding: 0.25rem 0.15rem;
+        gap: 0.1rem;
       }
-      .land-icon { font-size: 0.85rem; }
-      .land-name { font-size: 0.45rem; }
-      .land-list { font-size: 0.6rem; line-height: 1.3; }
+      .land-icon { font-size: 0.7rem; }
+      .land-name { font-size: 0.38rem; }
+      .land-list { font-size: 0.5rem; line-height: 1.2; }
 
       .gc-pt { font-size: 0.65rem; padding: 3px 7px; min-width: 40px; }
-      .gc-commander-stats .gc-back-stat-num { font-size: 1rem; }
-      .gc-commander-stats .gc-back-stat-label { font-size: 0.48rem; }
+
+      /* Mobile: commander card keeps flavor + P/T only — hide abilities and stats
+         so the text doesn't get cut off on short viewports. */
+      .commander-card .gc-abilities,
+      .commander-card .gc-commander-stats { display: none; }
+
+      /* Mobile: emblem card shows Connect nameplate + links + location —
+         hide the "Ongoing" flavor block so text doesn't get cut off. */
+      .board-emblem .gc .gc-ongoing { display: none; }
     }
 
     .gc-social-list {
@@ -1554,15 +1617,22 @@
     }
 
     @media (max-width: 400px) {
+      /* Keep Work/Personal + About cards shorter than Play so the pixel
+         sprite has room to walk between the card and the deck below. */
+      .hand-stage .gc,
       .board-top-row .gc,
-      .bf-card { width: clamp(200px, 75vw, 260px); }
+      .bf-card {
+        width: 160px;
+        height: max(160px, min(224px, calc(100dvh - 460px)));
+      }
 
-      .bf-card .gc-emblem-text { font-size: 2.2rem; }
+      .bf-card .gc-emblem-text { font-size: 0.95rem; }
 
-      .land-card { min-height: 64px; padding: 0.3rem 0.25rem; }
-      .land-icon { font-size: 0.75rem; }
-      .land-name { font-size: 0.45rem; }
-      .land-list { font-size: 0.55rem; }
+      /* 6 skills still in a single row — shrink slightly for 375px viewport */
+      .land-card { min-height: 56px; padding: 0.2rem 0.15rem; gap: 0.08rem; }
+      .land-icon { font-size: 0.65rem; }
+      .land-name { font-size: 0.36rem; }
+      .land-list { font-size: 0.48rem; line-height: 1.2; }
 
       .gc-social-link { font-size: 0.6rem; padding: 0.2rem 0.3rem; gap: 0.3rem; }
       .gc-social-link i { font-size: 0.75rem; }
@@ -1696,45 +1766,46 @@
       font-size: 0.48rem;
       color: var(--text-dim);
       letter-spacing: 0.05em;
-      white-space: nowrap;
+      white-space: normal;
       text-align: center;
-      max-width: 78px;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.15;
+      max-width: 100%;
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }
 
     @media (max-width: 768px) {
-      .card-hand { height: 110px; padding: 0 0.5rem 0.3rem; margin-bottom: 0.2rem; gap: 0.7rem; }
+      .card-hand { height: 78px; padding: 0 0.5rem 0.2rem; margin-bottom: 0.15rem; gap: 0.7rem; }
       .hand-card {
-        width: 68px; height: 88px;
+        width: 58px; height: 72px;
         border-radius: 5px;
-        gap: 4px;
+        gap: 3px;
         box-shadow:
           2px 2px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 35%, #000),
           3px 3px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 20%, #000),
           5px 6px 10px rgba(0,0,0,0.5);
       }
-      .hand-card-abbr { font-size: 1rem; }
-      .hand-card-name { font-size: 0.55rem; max-width: 60px; }
-      .hand-card.active { transform: rotateX(-4deg) translateY(-18px) scale(1.06); }
-      .hand-card.active::after { top: -10px; height: 12px; }
-      .hand-card:hover:not(.active) { transform: rotateX(10deg) translateY(-6px); }
+      .hand-card-abbr { font-size: 0.9rem; }
+      .hand-card-name { font-size: 0.45rem; max-width: 100%; line-height: 1.1; }
+      .hand-card.active { transform: rotateX(-4deg) translateY(-14px) scale(1.06); }
+      .hand-card.active::after { top: -8px; height: 10px; }
+      .hand-card:hover:not(.active) { transform: rotateX(10deg) translateY(-5px); }
     }
 
     @media (max-width: 400px) {
-      .card-hand { height: 86px; gap: 0.5rem; }
+      .card-hand { height: 64px; gap: 0.5rem; }
       .hand-card {
-        width: 54px; height: 72px;
+        width: 46px; height: 60px;
         border-width: 1.5px;
         box-shadow:
           1.5px 1.5px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 35%, #000),
           3px 3px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 20%, #000),
           4px 5px 8px rgba(0,0,0,0.5);
       }
-      .hand-card-abbr { font-size: 0.9rem; }
+      .hand-card-abbr { font-size: 0.8rem; }
       .hand-card-name { display: none; }
-      .hand-card.active { transform: rotateX(-4deg) translateY(-14px) scale(1.05); border-width: 2px; }
-      .hand-card.active::after { top: -8px; height: 10px; }
+      .hand-card.active { transform: rotateX(-4deg) translateY(-12px) scale(1.05); border-width: 2px; }
+      .hand-card.active::after { top: -6px; height: 8px; }
     }
 
     @media (prefers-reduced-motion: reduce) {

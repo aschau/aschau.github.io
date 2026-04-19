@@ -132,7 +132,10 @@ var cabinets = document.querySelectorAll('.cabinet');
       var rect = activeCard.getBoundingClientRect();
       contentSprite.style.left = '50%';
       contentSprite.style.transform = 'translateX(-50%)';
-      contentSprite.style.bottom = (window.innerHeight - rect.bottom - 54) + 'px';
+      // On Work/Personal mobile, pull the sprite closer to the card so the
+      // gap between sprite-on-cards and sprite-on-decks reads as distinct.
+      var offset = (window.innerWidth <= 768 && layer1IsTabs()) ? 28 : 54;
+      contentSprite.style.bottom = (window.innerHeight - rect.bottom - offset) + 'px';
     } else {
       // Fallback: just above the world strip
       var world = document.querySelector('.world');
@@ -556,7 +559,13 @@ var cabinets = document.querySelectorAll('.cabinet');
           if (boardScrollTimer) return;
           boardScrollTimer = requestAnimationFrame(function() {
             boardScrollTimer = null;
-            positionSpriteBottom();
+            // Mobile board-top-row scrolls horizontally like a carousel — sync the
+            // active card + fire walk animation. Desktop just repositions the sprite.
+            if (target === boardTopRow && window.innerWidth <= 768) {
+              liveSync(target);
+            } else {
+              positionSpriteBottom();
+            }
           });
         }, { passive: true });
       });

@@ -81,6 +81,19 @@ Per-page meta tags, OG/Twitter cards, `sitemap.xml`, `robots.txt`, JSON-LD on Ab
 
 See `.claude/rules/conventions.md` for coding standards (loaded automatically when editing HTML/CSS/JS).
 
+## iOS Safari gotchas
+
+Chrome DevTools' responsive mode does NOT reproduce these. They only show up on a real iPhone. When sizing cards/items that live inside a horizontal-scroll flex container (`.card-carousel`, `.hand-stage`, `.board-top-row`):
+
+- **`max-height` is dropped on flex items whose `height` is a `calc()` that resolves larger than the `max-height`.** Symptom: card renders at the `calc` value, not the cap, and overflows its container (gets clipped top/bottom on screen). Fix: replace `height: calc(100dvh - Npx); max-height: Mpx;` with `height: max(MIN, min(M, calc(100dvh - Npx)));` so the clamp lives in the value itself.
+- **`aspect-ratio: W/H` with `height: auto` is dropped on flex items**, so cards collapse to content height. Fix: set both `width` and `height` explicitly (via `clamp()`/`min()` if needed) and do not rely on `aspect-ratio` inside horizontal scroll rows.
+- **`display: contents` does NOT change selector specificity.** Rules like `.board-commander .gc { height: auto; flex: 1; }` written outside a media query still win the cascade on mobile even when `.board-commander` is flattened with `display: contents`. The `.gc` then collapses to content height. Scope such desktop-only sizing rules inside `@media (min-width: 769px)` so the mobile carousel rule wins.
+- **Carousel centering padding must match the actual card half-width at each breakpoint.** `.card-carousel { padding: 0 calc(50% - halfCardPx) 0; }` assumes a specific card size — if a scoped container (e.g. `.hand-stage .gc`) uses a smaller card, the first card lands off-center from the sprite. Add a matching scoped padding override (`.hand-stage .card-carousel { padding: 0 calc(50% - actualHalfCardPx) 0; }`).
+- **`backface-visibility: hidden` fails on descendants with their own compositor layer.** Any descendant of a flipping card that has its own CSS animation (e.g. `.gc-emblem-text` with `emblemPulse`), `will-change`, or a 3D transform gets promoted to its own iOS Safari render layer that ignores the parent's `backface-visibility`. Result: front-face content bleeds through when the card is flipped. Fix: add `-webkit-backface-visibility: hidden` AND a delayed opacity toggle on the face itself (`.gc.flipped .gc-front { opacity: 0; }` with `transition: opacity 0s linear 0.25s`). Use `ease-in-out` (not `ease`) for the rotate transform so the 90° edge-on point lines up with the opacity-swap delay — otherwise a visible gap appears mid-flip.
+- **iOS Safari auto-converts certain Unicode codepoints to colored emoji glyphs** — e.g. ☺ U+263A, ♥ U+2665, ★ U+2605, ◆ U+25C6, ♦ U+2666, ⚙ U+2699, ⚒ U+2692. Append the text-variation selector U+FE0E (HTML: `&#xFE0E;`) immediately after the codepoint to force monochrome text presentation: `&#9786;&#xFE0E;` (☺︎ text) instead of `&#9786;` (😊 emoji). Also add `font-variant-emoji: text;` to the container CSS for Safari 16.4+ belt-and-suspenders.
+
+Always verify layout changes on a real iOS device — the dev server is reachable over LAN (`npx http-server -p 8080 -c-1`, then phone → `http://<LAN-IP>:8080`) before declaring a mobile fix done.
+
 ## Adding Games/Tools
 
 1. Create `games/<name>/` or `tools/<name>/` with own HTML/CSS/JS (self-contained)

@@ -93,18 +93,14 @@ var cabinets = document.querySelectorAll('.cabinet');
       contentSprite.classList.toggle('on-no-flip', cards[idx].classList.contains('no-flip'));
     }
 
-    // Board layout: desktop does cross-zone sprite movement; mobile uses standard carousel
     if (contentEl.querySelector('.board-layout')) {
       if (cards[idx]) {
-        var isMobileBoard = window.innerWidth <= 768;
-        if (isMobileBoard) {
-          // Mobile: horizontal scroll carousel — scroll card to center and position sprite below
+        if (window.innerWidth <= 768) {
           programmaticScroll = true;
           cards[idx].scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
           setTimeout(function() { programmaticScroll = false; }, 500);
           setTimeout(positionSpriteBottom, 50);
         } else {
-          // Desktop: sprite teleports across zones to sit below active card
           positionSpriteAtCard(cards[idx]);
         }
       }
@@ -128,12 +124,11 @@ var cabinets = document.querySelectorAll('.cabinet');
     if (!contentSprite) return;
     var activeCard = document.querySelector('.gc.card-active');
     if (activeCard) {
-      // Desktop board layout: sprite moves across zones (not on mobile where it's a carousel)
+      // Desktop board layout tracks the card's actual X; everywhere else sprite stays centered.
       if (contentEl && contentEl.querySelector('.board-layout') && window.innerWidth > 768) {
         positionSpriteAtCard(activeCard);
         return;
       }
-      // Default: position just below the active card (horizontally centered)
       var rect = activeCard.getBoundingClientRect();
       contentSprite.style.left = '50%';
       contentSprite.style.transform = 'translateX(-50%)';
@@ -230,8 +225,11 @@ var cabinets = document.querySelectorAll('.cabinet');
 
   // Work/Personal sections put decks (hand-cards) at Layer 1, cards at Layer 2.
   // Other sections keep cards at Layer 1.
-  function layer1IsTabs() {
-    return !!(contentEl && contentEl.querySelector('.hand-card'));
+  // Cached per section-inject — bindSectionHandlers resets this after swapping contentEl.innerHTML
+  var _layer1IsTabs = false;
+  function layer1IsTabs() { return _layer1IsTabs; }
+  function refreshLayer1IsTabs() {
+    _layer1IsTabs = !!(contentEl && contentEl.querySelector('.hand-card'));
   }
 
   function updateModeLabel() {
@@ -455,6 +453,7 @@ var cabinets = document.querySelectorAll('.cabinet');
 
   // Bind event handlers on freshly injected section content
   function bindSectionHandlers() {
+    refreshLayer1IsTabs();
     contentEl.querySelectorAll('.tab-btn, .hand-card').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var tabId = btn.dataset.tab;
@@ -514,7 +513,6 @@ var cabinets = document.querySelectorAll('.cabinet');
     initCarouselDrag();
     updateDeckTitle();
 
-    // Reposition sprite when the board scrolls. On mobile the top row is the horizontal scroller.
     var boardScrollTargets = [];
     var boardLayout = contentEl.querySelector('.board-layout');
     if (boardLayout) boardScrollTargets.push(boardLayout);
@@ -719,52 +717,35 @@ var cabinets = document.querySelectorAll('.cabinet');
     updateModeLabel();
   }
 
-  // Left/right based on current layer
-  function goLeft() {
+  // Left/right based on current layer. dir is -1 or +1.
+  function step(dir) {
+    var goingRight = dir > 0;
     if (layer === 0) {
-      goToCab(currentCab - 1);
-    } else if (layer === 1) {
-      if (layer1IsTabs()) {
-        // Layer 1 on work/personal = decks — walk between deck boxes
-        var tabs = getTabs();
-        if (currentTab > 0) {
-          currentTab--;
-          spriteWalkBrief(false);
-          highlightTab(currentTab);
-          tabs[currentTab].click();
-        }
-      } else {
-        var cards = getCards();
-        if (currentCard > 0) { currentCard--; highlightCard(currentCard); spriteWalkBrief(false); }
-      }
-    } else if (layer === 2) {
-      // Layer 2 is cards on work/personal
+      goToCab(currentCab + dir);
+      return;
+    }
+    // Layer 1 on work/personal = decks; everywhere else (and layer 2 on work/personal) = cards.
+    var onDecks = layer === 1 && layer1IsTabs();
+    if (onDecks) {
+      var tabs = getTabs();
+      var next = currentTab + dir;
+      if (next < 0 || next >= tabs.length) return;
+      currentTab = next;
+      spriteWalkBrief(goingRight);
+      highlightTab(currentTab);
+      tabs[currentTab].click();
+    } else {
       var cards = getCards();
-      if (currentCard > 0) { currentCard--; highlightCard(currentCard); spriteWalkBrief(false); }
+      var next = currentCard + dir;
+      if (next < 0 || next >= cards.length) return;
+      currentCard = next;
+      highlightCard(currentCard);
+      spriteWalkBrief(goingRight);
     }
   }
 
-  function goRight() {
-    if (layer === 0) {
-      goToCab(currentCab + 1);
-    } else if (layer === 1) {
-      if (layer1IsTabs()) {
-        var tabs = getTabs();
-        if (currentTab < tabs.length - 1) {
-          currentTab++;
-          spriteWalkBrief(true);
-          highlightTab(currentTab);
-          tabs[currentTab].click();
-        }
-      } else {
-        var cards = getCards();
-        if (currentCard < cards.length - 1) { currentCard++; highlightCard(currentCard); spriteWalkBrief(true); }
-      }
-    } else if (layer === 2) {
-      var cards = getCards();
-      if (currentCard < cards.length - 1) { currentCard++; highlightCard(currentCard); spriteWalkBrief(true); }
-    }
-  }
+  function goLeft()  { step(-1); }
+  function goRight() { step(1); }
 
   // Flip active card
   function flipActive() {
@@ -836,8 +817,9 @@ var cabinets = document.querySelectorAll('.cabinet');
       }
     }
 
+    var IGNORE = '.ctrl-btn, .ach-toggle, .ach-panel';
     world.addEventListener('mousedown', function(e) {
-      if (e.target.closest('.ctrl-btn, .ach-toggle, .ach-panel')) return;
+      if (e.target.closest(IGNORE)) return;
       onStart(e.pageX, e.pageY);
     });
     world.addEventListener('mousemove', function(e) { onMove(e.pageX, e.pageY); });
@@ -845,7 +827,7 @@ var cabinets = document.querySelectorAll('.cabinet');
     world.addEventListener('mouseleave', function(e) { onEnd(e.pageX); });
 
     world.addEventListener('touchstart', function(e) {
-      if (e.target.closest('.ctrl-btn, .ach-toggle, .ach-panel')) return;
+      if (e.target.closest(IGNORE)) return;
       onStart(e.touches[0].pageX, e.touches[0].pageY);
     }, { passive: true });
     world.addEventListener('touchmove', function(e) {

@@ -1,3 +1,5 @@
+@import url('achievements.css');
+
 /* Self-hosted fonts (no external requests) */
     @font-face {
       font-family: 'Silkscreen';
@@ -1114,153 +1116,6 @@
       opacity: 0.5;
     }
 
-    /* ===== ACHIEVEMENTS ===== */
-
-    /* Progress bar — between bezel and world */
-    .ach-progress {
-      height: 3px; flex-shrink: 0;
-      background: rgba(74,144,217,0.08);
-      position: relative; z-index: 3;
-    }
-    .ach-progress-fill {
-      height: 100%; width: 0%;
-      background: linear-gradient(90deg, var(--blue), var(--blue-light));
-      border-radius: 0 2px 2px 0;
-      transition: width 0.8s ease;
-    }
-
-    /* Toggle button — inside screen bezel */
-    .ach-toggle {
-      position: absolute; top: 10px; right: 10px; z-index: 10;
-      width: 36px; height: 36px; border-radius: 6px;
-      background: linear-gradient(180deg, #1a1f3a, #12162d);
-      border: 2px solid var(--border);
-      cursor: pointer; transition: all 0.2s;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; color: var(--text-dim);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    .ach-toggle:hover { border-color: var(--border-glow); color: var(--blue-light); }
-    .ach-toggle:active { transform: translateY(1px); }
-
-    .ach-badge {
-      position: absolute; top: -6px; right: -6px;
-      min-width: 20px; height: 20px; border-radius: 10px;
-      background: var(--purple); color: white;
-      font-family: 'Silkscreen', cursive; font-size: 0.7rem;
-      display: flex; align-items: center; justify-content: center;
-      padding: 0 4px;
-      box-shadow: 0 0 8px rgba(155,109,255,0.5);
-      padding: 0 3px;
-    }
-    .ach-badge:empty { display: none; }
-
-    /* Panel */
-    .ach-panel {
-      position: fixed; top: 0; right: 0; bottom: 0; z-index: 199;
-      width: 280px; max-width: 85vw;
-      background: rgba(12,16,32,0.95);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-left: 1px solid var(--border);
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-      overflow-y: auto; scrollbar-width: none;
-      display: flex; flex-direction: column;
-      padding: 1rem;
-    }
-    .ach-panel::-webkit-scrollbar { display: none; }
-    .ach-panel.open { transform: translateX(0); }
-
-    .ach-panel-header {
-      font-family: 'Silkscreen', cursive; font-size: 0.9rem;
-      color: var(--blue-light); margin-bottom: 0.8rem;
-      padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
-    }
-
-    .ach-tile {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 6px; padding: 0.8rem;
-      margin-bottom: 0.55rem; transition: all 0.2s;
-      display: flex; gap: 0.7rem; align-items: flex-start;
-    }
-    .ach-tile.unlocked { border-color: var(--border-glow); }
-    .ach-tile.unlocked:hover { box-shadow: 0 0 12px rgba(74,144,217,0.15); }
-    .ach-tile.locked { opacity: 0.4; }
-
-    .ach-tile-icon { font-size: 1.6rem; flex-shrink: 0; line-height: 1; }
-    .ach-tile-info { flex: 1; min-width: 0; }
-    .ach-tile-title { font-family: 'Silkscreen', cursive; font-size: 0.78rem; margin-bottom: 0.2rem; }
-    .ach-tile-desc { font-family: 'Fira Code', monospace; font-size: 0.7rem; color: var(--text-dim); line-height: 1.4; }
-    .ach-tile.locked .ach-tile-desc { font-style: italic; }
-
-    .ach-clear {
-      font-family: 'Fira Code', monospace; font-size: 0.5rem;
-      color: var(--text-dim); background: none; border: 1px solid var(--border);
-      border-radius: 3px; padding: 0.3rem 0.6rem; cursor: pointer;
-      margin-top: auto; align-self: center; transition: all 0.2s;
-    }
-    .ach-clear:hover { border-color: var(--pink); color: var(--pink); }
-
-    /* Toast notification */
-    .ach-toast-container {
-      position: fixed; top: 52px; right: 8px; z-index: 201;
-      pointer-events: none; display: flex; flex-direction: column; gap: 8px;
-    }
-
-    .ach-toast {
-      pointer-events: auto;
-      background: rgba(12,16,32,0.95);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border-glow);
-      border-radius: 6px; padding: 0.7rem 1rem;
-      box-shadow: 0 0 20px rgba(74,144,217,0.15);
-      animation: achToastIn 0.4s ease forwards;
-      min-width: 200px;
-    }
-
-    .ach-toast.out { animation: achToastOut 0.4s ease forwards; }
-
-    .ach-toast-label {
-      font-family: 'Silkscreen', cursive; font-size: 0.7rem;
-      color: #c9a8ff; letter-spacing: 0.08em;
-      text-transform: uppercase; margin-bottom: 0.3rem;
-      text-shadow: 0 0 8px rgba(155,109,255,0.5);
-    }
-
-    .ach-toast-title {
-      font-family: 'Silkscreen', cursive; font-size: 0.9rem;
-      color: var(--text); margin-bottom: 0.15rem;
-    }
-
-    .ach-toast-desc {
-      font-family: 'Fira Code', monospace; font-size: 0.65rem;
-      color: var(--text-dim);
-    }
-
-    .ach-toast-icon { float: left; font-size: 1.8rem; margin-right: 0.65rem; line-height: 1; }
-
-    @keyframes achToastIn {
-      from { opacity: 0; transform: translateX(40px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes achToastOut {
-      from { opacity: 1; transform: translateX(0); }
-      to { opacity: 0; transform: translateX(40px); }
-    }
-
-    /* Mobile adjustments */
-    @media (max-width: 768px) {
-      .ach-toggle { width: 27px; height: 27px; font-size: 0.8rem; top: 8px; right: 8px; border-width: 1.5px; }
-      .ach-badge { min-width: 15px; height: 15px; font-size: 0.55rem; top: -5px; right: -5px; padding: 0 3px; }
-      .ach-toast-container { top: 48px; right: 4px; }
-      .ach-toast { min-width: 200px; padding: 0.65rem 0.85rem; }
-      .ach-toast-label { font-size: 0.6rem; }
-      .ach-toast-title { font-size: 0.85rem; }
-      .ach-toast-desc { font-size: 0.62rem; }
-      .ach-toast-icon { font-size: 1.5rem; }
-    }
 
     /* ===== BOARD LAYOUT (About) ===== */
 
@@ -1455,17 +1310,12 @@
       flex-shrink: 1;
       flex-grow: 0;
     }
+    /* Base .gc font sizes already match bf-card; keep back-text smaller for the smaller card. */
     .bf-card .gc-emblem { aspect-ratio: 4/3; }
-    .bf-card .gc-emblem-text { font-size: 3.3rem; }
-    .bf-card .gc-name { font-size: 1.07rem; }
-    .bf-card .gc-type { font-size: 0.75rem; }
-    .bf-card .gc-flavor { font-size: 0.98rem; padding: 0.45rem 0.62rem; }
+    .bf-card .gc-flavor { padding: 0.45rem 0.62rem; }
     .bf-card .gc-front-links { padding: 0.45rem 0.62rem; }
-    .bf-card .gc-ln { font-size: 0.83rem; padding: 0.3rem 0.62rem; }
-    .bf-card .gc-flip-hint { font-size: 0.68rem; }
+    .bf-card .gc-ln { padding: 0.3rem 0.62rem; }
     .bf-card .gc-nameplate { padding: 6px 13px; }
-    .bf-card .gc-back-title { font-size: 1.2rem; }
-    .bf-card .gc-back-role { font-size: 0.83rem; }
     .bf-card .gc-back-text { font-size: 0.9rem; line-height: 1.35; }
 
     .zone-label {

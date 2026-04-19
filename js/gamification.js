@@ -205,14 +205,13 @@
       flipped[key].push(cardIndex);
       setJSON(CARDS_KEY, flipped);
     }
-    // Any flip unlocks Card Collector
     unlock('card-collector');
   }
 
   // ── Tracking: Tabs ──
 
-  // Track the deck that's active by default (auto-opened on section load).
-  // Called after the section content loads.
+  // Counts the deck that's already active when a section loads (so Set Mastery
+  // doesn't require you to click back to the first deck after opening all others).
   function trackActiveDeck() {
     var active = document.querySelector('.hand-card.active');
     if (active && active.dataset.tab) trackTab(active.dataset.tab);
@@ -224,9 +223,7 @@
       clicked.push(tabId);
       setJSON(TABS_KEY, clicked);
     }
-    // Starter Deck: any deck clicked for the first time
     unlock('first-draw');
-    // Set Mastery: all decks in Work OR Personal section clicked
     var workDone = WORK_DECKS.every(function(id) { return clicked.indexOf(id) !== -1; });
     var personalDone = PERSONAL_DECKS.every(function(id) { return clicked.indexOf(id) !== -1; });
     if (workDone || personalDone) unlock('full-hand');
@@ -318,21 +315,25 @@
       if (btn && btn.dataset.tab) trackTab(btn.dataset.tab);
     });
 
-    // Home is always "visible" when the arcade loads, so count it visited.
+    // Home is always "visible" when the arcade loads; also track the URL section if different.
+    var current = getCurrentSection();
     trackSection('home');
-    // Also track whatever section the URL currently points to (may be same as home).
-    trackSection(getCurrentSection());
+    if (current !== 'home') trackSection(current);
+
+    function afterSectionLoad() {
+      setTimeout(function() { updateFlippableCounts(); trackActiveDeck(); }, 500);
+    }
 
     var origPush = history.pushState;
     history.pushState = function () {
       origPush.apply(history, arguments);
       trackSection(getCurrentSection());
-      setTimeout(function() { updateFlippableCounts(); trackActiveDeck(); }, 500);
+      afterSectionLoad();
     };
 
     window.addEventListener('popstate', function () {
       trackSection(getCurrentSection());
-      setTimeout(function() { updateFlippableCounts(); trackActiveDeck(); }, 500);
+      afterSectionLoad();
     });
   }
 

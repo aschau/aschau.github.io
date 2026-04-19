@@ -58,6 +58,8 @@ LPC spritesheets (CC-BY-SA 3.0): `img/character-spritesheet.png` (64x64 frames) 
 
 11 achievements. Keys are stable — titles/descs have been renamed without breaking existing user progress. Listeners are attached in **capture phase** on the document to bypass `.gc a` handlers that call `stopPropagation()`.
 
+Achievement UI (toggle button, badge, panel, toasts) is styled in `css/achievements.css`. It's `@import`ed by `css/detail.css` so all detail pages and the standalone privacy page inherit the styles — and each of those pages loads `js/gamification.js` at the end of the body, so achievements unlock + show toasts there too (not just on the arcade page).
+
 - **cabinet-crawler** — Visit all 5 sections. Home is auto-tracked on init even if user lands on another URL.
 - **card-collector** — Flip any card (simplified from "flip every card").
 - **pixel-walker** — Use keyboard arrows.

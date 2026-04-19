@@ -53,14 +53,13 @@ describe('Achievement definitions', () => {
         }
     });
 
-    test('SECTIONS includes all 6 arcade sections', () => {
+    test('SECTIONS includes all 5 arcade sections', () => {
         expect(SECTIONS).toContain('home');
         expect(SECTIONS).toContain('about');
-        expect(SECTIONS).toContain('journey');
         expect(SECTIONS).toContain('work');
         expect(SECTIONS).toContain('personal');
         expect(SECTIONS).toContain('play');
-        expect(SECTIONS.length).toBe(6);
+        expect(SECTIONS.length).toBe(5);
     });
 
     test('ALL_TABS includes all 10 tab IDs', () => {
@@ -182,14 +181,14 @@ describe('processSectionVisit', () => {
         expect(result.sectionsToSave).toEqual([]);
     });
 
-    test('unlocks cabinet-crawler after visiting all 6 sections', () => {
-        const visited = ['home', 'about', 'journey', 'work', 'personal'];
+    test('unlocks cabinet-crawler after visiting all 5 sections', () => {
+        const visited = ['home', 'about', 'work', 'personal'];
         const result = processSectionVisit('play', visited);
         expect(result.achievementsToUnlock).toContain('cabinet-crawler');
     });
 
-    test('does not unlock cabinet-crawler with only 5 sections', () => {
-        const visited = ['home', 'about', 'journey', 'work'];
+    test('does not unlock cabinet-crawler with only 4 sections', () => {
+        const visited = ['home', 'about', 'work'];
         const result = processSectionVisit('personal', visited);
         expect(result.achievementsToUnlock).not.toContain('cabinet-crawler');
     });
@@ -204,8 +203,8 @@ describe('processSectionVisit', () => {
         expect(result.achievementsToUnlock).not.toContain('player-one');
     });
 
-    test('can unlock multiple achievements in one visit (play as 6th section)', () => {
-        const visited = ['home', 'about', 'journey', 'work', 'personal'];
+    test('can unlock multiple achievements in one visit (play as 5th section)', () => {
+        const visited = ['home', 'about', 'work', 'personal'];
         const result = processSectionVisit('play', visited);
         expect(result.achievementsToUnlock).toContain('cabinet-crawler');
         expect(result.achievementsToUnlock).toContain('player-one');
@@ -342,19 +341,19 @@ describe('calculateProgress', () => {
         expect(calculateProgress(0)).toBe(0);
     });
 
-    test('all 6 sections = 100%', () => {
-        expect(calculateProgress(6)).toBe(100);
+    test('all 5 sections = 100%', () => {
+        expect(calculateProgress(5)).toBe(100);
     });
 
-    test('1 of 6 = 17%', () => {
-        expect(calculateProgress(1)).toBe(17);
+    test('1 of 5 = 20%', () => {
+        expect(calculateProgress(1)).toBe(20);
     });
 
-    test('3 of 6 = 50%', () => {
-        expect(calculateProgress(3)).toBe(50);
+    test('3 of 5 = 60%', () => {
+        expect(calculateProgress(3)).toBe(60);
     });
 
-    test('5 of 6 = 83%', () => {
-        expect(calculateProgress(5)).toBe(83);
+    test('4 of 5 = 80%', () => {
+        expect(calculateProgress(4)).toBe(80);
     });
 });

@@ -11,7 +11,7 @@
   // ── Achievement Definitions (mirror of module) ──
 
   var ACHIEVEMENTS = {
-    'cabinet-crawler':  { title: 'Cabinet Crawler',  desc: 'Visited all 6 sections',        hint: 'Visit every cabinet in the arcade...', icon: '\uD83D\uDD79\uFE0F' },
+    'cabinet-crawler':  { title: 'Cabinet Crawler',  desc: 'Visited all 5 sections',        hint: 'Visit every cabinet in the arcade...', icon: '\uD83D\uDD79\uFE0F' },
     'card-collector':   { title: 'Card Collector',   desc: 'Flipped every card',            hint: 'There\'s something on the back...',    icon: '\uD83C\uDCCF' },
     'tab-master':       { title: 'Tab Master',       desc: 'Clicked every tab',             hint: 'Check every category...',              icon: '\uD83D\uDCC1' },
     'pixel-walker':     { title: 'Pixel Walker',     desc: 'Used keyboard navigation',      hint: 'Try the arrow keys...',                icon: '\u2328\uFE0F' },
@@ -22,7 +22,7 @@
     'player-one':       { title: 'Player One',       desc: 'Visited the Play section',      hint: 'Ready Player One...',                  icon: '\uD83C\uDFAE' }
   };
 
-  var SECTIONS = ['home', 'about', 'journey', 'work', 'personal', 'play'];
+  var SECTIONS = ['home', 'about', 'work', 'personal', 'play'];
   var ALL_TABS = ['w-blizzard', 'w-mw', 'w-sega', 'w-trigger', 'w-stb', 'pp-fc', 'pp-wh', 'pp-ai', 'pp-web', 'pp-col'];
 
   var STORAGE_KEY = 'arcade_achievements';
@@ -316,7 +316,7 @@
 
     // Tab clicks
     document.addEventListener('click', function (e) {
-      var btn = e.target.closest('.tab-btn');
+      var btn = e.target.closest('.tab-btn, .hand-card');
       if (btn && btn.dataset.tab) trackTab(btn.dataset.tab);
     });
 

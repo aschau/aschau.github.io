@@ -368,6 +368,20 @@
     /* ===== CONTENT STYLES (same as before, compressed) ===== */
     .p-tag { font-family: 'Fira Code', monospace; font-size: 0.55rem; color: var(--teal); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.1rem; }
     .p-title { font-family: 'Silkscreen', cursive; font-size: clamp(1.1rem,2.5vw,1.5rem); margin-bottom: 0.15rem; }
+
+    /* Deck title for Work/Personal — shows the currently selected deck */
+    .deck-title {
+      font-family: 'Silkscreen', cursive;
+      font-size: clamp(1.3rem, 3vw, 2rem);
+      color: var(--active-deck-color, var(--text));
+      text-align: center;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin: 1.6rem 0 0.9rem;
+      text-shadow: 0 0 20px color-mix(in srgb, var(--active-deck-color, var(--blue)) 30%, transparent);
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+      flex-shrink: 0;
+    }
     .p-desc { font-size: 0.88rem; color: var(--text-dim); max-width: 600px; line-height: 1.6; margin-bottom: 1.5rem; }
 
     /* Home */
@@ -517,6 +531,9 @@
 
     .content-sprite.visible { opacity: 1; }
 
+    /* Hide the SPACE hint when sprite is parked on a deck (flipping doesn't apply) */
+    .content-sprite.on-decks::after { display: none; }
+
     /* Space bar hint below sprite */
     .content-sprite::after {
       content: 'SPACE';
@@ -601,7 +618,7 @@
       border: none;
     }
 
-    /* Stylized journey card art — pixel border + big abbreviation */
+    /* Stylized card emblem — pixel border + big abbreviation */
     .gc-emblem {
       width: calc(100% - 12px); aspect-ratio: 4/3;
       margin: 6px auto 0; border-radius: 4px;
@@ -978,10 +995,8 @@
 
       /* Content sprite — big enough to see clearly */
       .content-sprite { transform: translateX(-50%) scale(1); }
-      .content-sprite::after {
-        content: 'TAP';
-        font-size: 0.45rem; padding: 2px 8px; bottom: -18px;
-      }
+      /* Hide the text hint on mobile — feels like user should tap the sprite, not the card */
+      .content-sprite::after { display: none; }
 
       /* Bezel — keep subtle glow for arcade feel */
       .bezel-corner { display: none; }
@@ -1013,7 +1028,7 @@
       .tab-bar { gap: 3px; margin-top: 0.05rem; margin-bottom: 0.05rem; }
       .home-name { font-size: 1.1rem; }
       .content-sprite { transform: translateX(-50%) scale(0.85); }
-      .content-sprite::after { font-size: 0.4rem; bottom: -15px; padding: 1px 6px; }
+      .content-sprite::after { display: none; }
       .gallery-arrow { width: 20px; height: 20px; font-size: 0.4rem; }
       .gallery-dot { width: 4px; height: 4px; }
       .gallery-dots { gap: 3px; bottom: 2px; }
@@ -1235,6 +1250,544 @@
       .ach-toast { min-width: 160px; padding: 0.5rem 0.7rem; }
       .ach-toast-title { font-size: 0.55rem; }
       .ach-toast-icon { font-size: 1.1rem; }
+    }
+
+    /* ===== BOARD LAYOUT (About) ===== */
+
+    .board-layout {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 0.6rem;
+      padding: 0 0.5rem 0.5rem;
+      min-height: 0;
+      max-width: 100%;
+      overflow: hidden;
+      overflow: hidden;
+    }
+
+    /* Top row holds commander | battlefield | emblem as a 3-column grid */
+    .board-top-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.6rem;
+      flex: 1;
+      align-items: stretch;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .board-zone { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+    .board-commander { justify-content: center; }
+    .board-battlefield { overflow: hidden; min-width: 0; }
+    .board-emblem { justify-content: center; }
+    .board-skills { width: 100%; margin-bottom: 28px; flex-shrink: 0; }
+
+    /* Commander and emblem cards fill their zone height */
+    .board-commander .gc,
+    .board-emblem .gc {
+      height: auto;
+      flex: 1;
+      min-height: 0;
+      width: 240px;
+    }
+
+    /* Commander P/T box (MTG-style, bottom-right corner) */
+    .gc-pt {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      min-width: 52px;
+      padding: 4px 10px;
+      background: linear-gradient(180deg, rgba(10,12,26,0.92), rgba(5,7,15,0.96));
+      border: 2px solid color-mix(in srgb, var(--card-color, var(--green)) 70%, transparent);
+      border-radius: 6px;
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.95rem;
+      color: var(--card-color, var(--green));
+      text-align: center;
+      letter-spacing: 0.05em;
+      box-shadow: 0 0 12px color-mix(in srgb, var(--card-color, var(--green)) 25%, transparent);
+      z-index: 2;
+    }
+
+    /* Emblem tagline (flavor quote) */
+    .gc-tagline {
+      font-family: 'Fira Code', monospace;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      text-align: center;
+      padding: 0.6rem 0.8rem 0.2rem;
+      line-height: 1.3;
+    }
+
+    /* Emblem location/timezone */
+    .gc-location {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      text-align: center;
+      padding: 0.2rem 0.8rem 0.6rem;
+      letter-spacing: 0.08em;
+    }
+
+    .gc-location i {
+      color: var(--card-color, var(--purple));
+      margin-right: 0.3rem;
+    }
+
+    /* Commander stats inline on front */
+    .gc-commander-stats {
+      display: flex;
+      justify-content: space-around;
+      gap: 0.3rem;
+      padding: 0.5rem 0.3rem 0;
+      margin-top: auto;
+    }
+    .gc-commander-stats > span {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .gc-commander-stats .gc-back-stat-num {
+      font-family: 'Silkscreen', cursive;
+      font-size: 1.4rem;
+      color: var(--card-color, var(--green));
+      line-height: 1;
+    }
+    .gc-commander-stats .gc-back-stat-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      margin-top: 0.3rem;
+    }
+
+    /* Battlefield row — all 6 cards visible, no scroll */
+    .battlefield-row {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      gap: 0.4rem;
+      flex-shrink: 0;
+      padding: 0 0.3rem;
+    }
+
+    .bf-card {
+      width: clamp(208px, 22vw, 270px);
+      height: clamp(332px, 36vw, 434px);
+      flex-shrink: 1;
+      flex-grow: 0;
+    }
+    .bf-card .gc-emblem { aspect-ratio: 4/3; }
+    .bf-card .gc-emblem-text { font-size: 3.3rem; }
+    .bf-card .gc-name { font-size: 1.07rem; }
+    .bf-card .gc-type { font-size: 0.75rem; }
+    .bf-card .gc-flavor { font-size: 0.98rem; padding: 0.45rem 0.62rem; }
+    .bf-card .gc-front-links { padding: 0.45rem 0.62rem; }
+    .bf-card .gc-ln { font-size: 0.83rem; padding: 0.3rem 0.62rem; }
+    .bf-card .gc-flip-hint { font-size: 0.68rem; }
+    .bf-card .gc-nameplate { padding: 6px 13px; }
+    .bf-card .gc-back-title { font-size: 1.2rem; }
+    .bf-card .gc-back-role { font-size: 0.83rem; }
+    .bf-card .gc-back-text { font-size: 0.9rem; line-height: 1.35; }
+
+    .zone-label {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 0.2rem 0;
+      flex-shrink: 0;
+    }
+
+    .commander-card {
+      filter: drop-shadow(0 0 20px color-mix(in srgb, var(--green) 25%, transparent));
+    }
+    .commander-card .gc-front,
+    .commander-card .gc-back {
+      border-width: 3px;
+      box-shadow: 0 0 30px color-mix(in srgb, var(--card-color, var(--green)) 20%, transparent);
+    }
+
+    .board-layout .land-cards {
+      flex-shrink: 0;
+      padding: 0 1rem;
+    }
+
+    .board-battlefield {
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .land-cards {
+      display: flex;
+      gap: 0.4rem;
+      justify-content: center;
+      align-items: stretch;
+      max-width: 100%;
+    }
+
+    .land-card {
+      width: clamp(110px, 14vw, 160px);
+      min-height: 140px;
+      background: var(--bg-card, rgba(16,20,42,0.92));
+      border: 1px solid color-mix(in srgb, var(--land-color, var(--blue)) 30%, transparent);
+      border-radius: 8px;
+      padding: 0.7rem 0.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.4rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    .land-card:hover {
+      border-color: color-mix(in srgb, var(--land-color, var(--blue)) 60%, transparent);
+      box-shadow: 0 0 12px color-mix(in srgb, var(--land-color, var(--blue)) 15%, transparent);
+    }
+
+    .land-icon {
+      font-size: 1.5rem;
+      color: var(--land-color, var(--blue));
+      margin-bottom: 0.2rem;
+      line-height: 1;
+    }
+
+    .land-name {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.75rem;
+      color: var(--land-color, var(--blue));
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .land-list {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.7rem;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      .zone-label { font-size: 0.5rem; margin: 0.2rem 0; }
+
+      /* Mobile About: vertical scroll through commander → battlefield grid → emblem → skills */
+      .board-layout {
+        gap: 0.6rem;
+        padding: 0.3rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .board-top-row {
+        display: flex;
+        flex-direction: column;
+        grid-template-columns: none;
+        overflow: visible;
+        gap: 0.6rem;
+        flex: 0 0 auto;
+      }
+
+      .board-commander,
+      .board-battlefield,
+      .board-emblem {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 100%;
+        padding: 0.2rem;
+      }
+
+      /* Commander & emblem: readable card sizes with fixed aspect ratio */
+      .board-commander .gc,
+      .board-emblem .gc {
+        width: min(260px, 78vw);
+        height: auto;
+        aspect-ratio: 5/7;
+        max-height: 60vh;
+        flex: none;
+        margin: 0 auto;
+      }
+
+      /* Battlefield on mobile: 2-col grid, cards with fixed aspect ratio */
+      .battlefield-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.4rem;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        flex-wrap: unset;
+      }
+
+      .bf-card {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 5/7;
+        max-width: none;
+        min-width: 0;
+      }
+      .bf-card .gc-emblem-text { font-size: 2rem; }
+      .bf-card .gc-name { font-size: 0.75rem; }
+      .bf-card .gc-type { font-size: 0.5rem; }
+      .bf-card .gc-flavor { font-size: 0.6rem; padding: 0.25rem 0.35rem; }
+      .bf-card .gc-ln { font-size: 0.55rem; padding: 0.2rem 0.4rem; }
+      .bf-card .gc-flip-hint { font-size: 0.45rem; }
+      .bf-card .gc-nameplate { padding: 4px 7px; }
+
+      /* Skills: compact 3-column grid at bottom */
+      .board-skills { margin-bottom: 10px; }
+      .land-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.3rem;
+        padding: 0 0.3rem;
+      }
+      .land-card {
+        width: 100%;
+        min-width: 0;
+        min-height: 72px;
+        padding: 0.35rem 0.3rem;
+        gap: 0.15rem;
+      }
+      .land-icon { font-size: 0.85rem; }
+      .land-name { font-size: 0.45rem; }
+      .land-list { font-size: 0.45rem; line-height: 1.3; }
+
+      .gc-pt { font-size: 0.65rem; padding: 3px 7px; min-width: 40px; }
+      .gc-commander-stats .gc-back-stat-num { font-size: 1rem; }
+      .gc-commander-stats .gc-back-stat-label { font-size: 0.48rem; }
+    }
+
+    .gc-social-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .gc-social-link {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-family: 'Fira Code', monospace;
+      padding: 0.3rem 0.5rem;
+      border-radius: 6px;
+      border: 1px solid rgba(155,109,255,0.15);
+      background: rgba(155,109,255,0.05);
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .gc-social-link:hover {
+      background: rgba(155,109,255,0.15);
+      color: var(--text);
+      border-color: rgba(155,109,255,0.3);
+    }
+
+    .gc-social-link i {
+      font-size: 1.1rem;
+      width: 1.2rem;
+      text-align: center;
+      color: var(--purple);
+    }
+
+    @media (max-width: 768px) {
+      .gc-social-link { font-size: 0.7rem; gap: 0.4rem; padding: 0.25rem 0.4rem; }
+      .gc-social-link i { font-size: 0.9rem; }
+    }
+
+    @media (max-width: 400px) {
+      .board-commander .gc,
+      .board-emblem .gc { width: min(240px, 82vw); }
+
+      .bf-card .gc-emblem-text { font-size: 1.7rem; }
+      .bf-card .gc-name { font-size: 0.65rem; }
+      .bf-card .gc-type { font-size: 0.45rem; }
+      .bf-card .gc-flavor { font-size: 0.55rem; }
+
+      .land-card { min-height: 64px; padding: 0.3rem 0.25rem; }
+      .land-icon { font-size: 0.75rem; }
+      .land-name { font-size: 0.4rem; }
+      .land-list { font-size: 0.42rem; }
+
+      .gc-social-link { font-size: 0.6rem; padding: 0.2rem 0.3rem; gap: 0.3rem; }
+      .gc-social-link i { font-size: 0.75rem; }
+    }
+
+    @media (max-width: 768px) {
+      .deck-title { font-size: clamp(1rem, 4vw, 1.5rem); margin: 1rem 0 0.5rem; }
+    }
+
+    /* ===== CARD HAND (Work/Personal) ===== */
+
+    .hand-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .card-hand {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 0 1rem 0.3rem;
+      height: 120px;
+      flex-shrink: 0;
+      position: relative;
+      order: 10; /* push to bottom of flex container */
+      margin-bottom: 0.5rem;
+      gap: 0.9rem;
+      perspective: 900px;
+    }
+
+    /* 3D deck box — stacked box shadows simulate card thickness */
+    .hand-card {
+      width: 78px;
+      height: 100px;
+      background: linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--hand-color, var(--blue)) 22%, #0c1020) 0%,
+        color-mix(in srgb, var(--hand-color, var(--blue)) 6%, #05070c) 100%
+      );
+      border: 2px solid color-mix(in srgb, var(--hand-color, var(--blue)) 55%, transparent);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.35s cubic-bezier(0.25,1,0.5,1), box-shadow 0.3s ease, border-color 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      position: relative;
+      font-family: 'Silkscreen', cursive;
+      /* Stacked shadow layers = deck thickness */
+      box-shadow:
+        2px 2px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 35%, #000),
+        4px 4px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 22%, #000),
+        6px 6px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 12%, #000),
+        8px 10px 14px rgba(0,0,0,0.5);
+      transform: rotateX(18deg);
+      transform-style: preserve-3d;
+      outline: none;
+    }
+
+    /* Inner highlight to sell the "front face" of the deck box */
+    .hand-card::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    /* Active deck: opens up — tilts forward, lifts, and cards "peek" out the top */
+    .hand-card.active {
+      transform: rotateX(-6deg) translateY(-26px) scale(1.08);
+      border-color: var(--hand-color, var(--blue));
+      border-width: 3px;
+      box-shadow:
+        2px 2px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 45%, #000),
+        4px 4px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 30%, #000),
+        6px 6px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 18%, #000),
+        0 14px 32px color-mix(in srgb, var(--hand-color, var(--blue)) 45%, transparent),
+        0 0 28px color-mix(in srgb, var(--hand-color, var(--blue)) 35%, transparent);
+    }
+
+    /* Card peeking out of the opened deck */
+    .hand-card.active::after {
+      content: '';
+      position: absolute;
+      top: -14px;
+      left: 14%;
+      right: 14%;
+      height: 16px;
+      background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--hand-color, var(--blue)) 50%, #0c1020),
+        color-mix(in srgb, var(--hand-color, var(--blue)) 15%, #0c1020)
+      );
+      border: 2px solid var(--hand-color, var(--blue));
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      box-shadow: 0 -3px 10px color-mix(in srgb, var(--hand-color, var(--blue)) 30%, transparent);
+    }
+
+    .hand-card:hover:not(.active) {
+      transform: rotateX(10deg) translateY(-8px);
+      border-color: var(--hand-color, var(--blue));
+    }
+
+    .hand-card:focus-visible {
+      outline: 2px solid var(--hand-color, var(--blue));
+      outline-offset: 2px;
+    }
+
+    .hand-card.tab-focused {
+      outline: 2px solid var(--hand-color, var(--blue));
+      outline-offset: 2px;
+    }
+
+    .hand-card-abbr {
+      font-size: 1.1rem;
+      color: var(--hand-color, var(--blue));
+      text-shadow: 0 0 10px color-mix(in srgb, var(--hand-color, var(--blue)) 30%, transparent);
+    }
+
+    .hand-card-name {
+      font-size: 0.35rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      text-align: center;
+      max-width: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 768px) {
+      .card-hand { height: 90px; padding: 0 0.5rem 0.3rem; margin-bottom: 0.2rem; gap: 0.5rem; }
+      .hand-card {
+        width: 56px; height: 72px;
+        border-radius: 4px;
+        gap: 3px;
+        box-shadow:
+          2px 2px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 35%, #000),
+          3px 3px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 20%, #000),
+          5px 6px 10px rgba(0,0,0,0.5);
+      }
+      .hand-card-abbr { font-size: 0.8rem; }
+      .hand-card-name { font-size: 0.3rem; max-width: 48px; }
+      .hand-card.active { transform: rotateX(-4deg) translateY(-18px) scale(1.06); }
+      .hand-card.active::after { top: -10px; height: 12px; }
+      .hand-card:hover:not(.active) { transform: rotateX(10deg) translateY(-6px); }
+    }
+
+    @media (max-width: 400px) {
+      .card-hand { height: 70px; gap: 0.35rem; }
+      .hand-card {
+        width: 44px; height: 58px;
+        border-width: 1.5px;
+        box-shadow:
+          1.5px 1.5px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 35%, #000),
+          3px 3px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 20%, #000),
+          4px 5px 8px rgba(0,0,0,0.5);
+      }
+      .hand-card-abbr { font-size: 0.7rem; }
+      .hand-card-name { display: none; }
+      .hand-card.active { transform: rotateX(-4deg) translateY(-14px) scale(1.05); border-width: 2px; }
+      .hand-card.active::after { top: -8px; height: 10px; }
     }
 
     @media (prefers-reduced-motion: reduce) {

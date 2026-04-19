@@ -1,5 +1,5 @@
 var cabinets = document.querySelectorAll('.cabinet');
-  var panelIds = ['home','about','journey','work','personal','play'];
+  var panelIds = ['home','about','work','personal','play'];
   var character = document.getElementById('character');
   var strip = document.getElementById('world-strip');
   var modeLabel = document.getElementById('ctrl-mode-label');
@@ -17,7 +17,6 @@ var cabinets = document.querySelectorAll('.cabinet');
   var ambients = {
     home: 'radial-gradient(ellipse at 40% 30%, #4a90d9, transparent 70%)',
     about: 'radial-gradient(ellipse at 50% 30%, #50e3a4, transparent 70%)',
-    journey: 'radial-gradient(ellipse at 50% 40%, #4ecdc4, transparent 70%)',
     work: 'radial-gradient(ellipse at 60% 30%, #ff8a50, transparent 70%)',
     personal: 'radial-gradient(ellipse at 40% 50%, #ff6b9d, transparent 70%)',
     play: 'radial-gradient(ellipse at 50% 30%, #9b6dff, transparent 70%)'
@@ -27,7 +26,6 @@ var cabinets = document.querySelectorAll('.cabinet');
   var patterns = {
     home: 'radial-gradient(circle at 30% 70%, rgba(74,144,217,0.03) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(122,184,255,0.02) 0%, transparent 50%)',
     about: 'repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(80,227,164,0.015) 50px, rgba(80,227,164,0.015) 52px), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(80,227,164,0.015) 50px, rgba(80,227,164,0.015) 52px)',
-    journey: 'repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(78,205,196,0.02) 40px, rgba(78,205,196,0.02) 42px)',
     work: 'repeating-linear-gradient(-45deg, transparent, transparent 30px, rgba(255,138,80,0.02) 30px, rgba(255,138,80,0.02) 32px), repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,138,80,0.015) 30px, rgba(255,138,80,0.015) 32px)',
     personal: 'radial-gradient(circle at 20% 80%, rgba(255,107,157,0.03) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,107,157,0.03) 0%, transparent 50%)',
     play: 'repeating-linear-gradient(60deg, transparent, transparent 25px, rgba(155,109,255,0.02) 25px, rgba(155,109,255,0.02) 27px), repeating-linear-gradient(-60deg, transparent, transparent 25px, rgba(155,109,255,0.015) 25px, rgba(155,109,255,0.015) 27px)'
@@ -66,32 +64,51 @@ var cabinets = document.querySelectorAll('.cabinet');
     tick();
   }
 
-  // Get cards in the active carousel of current section
+  // Get cards in the active carousel/board of current section
   function getCards() {
     if (!contentEl) return [];
+    // Board layout: return ALL .gc cards across all zones
+    if (contentEl.querySelector('.board-layout')) {
+      return Array.from(contentEl.querySelectorAll('.board-layout .gc'));
+    }
+    // Default: carousel cards in active tab (or all cards if no tabs)
     var activeTab = contentEl.querySelector('.tab-panel.active');
     var container = activeTab || contentEl;
     return Array.from(container.querySelectorAll('.gc'));
   }
 
-  // Get tabs in current section
+  // Get tabs in current section (tab-bar or card-hand)
   function getTabs() {
     if (!contentEl) return [];
-    return Array.from(contentEl.querySelectorAll('.tab-btn'));
+    return Array.from(contentEl.querySelectorAll('.tab-btn, .hand-card'));
   }
 
   // Highlight active card — scrolls the card to center
   function highlightCard(idx) {
     var cards = getCards();
     cards.forEach(function(c, i) { c.classList.toggle('card-active', i === idx); });
+
+    // Board layout: sprite moves freely across zones
+    if (contentEl.querySelector('.board-layout')) {
+      if (cards[idx]) {
+        // Scroll battlefield carousel if the card is inside it
+        var carousel = cards[idx].closest('.board-carousel');
+        if (carousel) {
+          programmaticScroll = true;
+          cards[idx].scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
+          setTimeout(function() { programmaticScroll = false; }, 500);
+        }
+        // Position sprite at this card's screen position
+        positionSpriteAtCard(cards[idx]);
+      }
+      return;
+    }
+
+    // Default carousel behavior
     if (cards[idx]) {
       programmaticScroll = true;
       cards[idx].scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
       setTimeout(function() { programmaticScroll = false; }, 500);
-    }
-    // Journey section: swap jacket at MobilityWare (index 4)
-    if (panelIds[currentCab] === 'journey' && contentSprite) {
-      contentSprite.classList.toggle('no-jacket', idx < 4);
     }
   }
 
@@ -102,10 +119,17 @@ var cabinets = document.querySelectorAll('.cabinet');
   // Sprite stays centered — cards scroll to it
   function positionSpriteBottom() {
     if (!contentSprite) return;
-    // Position just below the active card (tight gap)
     var activeCard = document.querySelector('.gc.card-active');
     if (activeCard) {
+      // Board layout: position at card's actual X and Y
+      if (contentEl && contentEl.querySelector('.board-layout')) {
+        positionSpriteAtCard(activeCard);
+        return;
+      }
+      // Default: position just below the active card (horizontally centered)
       var rect = activeCard.getBoundingClientRect();
+      contentSprite.style.left = '50%';
+      contentSprite.style.transform = 'translateX(-50%)';
       contentSprite.style.bottom = (window.innerHeight - rect.bottom - 54) + 'px';
     } else {
       // Fallback: just above the world strip
@@ -117,15 +141,40 @@ var cabinets = document.querySelectorAll('.cabinet');
     }
   }
 
+  // Position sprite at a specific card's screen position (for board layout)
+  // If `above` is true, sprite sits on top of the card (for hand cards / decks)
+  function positionSpriteAtCard(card, above) {
+    if (!contentSprite || !card) return;
+    var rect = card.getBoundingClientRect();
+    var centerX = rect.left + rect.width / 2;
+    contentSprite.style.left = centerX + 'px';
+    contentSprite.style.transform = 'translateX(-50%)';
+    if (above) {
+      contentSprite.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+    } else {
+      contentSprite.style.bottom = (window.innerHeight - rect.bottom - 54) + 'px';
+    }
+  }
+
   function showContentSprite() {
     character.style.opacity = '0.3';
     contentSprite.classList.remove('walk-right','walk-left','no-jacket');
     contentSprite.classList.add('idle');
-    // Journey: start with jacket state based on current card
-    if (panelIds[currentCab] === 'journey') {
-      contentSprite.classList.toggle('no-jacket', currentCard < 4);
+    // Board layout: allow horizontal movement
+    if (contentEl && contentEl.querySelector('.board-layout')) {
+      contentSprite.style.transition = 'none';
+      contentSprite.style.opacity = '0';
+      setTimeout(function() {
+        positionSpriteBottom();
+        contentSprite.style.transition = 'left 0.5s ease, bottom 0.5s ease, opacity 0.3s ease';
+        contentSprite.classList.add('visible');
+        contentSprite.style.opacity = '';
+      }, 400);
+      return;
     }
-    // Position first (hidden), then show after positioned
+    // Default: position first (hidden), then show after positioned
+    contentSprite.style.left = '50%';
+    contentSprite.style.transform = 'translateX(-50%)';
     contentSprite.style.transition = 'none';
     contentSprite.style.opacity = '0';
     setTimeout(function() {
@@ -154,18 +203,32 @@ var cabinets = document.querySelectorAll('.cabinet');
     }, 500);
   }
 
-  // Highlight active tab
+  // Highlight active tab (tab-bar or card-hand)
   function highlightTab(idx) {
     var tabs = getTabs();
     tabs.forEach(function(t, i) { t.classList.toggle('tab-focused', i === idx); });
+    // Move content sprite to sit on top of the focused deck (hand card)
+    if (tabs[idx] && tabs[idx].classList.contains('hand-card') && contentSprite) {
+      contentSprite.classList.add('on-decks'); // hide SPACE hint on decks
+      contentSprite.style.transition = 'left 0.4s ease, bottom 0.4s ease, opacity 0.3s ease';
+      positionSpriteAtCard(tabs[idx], true);
+    }
   }
 
   function clearTabHighlight() {
-    document.querySelectorAll('.tab-btn.tab-focused').forEach(function(t) { t.classList.remove('tab-focused'); });
+    document.querySelectorAll('.tab-btn.tab-focused, .hand-card.tab-focused').forEach(function(t) { t.classList.remove('tab-focused'); });
+    // Leaving decks — re-enable SPACE hint
+    if (contentSprite) contentSprite.classList.remove('on-decks');
+  }
+
+  // Work/Personal sections put decks (hand-cards) at Layer 1, cards at Layer 2.
+  // Other sections keep cards at Layer 1.
+  function layer1IsTabs() {
+    return !!(contentEl && contentEl.querySelector('.hand-card'));
   }
 
   function updateModeLabel() {
-    var labels = ['WORLD', 'CARDS', 'TABS'];
+    var labels = layer1IsTabs() ? ['WORLD', 'DECKS', 'CARDS'] : ['WORLD', 'CARDS', 'TABS'];
     if (modeLabel) modeLabel.textContent = labels[layer] || 'WORLD';
   }
 
@@ -346,8 +409,9 @@ var cabinets = document.querySelectorAll('.cabinet');
       if (dist < closestDist) { closestDist = dist; closest = i; }
     });
     // Enter card mode on first drag/swipe interaction
+    // On work/personal (decks exist), the cards layer is 2, not 1
     if (layer === 0) {
-      layer = 1;
+      layer = layer1IsTabs() ? 2 : 1;
       updateModeLabel();
       currentCard = closest;
       cards.forEach(function(c, i) { c.classList.toggle('card-active', i === closest); });
@@ -360,9 +424,6 @@ var cabinets = document.querySelectorAll('.cabinet');
       cards.forEach(function(c, i) { c.classList.toggle('card-active', i === closest); });
       if (contentSprite) {
         spriteWalkBrief(goingRight);
-        if (panelIds[currentCab] === 'journey') {
-          contentSprite.classList.toggle('no-jacket', closest < 4);
-        }
       }
     }
   }
@@ -372,13 +433,27 @@ var cabinets = document.querySelectorAll('.cabinet');
     liveSync(carousel);
   }
 
+
+  // Update the deck title element based on the currently-active hand card
+  function updateDeckTitle() {
+    var deckTitle = contentEl.querySelector('[data-deck-title]');
+    if (!deckTitle) return;
+    var activeHand = contentEl.querySelector('.hand-card.active');
+    if (!activeHand) return;
+    var name = activeHand.querySelector('.hand-card-name');
+    deckTitle.textContent = name ? name.textContent : (activeHand.textContent || '');
+    var handColor = activeHand.style.getPropertyValue('--hand-color');
+    if (handColor) deckTitle.style.setProperty('--active-deck-color', handColor);
+  }
+
   // Bind event handlers on freshly injected section content
   function bindSectionHandlers() {
-    contentEl.querySelectorAll('.tab-btn').forEach(function(btn) {
+    contentEl.querySelectorAll('.tab-btn, .hand-card').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var tabId = btn.dataset.tab;
-        var bar = btn.closest('.tab-bar') || btn.parentElement;
-        var tabs = Array.from(bar.querySelectorAll('.tab-btn'));
+        var bar = btn.closest('.tab-bar, .card-hand') || btn.parentElement;
+        var tabs = Array.from(bar.querySelectorAll('.tab-btn, .hand-card'));
+        var prevTab = tabs.indexOf(bar.querySelector('.tab-btn.active, .hand-card.active'));
         tabs.forEach(function(b) { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
         btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
         contentEl.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
@@ -386,7 +461,33 @@ var cabinets = document.querySelectorAll('.cabinet');
         if (target) target.classList.add('active');
         currentTab = tabs.indexOf(btn);
         currentCard = 0;
-        if (layer === 1) { highlightCard(0); }
+        updateDeckTitle();
+
+        // Move sprite to the clicked deck (if this is a hand card)
+        if (btn.classList.contains('hand-card')) {
+          if (layer === 0) {
+            // Entering from world → decks layer (layer 1 on work/personal)
+            layer = 1;
+            updateModeLabel();
+            showContentSprite();
+            setTimeout(function() { highlightTab(currentTab); }, 420);
+          } else {
+            // Already in sprite mode — walk to the new deck
+            if (prevTab >= 0 && prevTab !== currentTab) {
+              spriteWalkBrief(currentTab > prevTab);
+            }
+            // If we're on the cards layer (L2), drop back to decks (L1) to show the sprite on the deck
+            if (layer === 2) {
+              layer = 1;
+              clearCardHighlight();
+              updateModeLabel();
+            }
+            highlightTab(currentTab);
+          }
+        } else {
+          // Non-hand tab (legacy tab-btn) — highlight first card if on cards layer
+          if (layer === 1 && !layer1IsTabs()) { highlightCard(0); }
+        }
       });
     });
 
@@ -404,6 +505,7 @@ var cabinets = document.querySelectorAll('.cabinet');
 
     initGalleries();
     initCarouselDrag();
+    updateDeckTitle();
   }
 
   function injectSection(html, goingRight) {
@@ -439,7 +541,6 @@ var cabinets = document.querySelectorAll('.cabinet');
   var titles = {
     home: 'Andrew Steven Chau | Senior Software Engineer & Game Developer',
     about: 'Andrew Steven Chau | About Me',
-    journey: 'Andrew Steven Chau | Career Journey',
     work: 'Andrew Steven Chau | Work Projects',
     personal: 'Andrew Steven Chau | Personal Projects',
     play: 'Andrew Steven Chau | Games & Tools'
@@ -511,22 +612,54 @@ var cabinets = document.querySelectorAll('.cabinet');
   // Navigate up a layer
   function goUp() {
     if (layer === 0) {
-      var cards = getCards();
-      if (cards.length === 0) return;
-      layer = 1;
-      currentCard = 0;
-      highlightCard(0);
-      showContentSprite();
+      // World → Layer 1. On work/personal this is the decks; elsewhere it's the cards.
+      if (layer1IsTabs()) {
+        var tabs = getTabs();
+        if (tabs.length === 0) return;
+        layer = 1;
+        currentTab = tabs.findIndex(function(t) { return t.classList.contains('active'); });
+        if (currentTab < 0) currentTab = 0;
+        // Pre-position sprite AT the active deck before showing it (no "from center" flash)
+        if (contentSprite && tabs[currentTab]) {
+          character.style.opacity = '0.3';
+          contentSprite.classList.remove('walk-right','walk-left','no-jacket');
+          contentSprite.classList.add('idle', 'on-decks');
+          contentSprite.style.transition = 'none';
+          contentSprite.style.opacity = '0';
+          positionSpriteAtCard(tabs[currentTab], true);
+          contentSprite.offsetHeight; // force reflow
+          setTimeout(function() {
+            contentSprite.style.transition = 'left 0.4s ease, bottom 0.4s ease, opacity 0.3s ease';
+            contentSprite.classList.add('visible');
+            contentSprite.style.opacity = '';
+            tabs.forEach(function(t, i) { t.classList.toggle('tab-focused', i === currentTab); });
+          }, 50);
+        }
+      } else {
+        var cards = getCards();
+        if (cards.length === 0) return;
+        layer = 1;
+        currentCard = 0;
+        highlightCard(0);
+        showContentSprite();
+      }
     } else if (layer === 1) {
-      // Cards → Tabs (if tabs exist)
-      var tabs = getTabs();
-      if (tabs.length === 0) return;
-      layer = 2;
-      // Find the currently active tab
-      currentTab = tabs.findIndex(function(t) { return t.classList.contains('active'); });
-      if (currentTab < 0) currentTab = 0;
-      highlightTab(currentTab);
-      clearCardHighlight();
+      // Layer 1 → Layer 2. Only work/personal has a Layer 2 (cards above decks).
+      if (layer1IsTabs()) {
+        var cards = getCards();
+        if (cards.length === 0) return;
+        layer = 2;
+        currentCard = 0;
+        clearTabHighlight();
+        highlightCard(0);
+        // Move sprite from the deck up to the active card
+        if (contentSprite) {
+          contentSprite.style.transition = 'left 0.5s ease, bottom 0.5s ease';
+          positionSpriteBottom();
+          // Reposition again after smooth scroll settles (handles carousel scroll case)
+          setTimeout(positionSpriteBottom, 500);
+        }
+      }
     }
     updateModeLabel();
   }
@@ -534,11 +667,10 @@ var cabinets = document.querySelectorAll('.cabinet');
   // Navigate down a layer
   function goDown() {
     if (layer === 2) {
+      // Work/Personal: Cards → Decks
       layer = 1;
-      clearTabHighlight();
-      currentCard = 0;
-      highlightCard(0);
-      showContentSprite();
+      clearCardHighlight();
+      highlightTab(currentTab);
     } else if (layer === 1) {
       layer = 0;
       clearCardHighlight();
@@ -553,15 +685,23 @@ var cabinets = document.querySelectorAll('.cabinet');
     if (layer === 0) {
       goToCab(currentCab - 1);
     } else if (layer === 1) {
+      if (layer1IsTabs()) {
+        // Layer 1 on work/personal = decks — walk between deck boxes
+        var tabs = getTabs();
+        if (currentTab > 0) {
+          currentTab--;
+          spriteWalkBrief(false);
+          highlightTab(currentTab);
+          tabs[currentTab].click();
+        }
+      } else {
+        var cards = getCards();
+        if (currentCard > 0) { currentCard--; highlightCard(currentCard); spriteWalkBrief(false); }
+      }
+    } else if (layer === 2) {
+      // Layer 2 is cards on work/personal
       var cards = getCards();
       if (currentCard > 0) { currentCard--; highlightCard(currentCard); spriteWalkBrief(false); }
-    } else if (layer === 2) {
-      var tabs = getTabs();
-      if (currentTab > 0) {
-        currentTab--;
-        highlightTab(currentTab);
-        tabs[currentTab].click();
-      }
     }
   }
 
@@ -569,21 +709,29 @@ var cabinets = document.querySelectorAll('.cabinet');
     if (layer === 0) {
       goToCab(currentCab + 1);
     } else if (layer === 1) {
+      if (layer1IsTabs()) {
+        var tabs = getTabs();
+        if (currentTab < tabs.length - 1) {
+          currentTab++;
+          spriteWalkBrief(true);
+          highlightTab(currentTab);
+          tabs[currentTab].click();
+        }
+      } else {
+        var cards = getCards();
+        if (currentCard < cards.length - 1) { currentCard++; highlightCard(currentCard); spriteWalkBrief(true); }
+      }
+    } else if (layer === 2) {
       var cards = getCards();
       if (currentCard < cards.length - 1) { currentCard++; highlightCard(currentCard); spriteWalkBrief(true); }
-    } else if (layer === 2) {
-      var tabs = getTabs();
-      if (currentTab < tabs.length - 1) {
-        currentTab++;
-        highlightTab(currentTab);
-        tabs[currentTab].click();
-      }
     }
   }
 
   // Flip active card
   function flipActive() {
-    if (layer !== 1) return;
+    // Cards are on Layer 2 for work/personal, Layer 1 elsewhere
+    var onCardsLayer = layer1IsTabs() ? (layer === 2) : (layer === 1);
+    if (!onCardsLayer) return;
     var cards = getCards();
     if (cards[currentCard] && !cards[currentCard].classList.contains('no-flip')) {
       cards[currentCard].classList.remove('peek');
@@ -652,7 +800,12 @@ var cabinets = document.querySelectorAll('.cabinet');
     if (idx >= 0) {
       var wasWorld = layer === 0;
       var prevCard = currentCard;
-      if (wasWorld) { layer = 1; updateModeLabel(); }
+      var cardsLayer = layer1IsTabs() ? 2 : 1;
+      if (layer !== cardsLayer) {
+        layer = cardsLayer;
+        clearTabHighlight();
+        updateModeLabel();
+      }
       currentCard = idx;
       highlightCard(idx);
       // Cancel peek animation if it's playing
@@ -665,6 +818,9 @@ var cabinets = document.querySelectorAll('.cabinet');
       } else if (idx !== prevCard) {
         // Moving between cards — walk animation
         spriteWalkBrief(idx > prevCard);
+        positionSpriteBottom();
+      } else {
+        // Same card — ensure sprite is positioned under it
         positionSpriteBottom();
       }
     }

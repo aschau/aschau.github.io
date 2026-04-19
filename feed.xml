@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Claude Developer Misery Index</title>
+    <link>https://www.raggedydoc.com/tools/misery-index/</link>
+    <description>Real-time Claude AI reliability tracking — misery score, API status, and incident alerts. Updated every 15 minutes.</description>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 19 Apr 2026 23:54:38 GMT</lastBuildDate>
+    <ttl>15</ttl>
+    <atom:link href="https://raw.githubusercontent.com/aschau/aschau.github.io/misery-data/feed.xml" rel="self" type="application/rss+xml"/>
+    <image>
+      <url>https://www.raggedydoc.com/tools/misery-index/favicon.png</url>
+      <title>Claude Developer Misery Index</title>
+      <link>https://www.raggedydoc.com/tools/misery-index/</link>
+    </image>
+    <item>
+      <title>Misery Index: 3.0/10 — MINOR GRUMBLING</title>
+      <link>https://www.raggedydoc.com/tools/misery-index/</link>
+      <guid isPermaLink="false">misery-MINOR GRUMBLING</guid>
+      <pubDate>Sat, 18 Apr 2026 15:56:20 GMT</pubDate>
+      <description>Score: 3.0/10 (MINOR GRUMBLING). Status: All Systems Operational.</description>
+      <category>misery-score</category>
+    </item>
+    <item>
+      <title>[NONE] Elevated errors on Opus 4.6</title>
+      <link>https://stspg.io/qlwclyv64k56</link>
+      <guid isPermaLink="false">incident-https://stspg.io/qlwclyv64k56</guid>
+      <pubDate>Sun, 19 Apr 2026 22:44:32 GMT</pubDate>
+      <description>Status: investigating. Impact: none. Latest: We are currently investigating this issue.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MINOR] Errors uploading documents to Google Drive in Claude.ai</title>
+      <link>https://stspg.io/1085mzzhwf2v</link>
+      <guid isPermaLink="false">incident-https://stspg.io/1085mzzhwf2v</guid>
+      <pubDate>Fri, 17 Apr 2026 19:56:32 GMT</pubDate>
+      <description>Status: resolved. Impact: minor. Latest: The issue affecting uploads to Google Drive has been resolved.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MINOR] Failures to add Credentials to Vaults</title>
+      <link>https://stspg.io/hn2qr6ds399k</link>
+      <guid isPermaLink="false">incident-https://stspg.io/hn2qr6ds399k</guid>
+      <pubDate>Thu, 16 Apr 2026 22:41:12 GMT</pubDate>
+      <description>Status: resolved. Impact: minor. Latest: This incident has been resolved.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MAJOR] Claude Cowork not starting for some users</title>
+      <link>https://stspg.io/zv6xsc3wm28c</link>
+      <guid isPermaLink="false">incident-https://stspg.io/zv6xsc3wm28c</guid>
+      <pubDate>Thu, 16 Apr 2026 21:29:01 GMT</pubDate>
+      <description>Status: resolved. Impact: major. Latest: This incident has been resolved in the v1.3109.0 release of Claude Desktop. Please &quot;Check for Updates&quot;.</description>
+      <category>incident</category>
+    </item>
+    <item>
+      <title>[MINOR] Opus 4.6 elevated rate of errors</title>
+      <link>https://stspg.io/90n2vmmkj1df</link>
+      <guid isPermaLink="false">incident-https://stspg.io/90n2vmmkj1df</guid>
+      <pubDate>Thu, 16 Apr 2026 07:46:41 GMT</pubDate>
+      <description>Status: resolved. Impact: minor. Latest: Earlier today we had an outage on Opus 4.6 that started at 23:03 PT / 6:03 UTC and ended at 00:26 PT / 7:26 UTC.</description>
+      <category>incident</category>
+    </item>
+  </channel>
+</rss>

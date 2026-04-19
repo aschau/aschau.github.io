@@ -88,6 +88,11 @@ var cabinets = document.querySelectorAll('.cabinet');
     var cards = getCards();
     cards.forEach(function(c, i) { c.classList.toggle('card-active', i === idx); });
 
+    // Hide SPACE hint when active card can't flip
+    if (contentSprite && cards[idx]) {
+      contentSprite.classList.toggle('on-no-flip', cards[idx].classList.contains('no-flip'));
+    }
+
     // Board layout: sprite moves freely across zones
     if (contentEl.querySelector('.board-layout')) {
       if (cards[idx]) {
@@ -506,6 +511,32 @@ var cabinets = document.querySelectorAll('.cabinet');
     initGalleries();
     initCarouselDrag();
     updateDeckTitle();
+
+    // Reposition sprite when the board layout scrolls (About mobile is a vertical scroll)
+    var boardLayout = contentEl.querySelector('.board-layout');
+    if (boardLayout) {
+      var boardScrollTimer = null;
+      var boardScrollEndTimer = null;
+      var savedTransition = '';
+      boardLayout.addEventListener('scroll', function() {
+        if (!contentSprite || !contentSprite.classList.contains('visible')) return;
+        // Disable transitions while scrolling so the sprite sticks to the card
+        if (!boardScrollEndTimer) {
+          savedTransition = contentSprite.style.transition;
+          contentSprite.style.transition = 'none';
+        }
+        clearTimeout(boardScrollEndTimer);
+        boardScrollEndTimer = setTimeout(function() {
+          boardScrollEndTimer = null;
+          contentSprite.style.transition = savedTransition;
+        }, 150);
+        if (boardScrollTimer) return;
+        boardScrollTimer = requestAnimationFrame(function() {
+          boardScrollTimer = null;
+          positionSpriteBottom();
+        });
+      }, { passive: true });
+    }
   }
 
   function injectSection(html, goingRight) {
@@ -748,14 +779,75 @@ var cabinets = document.querySelectorAll('.cabinet');
 
   var peeked = {};
   var suppressClick = false;
+  var suppressWorldClick = false;
   var programmaticScroll = false;
 
   // Cabinet clicks — go to cab and enter card layer
   cabinets.forEach(function(cab, i) {
     cab.addEventListener('click', function() {
+      if (suppressWorldClick) return;
       if (currentCab !== i) { layer = 0; updateModeLabel(); goToCab(i); }
     });
   });
+
+  // Swipe/drag on the world strip to switch cabinets
+  (function() {
+    var world = document.querySelector('.world');
+    if (!world) return;
+    var startX = 0, startY = 0, isDown = false, hasDragged = false;
+    var SWIPE_THRESHOLD = 40;
+
+    function onStart(x, y) {
+      isDown = true;
+      hasDragged = false;
+      startX = x;
+      startY = y;
+    }
+
+    function onMove(x, y) {
+      if (!isDown) return;
+      var dx = x - startX;
+      var dy = y - startY;
+      if (!hasDragged && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+        hasDragged = true;
+      }
+    }
+
+    function onEnd(x) {
+      if (!isDown) return;
+      isDown = false;
+      if (!hasDragged) return;
+      var dx = x - startX;
+      if (Math.abs(dx) < SWIPE_THRESHOLD) return;
+      suppressWorldClick = true;
+      setTimeout(function() { suppressWorldClick = false; }, 100);
+      var target = currentCab + (dx < 0 ? 1 : -1);
+      if (target >= 0 && target < cabinets.length) {
+        if (layer !== 0) { layer = 0; updateModeLabel(); clearCardHighlight(); clearTabHighlight(); hideContentSprite(); }
+        goToCab(target);
+      }
+    }
+
+    world.addEventListener('mousedown', function(e) {
+      if (e.target.closest('.ctrl-btn, .ach-toggle, .ach-panel')) return;
+      onStart(e.pageX, e.pageY);
+    });
+    world.addEventListener('mousemove', function(e) { onMove(e.pageX, e.pageY); });
+    world.addEventListener('mouseup', function(e) { onEnd(e.pageX); });
+    world.addEventListener('mouseleave', function(e) { onEnd(e.pageX); });
+
+    world.addEventListener('touchstart', function(e) {
+      if (e.target.closest('.ctrl-btn, .ach-toggle, .ach-panel')) return;
+      onStart(e.touches[0].pageX, e.touches[0].pageY);
+    }, { passive: true });
+    world.addEventListener('touchmove', function(e) {
+      onMove(e.touches[0].pageX, e.touches[0].pageY);
+    }, { passive: true });
+    world.addEventListener('touchend', function(e) {
+      var x = e.changedTouches[0] ? e.changedTouches[0].pageX : startX;
+      onEnd(x);
+    });
+  })();
 
   // Control buttons
   function pressBtn(id, fn) {

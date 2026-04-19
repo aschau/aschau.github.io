@@ -136,6 +136,34 @@ body {
 .detail-subsection-title:first-child { margin-top: 0; }
 
 /* ===== TEAM ROSTER ===== */
+/* Generic bulleted list (used in privacy, etc.) */
+.detail-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.detail-list li {
+  position: relative;
+  padding: 0.3rem 0 0.3rem 1.2rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.detail-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.75rem;
+  width: 5px; height: 5px;
+  background: var(--blue);
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+
+.detail-list li b { color: var(--text); }
+
 .detail-roster {
   list-style: none;
   padding: 0;

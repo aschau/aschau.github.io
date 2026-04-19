@@ -5,11 +5,13 @@ const {
     ACHIEVEMENTS,
     SECTIONS,
     ALL_TABS,
+    WORK_DECKS,
+    PERSONAL_DECKS,
     getJSON,
     setJSON,
     unlockAchievement,
     processSectionVisit,
-    checkTabMaster,
+    checkFullHand,
     checkSectionComplete,
     checkCardCollector,
     checkNightOwl,
@@ -31,8 +33,8 @@ function createMockStorage(initial) {
 // ── Achievement Definitions ──────────────────────────────────
 
 describe('Achievement definitions', () => {
-    test('9 achievements defined', () => {
-        expect(Object.keys(ACHIEVEMENTS).length).toBe(9);
+    test('11 achievements defined', () => {
+        expect(Object.keys(ACHIEVEMENTS).length).toBe(11);
     });
 
     test('each achievement has title, desc, hint, icon', () => {
@@ -203,6 +205,16 @@ describe('processSectionVisit', () => {
         expect(result.achievementsToUnlock).not.toContain('player-one');
     });
 
+    test('unlocks commander when visiting about section', () => {
+        const result = processSectionVisit('about', []);
+        expect(result.achievementsToUnlock).toContain('commander');
+    });
+
+    test('does not unlock commander for other sections', () => {
+        const result = processSectionVisit('work', []);
+        expect(result.achievementsToUnlock).not.toContain('commander');
+    });
+
     test('can unlock multiple achievements in one visit (play as 5th section)', () => {
         const visited = ['home', 'about', 'work', 'personal'];
         const result = processSectionVisit('play', visited);
@@ -219,26 +231,32 @@ describe('processSectionVisit', () => {
 
 // ── checkTabMaster ──────────────────────────────────────────
 
-describe('checkTabMaster', () => {
-    test('returns false with no tabs clicked', () => {
-        expect(checkTabMaster([])).toBe(false);
+// ── checkFullHand ───────────────────────────────────────────
+
+describe('checkFullHand', () => {
+    test('returns false with no decks clicked', () => {
+        expect(checkFullHand([])).toBe(false);
     });
 
-    test('returns false with some tabs clicked', () => {
-        expect(checkTabMaster(['w-blizzard', 'w-mw', 'pp-fc'])).toBe(false);
+    test('returns false with only some work decks', () => {
+        expect(checkFullHand(['w-blizzard', 'w-mw'])).toBe(false);
     });
 
-    test('returns true when all 10 tabs clicked', () => {
-        expect(checkTabMaster([...ALL_TABS])).toBe(true);
+    test('returns true with all work decks clicked', () => {
+        expect(checkFullHand([...WORK_DECKS])).toBe(true);
     });
 
-    test('returns true with extra tabs beyond the required set', () => {
-        expect(checkTabMaster([...ALL_TABS, 'extra-tab'])).toBe(true);
+    test('returns true with all personal decks clicked', () => {
+        expect(checkFullHand([...PERSONAL_DECKS])).toBe(true);
     });
 
-    test('order does not matter', () => {
-        const reversed = [...ALL_TABS].reverse();
-        expect(checkTabMaster(reversed)).toBe(true);
+    test('returns true with only one full section (work), not both', () => {
+        const clicked = [...WORK_DECKS, 'pp-fc'];
+        expect(checkFullHand(clicked)).toBe(true);
+    });
+
+    test('WORK_DECKS and PERSONAL_DECKS have no overlap', () => {
+        WORK_DECKS.forEach(id => expect(PERSONAL_DECKS).not.toContain(id));
     });
 });
 

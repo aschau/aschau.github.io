@@ -10,20 +10,24 @@
 
 var ACHIEVEMENTS = {
     "cabinet-crawler":  { title: "Cabinet Crawler",  desc: "Visited all 5 sections",           hint: "Visit every cabinet in the arcade...",   icon: "\uD83D\uDD79\uFE0F" },
-    "card-collector":   { title: "Card Collector",   desc: "Flipped every card",               hint: "There's something on the back...",       icon: "\uD83C\uDCCF" },
-    "tab-master":       { title: "Tab Master",       desc: "Clicked every tab",                hint: "Check every category...",                icon: "\uD83D\uDCC1" },
+    "card-collector":   { title: "Card Collector",   desc: "Flipped a card",                   hint: "There's something on the back...",       icon: "\uD83C\uDCCF" },
     "pixel-walker":     { title: "Pixel Walker",     desc: "Used keyboard navigation",         hint: "Try the arrow keys...",                  icon: "\u2328\uFE0F" },
     curious:            { title: "Curious",          desc: "Clicked an external link",         hint: "Follow a link to the outside...",        icon: "\uD83D\uDD0D" },
     "night-owl":        { title: "Night Owl",        desc: "Visited after 10 PM",              hint: "Come back when the moon is out...",      icon: "\uD83C\uDF19" },
     "deep-diver":       { title: "Deep Diver",       desc: "Visited a project detail page",    hint: "Go deeper into a project...",            icon: "\uD83E\uDD3F" },
     "social-butterfly": { title: "Social Butterfly", desc: "Clicked a social profile link",    hint: "Connect on social media...",             icon: "\uD83E\uDD8B" },
-    "player-one":       { title: "Player One",       desc: "Visited the Play section",         hint: "Ready Player One...",                    icon: "\uD83C\uDFAE" }
+    "player-one":       { title: "Player One",       desc: "Visited the Play section",         hint: "Ready Player One...",                    icon: "\uD83C\uDFAE" },
+    commander:          { title: "Commander",        desc: "Met the commander",                hint: "Step into the command zone...",          icon: "\uD83D\uDC51" },
+    "first-draw":       { title: "Starter Deck",     desc: "Opened your first deck",           hint: "Visit Work or Personal...",              icon: "\uD83C\uDFB4" },
+    "full-hand":        { title: "Set Mastery",      desc: "Opened every deck in a section",   hint: "Play every deck in Work or Personal...", icon: "\u270B" }
 };
 
 var SECTIONS = ["home", "about", "work", "personal", "play"];
 
-// All tab IDs across Work and Personal sections
-var ALL_TABS = ["w-blizzard", "w-mw", "w-sega", "w-trigger", "w-stb", "pp-fc", "pp-wh", "pp-ai", "pp-web", "pp-col"];
+// Work and Personal deck (hand-card) IDs, grouped
+var WORK_DECKS = ["w-blizzard", "w-mw", "w-sega", "w-trigger", "w-stb"];
+var PERSONAL_DECKS = ["pp-fc", "pp-wh", "pp-ai", "pp-web", "pp-col"];
+var ALL_TABS = WORK_DECKS.concat(PERSONAL_DECKS);
 
 // === Storage Helpers ===
 
@@ -69,7 +73,7 @@ function processSectionVisit(section, previouslyVisited) {
         sections.push(section);
     }
 
-    // Cabinet Crawler: visited all 6 sections
+    // Cabinet Crawler: visited all sections
     if (sections.length >= SECTIONS.length) {
         achievements.push("cabinet-crawler");
     }
@@ -79,19 +83,28 @@ function processSectionVisit(section, previouslyVisited) {
         achievements.push("player-one");
     }
 
+    // Commander: visited the About section
+    if (section === "about") {
+        achievements.push("commander");
+    }
+
+    // Starter Deck: visiting Work or Personal opens a deck automatically
+    if (section === "work" || section === "personal") {
+        achievements.push("first-draw");
+    }
+
     return { sectionsToSave: sections, achievementsToUnlock: achievements };
 }
 
 /**
- * Check if all tabs have been clicked.
- * @param {string[]} clickedTabs - tab IDs that have been clicked
+ * Check if any single "section" (Work OR Personal) has had all its decks opened.
+ * @param {string[]} clickedTabs - tab/deck IDs clicked so far
  * @returns {boolean}
  */
-function checkTabMaster(clickedTabs) {
-    for (var i = 0; i < ALL_TABS.length; i++) {
-        if (clickedTabs.indexOf(ALL_TABS[i]) === -1) return false;
-    }
-    return true;
+function checkFullHand(clickedTabs) {
+    var workComplete = WORK_DECKS.every(function(id) { return clickedTabs.indexOf(id) !== -1; });
+    var personalComplete = PERSONAL_DECKS.every(function(id) { return clickedTabs.indexOf(id) !== -1; });
+    return workComplete || personalComplete;
 }
 
 /**
@@ -147,11 +160,13 @@ module.exports = {
     ACHIEVEMENTS,
     SECTIONS,
     ALL_TABS,
+    WORK_DECKS,
+    PERSONAL_DECKS,
     getJSON,
     setJSON,
     unlockAchievement,
     processSectionVisit,
-    checkTabMaster,
+    checkFullHand,
     checkSectionComplete,
     checkCardCollector,
     checkNightOwl,

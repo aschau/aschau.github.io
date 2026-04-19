@@ -12,18 +12,22 @@
 
   var ACHIEVEMENTS = {
     'cabinet-crawler':  { title: 'Cabinet Crawler',  desc: 'Visited all 5 sections',        hint: 'Visit every cabinet in the arcade...', icon: '\uD83D\uDD79\uFE0F' },
-    'card-collector':   { title: 'Card Collector',   desc: 'Flipped every card',            hint: 'There\'s something on the back...',    icon: '\uD83C\uDCCF' },
-    'tab-master':       { title: 'Tab Master',       desc: 'Clicked every tab',             hint: 'Check every category...',              icon: '\uD83D\uDCC1' },
+    'card-collector':   { title: 'Card Collector',   desc: 'Flipped a card',                hint: 'There\'s something on the back...',    icon: '\uD83C\uDCCF' },
     'pixel-walker':     { title: 'Pixel Walker',     desc: 'Used keyboard navigation',      hint: 'Try the arrow keys...',                icon: '\u2328\uFE0F' },
     curious:            { title: 'Curious',          desc: 'Clicked an external link',      hint: 'Follow a link to the outside...',      icon: '\uD83D\uDD0D' },
     'night-owl':        { title: 'Night Owl',        desc: 'Visited after 10 PM',           hint: 'Come back when the moon is out...',    icon: '\uD83C\uDF19' },
     'deep-diver':       { title: 'Deep Diver',       desc: 'Visited a project detail page', hint: 'Go deeper into a project...',          icon: '\uD83E\uDD3F' },
     'social-butterfly': { title: 'Social Butterfly', desc: 'Clicked a social profile link', hint: 'Connect on social media...',           icon: '\uD83E\uDD8B' },
-    'player-one':       { title: 'Player One',       desc: 'Visited the Play section',      hint: 'Ready Player One...',                  icon: '\uD83C\uDFAE' }
+    'player-one':       { title: 'Player One',       desc: 'Visited the Play section',      hint: 'Ready Player One...',                  icon: '\uD83C\uDFAE' },
+    commander:          { title: 'Commander',        desc: 'Met the commander',             hint: 'Step into the command zone...',        icon: '\uD83D\uDC51' },
+    'first-draw':       { title: 'Starter Deck',     desc: 'Opened your first deck',        hint: 'Visit Work or Personal...',            icon: '\uD83C\uDFB4' },
+    'full-hand':        { title: 'Set Mastery',      desc: 'Opened every deck in a section', hint: 'Play every deck in Work or Personal...', icon: '\u270B' }
   };
 
   var SECTIONS = ['home', 'about', 'work', 'personal', 'play'];
-  var ALL_TABS = ['w-blizzard', 'w-mw', 'w-sega', 'w-trigger', 'w-stb', 'pp-fc', 'pp-wh', 'pp-ai', 'pp-web', 'pp-col'];
+  var WORK_DECKS = ['w-blizzard', 'w-mw', 'w-sega', 'w-trigger', 'w-stb'];
+  var PERSONAL_DECKS = ['pp-fc', 'pp-wh', 'pp-ai', 'pp-web', 'pp-col'];
+  var ALL_TABS = WORK_DECKS.concat(PERSONAL_DECKS);
 
   var STORAGE_KEY = 'arcade_achievements';
   var SECTIONS_KEY = 'arcade_sections_visited';
@@ -186,6 +190,8 @@
 
     if (visited.length >= SECTIONS.length) unlock('cabinet-crawler');
     if (sectionId === 'play') unlock('player-one');
+    if (sectionId === 'about') unlock('commander');
+    if (sectionId === 'work' || sectionId === 'personal') unlock('first-draw');
   }
 
   // ── Tracking: Card flips ──
@@ -199,27 +205,18 @@
       flipped[key].push(cardIndex);
       setJSON(CARDS_KEY, flipped);
     }
-    checkCardCollectorAchievement();
-  }
-
-  function checkCardCollectorAchievement() {
-    var flipped = getJSON(CARDS_KEY, {});
-    var keys = Object.keys(flippableCounts);
-    if (keys.length === 0) return;
-    for (var i = 0; i < keys.length; i++) {
-      var k = keys[i];
-      if (flippableCounts[k] <= 0) continue;
-      if (!flipped[k]) return;
-      var unique = [];
-      for (var j = 0; j < flipped[k].length; j++) {
-        if (unique.indexOf(flipped[k][j]) === -1) unique.push(flipped[k][j]);
-      }
-      if (unique.length < flippableCounts[k]) return;
-    }
+    // Any flip unlocks Card Collector
     unlock('card-collector');
   }
 
   // ── Tracking: Tabs ──
+
+  // Track the deck that's active by default (auto-opened on section load).
+  // Called after the section content loads.
+  function trackActiveDeck() {
+    var active = document.querySelector('.hand-card.active');
+    if (active && active.dataset.tab) trackTab(active.dataset.tab);
+  }
 
   function trackTab(tabId) {
     var clicked = getJSON(TABS_KEY, []);
@@ -227,11 +224,12 @@
       clicked.push(tabId);
       setJSON(TABS_KEY, clicked);
     }
-    var allClicked = true;
-    for (var i = 0; i < ALL_TABS.length; i++) {
-      if (clicked.indexOf(ALL_TABS[i]) === -1) { allClicked = false; break; }
-    }
-    if (allClicked) unlock('tab-master');
+    // Starter Deck: any deck clicked for the first time
+    unlock('first-draw');
+    // Set Mastery: all decks in Work OR Personal section clicked
+    var workDone = WORK_DECKS.every(function(id) { return clicked.indexOf(id) !== -1; });
+    var personalDone = PERSONAL_DECKS.every(function(id) { return clicked.indexOf(id) !== -1; });
+    if (workDone || personalDone) unlock('full-hand');
   }
 
   // ── Helpers ──
@@ -276,20 +274,20 @@
       }
     });
 
-    // External links → Curious
+    // External links → Curious. Use capture phase so .gc a's stopPropagation() doesn't block us.
     document.addEventListener('click', function (e) {
       if (e.target.closest('a[target="_blank"]')) unlock('curious');
-    });
+    }, true);
 
-    // Social buttons → Social Butterfly
+    // Social buttons → Social Butterfly (both .soc-btn on commander and .gc-social-link on emblem)
     document.addEventListener('click', function (e) {
-      if (e.target.closest('.soc-btn')) unlock('social-butterfly');
-    });
+      if (e.target.closest('.soc-btn, .gc-social-link')) unlock('social-butterfly');
+    }, true);
 
     // Detail page links → Deep Diver
     document.addEventListener('click', function (e) {
       if (e.target.closest('a[href*="projects/"]')) unlock('deep-diver');
-    });
+    }, true);
 
     // Card flips
     document.addEventListener('click', function (e) {
@@ -320,19 +318,21 @@
       if (btn && btn.dataset.tab) trackTab(btn.dataset.tab);
     });
 
-    // Section tracking via pushState
+    // Home is always "visible" when the arcade loads, so count it visited.
+    trackSection('home');
+    // Also track whatever section the URL currently points to (may be same as home).
     trackSection(getCurrentSection());
 
     var origPush = history.pushState;
     history.pushState = function () {
       origPush.apply(history, arguments);
       trackSection(getCurrentSection());
-      setTimeout(updateFlippableCounts, 500);
+      setTimeout(function() { updateFlippableCounts(); trackActiveDeck(); }, 500);
     };
 
     window.addEventListener('popstate', function () {
       trackSection(getCurrentSection());
-      setTimeout(updateFlippableCounts, 500);
+      setTimeout(function() { updateFlippableCounts(); trackActiveDeck(); }, 500);
     });
   }
 
@@ -352,6 +352,7 @@
       initListeners();
       updateProgress();
       updateFlippableCounts();
+      trackActiveDeck();
     }, 500);
   }
 

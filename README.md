@@ -30,7 +30,8 @@ The site is framed as an **arcade cabinet**: a CRT bezel wraps a content panel, 
 ## Tech Stack
 
 - HTML5 / CSS3 / vanilla JavaScript
-- Bootstrap 5.3 (CDN) for detail pages; arcade shell is pure CSS
+- Bootstrap 5.3 (CDN) for legacy detail pages; arcade shell is pure CSS
+- Self-hosted typography (Silkscreen, Outfit, Fira Code) and Font Awesome 6.7.2 icons
 - LPC character spritesheets (CC BY-SA 3.0)
 - GitHub Pages hosting
 - Jest for testing
@@ -73,6 +74,8 @@ npm run test:coverage
 │   ├── arcade.css            # Arcade shell + section styles
 │   ├── detail.css            # Standalone detail/privacy pages
 │   └── achievements.css      # Shared achievement UI (toasts, panel, badge)
+├── fonts/                    # Self-hosted typography woff2
+├── fontawesome/              # Self-hosted Font Awesome 6.7.2 (CSS + webfonts)
 ├── js/
 │   ├── arcade.js             # Arcade shell: navigation, sprite, sections
 │   ├── components.js         # Legacy shared nav/footer (unused on arcade)

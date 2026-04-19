@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Andrew Steven Chau | Senior Software Engineer & Game Developer</title>
   <link rel="stylesheet" href="css/arcade.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous">
+  <link rel="stylesheet" href="fontawesome/css/all.min.css">
 </head>
 <body>
 
@@ -25,13 +25,14 @@
   <div class="screen-bezel">
     <div class="bezel-corner tl"></div><div class="bezel-corner tr"></div>
     <div class="bezel-corner bl"></div><div class="bezel-corner br"></div>
-    <div class="bezel-label">raggedydoc &middot; model asc-2026</div>
+    <div class="bezel-label" aria-hidden="true">raggedydoc &middot; model asc-2026</div>
     <div class="screen-ambient" id="screen-ambient"></div>
     <div class="screen-pattern" id="screen-pattern"></div>
     <div class="screen-static"></div>
     <div class="screen-flicker"></div>
     <div class="content-area">
-    <div class="panel active" id="section-content" aria-live="polite"></div>
+    <div class="panel active" id="section-content"></div>
+    <div id="section-status" aria-live="polite" class="sr-only"></div>
     </div><!-- /content-area -->
   </div><!-- /screen-bezel -->
 
@@ -43,7 +44,7 @@
     <div class="sky"></div>
     <div class="stars" id="stars"></div>
     <div class="ground"><div class="ground-grid"></div></div>
-    <div class="character idle" id="character"></div>
+    <div class="character idle" id="character" aria-hidden="true"></div>
     <div class="world-strip" id="world-strip">
       <div class="cabinet active" data-id="home" style="--cc:var(--blue-light);"><div class="cab-screen"><div class="cab-icon">&#9670;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Home</div></div>
       <div class="cabinet" data-id="about" style="--cc:var(--green);"><div class="cab-screen"><div class="cab-icon">&#9786;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">About</div></div>
@@ -55,7 +56,7 @@
   </div>
 
   <!-- Content sprite (moves up from world into card area) -->
-  <div class="content-sprite idle" id="content-sprite"></div>
+  <div class="content-sprite idle" id="content-sprite" aria-hidden="true"></div>
 
   <!-- CONTROL PANEL -->
   <div class="controls">

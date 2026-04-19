@@ -8,6 +8,7 @@ Static portfolio website (GitHub Pages) for Andrew Steven Chau at `www.raggedydo
 - Open `index.html` in browser to preview. Hard refresh (`Ctrl+Shift+R`) to bust cache. For local serving: `npx http-server -p 8080 -c-1`.
 - Games and tools are self-contained in `games/` and `tools/` — they don't use the portfolio's arcade shell. Each has its own `CLAUDE.md` with detailed docs.
 - **Testing**: `npm test` runs Jest (285 tests). Each game/tool extracts pure logic into a `.module.js` file (UMD-compatible, used by both tests and browser). Tests live in `__tests__/`. CI runs on push/PR via `.github/workflows/tests.yml`.
+- **Fonts**: typography (Silkscreen, Outfit, Fira Code) is self-hosted from `fonts/*.woff2`. Font Awesome (used on About's emblem card for socials) is also self-hosted under `fontawesome/` — CSS at `fontawesome/css/all.min.css`, webfonts at `fontawesome/webfonts/fa-brands-400.woff2` and `fa-solid-900.woff2`. Only Bootstrap CSS still loads from a CDN on the non-arcade detail pages.
 
 ## Architecture
 

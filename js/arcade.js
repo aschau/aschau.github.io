@@ -208,7 +208,10 @@ var cabinets = document.querySelectorAll('.cabinet');
   // Highlight active tab (tab-bar or card-hand)
   function highlightTab(idx) {
     var tabs = getTabs();
-    tabs.forEach(function(t, i) { t.classList.toggle('tab-focused', i === idx); });
+    tabs.forEach(function(t, i) {
+      t.classList.toggle('tab-focused', i === idx);
+      t.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+    });
     // Move content sprite to sit on top of the focused deck (hand card)
     if (tabs[idx] && tabs[idx].classList.contains('hand-card') && contentSprite) {
       contentSprite.classList.add('on-decks'); // hide SPACE hint on decks
@@ -501,6 +504,21 @@ var cabinets = document.querySelectorAll('.cabinet');
       el.addEventListener('click', function(e) { e.stopPropagation(); });
     });
 
+    // Make flippable cards keyboard-focusable and activatable
+    contentEl.querySelectorAll('.gc:not(.no-flip)').forEach(function(card) {
+      if (!card.hasAttribute('tabindex')) card.setAttribute('tabindex', '0');
+      if (!card.hasAttribute('role')) card.setAttribute('role', 'button');
+      card.setAttribute('aria-pressed', card.classList.contains('flipped') ? 'true' : 'false');
+      card.addEventListener('keydown', function(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          card.classList.remove('peek');
+          card.classList.toggle('flipped');
+          card.setAttribute('aria-pressed', card.classList.contains('flipped') ? 'true' : 'false');
+        }
+      });
+    });
+
     startTyping();
 
     if ('ontouchstart' in window || window.innerWidth <= 768) {
@@ -560,8 +578,16 @@ var cabinets = document.querySelectorAll('.cabinet');
 
       bindSectionHandlers();
 
+      // Announce section change for screen readers
+      var status = document.getElementById('section-status');
+      if (status) {
+        var sectionTitle = (contentEl.querySelector('.p-title') || {}).textContent || panelIds[currentCab];
+        status.textContent = sectionTitle + ' section loaded';
+        setTimeout(function() { status.textContent = ''; }, 1000);
+      }
+
       // Peek flip on first visit — skip no-flip cards so the hint lands on a card that can actually flip
-      if (!peeked[currentCab]) {
+      if (!peeked[currentCab] && !prefersReducedMotion) {
         peeked[currentCab] = true;
         var firstCard = contentEl.querySelector('.gc:not(.no-flip)');
         if (firstCard) {
@@ -857,13 +883,14 @@ var cabinets = document.querySelectorAll('.cabinet');
 
   // Keyboard
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowRight') { e.preventDefault(); goRight(); }
-    else if (e.key === 'ArrowLeft') { e.preventDefault(); goLeft(); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); goUp(); }
-    else if (e.key === 'ArrowDown') { e.preventDefault(); goDown(); }
+    // Don't hijack keys when focus is in an iframe (YouTube player, etc.), form control, or link
+    var focused = document.activeElement;
+    var inEmbed = focused && (focused.tagName === 'IFRAME' || focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA' || focused.tagName === 'SELECT');
+    if (e.key === 'ArrowRight') { if (inEmbed) return; e.preventDefault(); goRight(); }
+    else if (e.key === 'ArrowLeft') { if (inEmbed) return; e.preventDefault(); goLeft(); }
+    else if (e.key === 'ArrowUp') { if (inEmbed) return; e.preventDefault(); goUp(); }
+    else if (e.key === 'ArrowDown') { if (inEmbed) return; e.preventDefault(); goDown(); }
     else if (e.key === ' ' || e.key === 'Enter') {
-      // Don't hijack Space/Enter on links, buttons, or iframes inside cards
-      var focused = document.activeElement;
       if (focused && (focused.tagName === 'A' || focused.tagName === 'BUTTON' || focused.tagName === 'IFRAME')) return;
       e.preventDefault(); flipActive();
     }
@@ -1003,6 +1030,7 @@ var cabinets = document.querySelectorAll('.cabinet');
     setTimeout(finishLoad, 3000);
   })();
 
+  var resizeDebounce = null;
   window.addEventListener('resize', function() {
     var cab = cabinets[currentCab];
     var cabCenter = cab.offsetLeft + cab.offsetWidth / 2;
@@ -1010,6 +1038,16 @@ var cabinets = document.querySelectorAll('.cabinet');
     var offset = -(cabCenter - viewCenter);
     strip.style.transform = 'translateX(' + offset + 'px)';
     character.style.left = (cabCenter + offset - 32) + 'px';
+
+    // Debounce heavier work: reposition sprite for new breakpoint, update touch/click hint
+    clearTimeout(resizeDebounce);
+    resizeDebounce = setTimeout(function() {
+      positionSpriteBottom();
+      var touchHint = ('ontouchstart' in window || window.innerWidth <= 768) ? 'tap to flip' : 'click to flip';
+      if (contentEl) {
+        contentEl.querySelectorAll('.gc-flip-hint').forEach(function(el) { el.textContent = touchHint; });
+      }
+    }, 150);
   });
 
   // Lightbox — click any card image to expand

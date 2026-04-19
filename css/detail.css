@@ -341,7 +341,7 @@ body {
 }
 
 /* Tablet */
-@media (min-width: 769px) and (max-width: 1024px) {
+@media (min-width: 768.02px) and (max-width: 1024px) {
   .detail-page { padding: 1.2rem 1rem 1.5rem; }
 }
 

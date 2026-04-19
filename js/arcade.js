@@ -93,18 +93,20 @@ var cabinets = document.querySelectorAll('.cabinet');
       contentSprite.classList.toggle('on-no-flip', cards[idx].classList.contains('no-flip'));
     }
 
-    // Board layout: sprite moves freely across zones
+    // Board layout: desktop does cross-zone sprite movement; mobile uses standard carousel
     if (contentEl.querySelector('.board-layout')) {
       if (cards[idx]) {
-        // Scroll battlefield carousel if the card is inside it
-        var carousel = cards[idx].closest('.board-carousel');
-        if (carousel) {
+        var isMobileBoard = window.innerWidth <= 768;
+        if (isMobileBoard) {
+          // Mobile: horizontal scroll carousel — scroll card to center and position sprite below
           programmaticScroll = true;
           cards[idx].scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
           setTimeout(function() { programmaticScroll = false; }, 500);
+          setTimeout(positionSpriteBottom, 50);
+        } else {
+          // Desktop: sprite teleports across zones to sit below active card
+          positionSpriteAtCard(cards[idx]);
         }
-        // Position sprite at this card's screen position
-        positionSpriteAtCard(cards[idx]);
       }
       return;
     }
@@ -126,8 +128,8 @@ var cabinets = document.querySelectorAll('.cabinet');
     if (!contentSprite) return;
     var activeCard = document.querySelector('.gc.card-active');
     if (activeCard) {
-      // Board layout: position at card's actual X and Y
-      if (contentEl && contentEl.querySelector('.board-layout')) {
+      // Desktop board layout: sprite moves across zones (not on mobile where it's a carousel)
+      if (contentEl && contentEl.querySelector('.board-layout') && window.innerWidth > 768) {
         positionSpriteAtCard(activeCard);
         return;
       }
@@ -512,30 +514,36 @@ var cabinets = document.querySelectorAll('.cabinet');
     initCarouselDrag();
     updateDeckTitle();
 
-    // Reposition sprite when the board layout scrolls (About mobile is a vertical scroll)
+    // Reposition sprite when the board scrolls. On mobile the top row is the horizontal scroller.
+    var boardScrollTargets = [];
     var boardLayout = contentEl.querySelector('.board-layout');
-    if (boardLayout) {
+    if (boardLayout) boardScrollTargets.push(boardLayout);
+    var boardTopRow = contentEl.querySelector('.board-top-row');
+    if (boardTopRow) boardScrollTargets.push(boardTopRow);
+    if (boardScrollTargets.length) {
       var boardScrollTimer = null;
       var boardScrollEndTimer = null;
       var savedTransition = '';
-      boardLayout.addEventListener('scroll', function() {
-        if (!contentSprite || !contentSprite.classList.contains('visible')) return;
-        // Disable transitions while scrolling so the sprite sticks to the card
-        if (!boardScrollEndTimer) {
-          savedTransition = contentSprite.style.transition;
-          contentSprite.style.transition = 'none';
-        }
-        clearTimeout(boardScrollEndTimer);
-        boardScrollEndTimer = setTimeout(function() {
-          boardScrollEndTimer = null;
-          contentSprite.style.transition = savedTransition;
-        }, 150);
-        if (boardScrollTimer) return;
-        boardScrollTimer = requestAnimationFrame(function() {
-          boardScrollTimer = null;
-          positionSpriteBottom();
-        });
-      }, { passive: true });
+      boardScrollTargets.forEach(function(target) {
+        target.addEventListener('scroll', function() {
+          if (!contentSprite || !contentSprite.classList.contains('visible')) return;
+          if (programmaticScroll) return; // don't fight the scrollIntoView animation
+          if (!boardScrollEndTimer) {
+            savedTransition = contentSprite.style.transition;
+            contentSprite.style.transition = 'none';
+          }
+          clearTimeout(boardScrollEndTimer);
+          boardScrollEndTimer = setTimeout(function() {
+            boardScrollEndTimer = null;
+            contentSprite.style.transition = savedTransition;
+          }, 150);
+          if (boardScrollTimer) return;
+          boardScrollTimer = requestAnimationFrame(function() {
+            boardScrollTimer = null;
+            positionSpriteBottom();
+          });
+        }, { passive: true });
+      });
     }
   }
 
@@ -554,10 +562,10 @@ var cabinets = document.querySelectorAll('.cabinet');
 
       bindSectionHandlers();
 
-      // Peek flip on first visit
+      // Peek flip on first visit — skip no-flip cards so the hint lands on a card that can actually flip
       if (!peeked[currentCab]) {
         peeked[currentCab] = true;
-        var firstCard = contentEl.querySelector('.gc');
+        var firstCard = contentEl.querySelector('.gc:not(.no-flip)');
         if (firstCard) {
           setTimeout(function() {
             firstCard.classList.add('peek');

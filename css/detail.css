@@ -1,5 +1,7 @@
 /* Detail page styles — arcade-themed standalone pages */
 
+@import url('achievements.css');
+
 /* Self-hosted fonts (same as arcade.css) */
 @font-face { font-family: 'Silkscreen'; font-weight: 400; font-display: swap; src: url('../fonts/Silkscreen-Regular.woff2') format('woff2'); }
 @font-face { font-family: 'Silkscreen'; font-weight: 700; font-display: swap; src: url('../fonts/Silkscreen-Bold.woff2') format('woff2'); }

@@ -112,7 +112,7 @@
     /* Screen label */
     .bezel-label {
       position: absolute;
-      bottom: 1px;
+      bottom: 6px;
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Silkscreen', cursive;
@@ -121,6 +121,9 @@
       letter-spacing: 0.2em;
       z-index: 7;
       text-transform: uppercase;
+      line-height: 1;
+      padding: 0 8px;
+      background: linear-gradient(to bottom, transparent, rgba(10,12,26,0.6));
     }
 
     /* Retro ambient background per section */
@@ -1249,7 +1252,8 @@
 
     /* Mobile adjustments */
     @media (max-width: 768px) {
-      .ach-toggle { width: 36px; height: 36px; font-size: 1rem; top: 8px; right: 8px; border-width: 2px; }
+      .ach-toggle { width: 27px; height: 27px; font-size: 0.8rem; top: 8px; right: 8px; border-width: 1.5px; }
+      .ach-badge { min-width: 15px; height: 15px; font-size: 0.55rem; top: -5px; right: -5px; padding: 0 3px; }
       .ach-toast-container { top: 48px; right: 4px; }
       .ach-toast { min-width: 200px; padding: 0.65rem 0.85rem; }
       .ach-toast-label { font-size: 0.6rem; }
@@ -1547,73 +1551,64 @@
     }
 
     @media (max-width: 768px) {
-      .zone-label { font-size: 0.5rem; margin: 0.2rem 0; }
-
-      /* Mobile About: vertical scroll through commander → battlefield grid → emblem → skills */
+      /* Mobile About: horizontal card carousel like Work/Personal, skills grid pinned at bottom */
       .board-layout {
-        gap: 0.6rem;
-        padding: 0.3rem;
-        overflow-y: auto;
-        overflow-x: hidden;
+        gap: 0.4rem;
+        padding: 0.3rem 0 0.3rem;
+        overflow: hidden;
       }
 
-      .board-top-row {
-        display: flex;
-        flex-direction: column;
-        grid-template-columns: none;
-        overflow: visible;
-        gap: 0.6rem;
-        flex: 0 0 auto;
-      }
-
+      /* Flatten the zone wrappers so all 8 cards flow as horizontal scroll siblings */
       .board-commander,
       .board-battlefield,
-      .board-emblem {
-        flex: 0 0 auto;
-        width: 100%;
-        max-width: 100%;
-        padding: 0.2rem;
-      }
-
-      /* Commander & emblem: readable card sizes with fixed aspect ratio */
-      .board-commander .gc,
-      .board-emblem .gc {
-        width: min(260px, 78vw);
-        height: auto;
-        aspect-ratio: 5/7;
-        max-height: 60vh;
-        flex: none;
-        margin: 0 auto;
-      }
-
-      /* Battlefield on mobile: 2-col grid, cards with fixed aspect ratio */
+      .board-emblem,
       .battlefield-row {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.4rem;
-        width: 100%;
-        max-width: 500px;
-        margin: 0 auto;
-        flex-wrap: unset;
+        display: contents;
       }
 
-      .bf-card {
-        width: 100%;
+      /* Zone labels don't make sense in a flat carousel */
+      .board-top-row .zone-label { display: none; }
+
+      /* The top row becomes the single horizontal scroll carousel */
+      .board-top-row {
+        display: flex;
+        flex-direction: row;
+        grid-template-columns: none;
+        overflow-x: auto;
+        overflow-y: visible;
+        scroll-snap-type: x mandatory;
+        gap: 0.6rem;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        padding: 0.3rem clamp(0.5rem, 50vw - 125px, 50vw);
+        flex: 1;
+        min-height: 0;
+        align-items: center;
+      }
+      .board-top-row::-webkit-scrollbar { display: none; }
+
+      /* Every card (commander, bf-cards, emblem) same size on mobile */
+      .board-top-row .gc {
+        flex: 0 0 auto;
+        width: clamp(220px, 68vw, 280px);
         height: auto;
         aspect-ratio: 5/7;
         max-width: none;
         min-width: 0;
+        scroll-snap-align: center;
       }
-      .bf-card .gc-emblem-text { font-size: 2rem; }
-      .bf-card .gc-name { font-size: 0.75rem; }
-      .bf-card .gc-type { font-size: 0.5rem; }
-      .bf-card .gc-flavor { font-size: 0.6rem; padding: 0.25rem 0.35rem; }
-      .bf-card .gc-ln { font-size: 0.55rem; padding: 0.2rem 0.4rem; }
-      .bf-card .gc-flip-hint { font-size: 0.45rem; }
-      .bf-card .gc-nameplate { padding: 4px 7px; }
+      .bf-card { width: clamp(220px, 68vw, 280px); height: auto; aspect-ratio: 5/7; }
+      .bf-card .gc-emblem-text { font-size: 2.6rem; }
+      .bf-card .gc-name { font-size: 0.9rem; }
+      .bf-card .gc-type { font-size: 0.6rem; }
+      .bf-card .gc-flavor { font-size: 0.8rem; padding: 0.35rem 0.5rem; }
+      .bf-card .gc-ln { font-size: 0.7rem; padding: 0.25rem 0.5rem; }
+      .bf-card .gc-flip-hint { font-size: 0.55rem; }
+      .bf-card .gc-nameplate { padding: 5px 10px; }
 
-      /* Skills: compact 3-column grid at bottom */
-      .board-skills { margin-bottom: 10px; }
+      /* Skills: 3-col grid pinned at bottom */
+      .board-skills { margin-bottom: 10px; flex-shrink: 0; }
+      .board-skills .zone-label { font-size: 0.55rem; margin: 0.1rem 0 0.2rem; display: block; }
       .land-cards {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -1676,13 +1671,10 @@
     }
 
     @media (max-width: 400px) {
-      .board-commander .gc,
-      .board-emblem .gc { width: min(240px, 82vw); }
+      .board-top-row .gc,
+      .bf-card { width: clamp(200px, 75vw, 260px); }
 
-      .bf-card .gc-emblem-text { font-size: 1.7rem; }
-      .bf-card .gc-name { font-size: 0.65rem; }
-      .bf-card .gc-type { font-size: 0.45rem; }
-      .bf-card .gc-flavor { font-size: 0.55rem; }
+      .bf-card .gc-emblem-text { font-size: 2.2rem; }
 
       .land-card { min-height: 64px; padding: 0.3rem 0.25rem; }
       .land-icon { font-size: 0.75rem; }

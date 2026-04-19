@@ -1,0 +1,1629 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Andrew Steven Chau — Redesign Preview 3</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500&display=swap');
+
+    :root {
+      --blue: #4a90d9; --blue-light: #7ab8ff; --blue-dim: rgba(74,144,217,0.12);
+      --purple: #9b6dff; --pink: #ff6b9d; --green: #50e3a4;
+      --yellow: #ffd166; --orange: #ff8a50; --teal: #4ecdc4;
+      --bg: #0c1020; --bg-card: rgba(16,20,42,0.92);
+      --border: rgba(74,144,217,0.12); --border-glow: rgba(74,144,217,0.3);
+      --text: #e4e8f7; --text-dim: rgba(180,190,220,0.55); --text-soft: rgba(200,210,240,0.8);
+      --world-h: 220px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; background: var(--bg); font-family: 'Outfit', sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
+
+    /* Scanlines */
+    /* Scanline overlay removed — was causing dark band between bezel and world */
+
+    /* ===== SPLIT LAYOUT ===== */
+    .layout { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+
+    /* Top: content */
+    /* ===== ARCADE SCREEN FRAME ===== */
+    .screen-bezel {
+      flex: 1;
+      position: relative;
+      margin: 4px 8px 0;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 2px solid rgba(74,144,217,0.12);
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    /* CRT vignette */
+    /* Vignette removed — was causing dark band at bottom */
+
+    /* CRT phosphor glow on edges */
+    .screen-bezel::after {
+      content: none;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    /* Bezel screws / decorative corners */
+    /* Corner brackets — retro CRT bezel marks */
+    .bezel-corner {
+      position: absolute;
+      width: 14px; height: 14px;
+      z-index: 7;
+      pointer-events: none;
+    }
+    .bezel-corner::before, .bezel-corner::after {
+      content: '';
+      position: absolute;
+      background: rgba(122,184,255,0.1);
+    }
+    /* Horizontal bar */
+    .bezel-corner::before { width: 14px; height: 1px; }
+    /* Vertical bar */
+    .bezel-corner::after { width: 1px; height: 14px; }
+    .bezel-corner.tl { display: none; }
+    .bezel-corner.tr { top: 8px; right: 8px; }
+    .bezel-corner.tr::before { top: 0; right: 0; }
+    .bezel-corner.tr::after { top: 0; right: 0; }
+    .bezel-corner.bl { bottom: 8px; left: 8px; }
+    .bezel-corner.bl::before { bottom: 0; left: 0; }
+    .bezel-corner.bl::after { bottom: 0; left: 0; }
+    .bezel-corner.br { bottom: 8px; right: 8px; }
+    .bezel-corner.br::before { bottom: 0; right: 0; }
+    .bezel-corner.br::after { bottom: 0; right: 0; }
+
+    /* Screen label */
+    .bezel-label {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.45rem;
+      color: rgba(122,184,255,0.2);
+      letter-spacing: 0.2em;
+      z-index: 7;
+      text-transform: uppercase;
+    }
+
+    /* Retro ambient background per section */
+    .screen-ambient {
+      position: absolute;
+      inset: 0;
+      opacity: 0.1;
+      transition: background 0.8s ease, opacity 0.8s ease;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 8px;
+    }
+
+    /* Themed pattern overlay */
+    .screen-pattern {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 8px;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .screen-pattern.visible { opacity: 1; }
+
+    /* CRT flicker + scanlines */
+    .screen-flicker {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+      border-radius: 8px;
+      animation: crtFlicker 0.15s infinite;
+      opacity: 0.02;
+      background: linear-gradient(transparent 50%, rgba(0,0,0,0.08) 50%);
+      background-size: 100% 4px;
+    }
+
+    /* Static noise animation */
+    .screen-static {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      border-radius: 8px;
+      opacity: 0.015;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+      animation: staticShift 0.5s steps(3) infinite;
+    }
+
+    @keyframes staticShift {
+      0% { transform: translate(0, 0); }
+      33% { transform: translate(-1px, 1px); }
+      66% { transform: translate(1px, -1px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    @keyframes crtFlicker {
+      0% { opacity: 0.015; }
+      50% { opacity: 0.025; }
+      100% { opacity: 0.015; }
+    }
+
+    .content-area {
+      position: relative;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .panel {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateX(40px);
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .panel.active { opacity: 1; transform: translateX(0); pointer-events: auto; display: flex; }
+    .panel.exit-left { transform: translateX(-40px); opacity: 0; }
+    .panel.exit-right { transform: translateX(40px); opacity: 0; }
+
+    .panel::-webkit-scrollbar { width: 0; }
+    .panel { scrollbar-width: none; }
+
+    /* Bottom: game world */
+    .world {
+      height: var(--world-h);
+      min-height: var(--world-h);
+      position: relative;
+      overflow: hidden;
+      background: #0e1430;
+      margin-top: -12px;
+      padding-top: 12px;
+    }
+
+    /* Sky in world strip */
+    .sky { position: absolute; inset: 0; background: linear-gradient(180deg, #0e1430 0%, #121a40 40%, #1a2450 100%); }
+    .stars { position: absolute; inset: 0; }
+    .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--d,3s) ease-in-out infinite alternate; }
+    @keyframes twinkle { 0%, 100% { opacity: var(--o, 0.3); } 50% { opacity: 0.08; } }
+
+
+    .ground { position: absolute; bottom: 0; left: 0; right: 0; height: 90px; background: linear-gradient(180deg, #141830, #0e1225); border-top: 2px solid rgba(74,144,217,0.12); }
+    .ground-grid { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(74,144,217,0.03) 79px, rgba(74,144,217,0.03) 80px), repeating-linear-gradient(180deg, transparent, transparent 29px, rgba(74,144,217,0.02) 29px, rgba(74,144,217,0.02) 30px); }
+
+    /* Cabinet strip */
+    .world-strip {
+      position: absolute; bottom: 0; left: 0; height: 100%;
+      display: flex; align-items: flex-end; padding-bottom: 12px;
+      transition: transform 1.4s cubic-bezier(0.25,1,0.5,1);
+    }
+
+    /* Cabinets */
+    .cabinet {
+      width: 200px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center;
+      cursor: pointer; position: relative; padding: 0 20px; transition: transform 0.2s;
+    }
+    .cabinet:hover { transform: translateY(-3px); }
+    .cabinet:first-child { margin-left: max(calc(50vw - 100px), 60px); }
+    .cabinet:last-child { margin-right: max(calc(50vw - 100px), 60px); }
+
+    .cab-screen {
+      width: 120px; height: 90px; background: var(--bg-card);
+      border: 2px solid var(--cc, var(--blue)); border-radius: 6px 6px 3px 3px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 15px color-mix(in srgb, var(--cc, var(--blue)) 12%, transparent), inset 0 0 20px rgba(0,0,0,0.5);
+      position: relative; overflow: hidden;
+    }
+    .cab-screen::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px); pointer-events: none; }
+
+    .cab-icon { font-size: 1.8rem; opacity: 0.45; color: var(--cc, var(--blue)); z-index: 1; }
+    .cab-glow { position: absolute; bottom: -3px; left: 15%; right: 15%; height: 5px; background: var(--cc, var(--blue)); filter: blur(6px); opacity: 0.3; }
+    .cab-base { width: 140px; height: 14px; background: linear-gradient(180deg, #1a1e35, #12152a); border: 1px solid rgba(255,255,255,0.04); border-top: none; border-radius: 0 0 5px 5px; }
+    .cab-label { font-family: 'Silkscreen', cursive; font-size: 0.55rem; color: var(--cc, var(--blue)); margin-top: 6px; text-shadow: 0 0 8px color-mix(in srgb, var(--cc, var(--blue)) 25%, transparent); }
+
+    .cabinet.active .cab-screen {
+      box-shadow: 0 0 25px color-mix(in srgb, var(--cc, var(--blue)) 20%, transparent), 0 0 50px color-mix(in srgb, var(--cc, var(--blue)) 8%, transparent), inset 0 0 15px rgba(0,0,0,0.3);
+      border-color: color-mix(in srgb, var(--cc, var(--blue)) 80%, white);
+    }
+
+    /* Character */
+    .character {
+      position: absolute; bottom: 24px; width: 64px; height: 64px;
+      background: url('img/character-spritesheet.png') 0 -640px; background-size: 832px 3456px;
+      image-rendering: pixelated; z-index: 10; pointer-events: none;
+      transition: left 1.6s cubic-bezier(0.25,1,0.5,1), opacity 0.3s ease;
+    }
+    .character.walking { animation: spriteWalk 1s steps(9) infinite; }
+    .character.idle { animation: none; background-position: 0 -640px; }
+    .character.walk-right { background-position-y: -704px; }
+    .character.walk-left { background-position-y: -576px; }
+    @keyframes spriteWalk { from { background-position-x: 0; } to { background-position-x: -576px; } }
+
+    /* ===== CONTROL PANEL (below world) ===== */
+    .controls {
+      height: 48px; min-height: 48px;
+      background: linear-gradient(180deg, #10132a, #0a0d1e);
+      border-top: 1px solid rgba(255,255,255,0.04);
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      position: relative; z-index: 20;
+    }
+
+    .controls::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(74,144,217,0.1), transparent);
+    }
+
+    .ctrl-btn {
+      width: 36px; height: 36px; border-radius: 6px;
+      background: linear-gradient(180deg, #1a1f3a, #12162d);
+      border: 2px solid rgba(100,140,255,0.2);
+      cursor: pointer; transition: all 0.12s;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(122,184,255,0.5); font-size: 0.9rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .ctrl-btn:hover { background: linear-gradient(180deg, #222850, #1a1f3a); border-color: var(--border-glow); color: var(--blue-light); }
+    .ctrl-btn:active, .ctrl-btn.pressed {
+      background: linear-gradient(180deg, #12162d, #1a1f3a); border-color: var(--blue-light); color: var(--blue-light);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 3px rgba(0,0,0,0.3), 0 0 8px rgba(74,144,217,0.2);
+      transform: translateY(1px);
+    }
+
+    .ctrl-sep {
+      width: 1px; height: 24px; background: rgba(255,255,255,0.06); margin: 0 4px;
+    }
+
+    .ctrl-label {
+      font-family: 'Silkscreen', cursive; font-size: 0.6rem; color: var(--text-dim); opacity: 0.5;
+      letter-spacing: 0.1em;
+    }
+
+    .ctrl-section {
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* ===== CONTENT STYLES (same as before, compressed) ===== */
+    .p-tag { font-family: 'Fira Code', monospace; font-size: 0.55rem; color: var(--teal); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.1rem; }
+    .p-title { font-family: 'Silkscreen', cursive; font-size: clamp(1.1rem,2.5vw,1.5rem); margin-bottom: 0.15rem; }
+    .p-desc { font-size: 0.88rem; color: var(--text-dim); max-width: 600px; line-height: 1.6; margin-bottom: 1.5rem; }
+
+    /* Home */
+    .home-center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; flex: 1; }
+    .home-sprite { width: 96px; height: 96px; background: url('img/character-spritesheet.png') 0 -1280px; background-size: 1664px 6912px; image-rendering: pixelated; margin-bottom: 1.5rem; }
+    .home-name { font-family: 'Silkscreen', cursive; font-size: clamp(1.6rem,4vw,2.5rem); color: var(--blue-light); margin-bottom: 0.4rem; text-shadow: 0 0 30px rgba(74,144,217,0.2); }
+    .home-typing { font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-soft); min-height: 1.5rem; margin-bottom: 0.8rem; }
+    .home-cursor { animation: blink 1s step-end infinite; color: var(--blue-light); }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+    .home-tagline { font-size: 0.85rem; color: var(--text-dim); max-width: 480px; line-height: 1.6; margin-bottom: 1.5rem; }
+    .home-badges { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; }
+    .home-badge { font-family: 'Fira Code', monospace; font-size: 0.55rem; padding: 0.35rem 0.8rem; border: 1px solid var(--border); border-radius: 4px; color: var(--blue-light); background: var(--blue-dim); }
+
+    /* Timeline */
+    .tl { position: relative; padding-left: 36px; max-width: 700px; }
+    .tl::before { content:''; position: absolute; left: 13px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--blue-dim), var(--border-glow), var(--blue-dim)); }
+    .tl-i { position: relative; margin-bottom: 1.2rem; }
+    .tl-n { position: absolute; left: -29px; top: 9px; width: 10px; height: 10px; border: 2px solid var(--nc, var(--blue)); border-radius: 2px; background: var(--bg); transform: rotate(45deg); z-index: 2; transition: all 0.3s; }
+    .tl-i:hover .tl-n { background: var(--nc, var(--blue)); box-shadow: 0 0 8px color-mix(in srgb, var(--nc, var(--blue)) 40%, transparent); }
+    .tl-c { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.2rem; transition: all 0.2s; }
+    .tl-c:hover { border-color: var(--border-glow); transform: translateX(3px); }
+    .tl-date { font-family: 'Fira Code', monospace; font-size: 0.55rem; color: var(--text-dim); }
+    .tl-co { font-family: 'Silkscreen', cursive; font-size: 0.8rem; margin: 0.15rem 0; }
+    .tl-role { font-size: 0.75rem; color: var(--blue-light); font-weight: 500; margin-bottom: 0.3rem; }
+    .tl-d { font-size: 0.75rem; color: var(--text-dim); line-height: 1.5; }
+    .tl-tags { display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.4rem; }
+    .tl-tag { font-family: 'Fira Code', monospace; font-size: 0.45rem; padding: 0.12rem 0.4rem; border: 1px solid var(--border); border-radius: 3px; color: var(--text-dim); }
+    .tl-now { font-family: 'Silkscreen', cursive; font-size: 0.4rem; color: var(--green); border: 1px solid rgba(80,227,164,0.3); padding: 0.08rem 0.35rem; border-radius: 3px; margin-left: 0.3rem; vertical-align: middle; }
+
+    /* Tab system for project sections */
+    .tab-bar {
+      display: flex; gap: 4px; margin-bottom: 0.2rem;
+      overflow-x: auto; scrollbar-width: none;
+      padding-bottom: 0; justify-content: center;
+    }
+    .tab-bar::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      font-family: 'Silkscreen', cursive; font-size: 0.7rem;
+      padding: 0.65rem 1.4rem; border-radius: 5px;
+      background: var(--bg-card); border: 1.5px solid var(--border);
+      color: var(--text-dim); cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tab-btn:hover { border-color: var(--border-glow); color: var(--text-soft); }
+    .tab-btn.tab-focused {
+      outline: 2px solid rgba(122,184,255,0.5);
+      outline-offset: 2px;
+    }
+    .tab-btn.active {
+      border-color: var(--tab-color, var(--blue));
+      color: var(--tab-color, var(--blue-light));
+      background: color-mix(in srgb, var(--tab-color, var(--blue)) 10%, var(--bg-card));
+      box-shadow: 0 0 10px color-mix(in srgb, var(--tab-color, var(--blue)) 12%, transparent);
+    }
+
+    .tab-panel { display: none; flex-direction: column; flex: 1; }
+    .tab-panel.active { display: flex; }
+
+    /* Card carousel within tabs */
+    .card-carousel {
+      display: flex; gap: 1.5rem; overflow-x: auto;
+      padding: 0.2rem calc(50% - 150px) 0.2rem; scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      flex-wrap: nowrap;
+      flex: 1; align-items: center;
+    }
+    .card-carousel::-webkit-scrollbar { display: none; }
+
+    .card-carousel .gc { scroll-snap-align: center; }
+
+    /* Legacy project group (for non-card sections like "This Website") */
+    .pg { margin-bottom: 0.8rem; }
+    .pg-h { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.1rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.2s; user-select: none; }
+    .pg-h:hover { border-color: var(--border-glow); }
+    .pg.open .pg-h { border-radius: 6px 6px 0 0; border-color: var(--border-glow); }
+    .pg-l { display: flex; align-items: center; gap: 0.7rem; }
+    .pg-dot { width: 3px; height: 28px; border-radius: 2px; background: var(--gc, var(--blue)); flex-shrink: 0; }
+    .pg-nm { font-family: 'Silkscreen', cursive; font-size: 0.7rem; }
+    .pg-mt { font-size: 0.65rem; color: var(--text-dim); margin-top: 0.1rem; }
+    .pg-ar { font-size: 0.65rem; color: var(--text-dim); transition: transform 0.3s; }
+    .pg.open .pg-ar { transform: rotate(180deg); }
+    .pg-b { display: none; border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; padding: 1.2rem; background: rgba(14,18,36,0.5); }
+    .pg.open .pg-b { display: block; }
+    .pg-desc { font-size: 0.8rem; color: var(--text-soft); line-height: 1.6; margin-bottom: 1rem; }
+    .pg-desc b { color: var(--text); }
+    .pg-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; max-width: 500px; }
+    .pg-imgs img { width: 100%; border-radius: 4px; border: 1px solid var(--border); }
+    .pg-sub { font-family: 'Silkscreen', cursive; font-size: 0.5rem; color: var(--text-dim); margin-top: 1rem; margin-bottom: 0.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+
+    /* Info panel next to carousel for company details */
+    .tab-info {
+      font-size: 0.8rem; color: var(--text-soft); line-height: 1.6;
+      margin-bottom: 0.8rem; max-width: 700px;
+    }
+    .tab-info b { color: var(--text); }
+    .tab-info-link {
+      display: inline-block; font-family: 'Fira Code', monospace; font-size: 0.5rem;
+      color: var(--blue-light); text-decoration: none; border: 1px solid var(--border);
+      padding: 0.25rem 0.6rem; border-radius: 3px; transition: all 0.2s;
+      margin-top: 0.5rem;
+    }
+    .tab-info-link:hover { border-color: var(--border-glow); background: var(--blue-dim); }
+
+    .splash-img { border-radius: 4px; margin-bottom: 1rem; display: block; }
+
+    /* TCG Cards */
+    .cg { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 1rem; justify-content: flex-start; }
+
+    .gc {
+      width: 300px; height: 480px; perspective: 900px; cursor: pointer; flex-shrink: 0;
+      animation: cardFloat var(--float-dur, 4s) ease-in-out infinite;
+      animation-delay: var(--float-del, 0s);
+    }
+
+    /* Active card highlight */
+    .gc.card-active {
+      filter: brightness(1.15);
+    }
+
+    .gc.card-active .gc-front,
+    .gc.card-active .gc-back {
+      box-shadow:
+        0 0 25px color-mix(in srgb, var(--card-color, var(--blue)) 25%, transparent),
+        0 0 50px color-mix(in srgb, var(--card-color, var(--blue)) 10%, transparent),
+        inset 0 0 15px rgba(0,0,0,0.3);
+    }
+
+    /* Floating sprite in card area — fixed center, cards scroll to it */
+    .content-sprite {
+      width: 48px; height: 48px;
+      background: url('img/character-spritesheet.png') 0 -640px;
+      background-size: 624px 2592px;
+      image-rendering: pixelated;
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0;
+      transition: bottom 0.3s ease, opacity 0.3s ease;
+    }
+
+    .content-sprite.visible { opacity: 1; }
+
+    /* Space bar hint below sprite */
+    .content-sprite::after {
+      content: 'SPACE';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.5rem;
+      color: rgba(122,184,255,0.35);
+      letter-spacing: 0.1em;
+      padding: 2px 12px;
+      border: 1px solid rgba(122,184,255,0.15);
+      border-radius: 4px;
+      background: rgba(10,12,26,0.6);
+      white-space: nowrap;
+    }
+    .content-sprite.walk-right { background-position-y: -528px; animation: spriteWalkSmall 0.8s steps(9) infinite; }
+    .content-sprite.walk-left { background-position-y: -432px; animation: spriteWalkSmall 0.8s steps(9) infinite; }
+    .content-sprite.idle { background-position: 0 -480px; animation: none; }
+
+    @keyframes spriteWalkSmall {
+      from { background-position-x: 0; }
+      to { background-position-x: -432px; }
+    }
+
+    .content-sprite.jumping {
+      animation: spriteJump 0.4s ease;
+    }
+
+    @keyframes spriteJump {
+      0% { transform: translateX(-50%) translateY(0); }
+      40% { transform: translateX(-50%) translateY(-16px); }
+      100% { transform: translateX(-50%) translateY(0); }
+    }
+
+    .gc-inner {
+      width: 100%; height: 100%; position: relative;
+      transform-style: preserve-3d; transition: transform 0.5s ease;
+    }
+
+    .gc.flipped { animation-play-state: paused; }
+    .gc.no-flip { cursor: default; }
+    .gc.flipped .gc-inner { transform: rotateY(180deg); }
+
+    .gc-front, .gc-back {
+      position: absolute; inset: 0; backface-visibility: hidden;
+      border-radius: 10px; overflow: hidden;
+      border: 2px solid var(--card-color, var(--blue));
+      background: linear-gradient(180deg, rgba(12,16,35,0.95), rgba(8,10,25,0.98));
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .gc-front::before, .gc-back::before {
+      content: ''; position: absolute; inset: 3px; border-radius: 7px;
+      border: 1px solid rgba(255,255,255,0.04); pointer-events: none; z-index: 5;
+    }
+
+    .gc:hover .gc-front, .gc:hover .gc-back {
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 15px color-mix(in srgb, var(--card-color, var(--blue)) 15%, transparent);
+    }
+
+    .gc-back { transform: rotateY(180deg); }
+
+    /* Front face */
+    .gc-art {
+      width: calc(100% - 12px); aspect-ratio: 4/3; object-fit: cover;
+      margin: 6px auto 0; display: block; border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .gc-art-contain {
+      width: calc(100% - 12px); aspect-ratio: 4/3; object-fit: contain;
+      margin: 6px auto 0; display: block; border-radius: 4px;
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .gc-vid-front {
+      width: calc(100% - 12px); aspect-ratio: 4/3;
+      margin: 6px auto 0; display: block; border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.08); border: none;
+    }
+
+    /* Stylized journey card art — pixel border + big abbreviation */
+    .gc-emblem {
+      width: calc(100% - 12px); aspect-ratio: 4/3;
+      margin: 6px auto 0; border-radius: 4px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--card-color) 6%, transparent), color-mix(in srgb, var(--card-color) 15%, transparent));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .gc-emblem::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 2px solid color-mix(in srgb, var(--card-color) 20%, transparent);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .gc-emblem::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 10px 10px, var(--card-color) 2px, transparent 2px),
+        radial-gradient(circle at calc(100% - 10px) 10px, var(--card-color) 2px, transparent 2px),
+        radial-gradient(circle at 10px calc(100% - 10px), var(--card-color) 2px, transparent 2px),
+        radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), var(--card-color) 2px, transparent 2px),
+        repeating-linear-gradient(45deg, transparent, transparent 8px, color-mix(in srgb, var(--card-color) 4%, transparent) 8px, color-mix(in srgb, var(--card-color) 4%, transparent) 9px);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .gc-emblem-text {
+      font-family: 'Silkscreen', cursive;
+      font-size: 2.8rem;
+      color: var(--card-color);
+      opacity: 0.8;
+      text-shadow: 0 0 25px color-mix(in srgb, var(--card-color) 35%, transparent);
+      z-index: 1;
+    }
+
+    .gc-emblem-sub {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.55rem;
+      color: var(--card-color);
+      opacity: 0.45;
+      letter-spacing: 0.12em;
+      margin-top: 6px;
+      z-index: 1;
+    }
+
+    /* Shimmer effect on emblem */
+    .gc-emblem .gc-emblem-text {
+      animation: emblemPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes emblemPulse {
+      0%, 100% { opacity: 0.7; text-shadow: 0 0 20px color-mix(in srgb, var(--card-color) 25%, transparent); }
+      50% { opacity: 0.9; text-shadow: 0 0 35px color-mix(in srgb, var(--card-color) 45%, transparent); }
+    }
+
+    .gc-nameplate {
+      background: linear-gradient(90deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3));
+      padding: 6px 10px 4px; margin-top: 4px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .gc-name {
+      font-family: 'Silkscreen', cursive; font-size: 0.85rem; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .gc-type {
+      font-family: 'Fira Code', monospace; font-size: 0.65rem;
+      color: var(--card-color, var(--purple)); letter-spacing: 0.04em;
+      text-transform: uppercase; margin-top: 4px;
+    }
+
+    .gc-flavor {
+      padding: 8px 14px; font-size: 0.82rem; color: var(--text-dim);
+      line-height: 1.55; flex: 1; overflow: hidden;
+      font-style: italic; opacity: 0.7;
+    }
+
+    .gc-rarity {
+      position: absolute; bottom: 6px; right: 8px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--card-color, var(--blue));
+      box-shadow: 0 0 6px var(--card-color, var(--blue));
+      opacity: 0.6;
+    }
+
+    .gc-flip-hint {
+      position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+      font-family: 'Fira Code', monospace; font-size: 0.55rem;
+      color: var(--text-dim); opacity: 0.5;
+      padding: 2px 10px; border: 1px solid rgba(255,255,255,0.06); border-radius: 3px;
+    }
+
+    /* Front face link bar */
+    .gc-front-links {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      padding: 0 12px 8px; margin-top: auto;
+    }
+
+    /* Back face */
+    .gc-back-content {
+      padding: 16px; height: 100%; display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    .gc-back-title {
+      font-family: 'Silkscreen', cursive; font-size: 1.05rem;
+      color: var(--card-color, var(--blue)); margin-bottom: 10px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    }
+
+    .gc-back-role {
+      font-family: 'Fira Code', monospace; font-size: 0.75rem;
+      color: var(--purple); letter-spacing: 0.04em; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .gc-back-text {
+      font-size: 1rem; color: var(--text-soft); line-height: 1.8;
+      flex: 1; overflow: hidden;
+    }
+
+
+    .gc-back-links {
+      margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 4px;
+    }
+
+    .gc-ln {
+      display: inline-block; font-family: 'Fira Code', monospace; font-size: 0.7rem;
+      color: var(--blue-light); text-decoration: none; border: 1px solid var(--border);
+      padding: 0.35rem 0.8rem; border-radius: 3px; transition: all 0.2s;
+    }
+    .gc-ln:hover { border-color: var(--border-glow); background: var(--blue-dim); }
+
+    .gc-back-hint {
+      font-family: 'Fira Code', monospace; font-size: 0.35rem;
+      color: var(--text-dim); opacity: 0.4; text-align: center; margin-top: 6px;
+    }
+
+    /* Gallery thumbnails on back */
+    .gc-back-gallery {
+      display: flex; gap: 3px; margin-top: 8px;
+      flex: 1; min-height: 0; align-items: flex-start; justify-content: center;
+    }
+    .gc-back-gallery img { max-width: 100%; object-fit: contain; border-radius: 2px; cursor: zoom-in; }
+
+    /* Lightbox for expanding images */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 10001;
+      background: rgba(0,0,0,0.9);
+      display: flex; align-items: center; justify-content: center;
+      cursor: zoom-out; opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+    .lightbox.open { opacity: 1; pointer-events: auto; }
+    .lightbox img {
+      max-width: 90vw; max-height: 90vh; object-fit: contain;
+      border-radius: 6px; box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    }
+
+    /* Also make front card images expandable */
+    .gc-art, .gc-art-contain { cursor: zoom-in; }
+
+    @keyframes cardFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* Peek-flip hint: card briefly rotates to show there's a back */
+    .gc.peek .gc-inner {
+      animation: peekFlip 1.2s ease-in-out;
+    }
+
+    @keyframes peekFlip {
+      0% { transform: rotateY(0); }
+      30% { transform: rotateY(35deg); }
+      60% { transform: rotateY(-10deg); }
+      100% { transform: rotateY(0); }
+    }
+
+    /* About */
+    .about-g { display: grid; grid-template-columns: 200px 1fr; gap: 2rem; align-items: start; max-width: 800px; }
+    .about-ph { width: 100%; border-radius: 6px; }
+    .about-h3 { font-family: 'Silkscreen', cursive; font-size: 1rem; margin-bottom: 0.7rem; }
+    .about-p { font-size: 0.82rem; color: var(--text-soft); line-height: 1.7; margin-bottom: 0.7rem; }
+    .about-stats { display: flex; gap: 1.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .about-sn { font-family: 'Silkscreen', cursive; font-size: 1.3rem; color: var(--blue-light); }
+    .about-sl { font-family: 'Fira Code', monospace; font-size: 0.45rem; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; }
+    .soc-row { display: flex; gap: 0.4rem; margin-top: 0.8rem; }
+    .soc-btn { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--border); background: none; color: var(--text-dim); display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.75rem; transition: all 0.2s; }
+    .soc-btn:hover { border-color: var(--border-glow); color: var(--blue-light); background: var(--blue-dim); transform: translateY(-2px); }
+
+    /* Skills */
+    .sk-g { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px,1fr)); gap: 0.8rem; }
+    .sk-c { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; transition: all 0.3s; position: relative; overflow: hidden; }
+    .sk-c::after { content:''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--sc, var(--blue)); opacity: 0; transition: opacity 0.3s; }
+    .sk-c:hover { border-color: var(--border-glow); transform: translateY(-2px); }
+    .sk-c:hover::after { opacity: 1; }
+    .sk-ct { font-family: 'Silkscreen', cursive; font-size: 0.6rem; margin-bottom: 0.5rem; }
+    .sk-pills { display: flex; flex-wrap: wrap; gap: 0.2rem; }
+    .sk-p { font-family: 'Fira Code', monospace; font-size: 0.5rem; padding: 0.2rem 0.45rem; border: 1px solid var(--border); border-radius: 3px; color: var(--text-dim); transition: all 0.2s; }
+    .sk-p:hover { border-color: var(--blue); color: var(--blue-light); }
+
+    /* Showcase */
+    .sh-g { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: 1rem; }
+    .sh-c { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; transition: all 0.3s; cursor: pointer; }
+    .sh-c:hover { border-color: var(--border-glow); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+    .sh-c img { width: 100%; aspect-ratio: 16/9; object-fit: contain; background: rgba(0,0,0,0.3); display: block; }
+    .sh-bd { padding: 0.9rem 1rem; }
+    .sh-tp { font-family: 'Silkscreen', cursive; font-size: 0.4rem; letter-spacing: 0.1em; color: var(--purple); margin-bottom: 0.15rem; }
+    .sh-nm { font-family: 'Silkscreen', cursive; font-size: 0.7rem; margin-bottom: 0.25rem; }
+    .sh-ds { font-size: 0.68rem; color: var(--text-dim); line-height: 1.4; }
+
+    /* Evo list */
+    .evo { list-style: none; padding: 0; }
+    .evo li { position: relative; padding: 0.4rem 0 0.4rem 1.2rem; font-size: 0.75rem; color: var(--text-soft); line-height: 1.5; }
+    .evo li::before { content:''; position: absolute; left: 0; top: 0.7rem; width: 5px; height: 5px; background: var(--blue); border-radius: 1px; transform: rotate(45deg); }
+    .evo li b { color: var(--blue-light); font-family: 'Silkscreen', cursive; font-size: 0.5rem; display: block; margin-bottom: 0.1rem; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      :root { --world-h: 180px; }
+      .panel { padding: 1.2rem; }
+      .cabinet { width: 150px; padding: 0 10px; }
+      .cab-screen { width: 90px; height: 68px; }
+      .cab-base { width: 110px; height: 10px; }
+      .cab-icon { font-size: 1.3rem; }
+      .cab-label { font-size: 0.45rem; }
+      .cabinet:first-child { margin-left: max(calc(50vw - 75px), 30px); }
+      .cabinet:last-child { margin-right: max(calc(50vw - 75px), 30px); }
+      .controls { height: 40px; min-height: 40px; }
+      .ctrl-btn { width: 32px; height: 32px; }
+      .gc { width: 220px; height: 380px; }
+      .gc-flavor { font-size: 0.5rem; padding: 3px 8px; }
+      .gc-name { font-size: 0.55rem; }
+      .gc-nameplate { padding: 4px 8px 3px; }
+      .panel { padding: 1rem; }
+      .screen-bezel { margin: 2px 4px 0; }
+      .card-carousel { gap: 0.8rem; padding: 0.5rem 0.3rem 1rem; }
+      .cg { grid-template-columns: 1fr; }
+      .about-g { grid-template-columns: 1fr; }
+      .about-ph { max-width: 150px; margin: 0 auto; }
+      .pg-imgs { grid-template-columns: 1fr; }
+    }
+
+    /* Loading screen */
+    .load-screen {
+      position: fixed; inset: 0; z-index: 10000;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.5s ease;
+    }
+
+    .load-screen.fade-out {
+      opacity: 0; pointer-events: none;
+    }
+
+    .load-sprite {
+      width: 64px; height: 64px;
+      background: url('img/character-spritesheet.png') 0 -704px;
+      background-size: 832px 3456px;
+      image-rendering: pixelated;
+      animation: spriteWalk 0.8s steps(9) infinite;
+      margin-bottom: 1.5rem;
+    }
+
+    .load-text {
+      font-family: 'Silkscreen', cursive;
+      font-size: 1rem;
+      color: var(--blue-light);
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .load-bar {
+      width: 200px; height: 4px;
+      background: rgba(74,144,217,0.15);
+      border-radius: 2px; overflow: hidden;
+    }
+
+    .load-fill {
+      height: 100%; width: 0%;
+      background: var(--blue-light);
+      border-radius: 2px;
+      transition: width 1.2s ease;
+    }
+
+    .load-hint {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      margin-top: 1rem;
+      opacity: 0.5;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('open')"><img id="lightbox-img" src="" alt=""></div>
+
+<div class="load-screen" id="load-screen">
+  <div class="load-sprite"></div>
+  <div class="load-text">LOADING</div>
+  <div class="load-bar"><div class="load-fill" id="load-fill"></div></div>
+  <div class="load-hint">Preparing the arcade...</div>
+</div>
+
+<div class="layout">
+  <!-- ARCADE SCREEN -->
+  <div class="screen-bezel">
+    <div class="bezel-corner tl"></div><div class="bezel-corner tr"></div>
+    <div class="bezel-corner bl"></div><div class="bezel-corner br"></div>
+    <div class="bezel-label">raggedydoc &middot; model asc-2026</div>
+    <div class="screen-ambient" id="screen-ambient"></div>
+    <div class="screen-pattern" id="screen-pattern"></div>
+    <div class="screen-static"></div>
+    <div class="screen-flicker"></div>
+    <div class="content-area">
+    <!-- HOME -->
+    <div class="panel active" id="p-home">
+      <div class="p-tag">// home</div>
+      <div class="home-center">
+        <div class="home-sprite"></div>
+        <h1 class="home-name">Andrew Steven Chau</h1>
+        <div class="home-typing"><span id="typing-text"></span><span class="home-cursor">_</span></div>
+        <p class="home-tagline">From QA to shipping AR experiences to maintaining some of the best card games on the app stores. Co-founder of an indie game studio.</p>
+        <div class="home-badges"><span class="home-badge">Hearthstone</span><span class="home-badge">AR / XR</span><span class="home-badge">Game Dev</span><span class="home-badge">Indie Studio</span></div>
+      </div>
+    </div>
+
+    <!-- JOURNEY -->
+    <div class="panel" id="p-journey">
+      <div class="p-tag">// career</div><h2 class="p-title"">The Journey</h2>
+      <div class="card-carousel">
+        <div class="gc" style="--card-color:#FFD100;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">UCI</div><div class="gc-emblem-sub">IRVINE</div></div><div class="gc-nameplate"><div class="gc-name">UC Irvine</div><div class="gc-type">2013 — 2017</div></div><div class="gc-flavor">B.S. Computer Game Science</div><div class="gc-front-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('personal','pp-col')">College Projects →</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">UC Irvine</div><div class="gc-back-role">B.S. Computer Game Science · 2013—2017</div><div class="gc-back-text">Studied Computer Game Science at UC Irvine. Built award-winning games in Python and Unity. Foundation in game design, programming, UX research, and iterative development.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('personal','pp-col')">College Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#FF6B35;--float-dur:4.1s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">STB</div><div class="gc-emblem-sub">SUPER TOY BOX</div></div><div class="gc-nameplate"><div class="gc-name">Super Toy Box</div><div class="gc-type">2016 — 2017</div></div><div class="gc-flavor">Client Developer</div><div class="gc-front-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-stb')">View Projects →</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Super Toy Box</div><div class="gc-back-role">Client Developer · Dec 2016—Dec 2017</div><div class="gc-back-text">Built the Subaru Wheelstand showroom app from start to release — dynamic CMS content by VIN. Also developed VR Factory with flexible layouts.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-stb')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#0060A8;--float-dur:3.6s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">SA</div><div class="gc-emblem-sub">SEGA ATLUS</div></div><div class="gc-nameplate"><div class="gc-name">Sega Atlus</div><div class="gc-type">2016 — 2020</div></div><div class="gc-flavor">QA Tester</div><div class="gc-front-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-sega')">View Projects →</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Sega Atlus</div><div class="gc-back-role">Quality Assurance Tester · 2016—2020</div><div class="gc-back-text">QA tested AAA titles including Persona 5 Royal, Yakuza 5 Remastered, Catherine: Full Body (Switch), and Yakuza 0. Ensured localization accuracy and gameplay polish.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-sega')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#00C9DB;--float-dur:4.3s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">TG</div><div class="gc-emblem-sub">TRIGGER GLOBAL</div></div><div class="gc-nameplate"><div class="gc-name">Trigger Global</div><div class="gc-type">2018 — 2019</div></div><div class="gc-flavor">AR Developer</div><div class="gc-front-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-trigger')">View Projects →</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Trigger Global</div><div class="gc-back-role">AR Developer · Jan 2018—Oct 2019</div><div class="gc-back-text">Shipped AR experiences for the NBA, NHL, NFL, and major brands including Lenovo and General Mills. Deployed on-site at stadiums working with Intel.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-trigger')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#f26835;--float-dur:3.9s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">MW</div><div class="gc-emblem-sub">MOBILITYWARE</div></div><div class="gc-nameplate"><div class="gc-name">MobilityWare</div><div class="gc-type">2020 — 2025</div></div><div class="gc-flavor">Software Engineer II</div><div class="gc-front-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-mw')">View Projects →</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare</div><div class="gc-back-role">Software Engineer II · 2020—2025</div><div class="gc-back-text">Spark Studio — Yellow Team. Engineering across 30+ shipped titles. Studio point person for privacy/compliance — GDPR, CCPA, Google Privacy Sandbox. Worked with Technical Director and CTO.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-mw')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#8B6DAF;--float-dur:4.2s;--float-del:1.5s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">WH</div><div class="gc-emblem-sub">WAXHEART</div></div><div class="gc-nameplate"><div class="gc-name">Waxheart</div><div class="gc-type">Current</div></div><div class="gc-flavor">DevOps / Technical Producer</div><div class="gc-front-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('personal','pp-wh')">View Projects →</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Waxheart</div><div class="gc-back-role">DevOps / Technical Producer · 2024—Present</div><div class="gc-back-text">Built the team's entire build infrastructure from scratch — Jenkins CI/CD pipeline, Discord bot for build notifications, and Steamworks operations. Formed the QA department. Driving sprint planning and release management.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('personal','pp-wh')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#c13e5d;--float-dur:3.7s;--float-del:1.8s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">FC</div><div class="gc-emblem-sub">FRIEND CASTLE</div></div><div class="gc-nameplate"><div class="gc-name">Friend Castle</div><div class="gc-type">Current</div></div><div class="gc-flavor">Co-Founder</div><div class="gc-front-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('personal','pp-fc')">View Projects →</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Friend Castle</div><div class="gc-back-role">Co-Founder · 2023—Present</div><div class="gc-back-text">Co-founded an indie game development LLC. Shipped Schedazzle and Box Dog. Contract AR work for Niantic. Handling everything from design and engineering to production and publishing.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('personal','pp-fc')">View Projects →</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:#148EFF;--float-dur:4.4s;--float-del:2.1s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">B</div><div class="gc-emblem-sub">BLIZZARD</div></div><div class="gc-nameplate"><div class="gc-name">Blizzard</div><div class="gc-type">2025 — Current</div></div><div class="gc-flavor">Senior Software Engineer</div><div class="gc-front-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-blizzard')">View Projects →</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Blizzard Entertainment</div><div class="gc-back-role">Senior Software Engineer · 2025—Present</div><div class="gc-back-text">Part of the Hearthstone Client Team — maintaining and evolving an over-a-decade-old codebase. Managing critical SDKs including Firebase, AppsFlyer, Braze. Modernizing macOS and iOS platform support.</div><div class="gc-back-links"><a class="gc-ln" onclick="event.stopPropagation();goToSection('work','w-blizzard')">View Projects →</a></div></div></div></div></div>
+      </div>
+    </div>
+
+    <!-- WORK -->
+    <div class="panel" id="p-work">
+      <div class="p-tag">// professional</div><h2 class="p-title">Work Projects</h2>
+      <div class="tab-bar" data-group="work">
+        <button class="tab-btn active" data-tab="w-blizzard" style="--tab-color:#148EFF;">Blizzard</button>
+        <button class="tab-btn" data-tab="w-mw" style="--tab-color:#f26835;">MobilityWare</button>
+        <button class="tab-btn" data-tab="w-sega" style="--tab-color:#0060A8;">Sega Atlus</button>
+        <button class="tab-btn" data-tab="w-trigger" style="--tab-color:#00C9DB;">Trigger Global</button>
+        <button class="tab-btn" data-tab="w-stb" style="--tab-color:#FF6B35;">Super Toy Box</button>
+      </div>
+
+      <div class="tab-panel active" id="w-blizzard">
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:#148EFF;--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">B</div></div><div class="gc-nameplate"><div class="gc-name">Hearthstone</div><div class="gc-type">Client Team</div></div><div class="gc-flavor">Managing SDKs. Modernizing platform support.</div><div class="gc-front-links"><a href="https://www.blizzard.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Blizzard Entertainment</div><div class="gc-back-role">Senior Software Engineer · 2025—Current</div><div class="gc-back-text">Part of the Hearthstone Client Team. Managing critical SDKs — Firebase, AppsFlyer, Braze, and China-specific integrations. Modernizing macOS and iOS platform support.</div><div class="gc-back-links"><a href="https://www.blizzard.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#148EFF;--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Blizzard/Hearthstone_Apple.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">App Store</div><div class="gc-type">Hearthstone</div></div><div class="gc-flavor">iOS listing.</div><div class="gc-front-links"><a href="https://apps.apple.com/us/app/hearthstone/id625257520" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Hearthstone — iOS</div><div class="gc-back-text">Hearthstone on the Apple App Store. One of the most iconic digital card games, running on iOS since 2014.</div><div class="gc-back-links"><a href="https://apps.apple.com/us/app/hearthstone/id625257520" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#148EFF;--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Blizzard/Hearthstone_Google.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Google Play</div><div class="gc-type">Hearthstone</div></div><div class="gc-flavor">Android listing.</div><div class="gc-front-links"><a href="https://play.google.com/store/apps/details?id=com.blizzard.wtcg.hearthstone" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Hearthstone — Android</div><div class="gc-back-text">Hearthstone on the Google Play Store.</div><div class="gc-back-links"><a href="https://play.google.com/store/apps/details?id=com.blizzard.wtcg.hearthstone" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#148EFF;--float-dur:4.1s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Blizzard/Hearthstone_Credits_Card.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Credits Card</div><div class="gc-type">In-Game</div></div><div class="gc-flavor">Official Hearthstone credits card.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Official Credits Card</div><div class="gc-back-text">Andrew Steven Chau's official in-game Hearthstone credits card, awarded to team members.</div><div class="gc-back-gallery"><img src="img/work-projects/Blizzard/Hearthstone_Credits_Card_Golden.png" loading="lazy"></div></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="w-mw">
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:#f26835;--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">MW</div></div><div class="gc-nameplate"><div class="gc-name">MobilityWare</div><div class="gc-type">Spark Studio</div></div><div class="gc-flavor">30+ titles. Privacy/compliance lead.</div><div class="gc-front-links"><a href="https://www.mobilityware.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare</div><div class="gc-back-role">Software Engineer II · 2020—2025</div><div class="gc-back-text">Spark Studio — Yellow Team. Engineering across 30+ shipped titles. Studio point person for privacy/compliance — GDPR, CCPA, Privacy Sandbox. Worked with Technical Director and CTO.</div><div class="gc-back-links"><a href="https://www.mobilityware.com/" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#f26835;--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/MobilityWare/Mobilityware_Apple.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">App Store</div><div class="gc-type">MobilityWare</div></div><div class="gc-flavor">30+ titles on iOS.</div><div class="gc-front-links"><a href="https://apps.apple.com/cg/developer/mobilityware/id284117362" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare — iOS</div><div class="gc-back-text">MobilityWare's full catalog on the Apple App Store, including Solitaire, Mahjong, and more.</div><div class="gc-back-links"><a href="https://apps.apple.com/cg/developer/mobilityware/id284117362" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#f26835;--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/MobilityWare/Mobilityware_Google.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Google Play</div><div class="gc-type">MobilityWare</div></div><div class="gc-flavor">30+ titles on Android.</div><div class="gc-front-links"><a href="https://play.google.com/store/apps/dev?id=7125885284350687141" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">MobilityWare — Android</div><div class="gc-back-text">MobilityWare's full catalog on Google Play.</div><div class="gc-back-links"><a href="https://play.google.com/store/apps/dev?id=7125885284350687141" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="w-sega">
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:#0060A8;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/persona5Royal.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Persona 5: The Royal</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">The definitive edition of one of the highest-rated JRPGs.</div><div class="gc-front-links"><a href="https://persona.atlus.com/p5r/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Persona 5: The Royal</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">Quality assurance on the expanded Persona 5, ensuring localization accuracy and gameplay polish across hundreds of hours of content.</div><div class="gc-back-links"><a href="https://persona.atlus.com/p5r/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#0060A8;--float-dur:4.2s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/yakuza5.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Yakuza 5 Remastered</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">Five protagonists, five cities, one epic saga.</div><div class="gc-front-links"><a href="https://store.steampowered.com/app/1105510/Yakuza_5_Remastered/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Yakuza 5 Remastered</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">QA on the remastered western release, covering five interweaving storylines across Japan.</div><div class="gc-back-links"><a href="https://store.steampowered.com/app/1105510/Yakuza_5_Remastered/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#0060A8;--float-dur:3.6s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/catherineFullBodySwitch.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Catherine: Full Body</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">Puzzle-platformer meets romantic horror on Switch.</div><div class="gc-front-links"><a href="https://www.catherinethegame.com/fullbody/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Catherine: Full Body (Switch)</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">QA on the Switch port, ensuring feature parity and performance.</div><div class="gc-back-links"><a href="https://www.catherinethegame.com/fullbody/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#0060A8;--float-dur:4s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SegaAtlus/yakuza0.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Yakuza 0</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">1988 Japan in all its neon glory.</div><div class="gc-front-links"><a href="https://games.sega.com/yakuza0/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Yakuza 0</div><div class="gc-back-role">QA Tester</div><div class="gc-back-text">QA on the prequel entry, set in late-1980s Tokyo and Osaka.</div><div class="gc-back-links"><a href="https://games.sega.com/yakuza0/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="w-trigger">
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/starviewYardlineStat.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">NFL AR — Starview</div><div class="gc-type">Main Developer</div></div><div class="gc-flavor">Live AR stat overlays at AT&T Stadium.</div><div class="gc-front-links"><a href="projects/work/starview/starview.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">NFL AR — Starview</div><div class="gc-back-role">Main Developer · Jun—Oct 2019</div><div class="gc-back-text">Engineered live AR stat overlays for Dallas Cowboys games in Unity 3D. Deployed on-site at NFL stadiums.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/starviewFootballTransition.jpg" loading="lazy"><img src="img/work-projects/Trigger/starviewGenericStat.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/starview/starview.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:4.1s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/nhlARSplash.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">NHL AR</div><div class="gc-type">Main Developer</div></div><div class="gc-flavor">AR hockey rink at NHL arenas with Intel.</div><div class="gc-front-links"><a href="projects/work/nhlAR/nhlAR.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">NHL AR</div><div class="gc-back-role">Main Developer · Nov 2018—Jan 2019</div><div class="gc-back-text">Prototype live AR hockey rink in Unity 3D. Deployed with Sharks and Golden Knights + Intel.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/nhlARHome.jpg" loading="lazy"><img src="img/work-projects/Trigger/nhlARExample.jpg" loading="lazy"><img src="img/work-projects/Trigger/nhlARPlayerSelected.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/nhlAR/nhlAR.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:3.6s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/nbaARMain.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">NBA AR</div><div class="gc-type">Main Developer</div></div><div class="gc-flavor">Mobile AR basketball via ARKit and ARCore.</div><div class="gc-front-links"><a href="projects/work/nbaAR/nbaAR.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">NBA AR</div><div class="gc-back-role">Main Developer · Mar 2018—Sep 2019</div><div class="gc-back-text">Shipped a mobile AR game and portal experience built with Unity 3D.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/nbaARTiles.jpg" loading="lazy"><img src="img/work-projects/Trigger/nbaARExample.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/nbaAR/nbaAR.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:4.3s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/lenovoMirageARMain.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Lenovo Mirage AR</div><div class="gc-type">Developer</div></div><div class="gc-flavor">AR for the Lenovo Mirage headset.</div><div class="gc-front-links"><a href="projects/work/lenovoMirageAR/lenovoMirageAR.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Lenovo Mirage AR</div><div class="gc-back-role">Developer/Support · Oct 2018</div><div class="gc-back-text">AR applications developed for the Lenovo Mirage headset with Unity 3D.</div><div class="gc-back-gallery"><img src="img/work-projects/Trigger/lenovoMirageARExample.jpg" loading="lazy"></div><div class="gc-back-links"><a href="projects/work/lenovoMirageAR/lenovoMirageAR.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:3.9s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/generalmills-starwar_main_01.jpeg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Star Wars AR</div><div class="gc-type">Developer</div></div><div class="gc-flavor">That Star Wars feeling in AR.</div><div class="gc-front-links"><a href="https://www.triggerxr.com/work/general-mills-do-good-for-the-galaxy-ar" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">General Mills — Star Wars AR</div><div class="gc-back-role">Developer · 2019</div><div class="gc-back-text">Several iterations of AR placement flow and post-processing effects.</div><div class="gc-back-links"><a href="https://www.triggerxr.com/work/general-mills-do-good-for-the-galaxy-ar" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#00C9DB;--float-dur:4.4s;--float-del:1.5s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/Trigger/moviebill_feature_main_v02.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Moviebill</div><div class="gc-type">Developer</div></div><div class="gc-flavor">Asset management for the Moviebill app.</div><div class="gc-front-links"><a href="https://www.triggerxr.com/work/moviebill" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Moviebill</div><div class="gc-back-role">Developer · 2018</div><div class="gc-back-text">Asset downloading/management, feature releases, bug fixes.</div><div class="gc-back-links"><a href="https://www.triggerxr.com/work/moviebill" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="w-stb">
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:#FF6B35;--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SuperToyBox/stb-cap-subaru2.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Subaru Wheelstand</div><div class="gc-type">Sole Client Developer</div></div><div class="gc-flavor">Show floor app with dynamic CMS by VIN.</div><div class="gc-front-links"><a href="https://www.offekt.com/archive/work/subaru-wheelstand.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Subaru Wheelstand</div><div class="gc-back-role">Sole Client Developer</div><div class="gc-back-text">Client app from start to release for the show floor. Dynamic content pulled from CMS based on VIN.</div><div class="gc-back-gallery"><img src="img/work-projects/SuperToyBox/subaru2-1-p-2600.jpg" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-2-p-2600.jpg" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-3.png" loading="lazy"><img src="img/work-projects/SuperToyBox/subaru2-4.png" loading="lazy"></div><div class="gc-back-links"><a href="https://www.offekt.com/archive/work/subaru-wheelstand.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FF6B35;--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="img/work-projects/SuperToyBox/vrFactory.PNG" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">VR Factory</div><div class="gc-type">Client Developer</div></div><div class="gc-flavor">CMS integration for custom VR builds.</div><div class="gc-front-links"><a href="https://www.offekt.com/archive/supertoybox.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">VR Factory</div><div class="gc-back-role">Client Developer</div><div class="gc-back-text">Unity client pulling from custom CMS to deploy builds. Flexible layouts coordinated with design and artists.</div><div class="gc-back-links"><a href="https://www.offekt.com/archive/supertoybox.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONAL -->
+    <div class="panel" id="p-personal">
+      <div class="p-tag">// independent</div><h2 class="p-title">Personal Projects</h2>
+      <div class="tab-bar" data-group="personal">
+        <button class="tab-btn active" data-tab="pp-fc" style="--tab-color:#c13e5d;">Friend Castle</button>
+        <button class="tab-btn" data-tab="pp-wh" style="--tab-color:#8B6DAF;">Waxheart</button>
+        <button class="tab-btn" data-tab="pp-ai" style="--tab-color:var(--teal);">Games & Tools</button>
+        <button class="tab-btn" data-tab="pp-web" style="--tab-color:var(--blue);">This Website</button>
+        <button class="tab-btn" data-tab="pp-col" style="--tab-color:#FFD100;">College</button>
+      </div>
+
+      <div class="tab-panel active" id="pp-fc">
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:#c13e5d;--float-dur:3.7s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/friendCastleRainbow.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Friend Castle</div><div class="gc-type">Co-Founder</div></div><div class="gc-flavor">Indie game dev LLC.</div><div class="gc-front-links"><a href="https://friendcastle.org/home" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Friend Castle</div><div class="gc-back-role">Co-Founder · 2023—Present</div><div class="gc-back-text">Indie game development LLC co-founded with friends. Design, engineering, production, and publishing.</div><div class="gc-back-links"><a href="https://friendcastle.org/home" target="_blank" rel="noopener noreferrer" class="gc-ln">Website</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#c13e5d;--float-dur:3.9s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/schedazzle_promo.webp" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Schedazzle</div><div class="gc-type">Engineer/Lead</div></div><div class="gc-flavor">Event scheduling for conventions.</div><div class="gc-front-links"><a href="https://apps.apple.com/us/app/schedazzle/id6642688721" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a><a href="https://play.google.com/store/apps/details?id=com.FriendCastle.Schedazzle" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Schedazzle</div><div class="gc-back-role">Engineer/Lead, Technical Producer</div><div class="gc-back-text">Free event scheduling companion app. Promoters input schedules, attendees customize their itinerary on-device.</div><div class="gc-back-links"><a href="https://apps.apple.com/us/app/schedazzle/id6642688721" target="_blank" rel="noopener noreferrer" class="gc-ln">App Store</a><a href="https://play.google.com/store/apps/details?id=com.FriendCastle.Schedazzle" target="_blank" rel="noopener noreferrer" class="gc-ln">Google Play</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#c13e5d;--float-dur:4.2s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><div class="gc-art-contain" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(193,62,93,0.08),rgba(193,62,93,0.15));"><div style="font-family:'Silkscreen',cursive;font-size:0.7rem;color:rgba(193,62,93,0.4);text-align:center;line-height:1.6;">BOX<br>DOG</div></div><div class="gc-nameplate"><div class="gc-name">Box Dog</div><div class="gc-type">Engineer/Lead</div></div><div class="gc-flavor">Hidden object with hand-drawn levels.</div><div class="gc-front-links"><a href="https://store.steampowered.com/app/2991630/" target="_blank" rel="noopener noreferrer" class="gc-ln">Steam</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Box Dog</div><div class="gc-back-role">Engineer/Lead, Technical Producer</div><div class="gc-back-text">Guide Joget and Box Dog through vibrant worlds searching for mischievous Imps.</div><div class="gc-back-links"><a href="https://store.steampowered.com/app/2991630/" target="_blank" rel="noopener noreferrer" class="gc-ln">Steam</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#c13e5d;--float-dur:4s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><iframe class="gc-vid-front" src="https://www.youtube.com/embed/GnhbABKCzQs" loading="lazy" title="Gnome Hunt" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="gc-nameplate"><div class="gc-name">Gnome Hunt</div><div class="gc-type">Niantic Contract</div></div><div class="gc-flavor">AR game for Lightship SDK.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Gnome Hunt</div><div class="gc-back-role">Engineer/Lead · Niantic</div><div class="gc-back-text">AR game built as contract work for Niantic to showcase their Lightship SDK/API.</div></div></div></div></div>
+          <div class="gc" style="--card-color:#c13e5d;--float-dur:4.3s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><iframe class="gc-vid-front" src="https://www.youtube.com/embed/26JofclHeZc" loading="lazy" title="Fairy Finder" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="gc-nameplate"><div class="gc-name">Fairy Finder</div><div class="gc-type">Niantic Contract</div></div><div class="gc-flavor">AR creature finder experience.</div><div class="gc-rarity"></div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Fairy Finder</div><div class="gc-back-role">Engineer/Lead · Niantic</div><div class="gc-back-text">AR game built as contract work for Niantic to showcase their Lightship SDK/API.</div></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="pp-wh">
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:#8B6DAF;--float-dur:3.7s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheartSplash.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Waxheart</div><div class="gc-type">DevOps / Producer</div></div><div class="gc-flavor">Built the entire infrastructure.</div><div class="gc-front-links"><a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Waxheart</div><div class="gc-back-role">DevOps / Technical Producer · 2024—Present</div><div class="gc-back-text">Built Jenkins CI/CD, Discord bot, QA department from scratch. Sprint planning and release management.</div><div class="gc-back-links"><a href="https://waxheart.info/" target="_blank" rel="noopener noreferrer" class="gc-ln">View Game</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#8B6DAF;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheart%20jenkins%20pipeline.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Jenkins Pipeline</div><div class="gc-type">Build Infrastructure</div></div><div class="gc-flavor">Full CI/CD from scratch.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Jenkins Build Pipeline</div><div class="gc-back-text">Complete Jenkins CI/CD pipeline for Unity builds including Steamworks integration.</div></div></div></div></div>
+          <div class="gc" style="--card-color:#8B6DAF;--float-dur:4.1s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheart%20discord%20bot%20instructions.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Discord Bot</div><div class="gc-type">Build Notifications</div></div><div class="gc-flavor">Triggers and coordination.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Discord Bot</div><div class="gc-back-text">Build notifications, triggers, and team coordination via Discord.</div></div></div></div></div>
+          <div class="gc" style="--card-color:#8B6DAF;--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheart%20jenkins%20discord%20bot%20error.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Error Reporting</div><div class="gc-type">Bot Integration</div></div><div class="gc-flavor">Automated failure alerts.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Error Reporting</div><div class="gc-back-text">Jenkins-to-Discord error pipeline with formatted build failure reports.</div></div></div></div></div>
+          <div class="gc" style="--card-color:#8B6DAF;--float-dur:4.4s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/waxheart%20qa%20test%20case%20sheet.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">QA Test Cases</div><div class="gc-type">Quality Assurance</div></div><div class="gc-flavor">RC cycles and master sheets.</div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">QA Master Sheet</div><div class="gc-back-text">Established RC test cycles, documentation, and the QA department from scratch.</div></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="pp-ai">
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:var(--teal);--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="tools/misery-index/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Misery Index</div><div class="gc-type">Dashboard</div></div><div class="gc-flavor">Dev sentiment when Claude goes down.</div><div class="gc-front-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Claude Developer Misery Index</div><div class="gc-back-role">Real-time Dashboard</div><div class="gc-back-text">Combines status page, incidents, Reddit, Bluesky into a 0-10 misery score. Discord bot alerts on changes.</div><div class="gc-back-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:var(--teal);--float-dur:4.3s;--float-del:0.4s;"><div class="gc-inner"><div class="gc-front"><img src="tools/snaplayout/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">SnapLayout</div><div class="gc-type">Planning Tool</div></div><div class="gc-flavor">Drag furniture with real dimensions.</div><div class="gc-front-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">SnapLayout</div><div class="gc-back-role">Room Layout Planner</div><div class="gc-back-text">Import floorplan or draw rooms. Scale calibration, furniture library, undo/redo, PNG export.</div><div class="gc-back-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:var(--teal);--float-dur:3.7s;--float-del:0.8s;"><div class="gc-inner"><div class="gc-front"><img src="games/philosophy/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Examined</div><div class="gc-type">Philosophy Quiz</div></div><div class="gc-flavor">Which philosopher thinks like you?</div><div class="gc-front-links"><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Take Quiz</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Examined</div><div class="gc-back-role">Alignment Quiz</div><div class="gc-back-text">12 dilemmas, 5 schools, 20 archetypes. Interactive compass, shareable ID cards.</div><div class="gc-back-links"><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Take Quiz</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:var(--teal);--float-dur:4.1s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="games/parsed/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Parsed</div><div class="gc-type">Daily Code Puzzle</div></div><div class="gc-flavor">Swap tokens to debug code.</div><div class="gc-front-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Parsed</div><div class="gc-back-role">Daily Puzzle</div><div class="gc-back-text">365 daily puzzles with themed narratives, execution animations, explanations, scoring.</div><div class="gc-back-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:var(--teal);--float-dur:3.9s;--float-del:1.6s;"><div class="gc-inner"><div class="gc-front"><img src="games/beamlab/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Beamlab</div><div class="gc-type">Daily Laser Puzzle</div></div><div class="gc-flavor">Route lasers with mirrors.</div><div class="gc-front-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Beamlab</div><div class="gc-back-role">Daily Puzzle</div><div class="gc-back-text">365 puzzles across 3 tiers. Mirrors, beam splitters, gem collectibles, daily streaks.</div><div class="gc-back-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="pp-web">
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:var(--blue);--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><div class="gc-emblem"><div class="gc-emblem-text">WWW</div></div><div class="gc-nameplate"><div class="gc-name">raggedydoc.com</div><div class="gc-type">2016 — Present</div></div><div class="gc-flavor">My longest-running project.</div><div class="gc-front-links"><a href="projects/personal/portfolio.html" class="gc-ln">Original Research</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">This Website</div><div class="gc-back-role">raggedydoc.com</div><div class="gc-back-text">Started as a UCI course project in 2016. Always plain HTML/CSS/JS. Current version: glassmorphism, sprite timeline, particles, achievements. Built with Claude Code.</div><div class="gc-back-links"><a href="projects/personal/portfolio.html" class="gc-ln">Original Research</a></div></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="pp-col">
+        <div class="card-carousel">
+          <div class="gc" style="--card-color:#FFD100;--float-dur:3.8s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/spookyspoils.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Spooky Spoils</div><div class="gc-type">Engineer</div></div><div class="gc-flavor">Eye-tracking horror puzzle.</div><div class="gc-front-links"><a href="https://youtu.be/mqumUz5ktdY" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/spookyspoils.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Spooky Spoils</div><div class="gc-back-role">Engineer</div><div class="gc-back-text">Award for Creativity — IEEE GameSig 2016. Best Game Design — VGDC at UCI 2016.</div><div class="gc-back-links"><a href="https://youtu.be/mqumUz5ktdY" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/spookyspoils.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:4.2s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/goinghome.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Going Home</div><div class="gc-type">Engineer</div></div><div class="gc-flavor">Rogue-like survival at sea.</div><div class="gc-front-links"><a href="https://youtu.be/bB11x5bz4Wk" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/goinghome.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Going Home</div><div class="gc-back-role">Engineer · Python/Pygame</div><div class="gc-back-text">Make it home in rough seas with limited power!</div><div class="gc-back-links"><a href="https://youtu.be/bB11x5bz4Wk" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/goinghome.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:3.6s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/Left To Die.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Left 2 Die</div><div class="gc-type">Engineer, Designer</div></div><div class="gc-flavor">Invert the level to solve it.</div><div class="gc-front-links"><a href="https://youtu.be/Pw06Zx9Awik" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/lefttodie.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Left 2 Die</div><div class="gc-back-role">Engineer, Designer</div><div class="gc-back-text">2nd Place — VGDC at UCI 2015. Turn left and right to invert the level!</div><div class="gc-back-links"><a href="https://youtu.be/Pw06Zx9Awik" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a><a href="projects/personal/lefttodie.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:4s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/monochrome.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Monochrome Memories</div><div class="gc-type">Lead Engineer</div></div><div class="gc-flavor">5 stages of grief.</div><div class="gc-front-links"><a href="projects/personal/monochrome.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Monochrome Memories</div><div class="gc-back-role">Lead Engineer, Producer</div><div class="gc-back-text">Puzzle platformer. Walk through grief with your counterpart.</div><div class="gc-back-links"><a href="projects/personal/monochrome.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:4.3s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/scuminvaders.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Scuminvaders</div><div class="gc-type">Lead Engineer</div></div><div class="gc-flavor">Multiplayer space invaders.</div><div class="gc-front-links"><a href="https://youtu.be/-R9o7FAty8o" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Scuminvaders</div><div class="gc-back-role">Lead Engineer, Producer</div><div class="gc-back-text">Python/Pygame TCP multiplayer. Space invaders with pizzazz!</div><div class="gc-back-links"><a href="https://youtu.be/-R9o7FAty8o" target="_blank" rel="noopener noreferrer" class="gc-ln">Video</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:3.7s;--float-del:1.5s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/lifeofpymenu.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Life of Py</div><div class="gc-type">Lead Engineer</div></div><div class="gc-flavor">Teach kids Python.</div><div class="gc-front-links"><a href="projects/personal/lifeofpy.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Life of Py</div><div class="gc-back-role">Lead Engineer, Designer, Producer</div><div class="gc-back-text">Educational game teaching Python basics in a fun way.</div><div class="gc-back-links"><a href="projects/personal/lifeofpy.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:4.1s;--float-del:1.8s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/scallywags.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Scallywags</div><div class="gc-type">Designer</div></div><div class="gc-flavor">Competitive pirate cards.</div><div class="gc-front-links"><a href="projects/personal/scallywags.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Scallywags</div><div class="gc-back-role">Designer</div><div class="gc-back-text">Competitive solitaire. Stack against pirates for the title of Captain!</div><div class="gc-back-links"><a href="projects/personal/scallywags.html" class="gc-ln">Details</a></div></div></div></div></div>
+          <div class="gc" style="--card-color:#FFD100;--float-dur:3.9s;--float-del:2.1s;"><div class="gc-inner"><div class="gc-front"><img src="img/personal-projects/Date or Die Title.jpg" class="gc-art" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Date or Die</div><div class="gc-type">Designer</div></div><div class="gc-flavor">Love or die trying!</div><div class="gc-front-links"><a href="projects/personal/dateordie.html" class="gc-ln">Details</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Date or Die</div><div class="gc-back-role">Designer</div><div class="gc-back-text">Dating simulator visual novel. Fall madly in love... or die trying!</div><div class="gc-back-links"><a href="projects/personal/dateordie.html" class="gc-ln">Details</a></div></div></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="panel" id="p-about">
+      <div class="p-tag">// about</div><h2 class="p-title">About Me</h2>
+      <div class="card-carousel">
+        <!-- Character Card -->
+        <div class="gc" style="--card-color:var(--green);--float-dur:4s;--float-del:0s;">
+          <div class="gc-inner">
+            <div class="gc-front">
+              <img src="img/about-me/me.JPG" alt="Andrew Steven Chau" class="gc-art" loading="lazy">
+              <div class="gc-nameplate"><div class="gc-name">Andrew Steven Chau</div><div class="gc-type">Senior Software Engineer</div></div>
+              <div class="gc-flavor">Senior Software Engineer at Blizzard on Hearthstone. Co-founder of Friend Castle. 10+ years in games, 30+ titles shipped.</div>
+              <div class="gc-rarity"></div>
+              <div class="gc-flip-hint">click to flip</div>
+            </div>
+            <div class="gc-back">
+              <div class="gc-back-content">
+                <div class="gc-back-title">Andrew Steven Chau</div>
+                <div class="gc-back-role">Blizzard · Friend Castle · UCI</div>
+                <div class="gc-back-text" style="font-size:0.85rem;line-height:1.6;">
+                  <b style="color:var(--green);">Languages:</b> C#, Python, C++, Java<br>
+                  <b style="color:var(--green);">Engines:</b> Unity 3D, Pygame<br>
+                  <b style="color:var(--green);">Platforms:</b> iOS, Android, macOS, Win<br>
+                  <b style="color:var(--green);">Tools:</b> Git, Jenkins, Xcode, Discord.js<br>
+                  <b style="color:var(--green);">SDKs:</b> Firebase, AppsFlyer, Braze, AR<br>
+                  <b style="color:var(--green);">Production:</b> Agile, Sprint, QA, Jira
+                  <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-around;text-align:center;">
+                    <span><b style="color:var(--green);font-family:'Silkscreen',cursive;font-size:1.3rem;">10+</b><br><span style="font-size:0.5rem;color:var(--text-dim);">YEARS</span></span>
+                    <span><b style="color:var(--green);font-family:'Silkscreen',cursive;font-size:1.3rem;">30+</b><br><span style="font-size:0.5rem;color:var(--text-dim);">TITLES</span></span>
+                    <span><b style="color:var(--green);font-family:'Silkscreen',cursive;font-size:1.3rem;">5</b><br><span style="font-size:0.5rem;color:var(--text-dim);">STUDIOS</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Connect Card -->
+        <div class="gc no-flip" style="--card-color:var(--purple);--float-dur:3.7s;--float-del:0.5s;">
+          <div class="gc-inner">
+            <div class="gc-front">
+              <div class="gc-art" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(155,109,255,0.06),rgba(155,109,255,0.15));gap:10px;padding:14px;">
+                <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+                  <a href="https://www.linkedin.com/in/andrewstevenchau/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-linkedin"></i></a>
+                  <a href="https://www.youtube.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-youtube"></i></a>
+                  <a href="https://www.twitch.tv/raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-twitch"></i></a>
+                  <a href="https://www.instagram.com/raggedydoc/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-instagram"></i></a>
+                  <a href="https://www.tiktok.com/@raggedydoc" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-tiktok"></i></a>
+                  <a href="https://bsky.app/profile/raggedydoctv.bsky.social" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-bluesky"></i></a>
+                </div>
+              </div>
+              <div class="gc-nameplate"><div class="gc-name">Connect</div><div class="gc-type">Social Links</div></div>
+              <div class="gc-flavor">Click the icons above to connect.</div>
+              <div class="gc-rarity"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAY -->
+    <div class="panel" id="p-play">
+      <div class="p-tag">// play</div><h2 class="p-title"">Games & Tools</h2>
+      <div class="card-carousel">
+        <div class="gc" style="--card-color:var(--purple);--float-dur:4s;--float-del:0s;"><div class="gc-inner"><div class="gc-front"><img src="games/beamlab/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Beamlab</div><div class="gc-type">Daily Laser Puzzle</div></div><div class="gc-flavor">365 puzzles across 3 tiers.</div><div class="gc-front-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Beamlab</div><div class="gc-back-role">Daily Puzzle Game</div><div class="gc-back-text">Place mirrors and beam splitters on a 6x6 grid to route lasers to all targets. Gem collectibles, daily streaks, shareable results.</div><div class="gc-back-links"><a href="games/beamlab/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--teal);--float-dur:4.3s;--float-del:0.3s;"><div class="gc-inner"><div class="gc-front"><img src="games/parsed/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Parsed</div><div class="gc-type">Daily Code Puzzle</div></div><div class="gc-flavor">Swap tokens to debug code.</div><div class="gc-front-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Parsed</div><div class="gc-back-role">Daily Puzzle Game</div><div class="gc-back-text">365 themed puzzles with real-world narratives, execution animations, step-by-step explanations, and scoring tiers.</div><div class="gc-back-links"><a href="games/parsed/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Play</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--pink);--float-dur:3.7s;--float-del:0.6s;"><div class="gc-inner"><div class="gc-front"><img src="games/philosophy/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Examined</div><div class="gc-type">Philosophy Quiz</div></div><div class="gc-flavor">Which philosopher thinks like you?</div><div class="gc-front-links"><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Take Quiz</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Examined</div><div class="gc-back-role">Alignment Quiz</div><div class="gc-back-text">12 moral dilemmas, 5 philosophical schools, 20 archetypes. Interactive compass, shareable ID cards.</div><div class="gc-back-links"><a href="games/philosophy/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Take Quiz</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--orange);--float-dur:4.1s;--float-del:0.9s;"><div class="gc-inner"><div class="gc-front"><img src="tools/snaplayout/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">SnapLayout</div><div class="gc-type">Room Planner</div></div><div class="gc-flavor">Drag furniture with real dimensions.</div><div class="gc-front-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">SnapLayout</div><div class="gc-back-role">Planning Tool</div><div class="gc-back-text">Import floorplan or draw rooms. Scale calibration, furniture library across 6 categories, undo/redo, PNG export.</div><div class="gc-back-links"><a href="tools/snaplayout/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">Open</a></div></div></div></div></div>
+        <div class="gc" style="--card-color:var(--blue);--float-dur:3.9s;--float-del:1.2s;"><div class="gc-inner"><div class="gc-front"><img src="tools/misery-index/og-image.png" class="gc-art-contain" loading="lazy"><div class="gc-nameplate"><div class="gc-name">Misery Index</div><div class="gc-type">Dashboard</div></div><div class="gc-flavor">Claude outage sentiment tracker.</div><div class="gc-front-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div><div class="gc-rarity"></div><div class="gc-flip-hint">click to flip</div></div><div class="gc-back"><div class="gc-back-content"><div class="gc-back-title">Claude Developer Misery Index</div><div class="gc-back-role">Real-time Dashboard</div><div class="gc-back-text">Status page + Reddit + Bluesky combined into a 0-10 misery score. Discord bot alerts on level changes.</div><div class="gc-back-links"><a href="tools/misery-index/index.html" target="_blank" rel="noopener noreferrer" class="gc-ln">View</a></div></div></div></div></div>
+      </div>
+    </div>
+  </div>
+  </div><!-- /screen-bezel -->
+
+  <!-- GAME WORLD (bottom strip) -->
+  <div class="world">
+    <div class="sky"></div>
+    <div class="stars" id="stars"></div>
+    <div class="ground"><div class="ground-grid"></div></div>
+    <div class="character idle" id="character"></div>
+    <div class="world-strip" id="world-strip">
+      <div class="cabinet active" data-id="home" style="--cc:var(--blue-light);"><div class="cab-screen"><div class="cab-icon">&#9670;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Home</div></div>
+      <div class="cabinet" data-id="about" style="--cc:var(--green);"><div class="cab-screen"><div class="cab-icon">&#9786;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">About</div></div>
+      <div class="cabinet" data-id="journey" style="--cc:var(--teal);"><div class="cab-screen"><div class="cab-icon">&#9654;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Journey</div></div>
+      <div class="cabinet" data-id="work" style="--cc:var(--orange);"><div class="cab-screen"><div class="cab-icon">&#9733;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Work</div></div>
+      <div class="cabinet" data-id="personal" style="--cc:var(--pink);"><div class="cab-screen"><div class="cab-icon">&#9829;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Personal</div></div>
+      <div class="cabinet" data-id="play" style="--cc:var(--purple);"><div class="cab-screen"><div class="cab-icon">&#9684;</div></div><div class="cab-glow"></div><div class="cab-base"></div><div class="cab-label">Play</div></div>
+    </div>
+
+  </div>
+
+  <!-- Content sprite (moves up from world into card area) -->
+  <div class="content-sprite idle" id="content-sprite"></div>
+
+  <!-- CONTROL PANEL -->
+  <div class="controls">
+    <div class="ctrl-section">
+      <button class="ctrl-btn" id="ctrl-up">&#9650;</button>
+      <button class="ctrl-btn" id="ctrl-down">&#9660;</button>
+    </div>
+    <div class="ctrl-sep"></div>
+    <div class="ctrl-section">
+      <button class="ctrl-btn" id="ctrl-left">&#9664;</button>
+      <button class="ctrl-btn" id="ctrl-right">&#9654;</button>
+    </div>
+    <div class="ctrl-sep"></div>
+    <div class="ctrl-section">
+      <button class="ctrl-btn" id="ctrl-action" style="border-radius:50%;width:42px;height:42px;font-family:'Silkscreen',cursive;font-size:0.6rem;border-color:rgba(155,109,255,0.3);color:rgba(155,109,255,0.5);" title="Space to flip">FLIP</button>
+    </div>
+    <div class="ctrl-sep"></div>
+    <span class="ctrl-label" id="ctrl-mode-label">WORLD</span>
+    <div class="ctrl-sep"></div>
+    <span class="ctrl-label" style="opacity:0.3;">SPACE/ENTER=FLIP &middot; ARROWS=MOVE &middot; UP/DOWN=LAYER</span>
+  </div>
+</div>
+
+<script>
+  var cabinets = document.querySelectorAll('.cabinet');
+  var panelIds = ['home','about','journey','work','personal','play'];
+  var character = document.getElementById('character');
+  var strip = document.getElementById('world-strip');
+  var modeLabel = document.getElementById('ctrl-mode-label');
+
+  // Navigation state
+  var contentSprite = document.getElementById('content-sprite');
+  var currentCab = 0;     // which cabinet
+  var currentCard = 0;    // which card in carousel
+  var currentTab = 0;     // which tab
+  var layer = 0;          // 0=world, 1=cards, 2=tabs
+
+  var ambients = {
+    home: 'radial-gradient(ellipse at 40% 30%, #4a90d9, transparent 70%)',
+    about: 'radial-gradient(ellipse at 50% 30%, #50e3a4, transparent 70%)',
+    journey: 'radial-gradient(ellipse at 50% 40%, #4ecdc4, transparent 70%)',
+    work: 'radial-gradient(ellipse at 60% 30%, #ff8a50, transparent 70%)',
+    personal: 'radial-gradient(ellipse at 40% 50%, #ff6b9d, transparent 70%)',
+    play: 'radial-gradient(ellipse at 50% 30%, #9b6dff, transparent 70%)'
+  };
+
+  // Themed subtle patterns per section
+  var patterns = {
+    home: 'radial-gradient(circle at 30% 70%, rgba(74,144,217,0.03) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(122,184,255,0.02) 0%, transparent 50%)',
+    about: 'repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(80,227,164,0.015) 50px, rgba(80,227,164,0.015) 52px), repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(80,227,164,0.015) 50px, rgba(80,227,164,0.015) 52px)',
+    journey: 'repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(78,205,196,0.02) 40px, rgba(78,205,196,0.02) 42px)',
+    work: 'repeating-linear-gradient(-45deg, transparent, transparent 30px, rgba(255,138,80,0.02) 30px, rgba(255,138,80,0.02) 32px), repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,138,80,0.015) 30px, rgba(255,138,80,0.015) 32px)',
+    personal: 'radial-gradient(circle at 20% 80%, rgba(255,107,157,0.03) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,107,157,0.03) 0%, transparent 50%)',
+    play: 'repeating-linear-gradient(60deg, transparent, transparent 25px, rgba(155,109,255,0.02) 25px, rgba(155,109,255,0.02) 27px), repeating-linear-gradient(-60deg, transparent, transparent 25px, rgba(155,109,255,0.015) 25px, rgba(155,109,255,0.015) 27px)'
+  };
+
+  // Stars
+  (function() {
+    var c = document.getElementById('stars');
+    for (var i = 0; i < 50; i++) {
+      var s = document.createElement('div'); s.className = 'star';
+      s.style.width = s.style.height = (Math.random()*1.5+0.5)+'px';
+      s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*60+'%';
+      s.style.setProperty('--d', (Math.random()*4+2)+'s');
+      s.style.setProperty('--o', (Math.random()*0.4+0.1).toFixed(2));
+      s.style.animationDelay = (Math.random()*5)+'s';
+      c.appendChild(s);
+    }
+  })();
+
+  // Typing
+  (function() {
+    var roles = ["Senior Software Engineer","AR/XR Developer","Game Developer","Indie Developer"];
+    var el = document.getElementById("typing-text");
+    var ri=0,ci=0,del=false;
+    function tick() {
+      var c=roles[ri];
+      if(!del){el.textContent=c.substring(0,ci+1);ci++;if(ci===c.length){del=true;setTimeout(tick,1800);return;}setTimeout(tick,80);}
+      else{el.textContent=c.substring(0,ci-1);ci--;if(ci===0){del=false;ri=(ri+1)%roles.length;setTimeout(tick,400);return;}setTimeout(tick,40);}
+    }
+    tick();
+  })();
+
+  // Get cards in the active carousel of current panel
+  function getCards() {
+    var panel = document.getElementById('p-' + panelIds[currentCab]);
+    if (!panel) return [];
+    var activeTab = panel.querySelector('.tab-panel.active');
+    var container = activeTab || panel;
+    return Array.from(container.querySelectorAll('.gc'));
+  }
+
+  // Get tabs in current panel
+  function getTabs() {
+    var panel = document.getElementById('p-' + panelIds[currentCab]);
+    if (!panel) return [];
+    return Array.from(panel.querySelectorAll('.tab-btn'));
+  }
+
+  // Highlight active card — scrolls the card to center
+  function highlightCard(idx) {
+    var cards = getCards();
+    cards.forEach(function(c, i) { c.classList.toggle('card-active', i === idx); });
+    if (cards[idx]) {
+      cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }
+
+  function clearCardHighlight() {
+    document.querySelectorAll('.gc.card-active').forEach(function(c) { c.classList.remove('card-active'); });
+  }
+
+  // Sprite stays centered — cards scroll to it
+  function positionSpriteBottom() {
+    if (!contentSprite) return;
+    // Position just below the active card (tight gap)
+    var activeCard = document.querySelector('.gc.card-active');
+    if (activeCard) {
+      var rect = activeCard.getBoundingClientRect();
+      contentSprite.style.bottom = (window.innerHeight - rect.bottom - 54) + 'px';
+    } else {
+      // Fallback: just above the world strip
+      var world = document.querySelector('.world');
+      if (world) {
+        var rect = world.getBoundingClientRect();
+        contentSprite.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+      }
+    }
+  }
+
+  function showContentSprite() {
+    character.style.opacity = '0.3';
+    contentSprite.classList.remove('walk-right','walk-left');
+    contentSprite.classList.add('visible','idle');
+    // Delay positioning to after scrollIntoView settles
+    setTimeout(positionSpriteBottom, 400);
+  }
+
+  function hideContentSprite() {
+    character.style.opacity = '1';
+    contentSprite.classList.remove('visible','walk-right','walk-left');
+    contentSprite.classList.add('idle');
+  }
+
+  // Brief walk animation when scrolling cards
+  function spriteWalkBrief(goingRight) {
+    contentSprite.classList.remove('idle','walk-right','walk-left');
+    contentSprite.classList.add(goingRight ? 'walk-right' : 'walk-left');
+    setTimeout(function() {
+      contentSprite.classList.remove('walk-right','walk-left');
+      contentSprite.classList.add('idle');
+    }, 500);
+  }
+
+  // Highlight active tab
+  function highlightTab(idx) {
+    var tabs = getTabs();
+    tabs.forEach(function(t, i) { t.classList.toggle('tab-focused', i === idx); });
+  }
+
+  function clearTabHighlight() {
+    document.querySelectorAll('.tab-btn.tab-focused').forEach(function(t) { t.classList.remove('tab-focused'); });
+  }
+
+  function updateModeLabel() {
+    var labels = ['WORLD', 'CARDS', 'TABS'];
+    if (modeLabel) modeLabel.textContent = labels[layer] || 'WORLD';
+  }
+
+  // Switch cabinet (layer 0 left/right)
+  // Navigate to a specific cabinet and optionally activate a tab
+  function goToSection(cabId, tabId) {
+    var cabIdx = panelIds.indexOf(cabId);
+    if (cabIdx < 0) return;
+    goToCab(cabIdx);
+    if (tabId) {
+      setTimeout(function() {
+        var btn = document.querySelector('[data-tab="' + tabId + '"]');
+        if (btn) btn.click();
+      }, 500);
+    }
+  }
+
+  function goToCab(idx) {
+    if (idx < 0 || idx >= cabinets.length || idx === currentCab) return;
+
+    // Reset to world layer
+    layer = 0;
+    hideContentSprite();
+    clearCardHighlight();
+    clearTabHighlight();
+    updateModeLabel();
+
+    var oldIdx = currentCab;
+    var goingRight = idx > oldIdx;
+    var oldPanel = document.getElementById('p-' + panelIds[oldIdx]);
+    var newPanel = document.getElementById('p-' + panelIds[idx]);
+
+    oldPanel.classList.remove('active');
+    oldPanel.style.transform = goingRight ? 'translateX(-40px)' : 'translateX(40px)';
+    oldPanel.style.opacity = '0';
+    newPanel.style.transition = 'none';
+    newPanel.style.transform = goingRight ? 'translateX(40px)' : 'translateX(-40px)';
+    newPanel.style.opacity = '0';
+    newPanel.offsetHeight;
+    newPanel.style.transition = '';
+    newPanel.classList.add('active');
+    newPanel.style.transform = '';
+    newPanel.style.opacity = '';
+    setTimeout(function() { oldPanel.style.transform = ''; oldPanel.style.opacity = ''; }, 400);
+
+    cabinets.forEach(function(c,i) { c.classList.toggle('active', i === idx); });
+
+    var cab = cabinets[idx];
+    var cabCenter = cab.offsetLeft + cab.offsetWidth / 2;
+    var viewCenter = window.innerWidth / 2;
+    strip.style.transform = 'translateX(' + (-(cabCenter - viewCenter)) + 'px)';
+
+
+    var charTarget = cabCenter + (-(cabCenter - viewCenter)) - 32;
+    character.classList.remove('idle','walk-right','walk-left');
+    character.classList.add('walking', goingRight ? 'walk-right' : 'walk-left');
+    character.style.left = charTarget + 'px';
+    function onWalkEnd(e) {
+      if (e && e.propertyName !== 'left') return;
+      character.removeEventListener('transitionend', onWalkEnd);
+      character.classList.remove('walking','walk-right','walk-left');
+      character.classList.add('idle');
+    }
+    character.addEventListener('transitionend', onWalkEnd);
+    // Fallback in case transitionend doesn't fire
+    setTimeout(function() {
+      character.removeEventListener('transitionend', onWalkEnd);
+      character.classList.remove('walking','walk-right','walk-left');
+      character.classList.add('idle');
+    }, 1800);
+
+    currentCab = idx;
+    currentCard = 0;
+    currentTab = 0;
+    updateHash();
+
+    var ambient = document.getElementById('screen-ambient');
+    if (ambient) ambient.style.background = ambients[panelIds[idx]] || ambients.home;
+    var patternEl = document.getElementById('screen-pattern');
+    if (patternEl) { patternEl.style.background = patterns[panelIds[idx]] || ''; patternEl.classList.toggle('visible', !!patterns[panelIds[idx]]); }
+
+    // Peek flip on first visit
+    if (!peeked[idx]) {
+      peeked[idx] = true;
+      var firstCard = newPanel.querySelector('.gc');
+      if (firstCard) {
+        setTimeout(function() {
+          firstCard.classList.add('peek');
+          firstCard.addEventListener('animationend', function() { firstCard.classList.remove('peek'); }, { once: true });
+        }, 400);
+      }
+    }
+
+    clearCardHighlight();
+    clearTabHighlight();
+  }
+
+  // Navigate up a layer
+  function goUp() {
+    if (layer === 0) {
+      var cards = getCards();
+      if (cards.length === 0) return;
+      layer = 1;
+      currentCard = 0;
+      highlightCard(0);
+      showContentSprite();
+    } else if (layer === 1) {
+      // Cards → Tabs (if tabs exist)
+      var tabs = getTabs();
+      if (tabs.length === 0) return;
+      layer = 2;
+      // Find the currently active tab
+      currentTab = tabs.findIndex(function(t) { return t.classList.contains('active'); });
+      if (currentTab < 0) currentTab = 0;
+      highlightTab(currentTab);
+      clearCardHighlight();
+    }
+    updateModeLabel();
+  }
+
+  // Navigate down a layer
+  function goDown() {
+    if (layer === 2) {
+      layer = 1;
+      clearTabHighlight();
+      currentCard = 0;
+      highlightCard(0);
+      showContentSprite();
+    } else if (layer === 1) {
+      layer = 0;
+      clearCardHighlight();
+      clearTabHighlight();
+      hideContentSprite();
+    }
+    updateModeLabel();
+  }
+
+  // Left/right based on current layer
+  function goLeft() {
+    if (layer === 0) {
+      goToCab(currentCab - 1);
+    } else if (layer === 1) {
+      var cards = getCards();
+      if (currentCard > 0) { currentCard--; highlightCard(currentCard); spriteWalkBrief(false); }
+    } else if (layer === 2) {
+      var tabs = getTabs();
+      if (currentTab > 0) {
+        currentTab--;
+        highlightTab(currentTab);
+        tabs[currentTab].click();
+      }
+    }
+  }
+
+  function goRight() {
+    if (layer === 0) {
+      goToCab(currentCab + 1);
+    } else if (layer === 1) {
+      var cards = getCards();
+      if (currentCard < cards.length - 1) { currentCard++; highlightCard(currentCard); spriteWalkBrief(true); }
+    } else if (layer === 2) {
+      var tabs = getTabs();
+      if (currentTab < tabs.length - 1) {
+        currentTab++;
+        highlightTab(currentTab);
+        tabs[currentTab].click();
+      }
+    }
+  }
+
+  // Flip active card
+  function flipActive() {
+    if (layer !== 1) return;
+    var cards = getCards();
+    if (cards[currentCard] && !cards[currentCard].classList.contains('no-flip')) {
+      cards[currentCard].classList.toggle('flipped');
+      // Sprite jump
+      if (contentSprite) {
+        contentSprite.classList.add('jumping');
+        contentSprite.addEventListener('animationend', function() {
+          contentSprite.classList.remove('jumping');
+        }, { once: true });
+      }
+    }
+  }
+
+  var peeked = {};
+
+  // Cabinet clicks — go to cab and enter card layer
+  cabinets.forEach(function(cab, i) {
+    cab.addEventListener('click', function() {
+      if (currentCab !== i) { layer = 0; updateModeLabel(); goToCab(i); }
+    });
+  });
+
+  // Control buttons
+  function pressBtn(id, fn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', function() {
+      el.classList.add('pressed');
+      setTimeout(function() { el.classList.remove('pressed'); }, 150);
+      fn();
+    });
+  }
+  pressBtn('ctrl-left', goLeft);
+  pressBtn('ctrl-right', goRight);
+  pressBtn('ctrl-up', goUp);
+  pressBtn('ctrl-down', goDown);
+  pressBtn('ctrl-action', flipActive);
+
+  // Keyboard
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight') { e.preventDefault(); goRight(); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); goLeft(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); goUp(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); goDown(); }
+    else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipActive(); }
+  });
+
+  // Tab clicks — also update state
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = btn.dataset.tab;
+      var bar = btn.closest('.tab-bar') || btn.parentElement;
+      var tabs = Array.from(bar.querySelectorAll('.tab-btn'));
+      tabs.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = btn.closest('.panel');
+      panel.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      var target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+      currentTab = tabs.indexOf(btn);
+      currentCard = 0;
+      if (layer === 1) { highlightCard(0); }
+    });
+  });
+
+  // Card clicks — set as active and flip
+  document.addEventListener('click', function(e) {
+    var card = e.target.closest('.gc');
+    if (!card) return;
+    if (e.target.closest('a') || e.target.closest('iframe')) return;
+    var cards = getCards();
+    var idx = cards.indexOf(card);
+    if (idx >= 0) {
+      var wasWorld = layer === 0;
+      var prevCard = currentCard;
+      if (wasWorld) { layer = 1; updateModeLabel(); }
+      currentCard = idx;
+      highlightCard(idx);
+      if (!card.classList.contains('no-flip')) card.classList.toggle('flipped');
+
+      if (wasWorld) {
+        // Entering card mode — show sprite after scroll settles
+        setTimeout(function() { showContentSprite(); }, 350);
+      } else if (idx !== prevCard) {
+        // Moving between cards — walk animation
+        spriteWalkBrief(idx > prevCard);
+        positionSpriteBottom();
+      }
+    }
+  });
+
+  // Update URL hash when switching cabinets
+  function updateHash() {
+    history.replaceState(null, '', '#' + panelIds[currentCab]);
+  }
+
+  // Init — restore from hash immediately (no waiting for load)
+  (function() {
+    var hash = location.hash.replace('#', '');
+    var startIdx = panelIds.indexOf(hash);
+    if (startIdx < 0) startIdx = 0;
+
+    // Immediately swap active panel before any paint
+    if (startIdx !== 0) {
+      document.getElementById('p-home').classList.remove('active');
+      document.getElementById('p-' + panelIds[startIdx]).classList.add('active');
+      cabinets.forEach(function(c,i) { c.classList.toggle('active', i === startIdx); });
+      currentCab = startIdx;
+      var ambient = document.getElementById('screen-ambient');
+      if (ambient) ambient.style.background = ambients[panelIds[startIdx]] || ambients.home;
+    }
+
+    // Position strip and character after layout is ready
+    function positionInit() {
+      var cab = cabinets[startIdx];
+      var cabCenter = cab.offsetLeft + cab.offsetWidth / 2;
+      var viewCenter = window.innerWidth / 2;
+      var offset = -(cabCenter - viewCenter);
+      strip.style.transition = 'none';
+      strip.style.transform = 'translateX(' + offset + 'px)';
+      character.style.transition = 'none';
+      character.style.left = (cabCenter + offset - 32) + 'px';
+      character.classList.add('idle');
+      if (startIdx !== 0) {
+        // Mountains removed — no parallax needed
+      }
+      setTimeout(function() { strip.style.transition = ''; character.style.transition = ''; }, 50);
+    }
+
+    // Start loading bar animation immediately
+    requestAnimationFrame(function() {
+      var fill = document.getElementById('load-fill');
+      if (fill) fill.style.width = '100%';
+    });
+
+    var loaded = false;
+    function finishLoad() {
+      if (loaded) return;
+      loaded = true;
+      try { positionInit(); } catch(e) { console.error('positionInit error:', e); }
+      try { updateModeLabel(); } catch(e) { console.error('updateModeLabel error:', e); }
+      // Fade out loading screen
+      setTimeout(function() {
+        var ls = document.getElementById('load-screen');
+        if (ls) {
+          ls.classList.add('fade-out');
+          setTimeout(function() { ls.remove(); }, 500);
+        }
+      }, 300);
+    }
+
+    if (document.readyState === 'complete') finishLoad();
+    else window.addEventListener('load', finishLoad);
+    // Fallback: dismiss loading screen after 3s no matter what
+    setTimeout(finishLoad, 3000);
+  })();
+
+  window.addEventListener('resize', function() {
+    var cab = cabinets[currentCab];
+    var cabCenter = cab.offsetLeft + cab.offsetWidth / 2;
+    var viewCenter = window.innerWidth / 2;
+    var offset = -(cabCenter - viewCenter);
+    strip.style.transform = 'translateX(' + offset + 'px)';
+    character.style.left = (cabCenter + offset - 32) + 'px';
+  });
+
+  // Lightbox — click any card image to expand
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightbox-img');
+  document.addEventListener('click', function(e) {
+    var img = e.target;
+    if (!img.matches('.gc-art, .gc-art-contain, .gc-back-gallery img')) return;
+    if (!img.src) return;
+    e.stopPropagation();
+    lightboxImg.src = img.src;
+    lightboxImg.alt = img.alt || '';
+    lightbox.classList.add('open');
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+      lightbox.classList.remove('open');
+      e.stopPropagation();
+    }
+  });
+
+  // Prevent links/iframes from triggering card flip
+  document.querySelectorAll('.gc a, .gc iframe').forEach(function(el) {
+    el.addEventListener('click', function(e) { e.stopPropagation(); });
+  });
+</script>
+
+</body>
+</html>

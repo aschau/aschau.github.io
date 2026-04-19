@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Andrew Steven Chau | Page Not Found</title>
+  <script>
+    // SPA redirect: preserve the path for the arcade shell to route
+    // GitHub Pages serves this for any unknown path (e.g. /work, /about)
+    var path = location.pathname;
+    var validSections = ['about', 'journey', 'work', 'personal', 'play'];
+    var section = path.replace(/^\//, '').replace(/\/$/, '').split('/')[0];
+
+    if (validSections.indexOf(section) >= 0) {
+      // Known section — redirect to SPA shell with the path intact
+      // The shell's router will read location.pathname and load the right section
+      location.replace(location.origin + '/?route=' + encodeURIComponent(path));
+    }
+    // Otherwise: show the 404 page below
+  </script>
+  <style>
+    @font-face { font-family: 'Silkscreen'; font-weight: 400; font-display: swap; src: url('fonts/Silkscreen-Regular.woff2') format('woff2'); }
+    @font-face { font-family: 'Silkscreen'; font-weight: 700; font-display: swap; src: url('fonts/Silkscreen-Bold.woff2') format('woff2'); }
+    @font-face { font-family: 'Outfit'; font-weight: 300 700; font-display: swap; src: url('fonts/Outfit-Variable.woff2') format('woff2'); }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      height: 100vh; height: 100dvh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      background: #0c1020; color: #e4e8f7; font-family: 'Outfit', sans-serif;
+    }
+    .sprite-404 {
+      width: 128px; height: 128px;
+      background: url('img/character-spritesheet.png') 0 -1280px;
+      background-size: 1664px 6912px;
+      image-rendering: pixelated;
+      margin-bottom: 2rem;
+    }
+    h1 { font-family: 'Silkscreen', cursive; font-size: 3rem; color: #7ab8ff; margin-bottom: 0.5rem; }
+    p { font-size: 1rem; color: rgba(180,190,220,0.6); margin-bottom: 2rem; max-width: 400px; }
+    a {
+      font-family: 'Silkscreen', cursive; font-size: 0.8rem;
+      color: #7ab8ff; text-decoration: none;
+      border: 2px solid rgba(74,144,217,0.3); padding: 0.6rem 1.5rem;
+      border-radius: 4px; transition: all 0.2s;
+    }
+    a:hover { background: rgba(74,144,217,0.15); border-color: #7ab8ff; }
+  </style>
+</head>
+<body>
+  <div class="sprite-404"></div>
+  <h1>404</h1>
+  <p>The character wandered off. This page doesn't exist in the arcade.</p>
+  <a href="/">Return to the Arcade</a>
+</body>
+</html>

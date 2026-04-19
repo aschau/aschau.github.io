@@ -2,9 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha512-2bBQCjcnw658Lho4nlXJcc6WkV/UxpE/sAokbXPxQNGqmNdQrWqtw26Ns9kFF/yG792pKR1Sx8/Y1Lf1XN4GKA==" crossorigin="anonymous">
-    <link rel="stylesheet" href="../../css/stylesheet.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../css/detail.css">
     <link rel="icon" type="image/png" href="../../img/favicon.png">
     <link rel="apple-touch-icon" href="../../img/favicon-apple.png">
     <title>Spooky Spoils | Andrew Steven Chau</title>
@@ -21,58 +20,61 @@
     <link rel="canonical" href="https://www.raggedydoc.com/projects/personal/spookyspoils.html">
   </head>
 
-  <body class="page-body">
-    <div id="navbar-placeholder"></div>
-    <script src="../../js/components.js"></script>
+  <body>
+    <nav class="detail-nav" aria-label="Back navigation">
+      <a href="/personal" class="detail-back">&larr; Back to Personal</a>
+    </nav>
 
-    <div class="container my-4">
-      <div class="card text-white bg-dark">
-        <div class="card-body">
-          <h1 class="card-title display-4">Spooky Spoils</h1>
-          <p class="lead lead-white">April 2016 &mdash; Made with Unity using C#. Incorporates eye tracking software and hardware: Tobii EyeX.</p>
-          <hr class="my-4 hr-white">
-          <h5 class="card-title">Team Roster</h5>
-          <ul class="text-white">
-            <li>Andrew Steven Chau - Project Manager/Designer/Programmer</li>
-            <li>Edwin Andrew Ho - Lead Programmer/Designer</li>
-            <li>Harvey Limbo - Sound/Artist</li>
-            <li>Shaun Reid - Writer</li>
-            <li>Wesley Tseng - Artist</li>
-          </ul>
-          <h5 class="card-title mt-4">Description</h5>
-          <p class="card-text">A game in which the player has to use their eyes to interact with the environment to solve puzzles.</p>
-          <p class="card-text">Play as a dashing young explorer hoping to obtain treasure from a haunted house.</p>
-          <h5 class="card-title mt-4">Awards</h5>
-          <ul class="text-white">
-            <li>"Best Game Design" - VGDC 2016 Spring Game Jam</li>
-            <li>"Award for Creativity" - 2016 IEEE Gamesig</li>
-          </ul>
+    <main class="detail-page">
+      <header class="detail-header">
+        <h1 class="detail-title">Spooky Spoils</h1>
+        <p class="detail-subtitle">April 2016 &mdash; Made with Unity using C#. Incorporates eye tracking software and hardware: Tobii EyeX.</p>
+      </header>
+
+      <section class="detail-section">
+        <h2 class="detail-section-title">Team Roster</h2>
+        <ul class="detail-roster">
+          <li>Andrew Steven Chau - Project Manager/Designer/Programmer</li>
+          <li>Edwin Andrew Ho - Lead Programmer/Designer</li>
+          <li>Harvey Limbo - Sound/Artist</li>
+          <li>Shaun Reid - Writer</li>
+          <li>Wesley Tseng - Artist</li>
+        </ul>
+      </section>
+
+      <section class="detail-section">
+        <h2 class="detail-section-title">Description</h2>
+        <p class="detail-text">A game in which the player has to use their eyes to interact with the environment to solve puzzles.</p>
+        <p class="detail-text">Play as a dashing young explorer hoping to obtain treasure from a haunted house.</p>
+      </section>
+
+      <section class="detail-section">
+        <h2 class="detail-section-title">Awards</h2>
+        <div class="detail-awards">
+          <span class="detail-award">&ldquo;Best Game Design&rdquo; &mdash; VGDC 2016 Spring Game Jam</span>
+          <span class="detail-award">&ldquo;Award for Creativity&rdquo; &mdash; 2016 IEEE Gamesig</span>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <div class="container my-4">
-      <div class="card text-white bg-dark">
-        <div class="card-body">
-          <h5 class="card-title">Video</h5>
-          <div class="ratio ratio-16x9 mb-3">
-            <iframe src="https://www.youtube.com/embed/mqumUz5ktdY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-          </div>
+      <section class="detail-section">
+        <h2 class="detail-section-title">Video</h2>
+        <div class="detail-video">
+          <iframe src="https://www.youtube.com/embed/mqumUz5ktdY" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <div class="container my-4">
-      <div class="card text-white bg-dark">
-        <div class="card-body">
-          <h5 class="card-title">Links</h5>
-          <a class="btn btn-outline-light me-2 mb-2" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/open?id=0BxBERAt_2SWJV210ZmZUbFozNWs">Download</a>
-          <a class="btn btn-outline-light me-2 mb-2" target="_blank" rel="noopener noreferrer" href="https://github.com/eaho1/Spooky-Spoils">Github</a>
+      <section class="detail-section">
+        <h2 class="detail-section-title">Links</h2>
+        <div class="detail-links">
+          <a class="detail-link" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/open?id=0BxBERAt_2SWJV210ZmZUbFozNWs">Download</a>
+          <a class="detail-link" target="_blank" rel="noopener noreferrer" href="https://github.com/eaho1/Spooky-Spoils">Github</a>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
-    <div id="footer-placeholder"></div>
-    <script>loadCommonScripts();</script>
+    <footer class="detail-footer">
+      <p>&copy; 2026 Andrew Steven Chau &middot; <a href="../../privacy.html">Privacy</a></p>
+    </footer>
+    <script src="../../js/gamification.js"></script>
   </body>
 </html>

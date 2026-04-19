@@ -1,0 +1,1742 @@
+@import url('achievements.css');
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Self-hosted fonts (no external requests) */
+    @font-face {
+      font-family: 'Silkscreen';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('../fonts/Silkscreen-Regular.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Silkscreen';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url('../fonts/Silkscreen-Bold.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 300 700;
+      font-display: swap;
+      src: url('../fonts/Outfit-Variable.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Fira Code';
+      font-style: normal;
+      font-weight: 300 500;
+      font-display: swap;
+      src: url('../fonts/FiraCode-Variable.woff2') format('woff2');
+    }
+
+    :root {
+      --blue: #4a90d9; --blue-light: #7ab8ff; --blue-dim: rgba(74,144,217,0.12);
+      --purple: #9b6dff; --pink: #ff6b9d; --green: #50e3a4;
+      --yellow: #ffd166; --orange: #ff8a50; --teal: #4ecdc4;
+      --bg: #0c1020; --bg-card: rgba(16,20,42,0.92);
+      --border: rgba(74,144,217,0.12); --border-glow: rgba(74,144,217,0.3);
+      --text: #e4e8f7; --text-dim: rgba(180,190,220,0.55); --text-soft: rgba(200,210,240,0.8);
+      --world-h: 220px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; background: var(--bg); font-family: 'Outfit', sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
+
+    /* Focus indicators for keyboard users */
+    :focus-visible {
+      outline: 2px solid var(--blue-light);
+      outline-offset: 2px;
+    }
+    .ctrl-btn:focus-visible { outline-offset: 1px; }
+    .gc-ln:focus-visible, .soc-btn:focus-visible { outline-offset: 0; }
+
+    /* Touch :active feedback */
+    .gc-ln:active { background: var(--blue-dim); border-color: var(--border-glow); }
+    .soc-btn:active { border-color: var(--border-glow); color: var(--blue-light); background: var(--blue-dim); }
+    .tab-btn:active { border-color: var(--border-glow); color: var(--text-soft); }
+    .cabinet:active { transform: translateY(-3px); }
+
+    /* Skip navigation */
+    .skip-nav {
+      position: absolute; top: -100%; left: 50%; transform: translateX(-50%);
+      font-family: 'Silkscreen', cursive; font-size: 0.7rem;
+      color: var(--bg); background: var(--blue-light);
+      padding: 0.5rem 1.2rem; border-radius: 0 0 6px 6px;
+      z-index: 10002; text-decoration: none;
+    }
+    .skip-nav:focus { top: 0; }
+
+    /* ===== SPLIT LAYOUT ===== */
+    .layout { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+
+    /* Top: content */
+    /* ===== ARCADE SCREEN FRAME ===== */
+    .screen-bezel {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      margin: 4px 8px 0;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 2px solid rgba(74,144,217,0.12);
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    /* Corner brackets — retro CRT bezel marks */
+    .bezel-corner {
+      position: absolute;
+      width: 14px; height: 14px;
+      z-index: 7;
+      pointer-events: none;
+    }
+    .bezel-corner::before, .bezel-corner::after {
+      content: '';
+      position: absolute;
+      background: rgba(122,184,255,0.1);
+    }
+    /* Horizontal bar */
+    .bezel-corner::before { width: 14px; height: 1px; }
+    /* Vertical bar */
+    .bezel-corner::after { width: 1px; height: 14px; }
+    .bezel-corner.tl { display: none; }
+    .bezel-corner.tr { top: 8px; right: 8px; }
+    .bezel-corner.tr::before { top: 0; right: 0; }
+    .bezel-corner.tr::after { top: 0; right: 0; }
+    .bezel-corner.bl { bottom: 8px; left: 8px; }
+    .bezel-corner.bl::before { bottom: 0; left: 0; }
+    .bezel-corner.bl::after { bottom: 0; left: 0; }
+    .bezel-corner.br { bottom: 8px; right: 8px; }
+    .bezel-corner.br::before { bottom: 0; right: 0; }
+    .bezel-corner.br::after { bottom: 0; right: 0; }
+
+    /* Screen label */
+    .bezel-label {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.45rem;
+      color: rgba(122,184,255,0.2);
+      letter-spacing: 0.2em;
+      z-index: 7;
+      text-transform: uppercase;
+      line-height: 1;
+      padding: 0 8px;
+      background: linear-gradient(to bottom, transparent, rgba(10,12,26,0.6));
+    }
+
+    /* Retro ambient background per section */
+    .screen-ambient {
+      position: absolute;
+      inset: 0;
+      opacity: 0.1;
+      transition: background 0.8s ease, opacity 0.8s ease;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 8px;
+    }
+
+    /* Themed pattern overlay */
+    .screen-pattern {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 8px;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .screen-pattern.visible { opacity: 1; }
+
+    /* CRT flicker + scanlines */
+    .screen-flicker {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+      border-radius: 8px;
+      animation: crtFlicker 0.15s infinite;
+      opacity: 0.02;
+      background: linear-gradient(transparent 50%, rgba(0,0,0,0.08) 50%);
+      background-size: 100% 4px;
+    }
+
+    /* Static noise animation */
+    .screen-static {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      border-radius: 8px;
+      opacity: 0.015;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+      animation: staticShift 0.5s steps(3) infinite;
+    }
+
+    @keyframes staticShift {
+      0% { transform: translate(0, 0); }
+      33% { transform: translate(-1px, 1px); }
+      66% { transform: translate(1px, -1px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    @keyframes crtFlicker {
+      0% { opacity: 0.015; }
+      50% { opacity: 0.025; }
+      100% { opacity: 0.015; }
+    }
+
+    .content-area {
+      position: absolute;
+      inset: 5px;
+      overflow: hidden;
+      background: transparent;
+      /* Inner screen rim */
+      border: 1px solid rgba(74, 144, 217, 0.1);
+      border-radius: 6px;
+      box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Screen rim glow on top and bottom edges */
+    .content-area::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(122, 184, 255, 0.15), transparent);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .content-area::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 10%; right: 10%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(122, 184, 255, 0.08), transparent);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .panel {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateX(40px);
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .panel.active { opacity: 1; transform: translateX(0); pointer-events: auto; display: flex; }
+    .panel.exit-left { transform: translateX(-40px); opacity: 0; }
+    .panel.exit-right { transform: translateX(40px); opacity: 0; }
+
+    .panel::-webkit-scrollbar { width: 0; }
+    .panel { scrollbar-width: none; }
+
+    /* Bottom: game world */
+    .world {
+      height: var(--world-h);
+      min-height: var(--world-h);
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+      background: #0e1430;
+      margin-top: -12px;
+      padding-top: 12px;
+    }
+
+    /* Sky in world strip */
+    .sky { position: absolute; inset: 0; background: linear-gradient(180deg, #0e1430 0%, #121a40 40%, #1a2450 100%); }
+    .stars { position: absolute; inset: 0; }
+    .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--d,3s) ease-in-out infinite alternate; }
+    @keyframes twinkle { 0%, 100% { opacity: var(--o, 0.3); } 50% { opacity: 0.08; } }
+
+
+    .ground { position: absolute; bottom: 0; left: 0; right: 0; height: 90px; background: linear-gradient(180deg, #141830, #0e1225); border-top: 2px solid rgba(74,144,217,0.12); }
+    .ground-grid { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(74,144,217,0.03) 79px, rgba(74,144,217,0.03) 80px), repeating-linear-gradient(180deg, transparent, transparent 29px, rgba(74,144,217,0.02) 29px, rgba(74,144,217,0.02) 30px); }
+
+    /* Cabinet strip */
+    .world-strip {
+      position: absolute; bottom: 0; left: 0; height: 100%;
+      display: flex; align-items: flex-end; padding-bottom: 12px;
+      transition: transform 1.4s cubic-bezier(0.25,1,0.5,1);
+    }
+
+    /* Cabinets */
+    .cabinet {
+      width: 200px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center;
+      cursor: pointer; position: relative; padding: 0 20px; transition: transform 0.2s;
+    }
+    .cabinet:hover { transform: translateY(-3px); }
+    .cabinet:first-child { margin-left: max(calc(50vw - 100px), 60px); }
+    .cabinet:last-child { margin-right: max(calc(50vw - 100px), 60px); }
+
+    .cab-screen {
+      width: 120px; height: 90px; background: var(--bg-card);
+      border: 2px solid var(--cc, var(--blue)); border-radius: 6px 6px 3px 3px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 15px color-mix(in srgb, var(--cc, var(--blue)) 12%, transparent), inset 0 0 20px rgba(0,0,0,0.5);
+      position: relative; overflow: hidden;
+    }
+    .cab-screen::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px); pointer-events: none; }
+
+    .cab-icon { font-size: 1.8rem; opacity: 0.45; color: var(--cc, var(--blue)); z-index: 1; }
+    .cab-glow { position: absolute; bottom: -3px; left: 15%; right: 15%; height: 5px; background: var(--cc, var(--blue)); filter: blur(6px); opacity: 0.3; }
+    .cab-base { width: 140px; height: 14px; background: linear-gradient(180deg, #1a1e35, #12152a); border: 1px solid rgba(255,255,255,0.04); border-top: none; border-radius: 0 0 5px 5px; }
+    .cab-label { font-family: 'Silkscreen', cursive; font-size: 0.55rem; color: var(--cc, var(--blue)); margin-top: 6px; text-shadow: 0 0 8px color-mix(in srgb, var(--cc, var(--blue)) 25%, transparent); }
+
+    .cabinet.active .cab-screen {
+      box-shadow: 0 0 25px color-mix(in srgb, var(--cc, var(--blue)) 20%, transparent), 0 0 50px color-mix(in srgb, var(--cc, var(--blue)) 8%, transparent), inset 0 0 15px rgba(0,0,0,0.3);
+      border-color: color-mix(in srgb, var(--cc, var(--blue)) 80%, white);
+    }
+
+    /* Character */
+    .character {
+      position: absolute; bottom: 24px; width: 64px; height: 64px;
+      background: url('../img/character-spritesheet.png') 0 -640px; background-size: 832px 3456px;
+      image-rendering: pixelated; z-index: 10; pointer-events: none;
+      transition: left 1.6s cubic-bezier(0.25,1,0.5,1), opacity 0.3s ease;
+    }
+    .character.walking { animation: spriteWalk 1s steps(9) infinite; }
+    .character.idle { animation: none; background-position: 0 -640px; }
+    .character.walk-right { background-position-y: -704px; }
+    .character.walk-left { background-position-y: -576px; }
+    @keyframes spriteWalk { from { background-position-x: 0; } to { background-position-x: -576px; } }
+
+    /* ===== CONTROL PANEL (below world) ===== */
+    .controls {
+      height: 48px; min-height: 48px; flex-shrink: 0;
+      background: linear-gradient(180deg, #151a35, #0e1228);
+      border-top: 1px solid rgba(255,255,255,0.04);
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      position: relative; z-index: 20;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .controls::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(74,144,217,0.1), transparent);
+    }
+
+    .ctrl-btn {
+      width: 36px; height: 36px; border-radius: 6px;
+      background: linear-gradient(180deg, #1a1f3a, #12162d);
+      border: 2px solid rgba(100,140,255,0.2);
+      cursor: pointer; transition: all 0.12s;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(122,184,255,0.5); font-size: 0.9rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .ctrl-btn:hover { background: linear-gradient(180deg, #222850, #1a1f3a); border-color: var(--border-glow); color: var(--blue-light); }
+    .ctrl-btn:active, .ctrl-btn.pressed {
+      background: linear-gradient(180deg, #12162d, #1a1f3a); border-color: var(--blue-light); color: var(--blue-light);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 3px rgba(0,0,0,0.3), 0 0 8px rgba(74,144,217,0.2);
+      transform: translateY(1px);
+    }
+
+    .ctrl-sep {
+      width: 1px; height: 24px; background: rgba(255,255,255,0.06); margin: 0 4px;
+    }
+
+    .ctrl-label {
+      font-family: 'Silkscreen', cursive; font-size: 0.6rem; color: var(--text-dim); opacity: 0.5;
+      letter-spacing: 0.1em;
+    }
+
+    .ctrl-section {
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .ctrl-btn-action {
+      border-radius: 50%; width: 42px; height: 42px;
+      font-family: 'Silkscreen', cursive; font-size: 0.6rem;
+      border-color: rgba(155,109,255,0.3); color: rgba(155,109,255,0.5);
+    }
+
+    .ctrl-hint { opacity: 0.3; }
+
+    .ctrl-privacy {
+      position: absolute; right: 10px;
+      font-size: 0.55rem;
+      text-decoration: none; opacity: 0.55;
+      color: var(--text-soft);
+    }
+    .ctrl-privacy:hover, .ctrl-privacy:focus-visible { opacity: 1; color: var(--blue-light); }
+
+    /* ===== CONTENT STYLES (same as before, compressed) ===== */
+    .p-tag { font-family: 'Fira Code', monospace; font-size: 0.55rem; color: var(--teal); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.1rem; }
+    .p-title { font-family: 'Silkscreen', cursive; font-size: clamp(1.1rem,2.5vw,1.5rem); margin-bottom: 0.15rem; }
+
+    /* Deck title for Work/Personal — shows the currently selected deck */
+    .deck-title {
+      font-family: 'Silkscreen', cursive;
+      font-size: clamp(1.3rem, 3vw, 2rem);
+      color: var(--active-deck-color, var(--text));
+      text-align: center;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin: 1.6rem 0 0.9rem;
+      text-shadow: 0 0 20px color-mix(in srgb, var(--active-deck-color, var(--blue)) 30%, transparent);
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+      flex-shrink: 0;
+    }
+    .p-desc { font-size: 0.88rem; color: var(--text-dim); max-width: 600px; line-height: 1.6; margin-bottom: 1.5rem; }
+
+    /* Home */
+    .home-center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; flex: 1; }
+    .home-sprite { width: 96px; height: 96px; background: url('../img/character-spritesheet.png') 0 -1280px; background-size: 1664px 6912px; image-rendering: pixelated; margin-bottom: 1.5rem; }
+    .home-name { font-family: 'Silkscreen', cursive; font-size: clamp(1.6rem,4vw,2.5rem); color: var(--blue-light); margin-bottom: 0.4rem; text-shadow: 0 0 30px rgba(74,144,217,0.2); }
+    .home-typing { font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-soft); min-height: 1.5rem; margin-bottom: 0.8rem; }
+    .home-cursor { animation: blink 1s step-end infinite; color: var(--blue-light); }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+    .home-tagline { font-size: 0.85rem; color: var(--text-dim); max-width: 480px; line-height: 1.6; margin-bottom: 1.5rem; }
+    .home-badges { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; }
+    .home-badge { font-family: 'Fira Code', monospace; font-size: 0.55rem; padding: 0.35rem 0.8rem; border: 1px solid var(--border); border-radius: 4px; color: var(--blue-light); background: var(--blue-dim); }
+
+    /* Timeline */
+    .tl { position: relative; padding-left: 36px; max-width: 700px; }
+    .tl::before { content:''; position: absolute; left: 13px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--blue-dim), var(--border-glow), var(--blue-dim)); }
+    .tl-i { position: relative; margin-bottom: 1.2rem; }
+    .tl-n { position: absolute; left: -29px; top: 9px; width: 10px; height: 10px; border: 2px solid var(--nc, var(--blue)); border-radius: 2px; background: var(--bg); transform: rotate(45deg); z-index: 2; transition: all 0.3s; }
+    .tl-i:hover .tl-n { background: var(--nc, var(--blue)); box-shadow: 0 0 8px color-mix(in srgb, var(--nc, var(--blue)) 40%, transparent); }
+    .tl-c { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.2rem; transition: all 0.2s; }
+    .tl-c:hover { border-color: var(--border-glow); transform: translateX(3px); }
+    .tl-date { font-family: 'Fira Code', monospace; font-size: 0.55rem; color: var(--text-dim); }
+    .tl-co { font-family: 'Silkscreen', cursive; font-size: 0.8rem; margin: 0.15rem 0; }
+    .tl-role { font-size: 0.75rem; color: var(--blue-light); font-weight: 500; margin-bottom: 0.3rem; }
+    .tl-d { font-size: 0.75rem; color: var(--text-dim); line-height: 1.5; }
+    .tl-tags { display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.4rem; }
+    .tl-tag { font-family: 'Fira Code', monospace; font-size: 0.45rem; padding: 0.12rem 0.4rem; border: 1px solid var(--border); border-radius: 3px; color: var(--text-dim); }
+    .tl-now { font-family: 'Silkscreen', cursive; font-size: 0.4rem; color: var(--green); border: 1px solid rgba(80,227,164,0.3); padding: 0.08rem 0.35rem; border-radius: 3px; margin-left: 0.3rem; vertical-align: middle; }
+
+    /* Tab system for project sections */
+    .tab-bar {
+      display: flex; gap: 4px; margin-bottom: 0.2rem;
+      overflow-x: auto; scrollbar-width: none;
+      padding-bottom: 0; justify-content: center;
+    }
+    .tab-bar::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      font-family: 'Silkscreen', cursive; font-size: 0.7rem;
+      padding: 0.65rem 1.4rem; border-radius: 5px;
+      background: var(--bg-card); border: 1.5px solid var(--border);
+      color: var(--text-dim); cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tab-btn:hover { border-color: var(--border-glow); color: var(--text-soft); }
+    .tab-btn.tab-focused {
+      outline: 2px solid rgba(122,184,255,0.5);
+      outline-offset: 2px;
+    }
+    .tab-btn.active {
+      border-color: var(--tab-color, var(--blue));
+      color: var(--tab-color, var(--blue-light));
+      background: color-mix(in srgb, var(--tab-color, var(--blue)) 10%, var(--bg-card));
+      box-shadow: 0 0 10px color-mix(in srgb, var(--tab-color, var(--blue)) 12%, transparent);
+    }
+
+    .tab-panel { display: none; flex-direction: column; flex: 1; }
+    .tab-panel.active { display: flex; }
+
+    /* Card carousel within tabs */
+    .card-carousel {
+      display: flex; gap: 1.5rem; overflow-x: auto;
+      padding: 0.2rem calc(50% - 150px) 0.2rem; scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      flex-wrap: nowrap;
+      flex: 1; align-items: center;
+      cursor: grab;
+    }
+    .card-carousel::-webkit-scrollbar { display: none; }
+    .card-carousel.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+
+    .card-carousel .gc { scroll-snap-align: center; }
+
+    /* Legacy project group (for non-card sections like "This Website") */
+    .pg { margin-bottom: 0.8rem; }
+    .pg-h { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.1rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.2s; user-select: none; }
+    .pg-h:hover { border-color: var(--border-glow); }
+    .pg.open .pg-h { border-radius: 6px 6px 0 0; border-color: var(--border-glow); }
+    .pg-l { display: flex; align-items: center; gap: 0.7rem; }
+    .pg-dot { width: 3px; height: 28px; border-radius: 2px; background: var(--gc, var(--blue)); flex-shrink: 0; }
+    .pg-nm { font-family: 'Silkscreen', cursive; font-size: 0.7rem; }
+    .pg-mt { font-size: 0.65rem; color: var(--text-dim); margin-top: 0.1rem; }
+    .pg-ar { font-size: 0.65rem; color: var(--text-dim); transition: transform 0.3s; }
+    .pg.open .pg-ar { transform: rotate(180deg); }
+    .pg-b { display: none; border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; padding: 1.2rem; background: rgba(14,18,36,0.5); }
+    .pg.open .pg-b { display: block; }
+    .pg-desc { font-size: 0.8rem; color: var(--text-soft); line-height: 1.6; margin-bottom: 1rem; }
+    .pg-desc b { color: var(--text); }
+    .pg-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; max-width: 500px; }
+    .pg-imgs img { width: 100%; border-radius: 4px; border: 1px solid var(--border); }
+    .pg-sub { font-family: 'Silkscreen', cursive; font-size: 0.5rem; color: var(--text-dim); margin-top: 1rem; margin-bottom: 0.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+
+    /* Info panel next to carousel for company details */
+    .tab-info {
+      font-size: 0.8rem; color: var(--text-soft); line-height: 1.6;
+      margin-bottom: 0.8rem; max-width: 700px;
+    }
+    .tab-info b { color: var(--text); }
+    .tab-info-link {
+      display: inline-block; font-family: 'Fira Code', monospace; font-size: 0.5rem;
+      color: var(--blue-light); text-decoration: none; border: 1px solid var(--border);
+      padding: 0.25rem 0.6rem; border-radius: 3px; transition: all 0.2s;
+      margin-top: 0.5rem;
+    }
+    .tab-info-link:hover { border-color: var(--border-glow); background: var(--blue-dim); }
+
+    .splash-img { border-radius: 4px; margin-bottom: 1rem; display: block; }
+
+    /* TCG Cards */
+    .cg { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 1rem; justify-content: flex-start; }
+
+    .gc {
+      width: 300px; height: 480px; perspective: 900px; cursor: pointer; flex-shrink: 0;
+      animation: cardFloat var(--float-dur, 4s) ease-in-out infinite;
+      animation-delay: var(--float-del, 0s);
+    }
+
+    /* Active card highlight */
+    .gc.card-active {
+      filter: brightness(1.15);
+    }
+
+    .gc.card-active .gc-front,
+    .gc.card-active .gc-back {
+      box-shadow:
+        0 0 25px color-mix(in srgb, var(--card-color, var(--blue)) 25%, transparent),
+        0 0 50px color-mix(in srgb, var(--card-color, var(--blue)) 10%, transparent),
+        inset 0 0 15px rgba(0,0,0,0.3);
+    }
+
+    /* Floating sprite in card area — fixed center, cards scroll to it */
+    .content-sprite {
+      width: 48px; height: 48px;
+      background: url('../img/character-spritesheet.png') 0 -640px;
+      background-size: 624px 2592px;
+      image-rendering: pixelated;
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0;
+      transition: bottom 0.3s ease, opacity 0.3s ease;
+    }
+
+    .content-sprite.visible { opacity: 1; }
+
+    /* Hide the SPACE hint when sprite is parked on a deck or a no-flip card */
+    .content-sprite.on-decks::after,
+    .content-sprite.on-no-flip::after { display: none; }
+
+    /* Space bar hint below sprite */
+    .content-sprite::after {
+      content: 'SPACE';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.5rem;
+      color: rgba(122,184,255,0.35);
+      letter-spacing: 0.1em;
+      padding: 2px 12px;
+      border: 1px solid rgba(122,184,255,0.15);
+      border-radius: 4px;
+      background: rgba(10,12,26,0.6);
+      white-space: nowrap;
+    }
+    .content-sprite.walk-right { background-position-y: -528px; animation: spriteWalkSmall 0.8s steps(9) infinite; }
+    .content-sprite.walk-left { background-position-y: -432px; animation: spriteWalkSmall 0.8s steps(9) infinite; }
+    .content-sprite.idle { background-position: 0 -480px; animation: none; }
+    .content-sprite.no-jacket { background-image: url('../img/character-spritesheet-no-jacket.png'); }
+
+    @keyframes spriteWalkSmall {
+      from { background-position-x: 0; }
+      to { background-position-x: -432px; }
+    }
+
+    .content-sprite.jumping {
+      animation: spriteJump 0.4s ease;
+    }
+
+    @keyframes spriteJump {
+      0% { transform: translateX(-50%) translateY(0); }
+      40% { transform: translateX(-50%) translateY(-16px); }
+      100% { transform: translateX(-50%) translateY(0); }
+    }
+
+    .gc-inner {
+      width: 100%; height: 100%; position: relative;
+      transform-style: preserve-3d; transition: transform 0.5s ease;
+    }
+
+    .gc.flipped { animation-play-state: paused; }
+    .gc.no-flip { cursor: default; }
+    .gc.flipped .gc-inner { transform: rotateY(180deg); }
+
+    .gc-front, .gc-back {
+      position: absolute; inset: 0; backface-visibility: hidden;
+      border-radius: 10px; overflow: hidden;
+      border: 2px solid var(--card-color, var(--blue));
+      background: linear-gradient(180deg, rgba(12,16,35,0.95), rgba(8,10,25,0.98));
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .gc-front::before, .gc-back::before {
+      content: ''; position: absolute; inset: 3px; border-radius: 7px;
+      border: 1px solid rgba(255,255,255,0.04); pointer-events: none; z-index: 5;
+    }
+
+    .gc:hover .gc-front, .gc:hover .gc-back {
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 15px color-mix(in srgb, var(--card-color, var(--blue)) 15%, transparent);
+    }
+
+    .gc-back { transform: rotateY(180deg); }
+
+    /* Front face */
+    .gc-art {
+      width: calc(100% - 12px); aspect-ratio: 4/3; object-fit: cover;
+      margin: 6px auto 0; display: block; border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .gc-art-contain {
+      width: calc(100% - 12px); aspect-ratio: 4/3; object-fit: contain;
+      margin: 6px auto 0; display: block; border-radius: 4px;
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .gc-vid-front {
+      width: calc(100% - 12px); aspect-ratio: 4/3;
+      margin: 6px auto 0; display: block; border-radius: 4px;
+      border: none;
+    }
+
+    /* Stylized card emblem — pixel border + big abbreviation */
+    .gc-emblem {
+      width: calc(100% - 12px); aspect-ratio: 4/3;
+      margin: 6px auto 0; border-radius: 4px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--card-color) 6%, transparent), color-mix(in srgb, var(--card-color) 15%, transparent));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .gc-emblem::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 2px solid color-mix(in srgb, var(--card-color) 20%, transparent);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .gc-emblem::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 10px 10px, var(--card-color) 2px, transparent 2px),
+        radial-gradient(circle at calc(100% - 10px) 10px, var(--card-color) 2px, transparent 2px),
+        radial-gradient(circle at 10px calc(100% - 10px), var(--card-color) 2px, transparent 2px),
+        radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), var(--card-color) 2px, transparent 2px),
+        repeating-linear-gradient(45deg, transparent, transparent 8px, color-mix(in srgb, var(--card-color) 4%, transparent) 8px, color-mix(in srgb, var(--card-color) 4%, transparent) 9px);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .gc-emblem-text {
+      font-family: 'Silkscreen', cursive;
+      font-size: 3.3rem;
+      color: var(--card-color);
+      opacity: 0.8;
+      text-shadow: 0 0 25px color-mix(in srgb, var(--card-color) 35%, transparent);
+      z-index: 1;
+    }
+
+    .gc-emblem-sub {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.55rem;
+      color: var(--card-color);
+      opacity: 0.45;
+      letter-spacing: 0.12em;
+      margin-top: 6px;
+      z-index: 1;
+    }
+
+    /* Shimmer effect on emblem */
+    .gc-emblem .gc-emblem-text {
+      animation: emblemPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes emblemPulse {
+      0%, 100% { opacity: 0.7; text-shadow: 0 0 20px color-mix(in srgb, var(--card-color) 25%, transparent); }
+      50% { opacity: 0.9; text-shadow: 0 0 35px color-mix(in srgb, var(--card-color) 45%, transparent); }
+    }
+
+    .gc-nameplate {
+      background: linear-gradient(90deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3));
+      padding: 6px 10px 4px; margin-top: 4px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .gc-name {
+      font-family: 'Silkscreen', cursive; font-size: 1.05rem; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .gc-type {
+      font-family: 'Fira Code', monospace; font-size: 0.75rem;
+      color: var(--card-color, var(--purple)); letter-spacing: 0.04em;
+      text-transform: uppercase; margin-top: 4px;
+    }
+
+    .gc-flavor {
+      padding: 8px 14px; font-size: 0.95rem; color: var(--text-soft);
+      line-height: 1.5; flex: 1; overflow: hidden;
+      font-style: italic;
+    }
+
+    .gc-rarity {
+      position: absolute; bottom: 6px; right: 8px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--card-color, var(--blue));
+      box-shadow: 0 0 6px var(--card-color, var(--blue));
+      opacity: 0.6;
+    }
+
+    .gc-flip-hint {
+      position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+      font-family: 'Fira Code', monospace; font-size: 0.68rem;
+      color: var(--text-soft); opacity: 0.85;
+      padding: 2px 10px; border: 1px solid rgba(255,255,255,0.06); border-radius: 3px;
+    }
+
+    /* Front face link bar */
+    .gc-front-links {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      padding: 0 12px 8px; margin-top: auto;
+    }
+
+    /* Back face */
+    .gc-back-content {
+      padding: 16px; height: 100%; display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    .gc-back-title {
+      font-family: 'Silkscreen', cursive; font-size: 1.2rem;
+      color: var(--card-color, var(--blue)); margin-bottom: 10px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    }
+
+    .gc-back-role {
+      font-family: 'Fira Code', monospace; font-size: 0.85rem;
+      color: var(--purple); letter-spacing: 0.04em; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .gc-back-text {
+      font-size: 1rem; color: var(--text-soft); line-height: 1.8;
+      flex: 1; overflow: hidden;
+    }
+
+
+    .gc-back-links {
+      margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 4px;
+    }
+
+    .gc-ln {
+      display: inline-block; font-family: 'Fira Code', monospace; font-size: 0.83rem;
+      color: var(--blue-light); text-decoration: none; border: 1px solid var(--border);
+      padding: 0.35rem 0.8rem; border-radius: 3px; transition: all 0.2s;
+    }
+    .gc-ln:hover { border-color: var(--border-glow); background: var(--blue-dim); }
+
+    .gc-back-hint {
+      font-family: 'Fira Code', monospace; font-size: 0.35rem;
+      color: var(--text-dim); opacity: 0.4; text-align: center; margin-top: 6px;
+    }
+
+    /* Gallery thumbnails on back */
+    .gc-back-gallery {
+      display: flex; gap: 3px; margin-top: 8px;
+      flex: 2; min-height: 0; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .gc-back-gallery img {
+      flex: 1; min-width: 0; max-height: 100%; object-fit: contain;
+      border-radius: 2px; cursor: zoom-in;
+    }
+
+    /* Gallery slideshow (JS-enhanced when >1 image) */
+    .gallery-slideshow { position: relative; }
+    .gallery-slideshow .gallery-track {
+      position: relative; width: 100%; height: 100%;
+    }
+    .gallery-slideshow .gallery-slide {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: contain; opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .gallery-slideshow .gallery-slide.active { opacity: 1; }
+    .gallery-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-dim); font-size: 0.55rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 2; padding: 0;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .gallery-arrow:hover { border-color: var(--border-glow); color: var(--blue-light); }
+    .gallery-prev { left: 2px; }
+    .gallery-next { right: 2px; }
+    .gallery-dots {
+      position: absolute; bottom: 3px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 4px; z-index: 2;
+    }
+    .gallery-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--text-dim); opacity: 0.4;
+      transition: opacity 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+    .gallery-dot.active {
+      opacity: 1;
+      background: var(--card-color, var(--blue));
+    }
+
+    /* Lightbox for expanding images */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 10001;
+      background: rgba(0,0,0,0.9);
+      display: flex; align-items: center; justify-content: center;
+      cursor: zoom-out; opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+    .lightbox.open { opacity: 1; pointer-events: auto; }
+    .lightbox img {
+      max-width: 90vw; max-height: 90vh; object-fit: contain;
+      border-radius: 6px; box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    }
+
+    /* Also make front card images expandable */
+    .gc-art, .gc-art-contain { cursor: zoom-in; }
+
+    @keyframes cardFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* Peek-flip hint: card briefly rotates to show there's a back */
+    .gc.peek .gc-inner {
+      animation: peekFlip 1.2s ease-in-out;
+    }
+
+    @keyframes peekFlip {
+      0% { transform: rotateY(0); }
+      30% { transform: rotateY(35deg); }
+      60% { transform: rotateY(-10deg); }
+      100% { transform: rotateY(0); }
+    }
+
+    /* About */
+    .about-g { display: grid; grid-template-columns: 200px 1fr; gap: 2rem; align-items: start; max-width: 800px; }
+    .about-ph { width: 100%; border-radius: 6px; }
+    .about-h3 { font-family: 'Silkscreen', cursive; font-size: 1rem; margin-bottom: 0.7rem; }
+    .about-p { font-size: 0.82rem; color: var(--text-soft); line-height: 1.7; margin-bottom: 0.7rem; }
+    .about-stats { display: flex; gap: 1.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .about-sn { font-family: 'Silkscreen', cursive; font-size: 1.3rem; color: var(--blue-light); }
+    .about-sl { font-family: 'Fira Code', monospace; font-size: 0.45rem; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; }
+    .soc-row { display: flex; gap: 0.4rem; margin-top: 0.8rem; }
+    .soc-btn { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--border); background: none; color: var(--text-dim); display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.75rem; transition: all 0.2s; }
+    .soc-btn:hover { border-color: var(--border-glow); color: var(--blue-light); background: var(--blue-dim); transform: translateY(-2px); }
+
+    /* About card back — skills + stats */
+    .gc-back-skills { font-size: 0.85rem; line-height: 1.6; }
+    .gc-back-skills b { color: var(--card-color, var(--green)); }
+    .gc-back-stats {
+      margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; text-align: center;
+    }
+    .gc-back-stat-num { color: var(--card-color, var(--green)); font-family: 'Silkscreen', cursive; font-size: 1.3rem; }
+    .gc-back-stat-label { font-size: 0.5rem; color: var(--text-dim); }
+
+    /* Connect card social grid */
+    .gc-social-art {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, rgba(155,109,255,0.06), rgba(155,109,255,0.15));
+      gap: 10px; padding: 14px;
+    }
+    .gc-social-grid { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+    /* Placeholder emblem text (Box Dog etc.) */
+    .gc-placeholder-text {
+      font-family: 'Silkscreen', cursive; font-size: 0.7rem;
+      color: color-mix(in srgb, var(--card-color) 40%, transparent);
+      text-align: center; line-height: 1.6;
+    }
+    .gc-placeholder-art {
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--card-color) 8%, transparent), color-mix(in srgb, var(--card-color) 15%, transparent));
+    }
+
+    /* Skills */
+    .sk-g { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px,1fr)); gap: 0.8rem; }
+    .sk-c { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; transition: all 0.3s; position: relative; overflow: hidden; }
+    .sk-c::after { content:''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--sc, var(--blue)); opacity: 0; transition: opacity 0.3s; }
+    .sk-c:hover { border-color: var(--border-glow); transform: translateY(-2px); }
+    .sk-c:hover::after { opacity: 1; }
+    .sk-ct { font-family: 'Silkscreen', cursive; font-size: 0.6rem; margin-bottom: 0.5rem; }
+    .sk-pills { display: flex; flex-wrap: wrap; gap: 0.2rem; }
+    .sk-p { font-family: 'Fira Code', monospace; font-size: 0.5rem; padding: 0.2rem 0.45rem; border: 1px solid var(--border); border-radius: 3px; color: var(--text-dim); transition: all 0.2s; }
+    .sk-p:hover { border-color: var(--blue); color: var(--blue-light); }
+
+    /* Showcase */
+    .sh-g { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: 1rem; }
+    .sh-c { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; transition: all 0.3s; cursor: pointer; }
+    .sh-c:hover { border-color: var(--border-glow); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+    .sh-c img { width: 100%; aspect-ratio: 16/9; object-fit: contain; background: rgba(0,0,0,0.3); display: block; }
+    .sh-bd { padding: 0.9rem 1rem; }
+    .sh-tp { font-family: 'Silkscreen', cursive; font-size: 0.4rem; letter-spacing: 0.1em; color: var(--purple); margin-bottom: 0.15rem; }
+    .sh-nm { font-family: 'Silkscreen', cursive; font-size: 0.7rem; margin-bottom: 0.25rem; }
+    .sh-ds { font-size: 0.68rem; color: var(--text-dim); line-height: 1.4; }
+
+    /* Evo list */
+    .evo { list-style: none; padding: 0; }
+    .evo li { position: relative; padding: 0.4rem 0 0.4rem 1.2rem; font-size: 0.75rem; color: var(--text-soft); line-height: 1.5; }
+    .evo li::before { content:''; position: absolute; left: 0; top: 0.7rem; width: 5px; height: 5px; background: var(--blue); border-radius: 1px; transform: rotate(45deg); }
+    .evo li b { color: var(--blue-light); font-family: 'Silkscreen', cursive; font-size: 0.5rem; display: block; margin-bottom: 0.1rem; }
+
+    /* ===== RESPONSIVE ===== */
+
+    /* Mobile: phones */
+    @media (max-width: 768px) {
+      :root { --world-h: 140px; }
+
+      /* Screen bezel — keep arcade glow visible */
+      .screen-bezel { margin: 2px 3px 0; border-width: 1px; }
+
+      /* Panel — more top padding for screen edge gap, space between title and tabs */
+      .panel { padding: 0.5rem 0.6rem 0.1rem; }
+      .p-tag { font-size: 0.5rem; margin-bottom: 0; }
+      .p-title { font-size: 1.1rem; margin-bottom: 0.25rem; }
+
+      /* Cards — fill width, leave room for sprite below */
+      .gc { width: min(280px, 72vw); height: calc(100vh - 330px); height: calc(100dvh - 330px); min-height: 260px; max-height: 400px; }
+      .gc-name { font-size: 0.7rem; }
+      .gc-type { font-size: 0.45rem; }
+      .gc-flavor { font-size: 0.65rem; padding: 5px 10px; line-height: 1.45; }
+      .gc-nameplate { padding: 4px 10px 3px; }
+      .gc-emblem-text { font-size: 1.8rem; }
+      .gc-emblem-sub { font-size: 0.4rem; }
+      .gc-back-title { font-size: 0.8rem; }
+      .gc-back-role { font-size: 0.55rem; }
+      .gc-back-text { font-size: 0.75rem; line-height: 1.5; }
+      .gc-back-content { padding: 10px; }
+      .gc-ln { font-size: 0.5rem; padding: 0.2rem 0.5rem; }
+      .gc-flip-hint { font-size: 0.45rem; padding: 2px 8px; }
+      .gc-front-links { padding: 0 10px 6px; }
+
+      /* Card carousel */
+      .card-carousel {
+        gap: 0.8rem;
+        padding: 0rem calc(50% - min(140px, 36vw)) 0rem;
+      }
+
+      .gallery-arrow { width: 22px; height: 22px; font-size: 0.45rem; }
+      .gallery-dot { width: 5px; height: 5px; }
+      .gallery-dots { gap: 3px; }
+
+      /* Tabs — wrap with consistent 3+2 layout */
+      .tab-bar {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 3px;
+        margin-bottom: 0.1rem;
+        margin-top: 0.1rem;
+        padding: 0 0.3rem;
+      }
+      /* Each tab takes ~30% width to force 3 per row */
+      .tab-btn { font-size: 0.5rem; padding: 0.3rem 0.55rem; flex: 0 0 auto; min-width: 28%; text-align: center; }
+
+      /* Cabinets */
+      .cabinet { width: 100px; padding: 0 5px; }
+      .cab-screen { width: 64px; height: 48px; border-width: 1.5px; }
+      .cab-base { width: 78px; height: 7px; }
+      .cab-icon { font-size: 1rem; }
+      .cab-label { font-size: 0.35rem; margin-top: 4px; }
+      .cab-glow { display: none; }
+      .cabinet:first-child { margin-left: max(calc(50vw - 50px), 20px); }
+      .cabinet:last-child { margin-right: max(calc(50vw - 50px), 20px); }
+      .character { transform: scale(0.75); bottom: 8px; transform-origin: bottom center; }
+
+      /* Control bar — hide FLIP button text, show icon only */
+      .controls {
+        height: 36px; min-height: 36px;
+        gap: 5px; padding: 0 6px;
+      }
+      .ctrl-btn { width: 28px; height: 28px; font-size: 0.65rem; border-radius: 4px; }
+      .ctrl-btn-action { width: 30px !important; height: 30px !important; font-size: 0.4rem !important; }
+      .ctrl-sep { height: 18px; margin: 0 1px; }
+      .ctrl-label { font-size: 0.38rem; }
+      .ctrl-hint { display: none; }
+      .ctrl-privacy { font-size: 0.5rem; right: 6px; }
+
+      /* Content sprite — big enough to see clearly */
+      .content-sprite { transform: translateX(-50%) scale(1); }
+      /* Hide the text hint on mobile — feels like user should tap the sprite, not the card */
+      .content-sprite::after { display: none; }
+
+      /* Bezel — keep subtle glow for arcade feel */
+      .bezel-corner { display: none; }
+      .bezel-label { display: none; }
+
+      /* About */
+      .about-g { grid-template-columns: 1fr; }
+      .about-ph { max-width: 150px; margin: 0 auto; }
+      .pg-imgs { grid-template-columns: 1fr; max-width: 100%; }
+
+      /* Home */
+      .home-name { font-size: 1.4rem; }
+      .home-typing { font-size: 0.7rem; }
+      .home-tagline { font-size: 0.7rem; margin-bottom: 0.8rem; }
+      .home-badge { font-size: 0.45rem; padding: 0.25rem 0.5rem; }
+      .home-sprite { width: 64px; height: 64px; margin-bottom: 0.8rem;
+        background-size: 832px 3456px; }
+
+      /* Flip hint text changed to "tap" via JS */
+    }
+
+    /* Small phones (iPhone SE: 375px) */
+    @media (max-width: 400px) {
+      .gc { width: 200px; height: calc(100vh - 400px); height: calc(100dvh - 400px); min-height: 180px; max-height: 280px; }
+      .card-carousel { padding: 0rem calc(50% - 100px) 0rem; }
+      .p-title { font-size: 0.95rem; margin-bottom: 0.2rem; }
+      .panel { padding: 0.45rem 0.5rem 0.1rem; }
+      .tab-btn { font-size: 0.48rem; padding: 0.28rem 0.45rem; min-width: 27%; }
+      .tab-bar { gap: 3px; margin-top: 0.05rem; margin-bottom: 0.05rem; }
+      .home-name { font-size: 1.1rem; }
+      .content-sprite { transform: translateX(-50%) scale(0.85); }
+      .content-sprite::after { display: none; }
+      .gallery-arrow { width: 20px; height: 20px; font-size: 0.4rem; }
+      .gallery-dot { width: 4px; height: 4px; }
+      .gallery-dots { gap: 3px; bottom: 2px; }
+    }
+
+    /* Tablet: 769px - 1024px */
+    @media (min-width: 768.02px) and (max-width: 1024px) {
+      :root { --world-h: 220px; }
+      .screen-bezel { margin: 3px 5px 0; }
+      .panel { padding: 0.3rem 1rem; }
+      .p-tag { font-size: 0.55rem; }
+      .p-title { font-size: 1.3rem; margin-bottom: 0.15rem; }
+      .gc { width: 240px; height: calc(100vh - 370px); height: calc(100dvh - 370px); min-height: 320px; max-height: 480px; }
+      .card-carousel { padding: 0rem calc(50% - 120px) 0rem; }
+      .tab-bar { margin-top: 0.1rem; margin-bottom: 0.1rem; }
+      .tab-btn { font-size: 0.6rem; padding: 0.4rem 0.8rem; }
+      .cabinet { width: 150px; padding: 0 8px; }
+      .cab-screen { width: 90px; height: 68px; }
+      .cab-base { width: 110px; height: 10px; }
+      .cab-label { font-size: 0.45rem; }
+      .cab-icon { font-size: 1.3rem; }
+      .cabinet:first-child { margin-left: max(calc(50vw - 75px), 40px); }
+      .cabinet:last-child { margin-right: max(calc(50vw - 75px), 40px); }
+      .character { transform: scale(0.9); transform-origin: bottom center; bottom: 16px; }
+      .content-sprite { transform: translateX(-50%) scale(0.9); }
+      .controls { height: 44px; min-height: 44px; }
+      .ctrl-btn { width: 34px; height: 34px; }
+      .ctrl-hint { display: none; }
+
+      /* About board: shrink flanks + battlefield cards so 6 bf-cards fit between commander and emblem */
+      .board-commander .gc, .board-emblem .gc { width: 180px; }
+      .bf-card { width: clamp(110px, 13vw, 150px); height: clamp(170px, 20vw, 230px); }
+      .bf-card .gc-emblem-text { font-size: 2.2rem; }
+      .bf-card .gc-name { font-size: 0.78rem; }
+      .bf-card .gc-flavor { font-size: 0.7rem; }
+    }
+
+    /* Landscape phones — height is the tight axis */
+    @media (max-height: 500px) and (orientation: landscape) {
+      :root { --world-h: 90px; }
+      .gc { max-height: 180px; min-height: 0; }
+      .card-hand { height: 70px; margin-bottom: 0.15rem; }
+      .hand-card { height: 56px; }
+      .deck-title { margin: 0.2rem 0 0.15rem; font-size: clamp(0.85rem, 3vh, 1.1rem); }
+      .p-title { font-size: 1rem; margin-bottom: 0.1rem; }
+      .p-tag { font-size: 0.5rem; }
+      .controls { height: 36px; min-height: 36px; }
+      .character { transform: scale(0.7); bottom: 4px; }
+    }
+
+    /* Loading screen */
+    .load-screen {
+      position: fixed; inset: 0; z-index: 10000;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.5s ease;
+    }
+
+    .load-screen.fade-out {
+      opacity: 0; pointer-events: none;
+    }
+
+    .load-sprite {
+      width: 64px; height: 64px;
+      background: url('../img/character-spritesheet.png') 0 -704px;
+      background-size: 832px 3456px;
+      image-rendering: pixelated;
+      animation: spriteWalk 0.8s steps(9) infinite;
+      margin-bottom: 1.5rem;
+    }
+
+    .load-text {
+      font-family: 'Silkscreen', cursive;
+      font-size: 1rem;
+      color: var(--blue-light);
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .load-bar {
+      width: 200px; height: 4px;
+      background: rgba(74,144,217,0.15);
+      border-radius: 2px; overflow: hidden;
+    }
+
+    .load-fill {
+      height: 100%; width: 0%;
+      background: var(--blue-light);
+      border-radius: 2px;
+      transition: width 1.2s ease;
+    }
+
+    .load-hint {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      margin-top: 1rem;
+      opacity: 0.5;
+    }
+
+
+    /* ===== BOARD LAYOUT (About) ===== */
+
+    .board-layout {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 0.6rem;
+      padding: 0 0.5rem 0.5rem;
+      min-height: 0;
+      max-width: 100%;
+      overflow: hidden;
+      overflow: hidden;
+    }
+
+    /* Top row holds commander | battlefield | emblem as a 3-column grid */
+    .board-top-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.6rem;
+      flex: 1;
+      align-items: stretch;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .board-zone { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+    .board-commander { justify-content: center; }
+    .board-battlefield { overflow: hidden; min-width: 0; }
+    .board-emblem { justify-content: center; }
+    .board-skills { width: 100%; margin-bottom: 28px; flex-shrink: 0; }
+
+    /* Commander and emblem cards fill their zone height */
+    .board-commander .gc,
+    .board-emblem .gc {
+      height: auto;
+      flex: 1;
+      min-height: 0;
+      width: 240px;
+    }
+
+    /* Commander P/T box (MTG-style, bottom-right corner) */
+    .gc-pt {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      min-width: 52px;
+      padding: 4px 10px;
+      background: linear-gradient(180deg, rgba(10,12,26,0.92), rgba(5,7,15,0.96));
+      border: 2px solid color-mix(in srgb, var(--card-color, var(--green)) 70%, transparent);
+      border-radius: 6px;
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.95rem;
+      color: var(--card-color, var(--green));
+      text-align: center;
+      letter-spacing: 0.05em;
+      box-shadow: 0 0 12px color-mix(in srgb, var(--card-color, var(--green)) 25%, transparent);
+      z-index: 2;
+    }
+
+    /* Emblem tagline (flavor quote) */
+    .gc-tagline {
+      font-family: 'Fira Code', monospace;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      text-align: center;
+      padding: 0.6rem 0.8rem 0.2rem;
+      line-height: 1.3;
+    }
+
+    /* Commander abilities list — MTG-style keywords (Haste, Vigilance, etc.) */
+    .gc-abilities {
+      padding: 0.4rem 0.7rem 0.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      border-top: 1px dashed color-mix(in srgb, var(--card-color, var(--green)) 25%, transparent);
+    }
+
+    .gc-ability {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.68rem;
+      color: var(--text-soft);
+      line-height: 1.25;
+    }
+
+    .gc-ability b {
+      color: var(--card-color, var(--green));
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      margin-right: 0.2rem;
+    }
+
+    /* Emblem "ongoing effect" — MTG emblem-style persistent rule text */
+    .gc-ongoing {
+      padding: 0.5rem 0.7rem 0.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      border-top: 1px dashed rgba(155,109,255,0.25);
+      margin-top: 0.4rem;
+    }
+
+    .gc-ongoing-label {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.65rem;
+      color: #c9a8ff;
+      letter-spacing: 0.15em;
+    }
+
+    .gc-ongoing-text {
+      font-family: 'Fira Code', monospace;
+      font-style: italic;
+      font-size: 0.7rem;
+      color: var(--text-soft);
+      line-height: 1.35;
+    }
+
+    @media (max-width: 768px) {
+      .gc-ability { font-size: 0.58rem; }
+      .gc-ability b { font-size: 0.6rem; }
+      .gc-abilities { padding: 0.3rem 0.5rem 0.2rem; gap: 0.2rem; }
+      .gc-ongoing { padding: 0.35rem 0.55rem 0.25rem; }
+      .gc-ongoing-label { font-size: 0.55rem; }
+      .gc-ongoing-text { font-size: 0.58rem; }
+    }
+
+    /* Emblem location/timezone — pinned to bottom of card */
+    .gc-location {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      text-align: center;
+      padding: 0.4rem 0.8rem 0.5rem;
+      letter-spacing: 0.08em;
+      border-top: 1px solid rgba(155,109,255,0.12);
+      background: linear-gradient(to top, rgba(12,16,35,0.9), transparent);
+    }
+
+    .gc-location i {
+      color: var(--card-color, var(--purple));
+      margin-right: 0.3rem;
+    }
+
+    /* Commander stats inline on front */
+    .gc-commander-stats {
+      display: flex;
+      justify-content: space-around;
+      gap: 0.3rem;
+      padding: 0.5rem 0.3rem 0;
+      margin-top: auto;
+    }
+    .gc-commander-stats > span {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .gc-commander-stats .gc-back-stat-num {
+      font-family: 'Silkscreen', cursive;
+      font-size: 1.4rem;
+      color: var(--card-color, var(--green));
+      line-height: 1;
+    }
+    .gc-commander-stats .gc-back-stat-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      margin-top: 0.3rem;
+    }
+
+    /* Battlefield row — all 6 cards visible, no scroll */
+    .battlefield-row {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      gap: 0.4rem;
+      flex-shrink: 0;
+      padding: 0 0.3rem;
+    }
+
+    .bf-card {
+      width: clamp(208px, 22vw, 270px);
+      height: clamp(332px, 36vw, 434px);
+      flex-shrink: 1;
+      flex-grow: 0;
+    }
+    /* Base .gc font sizes already match bf-card; keep back-text smaller for the smaller card. */
+    .bf-card .gc-emblem { aspect-ratio: 4/3; }
+    .bf-card .gc-flavor { padding: 0.45rem 0.62rem; }
+    .bf-card .gc-front-links { padding: 0.45rem 0.62rem; }
+    .bf-card .gc-ln { padding: 0.3rem 0.62rem; }
+    .bf-card .gc-nameplate { padding: 6px 13px; }
+    .bf-card .gc-back-text { font-size: 0.9rem; line-height: 1.35; }
+
+    .zone-label {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 0.2rem 0;
+      flex-shrink: 0;
+    }
+
+    .commander-card {
+      filter: drop-shadow(0 0 20px color-mix(in srgb, var(--green) 25%, transparent));
+    }
+    .commander-card .gc-front,
+    .commander-card .gc-back {
+      border-width: 3px;
+      box-shadow: 0 0 30px color-mix(in srgb, var(--card-color, var(--green)) 20%, transparent);
+    }
+
+    .board-layout .land-cards {
+      flex-shrink: 0;
+      padding: 0 1rem;
+    }
+
+    .board-battlefield {
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .land-cards {
+      display: flex;
+      gap: 0.4rem;
+      justify-content: center;
+      align-items: stretch;
+      max-width: 100%;
+    }
+
+    .land-card {
+      width: clamp(110px, 14vw, 160px);
+      min-height: 140px;
+      background: var(--bg-card, rgba(16,20,42,0.92));
+      border: 1px solid color-mix(in srgb, var(--land-color, var(--blue)) 30%, transparent);
+      border-radius: 8px;
+      padding: 0.7rem 0.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.4rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    .land-card:hover {
+      border-color: color-mix(in srgb, var(--land-color, var(--blue)) 60%, transparent);
+      box-shadow: 0 0 12px color-mix(in srgb, var(--land-color, var(--blue)) 15%, transparent);
+    }
+
+    .land-icon {
+      font-size: 1.5rem;
+      color: var(--land-color, var(--blue));
+      margin-bottom: 0.2rem;
+      line-height: 1;
+    }
+
+    .land-name {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.75rem;
+      color: var(--land-color, var(--blue));
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .land-list {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.7rem;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      /* Mobile About: horizontal card carousel like Work/Personal, skills grid pinned at bottom */
+      .board-layout {
+        gap: 0.4rem;
+        padding: 0.3rem 0 0.3rem;
+        overflow: hidden;
+      }
+
+      /* Flatten the zone wrappers so all 8 cards flow as horizontal scroll siblings */
+      .board-commander,
+      .board-battlefield,
+      .board-emblem,
+      .battlefield-row {
+        display: contents;
+      }
+
+      /* Zone labels don't make sense in a flat carousel */
+      .board-top-row .zone-label { display: none; }
+
+      /* The top row becomes the single horizontal scroll carousel */
+      .board-top-row {
+        display: flex;
+        flex-direction: row;
+        grid-template-columns: none;
+        overflow-x: auto;
+        overflow-y: visible;
+        scroll-snap-type: x mandatory;
+        gap: 0.6rem;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        padding: 0.3rem clamp(0.5rem, 50vw - 125px, 50vw);
+        flex: 1;
+        min-height: 0;
+        align-items: center;
+      }
+      .board-top-row::-webkit-scrollbar { display: none; }
+
+      /* Every card (commander, bf-cards, emblem) same size on mobile */
+      .board-top-row .gc {
+        flex: 0 0 auto;
+        width: clamp(220px, 68vw, 280px);
+        height: auto;
+        aspect-ratio: 5/7;
+        max-width: none;
+        min-width: 0;
+        scroll-snap-align: center;
+      }
+      .bf-card { width: clamp(220px, 68vw, 280px); height: auto; aspect-ratio: 5/7; }
+      .bf-card .gc-emblem-text { font-size: 2.6rem; }
+      .bf-card .gc-name { font-size: 0.9rem; }
+      .bf-card .gc-type { font-size: 0.6rem; }
+      .bf-card .gc-flavor { font-size: 0.8rem; padding: 0.35rem 0.5rem; }
+      .bf-card .gc-ln { font-size: 0.7rem; padding: 0.25rem 0.5rem; }
+      .bf-card .gc-flip-hint { font-size: 0.55rem; }
+      .bf-card .gc-nameplate { padding: 5px 10px; }
+
+      /* Skills: 3-col grid pinned at bottom */
+      .board-skills { margin-bottom: 10px; flex-shrink: 0; }
+      .board-skills .zone-label { font-size: 0.55rem; margin: 0.1rem 0 0.2rem; display: block; }
+      .land-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.3rem;
+        padding: 0 0.3rem;
+      }
+      .land-card {
+        width: 100%;
+        min-width: 0;
+        min-height: 72px;
+        padding: 0.35rem 0.3rem;
+        gap: 0.15rem;
+      }
+      .land-icon { font-size: 0.85rem; }
+      .land-name { font-size: 0.45rem; }
+      .land-list { font-size: 0.6rem; line-height: 1.3; }
+
+      .gc-pt { font-size: 0.65rem; padding: 3px 7px; min-width: 40px; }
+      .gc-commander-stats .gc-back-stat-num { font-size: 1rem; }
+      .gc-commander-stats .gc-back-stat-label { font-size: 0.48rem; }
+    }
+
+    .gc-social-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .gc-social-link {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-family: 'Fira Code', monospace;
+      padding: 0.3rem 0.5rem;
+      border-radius: 6px;
+      border: 1px solid rgba(155,109,255,0.15);
+      background: rgba(155,109,255,0.05);
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .gc-social-link:hover {
+      background: rgba(155,109,255,0.15);
+      color: var(--text);
+      border-color: rgba(155,109,255,0.3);
+    }
+
+    .gc-social-link i {
+      font-size: 1.1rem;
+      width: 1.2rem;
+      text-align: center;
+      color: var(--purple);
+    }
+
+    @media (max-width: 768px) {
+      .gc-social-link { font-size: 0.7rem; gap: 0.4rem; padding: 0.25rem 0.4rem; }
+      .gc-social-link i { font-size: 0.9rem; }
+    }
+
+    @media (max-width: 400px) {
+      .board-top-row .gc,
+      .bf-card { width: clamp(200px, 75vw, 260px); }
+
+      .bf-card .gc-emblem-text { font-size: 2.2rem; }
+
+      .land-card { min-height: 64px; padding: 0.3rem 0.25rem; }
+      .land-icon { font-size: 0.75rem; }
+      .land-name { font-size: 0.45rem; }
+      .land-list { font-size: 0.55rem; }
+
+      .gc-social-link { font-size: 0.6rem; padding: 0.2rem 0.3rem; gap: 0.3rem; }
+      .gc-social-link i { font-size: 0.75rem; }
+
+      .deck-title { margin: 0.2rem 0 0.15rem; }
+    }
+
+    @media (max-width: 768px) {
+      .deck-title { font-size: clamp(1rem, 4vw, 1.5rem); margin: 0.4rem 0 0.3rem; }
+    }
+
+    /* ===== CARD HAND (Work/Personal) ===== */
+
+    .hand-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .card-hand {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 0 1rem 0.3rem;
+      height: 140px;
+      flex-shrink: 0;
+      position: relative;
+      order: 10; /* push to bottom of flex container */
+      margin-bottom: 0.5rem;
+      gap: 1.1rem;
+      perspective: 1000px;
+    }
+
+    /* 3D deck box — stacked box shadows simulate card thickness */
+    .hand-card {
+      width: 94px;
+      height: 120px;
+      background: linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--hand-color, var(--blue)) 22%, #0c1020) 0%,
+        color-mix(in srgb, var(--hand-color, var(--blue)) 6%, #05070c) 100%
+      );
+      border: 2px solid color-mix(in srgb, var(--hand-color, var(--blue)) 55%, transparent);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.35s cubic-bezier(0.25,1,0.5,1), box-shadow 0.3s ease, border-color 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      position: relative;
+      font-family: 'Silkscreen', cursive;
+      /* Stacked shadow layers = deck thickness */
+      box-shadow:
+        2px 2px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 35%, #000),
+        4px 4px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 22%, #000),
+        6px 6px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 12%, #000),
+        8px 10px 14px rgba(0,0,0,0.5);
+      transform: rotateX(18deg);
+      transform-style: preserve-3d;
+      outline: none;
+    }
+
+    /* Inner highlight to sell the "front face" of the deck box */
+    .hand-card::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    /* Active deck: opens up — tilts forward, lifts, and cards "peek" out the top */
+    .hand-card.active {
+      transform: rotateX(-6deg) translateY(-26px) scale(1.08);
+      border-color: var(--hand-color, var(--blue));
+      border-width: 3px;
+      box-shadow:
+        2px 2px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 45%, #000),
+        4px 4px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 30%, #000),
+        6px 6px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 18%, #000),
+        0 14px 32px color-mix(in srgb, var(--hand-color, var(--blue)) 45%, transparent),
+        0 0 28px color-mix(in srgb, var(--hand-color, var(--blue)) 35%, transparent);
+    }
+
+    /* Card peeking out of the opened deck */
+    .hand-card.active::after {
+      content: '';
+      position: absolute;
+      top: -14px;
+      left: 14%;
+      right: 14%;
+      height: 16px;
+      background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--hand-color, var(--blue)) 50%, #0c1020),
+        color-mix(in srgb, var(--hand-color, var(--blue)) 15%, #0c1020)
+      );
+      border: 2px solid var(--hand-color, var(--blue));
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      box-shadow: 0 -3px 10px color-mix(in srgb, var(--hand-color, var(--blue)) 30%, transparent);
+    }
+
+    .hand-card:hover:not(.active) {
+      transform: rotateX(10deg) translateY(-8px);
+      border-color: var(--hand-color, var(--blue));
+    }
+
+    .hand-card:focus-visible {
+      outline: 2px solid var(--hand-color, var(--blue));
+      outline-offset: 2px;
+    }
+
+    .hand-card.tab-focused {
+      outline: 2px solid var(--hand-color, var(--blue));
+      outline-offset: 2px;
+    }
+
+    .hand-card-abbr {
+      font-size: 1.35rem;
+      color: var(--hand-color, var(--blue));
+      text-shadow: 0 0 10px color-mix(in srgb, var(--hand-color, var(--blue)) 30%, transparent);
+    }
+
+    .hand-card-name {
+      font-size: 0.48rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      text-align: center;
+      max-width: 78px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 768px) {
+      .card-hand { height: 110px; padding: 0 0.5rem 0.3rem; margin-bottom: 0.2rem; gap: 0.7rem; }
+      .hand-card {
+        width: 68px; height: 88px;
+        border-radius: 5px;
+        gap: 4px;
+        box-shadow:
+          2px 2px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 35%, #000),
+          3px 3px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 20%, #000),
+          5px 6px 10px rgba(0,0,0,0.5);
+      }
+      .hand-card-abbr { font-size: 1rem; }
+      .hand-card-name { font-size: 0.55rem; max-width: 60px; }
+      .hand-card.active { transform: rotateX(-4deg) translateY(-18px) scale(1.06); }
+      .hand-card.active::after { top: -10px; height: 12px; }
+      .hand-card:hover:not(.active) { transform: rotateX(10deg) translateY(-6px); }
+    }
+
+    @media (max-width: 400px) {
+      .card-hand { height: 86px; gap: 0.5rem; }
+      .hand-card {
+        width: 54px; height: 72px;
+        border-width: 1.5px;
+        box-shadow:
+          1.5px 1.5px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 35%, #000),
+          3px 3px 0 color-mix(in srgb, var(--hand-color, var(--blue)) 20%, #000),
+          4px 5px 8px rgba(0,0,0,0.5);
+      }
+      .hand-card-abbr { font-size: 0.9rem; }
+      .hand-card-name { display: none; }
+      .hand-card.active { transform: rotateX(-4deg) translateY(-14px) scale(1.05); border-width: 2px; }
+      .hand-card.active::after { top: -8px; height: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }

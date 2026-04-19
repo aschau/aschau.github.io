@@ -1,17 +1,21 @@
-// Gamification tests — exercise real module logic, not just data validation.
+// Gamification tests — Arcade Edition
 // Imports from js/gamification.module.js (canonical reference for gamification.js).
 
 const {
     ACHIEVEMENTS,
-    MAIN_PAGES,
+    SECTIONS,
+    ALL_TABS,
+    WORK_DECKS,
+    PERSONAL_DECKS,
     getJSON,
     setJSON,
     unlockAchievement,
-    processPageVisit,
+    processSectionVisit,
+    checkFullHand,
+    checkSectionComplete,
+    checkCardCollector,
     checkNightOwl,
-    checkSpeedReader,
     calculateProgress,
-    checkTimelineHistorian,
 } = require('../js/gamification.module');
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -29,8 +33,8 @@ function createMockStorage(initial) {
 // ── Achievement Definitions ──────────────────────────────────
 
 describe('Achievement definitions', () => {
-    test('9 achievements defined', () => {
-        expect(Object.keys(ACHIEVEMENTS).length).toBe(9);
+    test('11 achievements defined', () => {
+        expect(Object.keys(ACHIEVEMENTS).length).toBe(11);
     });
 
     test('each achievement has title, desc, hint, icon', () => {
@@ -51,13 +55,27 @@ describe('Achievement definitions', () => {
         }
     });
 
-    test('MAIN_PAGES includes the 4 portfolio pages plus deep-dive', () => {
-        expect(MAIN_PAGES).toContain('index.html');
-        expect(MAIN_PAGES).toContain('aboutMe.html');
-        expect(MAIN_PAGES).toContain('workprojects.html');
-        expect(MAIN_PAGES).toContain('personalprojects.html');
-        expect(MAIN_PAGES).toContain('deep-dive');
-        expect(MAIN_PAGES.length).toBe(5);
+    test('SECTIONS includes all 5 arcade sections', () => {
+        expect(SECTIONS).toContain('home');
+        expect(SECTIONS).toContain('about');
+        expect(SECTIONS).toContain('work');
+        expect(SECTIONS).toContain('personal');
+        expect(SECTIONS).toContain('play');
+        expect(SECTIONS.length).toBe(5);
+    });
+
+    test('ALL_TABS includes all 10 tab IDs', () => {
+        expect(ALL_TABS).toContain('w-blizzard');
+        expect(ALL_TABS).toContain('w-mw');
+        expect(ALL_TABS).toContain('w-sega');
+        expect(ALL_TABS).toContain('w-trigger');
+        expect(ALL_TABS).toContain('w-stb');
+        expect(ALL_TABS).toContain('pp-fc');
+        expect(ALL_TABS).toContain('pp-wh');
+        expect(ALL_TABS).toContain('pp-ai');
+        expect(ALL_TABS).toContain('pp-web');
+        expect(ALL_TABS).toContain('pp-col');
+        expect(ALL_TABS.length).toBe(10);
     });
 });
 
@@ -72,7 +90,7 @@ describe('getJSON / setJSON', () => {
     });
 
     test('getJSON parses stored JSON', () => {
-        const data = { explorer: { unlocked: true } };
+        const data = { 'cabinet-crawler': { unlocked: true } };
         const storage = createMockStorage({ mykey: JSON.stringify(data) });
         expect(getJSON(storage, 'mykey', {})).toEqual(data);
     });
@@ -110,116 +128,195 @@ describe('unlockAchievement', () => {
 
     test('unlocks a new achievement and persists it', () => {
         const storage = createMockStorage();
-        const result = unlockAchievement(storage, KEY, 'explorer');
+        const result = unlockAchievement(storage, KEY, 'cabinet-crawler');
         expect(result).toBe(true);
 
         const saved = JSON.parse(storage._store[KEY]);
-        expect(saved.explorer).toBeDefined();
-        expect(saved.explorer.unlocked).toBe(true);
-        expect(saved.explorer.date).toBeDefined();
+        expect(saved['cabinet-crawler']).toBeDefined();
+        expect(saved['cabinet-crawler'].unlocked).toBe(true);
+        expect(saved['cabinet-crawler'].date).toBeDefined();
     });
 
     test('returns false for already-unlocked achievement', () => {
         const storage = createMockStorage({
-            [KEY]: JSON.stringify({ explorer: { unlocked: true, date: '2025-01-01' } }),
+            [KEY]: JSON.stringify({ 'cabinet-crawler': { unlocked: true, date: '2025-01-01' } }),
         });
-        expect(unlockAchievement(storage, KEY, 'explorer')).toBe(false);
+        expect(unlockAchievement(storage, KEY, 'cabinet-crawler')).toBe(false);
     });
 
     test('multiple achievements accumulate in storage', () => {
         const storage = createMockStorage();
-        unlockAchievement(storage, KEY, 'explorer');
+        unlockAchievement(storage, KEY, 'cabinet-crawler');
         unlockAchievement(storage, KEY, 'curious');
 
         const saved = JSON.parse(storage._store[KEY]);
-        expect(Object.keys(saved)).toEqual(['explorer', 'curious']);
+        expect(Object.keys(saved)).toEqual(['cabinet-crawler', 'curious']);
     });
 
     test('does not overwrite existing achievements when adding new ones', () => {
         const storage = createMockStorage({
-            [KEY]: JSON.stringify({ explorer: { unlocked: true, date: '2025-01-01' } }),
+            [KEY]: JSON.stringify({ 'cabinet-crawler': { unlocked: true, date: '2025-01-01' } }),
         });
         unlockAchievement(storage, KEY, 'curious');
 
         const saved = JSON.parse(storage._store[KEY]);
-        expect(saved.explorer.date).toBe('2025-01-01');
+        expect(saved['cabinet-crawler'].date).toBe('2025-01-01');
         expect(saved.curious.unlocked).toBe(true);
     });
 });
 
-// ── processPageVisit ─────────────────────────────────────────
+// ── processSectionVisit ─────────────────────────────────────
 
-describe('processPageVisit', () => {
-    test('tracks a new main page visit', () => {
-        const result = processPageVisit('aboutMe.html', [], '/aboutMe.html');
-        expect(result.pagesToSave).toContain('aboutMe.html');
+describe('processSectionVisit', () => {
+    test('tracks a new section visit', () => {
+        const result = processSectionVisit('about', []);
+        expect(result.sectionsToSave).toContain('about');
     });
 
-    test('does not duplicate already-visited pages', () => {
-        const result = processPageVisit('aboutMe.html', ['aboutMe.html'], '/aboutMe.html');
-        expect(result.pagesToSave.filter(p => p === 'aboutMe.html').length).toBe(1);
+    test('does not duplicate already-visited sections', () => {
+        const result = processSectionVisit('about', ['about']);
+        expect(result.sectionsToSave.filter(s => s === 'about').length).toBe(1);
     });
 
-    test('ignores pages not in MAIN_PAGES', () => {
-        const result = processPageVisit('random.html', [], '/random.html');
-        expect(result.pagesToSave).toEqual([]);
+    test('ignores sections not in SECTIONS', () => {
+        const result = processSectionVisit('unknown', []);
+        expect(result.sectionsToSave).toEqual([]);
     });
 
-    test('unlocks explorer after visiting all 4 main pages', () => {
-        const visited = ['index.html', 'aboutMe.html', 'workprojects.html'];
-        const result = processPageVisit('personalprojects.html', visited, '/personalprojects.html');
-        expect(result.achievementsToUnlock).toContain('explorer');
+    test('unlocks cabinet-crawler after visiting all 5 sections', () => {
+        const visited = ['home', 'about', 'work', 'personal'];
+        const result = processSectionVisit('play', visited);
+        expect(result.achievementsToUnlock).toContain('cabinet-crawler');
     });
 
-    test('does not unlock explorer with only 3 main pages', () => {
-        const visited = ['index.html', 'aboutMe.html'];
-        const result = processPageVisit('workprojects.html', visited, '/workprojects.html');
-        expect(result.achievementsToUnlock).not.toContain('explorer');
+    test('does not unlock cabinet-crawler with only 4 sections', () => {
+        const visited = ['home', 'about', 'work'];
+        const result = processSectionVisit('personal', visited);
+        expect(result.achievementsToUnlock).not.toContain('cabinet-crawler');
     });
 
-    test('deep-dive does not count toward explorer (needs 4 real pages)', () => {
-        const visited = ['index.html', 'aboutMe.html', 'deep-dive'];
-        const result = processPageVisit('workprojects.html', visited, '/workprojects.html');
-        expect(result.achievementsToUnlock).not.toContain('explorer');
+    test('unlocks player-one when visiting play section', () => {
+        const result = processSectionVisit('play', []);
+        expect(result.achievementsToUnlock).toContain('player-one');
     });
 
-    test('unlocks skill-scout when visiting aboutMe.html', () => {
-        const result = processPageVisit('aboutMe.html', [], '/aboutMe.html');
-        expect(result.achievementsToUnlock).toContain('skill-scout');
+    test('does not unlock player-one for other sections', () => {
+        const result = processSectionVisit('work', []);
+        expect(result.achievementsToUnlock).not.toContain('player-one');
     });
 
-    test('does not unlock skill-scout for other pages', () => {
-        const result = processPageVisit('index.html', [], '/index.html');
-        expect(result.achievementsToUnlock).not.toContain('skill-scout');
+    test('unlocks commander when visiting about section', () => {
+        const result = processSectionVisit('about', []);
+        expect(result.achievementsToUnlock).toContain('commander');
     });
 
-    test('unlocks deep-diver for project detail pages', () => {
-        const result = processPageVisit('beamlab.html', [], '/projects/personal/beamlab.html');
-        expect(result.achievementsToUnlock).toContain('deep-diver');
+    test('does not unlock commander for other sections', () => {
+        const result = processSectionVisit('work', []);
+        expect(result.achievementsToUnlock).not.toContain('commander');
     });
 
-    test('adds deep-dive to pages when visiting a project page', () => {
-        const result = processPageVisit('beamlab.html', [], '/projects/personal/beamlab.html');
-        expect(result.pagesToSave).toContain('deep-dive');
-    });
-
-    test('does not duplicate deep-dive if already tracked', () => {
-        const result = processPageVisit('other.html', ['deep-dive'], '/projects/work/other.html');
-        expect(result.pagesToSave.filter(p => p === 'deep-dive').length).toBe(1);
-    });
-
-    test('can unlock multiple achievements in one visit', () => {
-        // Visiting aboutMe.html as the 4th main page on a project-like path
-        const visited = ['index.html', 'workprojects.html', 'personalprojects.html'];
-        const result = processPageVisit('aboutMe.html', visited, '/aboutMe.html');
-        expect(result.achievementsToUnlock).toContain('explorer');
-        expect(result.achievementsToUnlock).toContain('skill-scout');
+    test('can unlock multiple achievements in one visit (play as 5th section)', () => {
+        const visited = ['home', 'about', 'work', 'personal'];
+        const result = processSectionVisit('play', visited);
+        expect(result.achievementsToUnlock).toContain('cabinet-crawler');
+        expect(result.achievementsToUnlock).toContain('player-one');
     });
 
     test('does not mutate the input array', () => {
-        const visited = ['index.html'];
-        processPageVisit('aboutMe.html', visited, '/aboutMe.html');
-        expect(visited).toEqual(['index.html']);
+        const visited = ['home'];
+        processSectionVisit('about', visited);
+        expect(visited).toEqual(['home']);
+    });
+});
+
+// ── checkTabMaster ──────────────────────────────────────────
+
+// ── checkFullHand ───────────────────────────────────────────
+
+describe('checkFullHand', () => {
+    test('returns false with no decks clicked', () => {
+        expect(checkFullHand([])).toBe(false);
+    });
+
+    test('returns false with only some work decks', () => {
+        expect(checkFullHand(['w-blizzard', 'w-mw'])).toBe(false);
+    });
+
+    test('returns true with all work decks clicked', () => {
+        expect(checkFullHand([...WORK_DECKS])).toBe(true);
+    });
+
+    test('returns true with all personal decks clicked', () => {
+        expect(checkFullHand([...PERSONAL_DECKS])).toBe(true);
+    });
+
+    test('returns true with only one full section (work), not both', () => {
+        const clicked = [...WORK_DECKS, 'pp-fc'];
+        expect(checkFullHand(clicked)).toBe(true);
+    });
+
+    test('WORK_DECKS and PERSONAL_DECKS have no overlap', () => {
+        WORK_DECKS.forEach(id => expect(PERSONAL_DECKS).not.toContain(id));
+    });
+});
+
+// ── checkSectionComplete ────────────────────────────────────
+
+describe('checkSectionComplete', () => {
+    test('returns false with no flips', () => {
+        expect(checkSectionComplete([], 3)).toBe(false);
+    });
+
+    test('returns false with partial flips', () => {
+        expect(checkSectionComplete([0, 1], 3)).toBe(false);
+    });
+
+    test('returns true when all cards flipped', () => {
+        expect(checkSectionComplete([0, 1, 2], 3)).toBe(true);
+    });
+
+    test('handles duplicate flip indices', () => {
+        expect(checkSectionComplete([0, 0, 1, 1, 2], 3)).toBe(true);
+    });
+
+    test('returns false for 0 total flippable', () => {
+        expect(checkSectionComplete([], 0)).toBe(false);
+    });
+});
+
+// ── checkCardCollector ──────────────────────────────────────
+
+describe('checkCardCollector', () => {
+    test('returns false when no sections have flips', () => {
+        expect(checkCardCollector({}, { work: 3, personal: 2 })).toBe(false);
+    });
+
+    test('returns false when only some sections complete', () => {
+        expect(checkCardCollector(
+            { work: [0, 1, 2] },
+            { work: 3, personal: 2 }
+        )).toBe(false);
+    });
+
+    test('returns true when all sections complete', () => {
+        expect(checkCardCollector(
+            { work: [0, 1, 2], personal: [0, 1] },
+            { work: 3, personal: 2 }
+        )).toBe(true);
+    });
+
+    test('ignores sections with 0 flippable cards', () => {
+        expect(checkCardCollector(
+            { work: [0, 1] },
+            { work: 2, home: 0 }
+        )).toBe(true);
+    });
+
+    test('handles duplicate indices in flipped arrays', () => {
+        expect(checkCardCollector(
+            { work: [0, 0, 1, 1, 2], personal: [0, 0, 1] },
+            { work: 3, personal: 2 }
+        )).toBe(true);
     });
 });
 
@@ -255,74 +352,26 @@ describe('checkNightOwl', () => {
     });
 });
 
-// ── checkSpeedReader ─────────────────────────────────────────
-
-describe('checkSpeedReader', () => {
-    test('fires when at bottom in under 10 seconds', () => {
-        expect(checkSpeedReader(5000, true)).toBe(true);
-    });
-
-    test('does not fire when not at bottom', () => {
-        expect(checkSpeedReader(5000, false)).toBe(false);
-    });
-
-    test('does not fire at exactly 10 seconds', () => {
-        expect(checkSpeedReader(10000, true)).toBe(false);
-    });
-
-    test('does not fire after 10 seconds', () => {
-        expect(checkSpeedReader(15000, true)).toBe(false);
-    });
-
-    test('fires at 0ms (instant scroll)', () => {
-        expect(checkSpeedReader(0, true)).toBe(true);
-    });
-});
-
 // ── calculateProgress ────────────────────────────────────────
 
 describe('calculateProgress', () => {
-    test('0 pages = 0%', () => {
-        expect(calculateProgress(0, 5)).toBe(0);
+    test('0 sections = 0%', () => {
+        expect(calculateProgress(0)).toBe(0);
     });
 
-    test('all pages = 100%', () => {
-        expect(calculateProgress(5, 5)).toBe(100);
-    });
-
-    test('4 of 9 = 44% (rounds correctly)', () => {
-        expect(calculateProgress(4, 9)).toBe(44);
+    test('all 5 sections = 100%', () => {
+        expect(calculateProgress(5)).toBe(100);
     });
 
     test('1 of 5 = 20%', () => {
-        expect(calculateProgress(1, 5)).toBe(20);
+        expect(calculateProgress(1)).toBe(20);
     });
 
-    test('2 of 3 = 67% (rounds up)', () => {
-        expect(calculateProgress(2, 3)).toBe(67);
-    });
-});
-
-// ── checkTimelineHistorian ───────────────────────────────────
-
-describe('checkTimelineHistorian', () => {
-    test('returns false when no entries expanded', () => {
-        expect(checkTimelineHistorian({}, 5)).toBe(false);
+    test('3 of 5 = 60%', () => {
+        expect(calculateProgress(3)).toBe(60);
     });
 
-    test('returns false when some entries expanded', () => {
-        expect(checkTimelineHistorian({ 0: true, 1: true }, 5)).toBe(false);
-    });
-
-    test('returns true when all entries expanded', () => {
-        expect(checkTimelineHistorian({ 0: true, 1: true, 2: true }, 3)).toBe(true);
-    });
-
-    test('returns true when more entries tracked than total (pre-seeded)', () => {
-        expect(checkTimelineHistorian({ 0: true, 1: true, 2: true, 3: true }, 3)).toBe(true);
-    });
-
-    test('returns true when exactly matching count', () => {
-        expect(checkTimelineHistorian({ 0: true }, 1)).toBe(true);
+    test('4 of 5 = 80%', () => {
+        expect(calculateProgress(4)).toBe(80);
     });
 });

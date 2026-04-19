@@ -4,41 +4,50 @@ Personal portfolio and development playground for Andrew Steven Chau, hosted on 
 
 ## Overview
 
-What started as a hand-built portfolio during my college years has evolved over time into both a professional showcase and a development playground. The site now serves as a space for prototyping ideas, exploring new concepts, and experimenting — enhanced by AI-assisted development.
+What started as a hand-built college portfolio has evolved into a card-game-themed arcade showcase and a playground for prototyping new ideas. Plain HTML / CSS / vanilla JavaScript — no build system, no frameworks.
 
-Static site built with plain HTML, CSS, and JavaScript — no build system or frameworks. Features a dark glassmorphism theme, animated career timeline, and character sprite navigation.
+The site is framed as an **arcade cabinet**: a CRT bezel wraps a content panel, a pixel character walks between 5 cabinets at the bottom, and each section is themed after a different card-game mechanic.
 
-### Pages
+### Sections
 
-- **Home** — Career timeline with interactive detail cards and animated sprite
-- **About Me** — Background and contact info
-- **Work Projects** — Professional project showcase
-- **Personal Projects** — Side projects and experiments
+- **Home** — Landing card with name, current role, and short pitch
+- **About** — MTG commander-board layout: a central "commander" card for me, a battlefield of company cards (career history), an emblem card for socials, and a row of skill "land" cards
+- **Work Projects** — Five company deck-boxes at the bottom of the screen. Play a deck to reveal its cards.
+- **Personal Projects** — Same deck pattern: Friend Castle, Waxheart, Games & Tools, Website (era-by-era screenshots), College
+- **Play** — Carousel of games and tools
 
 ### Games
 
-- **Beamlab** — Laser deflection puzzle game
-- **Parsed** — Code-themed puzzle game
-- **Examined** — Philosophy exploration game
+- **Beamlab** — Laser deflection puzzle
+- **Parsed** — Daily code puzzle
+- **Examined** — Philosophy alignment quiz
 
 ### Tools
 
 - **Misery Index** — Real-time Claude AI outage and sentiment tracker
-- **SnapLayout** — Layout utility
+- **SnapLayout** — Room layout planner
 
 ## Tech Stack
 
 - HTML5 / CSS3 / vanilla JavaScript
-- Bootstrap 5.3 (CDN)
-- GitHub Pages for hosting
+- Bootstrap 5.3 (CDN) for legacy detail pages; arcade shell is pure CSS
+- Self-hosted typography (Silkscreen, Outfit, Fira Code) and Font Awesome 6.7.2 icons
+- LPC character spritesheets (CC BY-SA 3.0)
+- GitHub Pages hosting
 - Jest for testing
 
 ## Development
 
-Open any `.html` file in a browser to preview. No build step needed.
+Open `index.html` in a browser to preview, or serve locally:
 
 ```bash
-# Run tests (280+ tests)
+npx http-server -p 8080 -c-1
+```
+
+Hard-refresh (`Ctrl+Shift+R`) to bust the cache.
+
+```bash
+# Run tests (285 tests)
 npm test
 
 # Verbose output
@@ -51,26 +60,40 @@ npm run test:coverage
 ## Project Structure
 
 ```
-├── index.html              # Home / career timeline
-├── aboutMe.html            # About page
-├── workprojects.html       # Work projects listing
-├── personalprojects.html   # Personal projects listing
-├── css/stylesheet.css      # Global styles + design tokens
+├── index.html                # Arcade shell (CRT bezel + cabinets + content panel)
+├── about/, work/, personal/  # SEO redirect pages → arcade routes
+├── play/                     #   (each is a thin HTML page)
+├── privacy.html              # Standalone privacy policy (detail-page style)
+├── sections/
+│   ├── home.html             # Landing section
+│   ├── about.html            # MTG commander board
+│   ├── work.html             # Work decks + carousel
+│   ├── personal.html         # Personal decks + carousel
+│   └── play.html             # Games & tools carousel
+├── css/
+│   ├── arcade.css            # Arcade shell + section styles
+│   ├── detail.css            # Standalone detail/privacy pages
+│   └── achievements.css      # Shared achievement UI (toasts, panel, badge)
+├── fonts/                    # Self-hosted typography woff2
+├── fontawesome/              # Self-hosted Font Awesome 6.7.2 (CSS + webfonts)
 ├── js/
-│   ├── components.js       # Shared navbar, footer, particles
-│   ├── gamification.js     # Site gamification system
-│   └── gamification.module.js
-├── games/
-│   ├── beamlab/            # Laser deflection puzzle
-│   ├── parsed/             # Code puzzle game
-│   └── philosophy/         # Philosophy exploration
-├── tools/
-│   ├── misery-index/       # Claude AI outage tracker
-│   └── snaplayout/         # Layout utility
-├── projects/               # Project detail pages
-├── __tests__/              # Jest test suites
+│   ├── arcade.js             # Arcade shell: navigation, sprite, sections
+│   ├── components.js         # Legacy shared nav/footer (unused on arcade)
+│   ├── gamification.js       # Achievement tracking + UI
+│   └── gamification.module.js # Testable pure logic
+├── games/                    # Beamlab, Parsed, Examined (each self-contained)
+├── tools/                    # Misery Index, SnapLayout
+├── projects/                 # Project detail pages (linked from decks)
+│   ├── work/<name>/<name>.html
+│   └── personal/<name>.html
+├── img/                      # Assets including character-spritesheet.png
+├── __tests__/                # Jest test suites
 └── sitemap.xml
 ```
+
+## Achievements
+
+11 achievements track exploration and interaction. Progress is local-storage only — no server tracking. See `js/gamification.module.js` for the canonical list.
 
 ## License
 

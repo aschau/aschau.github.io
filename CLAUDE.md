@@ -21,6 +21,17 @@ The portfolio uses an **arcade cabinet metaphor**: a single `index.html` contain
 - **Styling**: Bootstrap 5.3.8 CDN (jsdelivr) + `css/arcade.css` + `css/stylesheet.css`. No jQuery. Dark glassmorphism + retro-arcade theme. Design tokens in `:root`.
 - **Responsive**: Mobile breakpoint at 768px (phones), 400px (small phones / iPhone SE). Tablet landscape (769-1024px) adjusts spacing.
 
+## Variants
+
+The site has two entry points, both served from the same repo:
+
+- `/` (`index.html`) — the **Arcade** variant. Cabinet metaphor, section-swap navigation, sprite-driven. Primary canonical.
+- `/scroll.html` — the **Single Page** variant. Long-scroll layout with arcade aesthetic (sticky marquee nav, scroll-following spine character, section tabs + flippable cards). Rendered entirely by `js/scroll-app.js` from `js/scroll-data.js`, with styles in `css/scroll.css`.
+
+A fixed pill widget (`js/mode-switcher.js`) on both pages lets users switch between them and persists choice to `localStorage.portfolio-mode`. The widget's `data-mode` attribute identifies the current page (`gamified` on arcade, `single` on scroll). Position auto-adjusts: top-center on arcade, bottom-center on scroll (the scroll page has its own sticky marquee at top).
+
+Content is duplicated between `sections/*.html` (arcade) and `js/scroll-data.js` (scroll). **Arcade is the source of truth** — when adding or editing a card, update both or the variants will drift.
+
 ## Section Design
 
 Each section is themed differently to feel unique. All use the shared `.gc` card component (flip, peek-in, float animation, back-side content, gallery slideshows).
@@ -97,7 +108,8 @@ Always verify layout changes on a real iOS device — the dev server is reachabl
 ## Adding Games/Tools
 
 1. Create `games/<name>/` or `tools/<name>/` with own HTML/CSS/JS (self-contained)
-2. Add a card to the Play section and/or the Personal → Games & Tools deck
-3. Add to `sitemap.xml`
-4. Create a `CLAUDE.md` in the subdirectory with game/tool-specific docs
-5. Extract testable logic into a `.module.js` file, add tests in `__tests__/`, update `jest.config.js` coverage list
+2. Add a card to the Play section and/or the Personal → Games & Tools deck in `sections/play.html` / `sections/personal.html`
+3. Also update `js/scroll-data.js` — add matching entry to `arcadeRow` (Play) and/or the `pp-ai` entry in `personalTabs` so the scroll variant stays in sync
+4. Add to `sitemap.xml`
+5. Create a `CLAUDE.md` in the subdirectory with game/tool-specific docs
+6. Extract testable logic into a `.module.js` file, add tests in `__tests__/`, update `jest.config.js` coverage list

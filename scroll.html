@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Andrew Steven Chau &middot; Senior Software Engineer &amp; Game Developer</title>
+  <meta name="description" content="Senior Software Engineer at Blizzard on Hearthstone. Co-founder of Friend Castle. 10+ years and 30+ shipped titles across Blizzard, MobilityWare, Sega Atlus, Trigger Global. Single-page scroll view.">
+  <meta name="author" content="Andrew Steven Chau">
+  <link rel="canonical" href="https://www.raggedydoc.com/scroll.html">
+  <meta property="og:type" content="profile">
+  <meta property="og:url" content="https://www.raggedydoc.com/scroll.html">
+  <meta property="og:title" content="Andrew Steven Chau &middot; Senior Software Engineer">
+  <meta property="og:description" content="10+ years and 30+ shipped titles. Hearthstone, AR at stadiums, indie studios. Scroll to read.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Andrew Steven Chau &middot; Senior Software Engineer">
+  <meta name="twitter:description" content="10+ years and 30+ shipped titles. Hearthstone, AR at stadiums, indie studios. Scroll to read.">
+  <link rel="icon" href="img/favicon.png">
+  <link rel="stylesheet" href="css/scroll.css?v=1">
+</head>
+<body>
+
+<a class="skip-nav" href="#s-home">Skip to content</a>
+
+<!-- TOP MARQUEE -->
+<header class="marquee" role="banner" aria-label="Site navigation">
+  <div class="marquee-brand">
+    <span class="chip" aria-hidden="true"></span>
+    <span class="full">RAGGEDYDOC&nbsp;&middot;&nbsp;ASC-2026</span>
+    <span class="full" aria-hidden="true">&middot;</span>
+    <span>ANDREW&nbsp;CHAU</span>
+  </div>
+  <nav class="marquee-cabs" id="marquee-cabs" aria-label="Sections"></nav>
+  <div class="marquee-actions"></div>
+</header>
+
+<!-- SCROLL SPINE -->
+<aside class="spine-rail" id="spine" aria-hidden="true"></aside>
+
+<!-- HERO -->
+<section id="s-home" class="hero" data-screen-label="01 Home">
+  <div>
+    <div class="hero-tag">// player_one</div>
+    <h1>Engineer who ships games.<br>Player who never stopped <span class="accent">making</span> them.</h1>
+    <p class="lede">From QA to shipping AR experiences to maintaining some of the best card games on the app stores. Co-founder of an indie game studio.</p>
+    <div class="hero-typing"><span id="typing"></span><span class="cursor" aria-hidden="true">&nbsp;</span></div>
+    <div class="hero-badges">
+      <span class="hero-badge">Hearthstone</span>
+      <span class="hero-badge">AR / XR</span>
+      <span class="hero-badge">Game Dev</span>
+      <span class="hero-badge">Indie Studio</span>
+    </div>
+  </div>
+  <div class="hero-monitor" aria-hidden="true">
+    <div class="screen">
+      <div class="ground"></div>
+      <div class="hero-sprite"></div>
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+    </div>
+    <div class="label">RAGGEDYDOC &middot; MODEL ASC-2026</div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="s-about" data-screen-label="02 About">
+  <div class="section-head">
+    <div class="tag">// the.commander</div>
+    <h2>About Me</h2>
+    <p class="sub">My career as a Magic deck. The Commander is me, the Battlefield is everywhere I&rsquo;ve worked, the Lands are what I&rsquo;m fluent in, the Emblem is how to find me.</p>
+  </div>
+  <div class="board" id="about-board"></div>
+  <div class="lands" id="about-lands"></div>
+</section>
+
+<!-- JOURNEY -->
+<section id="s-journey" data-screen-label="03 Journey">
+  <div class="section-head">
+    <div class="tag">// the.story</div>
+    <h2>How I got here</h2>
+    <p class="sub">Seven chapters, no plot armor. Each one taught the next thing I needed before I&rsquo;d done it yet.</p>
+  </div>
+  <div class="chapters" id="journey-list"></div>
+</section>
+
+<!-- WORK -->
+<section id="s-work" data-screen-label="04 Work">
+  <div class="section-head">
+    <div class="tag">// professional</div>
+    <h2>Work &mdash; pick a deck</h2>
+    <p class="sub">Each studio is a deck. Cards are the games and projects I shipped there. Click any card to see the role and what I did on it.</p>
+  </div>
+  <div class="deck-section">
+    <div class="deck-title" id="work-title">Blizzard</div>
+    <div id="work-deck"></div>
+  </div>
+</section>
+
+<!-- PERSONAL -->
+<section id="s-personal" data-screen-label="05 Personal">
+  <div class="section-head">
+    <div class="tag">// independent</div>
+    <h2>Personal &mdash; built outside the office</h2>
+    <p class="sub">Friend Castle, Waxheart, games and tools, the website itself, and college-era stuff that still teaches me things.</p>
+  </div>
+  <div class="deck-section">
+    <div class="deck-title" id="personal-title">Friend Castle</div>
+    <div id="personal-deck"></div>
+  </div>
+</section>
+
+<!-- PLAY -->
+<section id="s-play" data-screen-label="06 Play">
+  <div class="section-head">
+    <div class="tag">// the.arcade</div>
+    <h2>Things you can actually play</h2>
+    <p class="sub">Daily puzzles and small tools I built for myself first. Pop a quarter in.</p>
+  </div>
+  <div class="arcade-row" id="play-row"></div>
+</section>
+
+<footer>
+  <div>&copy; 2026 Andrew Steven Chau &middot; raggedydoc</div>
+  <div style="margin-top:.5rem; font-size:.7rem;">
+    <a href="https://www.linkedin.com/in/andrewstevenchau/" target="_blank" rel="noopener">LinkedIn</a> &middot;
+    <a href="https://github.com/aschau" target="_blank" rel="noopener">GitHub</a> &middot;
+    <a href="privacy.html">Privacy</a>
+  </div>
+</footer>
+
+<!-- Optional tweaks panel — only opens when hosted inside Claude artifact edit mode -->
+<aside class="tweaks" id="tweaks" aria-label="Tweaks panel">
+  <h4>TWEAKS</h4>
+  <div class="row">
+    <label for="tw-spine">Scroll character</label>
+    <input type="checkbox" id="tw-spine" checked>
+  </div>
+  <div class="row">
+    <label for="tw-jacket">Sprite jacket</label>
+    <select id="tw-jacket">
+      <option value="auto">Auto (jacket)</option>
+      <option value="no">No jacket</option>
+    </select>
+  </div>
+</aside>
+
+<script>
+  window.__TWEAKS_DEFAULTS = { spineCharacter: true, jacket: 'auto' };
+</script>
+<script src="js/scroll-data.js?v=1"></script>
+<script src="js/scroll-app.js?v=1"></script>
+<script src="js/mode-switcher.js" data-mode="single" defer></script>
+</body>
+</html>

@@ -951,8 +951,12 @@
       .p-tag { font-size: 0.5rem; margin-bottom: 0; }
       .p-title { font-size: 1.1rem; margin-bottom: 0.25rem; }
 
-      /* Cards — fill width, leave room for sprite below */
-      .gc { width: min(280px, 72vw); height: calc(100vh - 330px); height: calc(100dvh - 330px); min-height: 260px; max-height: 400px; }
+      /* Cards — fill width, leave room for sprite below. iOS Safari ignores max-height
+         on flex items with a `height` larger than max, so use min()/max() to compute directly. */
+      .gc {
+        width: min(280px, 72vw);
+        height: max(260px, min(400px, calc(100dvh - 330px)));
+      }
       .gc-name { font-size: 0.7rem; }
       .gc-type { font-size: 0.45rem; }
       .gc-flavor { font-size: 0.65rem; padding: 5px 10px; line-height: 1.45; }
@@ -1474,13 +1478,13 @@
       .board-top-row .gc {
         flex: 0 0 auto;
         width: clamp(220px, 68vw, 280px);
-        height: auto;
-        aspect-ratio: 5/7;
+        /* iOS Safari loses aspect-ratio height on flex items — set height directly (5:7 of width) */
+        height: clamp(308px, 95.2vw, 392px);
         max-width: none;
         min-width: 0;
         scroll-snap-align: center;
       }
-      .bf-card { width: clamp(220px, 68vw, 280px); height: auto; aspect-ratio: 5/7; }
+      .bf-card { width: clamp(220px, 68vw, 280px); height: clamp(308px, 95.2vw, 392px); }
       .bf-card .gc-emblem-text { font-size: 2.6rem; }
       .bf-card .gc-name { font-size: 0.9rem; }
       .bf-card .gc-type { font-size: 0.6rem; }
@@ -1555,7 +1559,7 @@
 
     @media (max-width: 400px) {
       .board-top-row .gc,
-      .bf-card { width: clamp(200px, 75vw, 260px); }
+      .bf-card { width: clamp(200px, 75vw, 260px); height: clamp(280px, 105vw, 364px); }
 
       .bf-card .gc-emblem-text { font-size: 2.2rem; }
 

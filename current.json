@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-20T00:06:42.164Z",
+  "lastUpdated": "2026-04-20T00:21:41.361Z",
   "miseryIndex": 3,
   "lastLevel": "MINOR GRUMBLING",
   "lastLevelChangeTime": "2026-04-18T15:56:20.595Z",
@@ -120,7 +120,7 @@
       {
         "title": "claude code is slowly becoming more and more unusable imo inside of serious code bases. not because its \"broken\" but bec...",
         "author": "hailey.at",
-        "score": 89,
+        "score": 91,
         "numComments": 4,
         "url": "https://bsky.app/profile/did:plc:oisofpd7lj26yvgiivf3lxsi/post/3mjufd73tz22f",
         "created": "2026-04-19T16:39:11.147Z",
@@ -180,7 +180,7 @@
     ]
   },
   "reddit": {
-    "lastFetched": "2026-04-20T00:06:42.164Z",
+    "lastFetched": "2026-04-20T00:21:41.361Z",
     "recentPosts": 5,
     "outagePosts": 4,
     "usagePosts": 1,
@@ -189,13 +189,32 @@
       {
         "title": "PSA: Opus 4.7 thinking summaries silently stopped rendering in Claude Code v2.1.111, even with showThinkingSummaries",
         "author": "Fragrant-Street-4639",
-        "score": 3,
+        "score": 5,
         "url": "https://reddit.com/r/ClaudeAI/comments/1snxxfr/psa_opus_47_thinking_summaries_silently_stopped/",
         "created": "2026-04-17T11:13:07.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
         "category": "outage"
+      },
+      {
+        "title": "No developer experience and I just created a fully-functioning app",
+        "author": "TooManyPoisons",
+        "score": 4,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
+        "created": "2026-04-18T01:35:09.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "usage",
+        "topComments": [
+          {
+            "author": "Witty0Gore",
+            "score": 18,
+            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
+            "created": "2026-04-18T01:49:42.000Z"
+          }
+        ]
       },
       {
         "title": "What am I missing",
@@ -218,25 +237,6 @@
         "source": "reddit",
         "isMegathread": false,
         "category": "outage"
-      },
-      {
-        "title": "No developer experience and I just created a fully-functioning app",
-        "author": "TooManyPoisons",
-        "score": 3,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
-        "created": "2026-04-18T01:35:09.000Z",
-        "subreddit": "ClaudeAI",
-        "source": "reddit",
-        "isMegathread": false,
-        "category": "usage",
-        "topComments": [
-          {
-            "author": "Witty0Gore",
-            "score": 19,
-            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
-            "created": "2026-04-18T01:49:42.000Z"
-          }
-        ]
       },
       {
         "title": "Am I shadow banned?",
@@ -439,13 +439,6 @@
     }
   ],
   "history": [
-    {
-      "timestamp": "2026-04-13T22:51:17.686Z",
-      "miseryIndex": 2,
-      "statusIndicator": "none",
-      "postCount": 12,
-      "commentCount": 9
-    },
     {
       "timestamp": "2026-04-13T23:06:19.341Z",
       "miseryIndex": 2,
@@ -5138,6 +5131,13 @@
     },
     {
       "timestamp": "2026-04-20T00:06:42.164Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 10
+    },
+    {
+      "timestamp": "2026-04-20T00:21:41.361Z",
       "miseryIndex": 3,
       "statusIndicator": "none",
       "postCount": 6,

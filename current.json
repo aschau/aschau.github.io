@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-20T00:36:56.054Z",
+  "lastUpdated": "2026-04-20T00:51:43.571Z",
   "miseryIndex": 3,
   "lastLevel": "MINOR GRUMBLING",
   "lastLevelChangeTime": "2026-04-18T15:56:20.595Z",
@@ -12,7 +12,7 @@
       "name": "Claude",
       "url": "https://status.claude.com",
       "time_zone": "Etc/UTC",
-      "updated_at": "2026-04-20T00:00:15.231Z"
+      "updated_at": "2026-04-20T00:28:29.594Z"
     },
     "components": [
       {
@@ -180,7 +180,7 @@
     ]
   },
   "reddit": {
-    "lastFetched": "2026-04-20T00:36:56.054Z",
+    "lastFetched": "2026-04-20T00:51:43.571Z",
     "recentPosts": 6,
     "outagePosts": 5,
     "usagePosts": 1,
@@ -189,9 +189,20 @@
       {
         "title": "PSA: Opus 4.7 thinking summaries silently stopped rendering in Claude Code v2.1.111, even with showThinkingSummaries",
         "author": "Fragrant-Street-4639",
-        "score": 4,
+        "score": 5,
         "url": "https://reddit.com/r/ClaudeAI/comments/1snxxfr/psa_opus_47_thinking_summaries_silently_stopped/",
         "created": "2026-04-17T11:13:07.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "outage"
+      },
+      {
+        "title": "Hyrum's Law",
+        "author": "sketchdraft",
+        "score": 4,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
+        "created": "2026-04-19T11:14:41.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
@@ -203,17 +214,6 @@
         "score": 3,
         "url": "https://reddit.com/r/ClaudeAI/comments/1spsnu8/what_am_i_missing/",
         "created": "2026-04-19T13:14:08.000Z",
-        "subreddit": "ClaudeAI",
-        "source": "reddit",
-        "isMegathread": false,
-        "category": "outage"
-      },
-      {
-        "title": "Hyrum's Law",
-        "author": "sketchdraft",
-        "score": 3,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
-        "created": "2026-04-19T11:14:41.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
@@ -450,13 +450,6 @@
     }
   ],
   "history": [
-    {
-      "timestamp": "2026-04-13T23:21:18.971Z",
-      "miseryIndex": 2,
-      "statusIndicator": "none",
-      "postCount": 12,
-      "commentCount": 9
-    },
     {
       "timestamp": "2026-04-13T23:26:43.048Z",
       "miseryIndex": 2,
@@ -5151,6 +5144,13 @@
       "timestamp": "2026-04-20T00:36:56.054Z",
       "miseryIndex": 3,
       "statusIndicator": "unknown",
+      "postCount": 6,
+      "commentCount": 10
+    },
+    {
+      "timestamp": "2026-04-20T00:51:43.571Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
       "postCount": 6,
       "commentCount": 10
     }

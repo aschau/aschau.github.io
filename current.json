@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-20T00:51:43.571Z",
+  "lastUpdated": "2026-04-20T01:06:43.304Z",
   "miseryIndex": 3,
   "lastLevel": "MINOR GRUMBLING",
   "lastLevelChangeTime": "2026-04-18T15:56:20.595Z",
@@ -115,13 +115,13 @@
   },
   "social": {
     "recentPosts": 6,
-    "recentComments": 10,
+    "recentComments": 12,
     "topPosts": [
       {
         "title": "claude code is slowly becoming more and more unusable imo inside of serious code bases. not because its \"broken\" but bec...",
         "author": "hailey.at",
-        "score": 91,
-        "numComments": 4,
+        "score": 93,
+        "numComments": 5,
         "url": "https://bsky.app/profile/did:plc:oisofpd7lj26yvgiivf3lxsi/post/3mjufd73tz22f",
         "created": "2026-04-19T16:39:11.147Z",
         "source": "bluesky",
@@ -140,8 +140,8 @@
       {
         "title": "Starting doubt the Mythos narrative. If they have a God model then why:\n\n- Is Opus 4.7 so bad\n- Is Claude Code so buggy\n...",
         "author": "jpschroeder.com",
-        "score": 1,
-        "numComments": 1,
+        "score": 2,
+        "numComments": 2,
         "url": "https://bsky.app/profile/did:plc:5xbghy4r6c5bhoy7d5f7p3if/post/3mjv3lupztc2h",
         "created": "2026-04-19T23:17:44.156Z",
         "source": "bluesky",
@@ -180,7 +180,7 @@
     ]
   },
   "reddit": {
-    "lastFetched": "2026-04-20T00:51:43.571Z",
+    "lastFetched": "2026-04-20T01:06:43.304Z",
     "recentPosts": 6,
     "outagePosts": 5,
     "usagePosts": 1,
@@ -189,7 +189,7 @@
       {
         "title": "PSA: Opus 4.7 thinking summaries silently stopped rendering in Claude Code v2.1.111, even with showThinkingSummaries",
         "author": "Fragrant-Street-4639",
-        "score": 5,
+        "score": 4,
         "url": "https://reddit.com/r/ClaudeAI/comments/1snxxfr/psa_opus_47_thinking_summaries_silently_stopped/",
         "created": "2026-04-17T11:13:07.000Z",
         "subreddit": "ClaudeAI",
@@ -198,15 +198,23 @@
         "category": "outage"
       },
       {
-        "title": "Hyrum's Law",
-        "author": "sketchdraft",
+        "title": "No developer experience and I just created a fully-functioning app",
+        "author": "TooManyPoisons",
         "score": 4,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
-        "created": "2026-04-19T11:14:41.000Z",
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
+        "created": "2026-04-18T01:35:09.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
-        "category": "outage"
+        "category": "usage",
+        "topComments": [
+          {
+            "author": "Witty0Gore",
+            "score": 19,
+            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
+            "created": "2026-04-18T01:49:42.000Z"
+          }
+        ]
       },
       {
         "title": "What am I missing",
@@ -220,23 +228,15 @@
         "category": "outage"
       },
       {
-        "title": "No developer experience and I just created a fully-functioning app",
-        "author": "TooManyPoisons",
+        "title": "Hyrum's Law",
+        "author": "sketchdraft",
         "score": 2,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
-        "created": "2026-04-18T01:35:09.000Z",
+        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
+        "created": "2026-04-19T11:14:41.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
-        "category": "usage",
-        "topComments": [
-          {
-            "author": "Witty0Gore",
-            "score": 17,
-            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
-            "created": "2026-04-18T01:49:42.000Z"
-          }
-        ]
+        "category": "outage"
       },
       {
         "title": "Am I shadow banned?",
@@ -450,13 +450,6 @@
     }
   ],
   "history": [
-    {
-      "timestamp": "2026-04-13T23:26:43.048Z",
-      "miseryIndex": 2,
-      "statusIndicator": "none",
-      "postCount": 12,
-      "commentCount": 9
-    },
     {
       "timestamp": "2026-04-13T23:36:18.824Z",
       "miseryIndex": 2,
@@ -5153,6 +5146,13 @@
       "statusIndicator": "none",
       "postCount": 6,
       "commentCount": 10
+    },
+    {
+      "timestamp": "2026-04-20T01:06:43.304Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 12
     }
   ],
   "breakdown": {

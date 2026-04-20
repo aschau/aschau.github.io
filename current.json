@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-19T23:54:38.160Z",
+  "lastUpdated": "2026-04-20T00:06:42.164Z",
   "miseryIndex": 3,
   "lastLevel": "MINOR GRUMBLING",
   "lastLevelChangeTime": "2026-04-18T15:56:20.595Z",
@@ -12,7 +12,7 @@
       "name": "Claude",
       "url": "https://status.claude.com",
       "time_zone": "Etc/UTC",
-      "updated_at": "2026-04-19T23:20:32.293Z"
+      "updated_at": "2026-04-20T00:00:15.231Z"
     },
     "components": [
       {
@@ -106,145 +106,7 @@
         "only_show_if_degraded": false
       }
     ],
-    "incidents": [
-      {
-        "id": "34yy5hskyw2v",
-        "name": "Elevated errors on Opus 4.6",
-        "status": "investigating",
-        "created_at": "2026-04-19T22:44:32.175Z",
-        "updated_at": "2026-04-19T22:44:32.239Z",
-        "monitoring_at": null,
-        "resolved_at": null,
-        "impact": "none",
-        "shortlink": "https://stspg.io/qlwclyv64k56",
-        "started_at": "2026-04-19T22:44:32.167Z",
-        "page_id": "tymt9n04zgry",
-        "incident_updates": [
-          {
-            "id": "qqd8gg71lsfr",
-            "status": "investigating",
-            "body": "We are currently investigating this issue.",
-            "incident_id": "34yy5hskyw2v",
-            "created_at": "2026-04-19T22:44:32.236Z",
-            "updated_at": "2026-04-19T22:44:32.236Z",
-            "display_at": "2026-04-19T22:44:32.236Z",
-            "affected_components": [
-              {
-                "code": "rwppv331jlwc",
-                "name": "claude.ai",
-                "old_status": "operational",
-                "new_status": "operational"
-              },
-              {
-                "code": "0qbwn08sd68x",
-                "name": "platform.claude.com (formerly console.anthropic.com)",
-                "old_status": "operational",
-                "new_status": "operational"
-              },
-              {
-                "code": "k8w3r06qmzrp",
-                "name": "Claude API (api.anthropic.com)",
-                "old_status": "operational",
-                "new_status": "operational"
-              },
-              {
-                "code": "yyzkbfz2thpt",
-                "name": "Claude Code",
-                "old_status": "operational",
-                "new_status": "operational"
-              },
-              {
-                "code": "bpp5gb3hpjcl",
-                "name": "Claude Cowork",
-                "old_status": "operational",
-                "new_status": "operational"
-              }
-            ],
-            "deliver_notifications": true,
-            "custom_tweet": null,
-            "tweet_id": null
-          }
-        ],
-        "components": [
-          {
-            "id": "rwppv331jlwc",
-            "name": "claude.ai",
-            "status": "operational",
-            "created_at": "2023-07-11T17:52:24.275Z",
-            "updated_at": "2026-04-17T19:56:32.032Z",
-            "position": 1,
-            "description": null,
-            "showcase": true,
-            "start_date": "2023-07-11",
-            "group_id": null,
-            "page_id": "tymt9n04zgry",
-            "group": false,
-            "only_show_if_degraded": false
-          },
-          {
-            "id": "0qbwn08sd68x",
-            "name": "platform.claude.com (formerly console.anthropic.com)",
-            "status": "operational",
-            "created_at": "2023-07-11T17:52:49.982Z",
-            "updated_at": "2026-04-16T22:40:22.369Z",
-            "position": 2,
-            "description": null,
-            "showcase": true,
-            "start_date": "2023-07-11",
-            "group_id": null,
-            "page_id": "tymt9n04zgry",
-            "group": false,
-            "only_show_if_degraded": false
-          },
-          {
-            "id": "k8w3r06qmzrp",
-            "name": "Claude API (api.anthropic.com)",
-            "status": "operational",
-            "created_at": "2023-07-11T17:53:10.880Z",
-            "updated_at": "2026-04-16T07:43:32.850Z",
-            "position": 3,
-            "description": null,
-            "showcase": true,
-            "start_date": "2023-07-11",
-            "group_id": null,
-            "page_id": "tymt9n04zgry",
-            "group": false,
-            "only_show_if_degraded": false
-          },
-          {
-            "id": "yyzkbfz2thpt",
-            "name": "Claude Code",
-            "status": "operational",
-            "created_at": "2025-05-22T21:35:29.822Z",
-            "updated_at": "2026-04-16T07:43:32.867Z",
-            "position": 4,
-            "description": null,
-            "showcase": true,
-            "start_date": "2025-02-06",
-            "group_id": null,
-            "page_id": "tymt9n04zgry",
-            "group": false,
-            "only_show_if_degraded": false
-          },
-          {
-            "id": "bpp5gb3hpjcl",
-            "name": "Claude Cowork",
-            "status": "operational",
-            "created_at": "2026-04-01T17:39:47.692Z",
-            "updated_at": "2026-04-17T19:56:32.049Z",
-            "position": 5,
-            "description": null,
-            "showcase": true,
-            "start_date": "2026-04-01",
-            "group_id": null,
-            "page_id": "tymt9n04zgry",
-            "group": false,
-            "only_show_if_degraded": false
-          }
-        ],
-        "reminder_intervals": null
-      }
-    ],
+    "incidents": [],
     "scheduled_maintenances": [],
     "status": {
       "indicator": "none",
@@ -258,7 +120,8 @@
       {
         "title": "claude code is slowly becoming more and more unusable imo inside of serious code bases. not because its \"broken\" but bec...",
         "author": "hailey.at",
-        "score": 88,
+        "score": 89,
+        "numComments": 4,
         "url": "https://bsky.app/profile/did:plc:oisofpd7lj26yvgiivf3lxsi/post/3mjufd73tz22f",
         "created": "2026-04-19T16:39:11.147Z",
         "source": "bluesky",
@@ -268,15 +131,17 @@
         "title": "Yeah this confusion is on BlueSky for their hubris in calling it \"April 2026 Outage Post-Mortem\" as if there wouldn't be...",
         "author": "keithzg.ca",
         "score": 5,
+        "numComments": 1,
         "url": "https://bsky.app/profile/did:plc:kkkgp6ufbmtcfuytb5jrslnn/post/3mjstpnykvs2r",
         "created": "2026-04-19T01:51:24.452Z",
         "source": "bluesky",
         "category": "outage"
       },
       {
-        "title": "Starting doubt the Mythos narrative. If they have a God model then why: - Is Opus 4.7 so bad - Is Claude Code so buggy -...",
+        "title": "Starting doubt the Mythos narrative. If they have a God model then why:\n\n- Is Opus 4.7 so bad\n- Is Claude Code so buggy\n...",
         "author": "jpschroeder.com",
         "score": 1,
+        "numComments": 1,
         "url": "https://bsky.app/profile/did:plc:5xbghy4r6c5bhoy7d5f7p3if/post/3mjv3lupztc2h",
         "created": "2026-04-19T23:17:44.156Z",
         "source": "bluesky",
@@ -286,6 +151,7 @@
         "title": ".. And Claude Code is down for all of us right now",
         "author": "dev-guy.bsky.social",
         "score": 1,
+        "numComments": 1,
         "url": "https://bsky.app/profile/did:plc:5akkpwuj4ejt5ijikdjbquk3/post/3mjv2puse5c2m",
         "created": "2026-04-19T23:02:04.845Z",
         "source": "bluesky",
@@ -295,6 +161,7 @@
         "title": "deterioration without breaking is the insidious one. it's not that claude code stopped working—it's that the negotiation...",
         "author": "agent-tsumugi.bsky.social",
         "score": 1,
+        "numComments": 1,
         "url": "https://bsky.app/profile/did:plc:u2wn4a7bcdhte2z2dag3wafb/post/3mjui75rjcr24",
         "created": "2026-04-19T17:30:36.398Z",
         "source": "bluesky",
@@ -304,6 +171,7 @@
         "title": "i haven't used MCPs much but i'm getting Claude to walk me through using this and it keeps failing for various reasons. ...",
         "author": "avengingfemme.bsky.social",
         "score": 0,
+        "numComments": 2,
         "url": "https://bsky.app/profile/did:plc:7757w723nk675bqziinitoif/post/3mjv3lnayg22g",
         "created": "2026-04-19T23:17:36.653Z",
         "source": "bluesky",
@@ -312,52 +180,22 @@
     ]
   },
   "reddit": {
-    "lastFetched": "2026-04-19T23:51:43.463Z",
-    "recentPosts": 6,
-    "outagePosts": 5,
+    "lastFetched": "2026-04-20T00:06:42.164Z",
+    "recentPosts": 5,
+    "outagePosts": 4,
     "usagePosts": 1,
-    "recentComments": 121,
+    "recentComments": 101,
     "topPosts": [
       {
         "title": "PSA: Opus 4.7 thinking summaries silently stopped rendering in Claude Code v2.1.111, even with showThinkingSummaries",
         "author": "Fragrant-Street-4639",
-        "score": 4,
+        "score": 3,
         "url": "https://reddit.com/r/ClaudeAI/comments/1snxxfr/psa_opus_47_thinking_summaries_silently_stopped/",
         "created": "2026-04-17T11:13:07.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
         "category": "outage"
-      },
-      {
-        "title": "Hyrum's Law",
-        "author": "sketchdraft",
-        "score": 4,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
-        "created": "2026-04-19T11:14:41.000Z",
-        "subreddit": "ClaudeAI",
-        "source": "reddit",
-        "isMegathread": false,
-        "category": "outage"
-      },
-      {
-        "title": "No developer experience and I just created a fully-functioning app",
-        "author": "TooManyPoisons",
-        "score": 4,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
-        "created": "2026-04-18T01:35:09.000Z",
-        "subreddit": "ClaudeAI",
-        "source": "reddit",
-        "isMegathread": false,
-        "category": "usage",
-        "topComments": [
-          {
-            "author": "Witty0Gore",
-            "score": 18,
-            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
-            "created": "2026-04-18T01:49:42.000Z"
-          }
-        ]
       },
       {
         "title": "What am I missing",
@@ -371,22 +209,41 @@
         "category": "outage"
       },
       {
-        "title": "Am I shadow banned?",
-        "author": "fckdatcryptoworld",
-        "score": 1,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1sppjli/am_i_shadow_banned/",
-        "created": "2026-04-19T10:42:18.000Z",
+        "title": "Hyrum's Law",
+        "author": "sketchdraft",
+        "score": 3,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
+        "created": "2026-04-19T11:14:41.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
         "category": "outage"
       },
       {
-        "title": "Anyone actually used Claude Code + WordPress MCP for production site work? How did it go?",
-        "author": "gambirsg",
+        "title": "No developer experience and I just created a fully-functioning app",
+        "author": "TooManyPoisons",
+        "score": 3,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
+        "created": "2026-04-18T01:35:09.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "usage",
+        "topComments": [
+          {
+            "author": "Witty0Gore",
+            "score": 19,
+            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
+            "created": "2026-04-18T01:49:42.000Z"
+          }
+        ]
+      },
+      {
+        "title": "Am I shadow banned?",
+        "author": "fckdatcryptoworld",
         "score": 1,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1spnoo0/anyone_actually_used_claude_code_wordpress_mcp/",
-        "created": "2026-04-19T08:53:11.000Z",
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sppjli/am_i_shadow_banned/",
+        "created": "2026-04-19T10:42:18.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
@@ -397,12 +254,17 @@
   "incidents": [
     {
       "name": "Elevated errors on Opus 4.6",
-      "status": "investigating",
+      "status": "resolved",
       "impact": "none",
       "createdAt": "2026-04-19T22:44:32.175Z",
-      "updatedAt": "2026-04-19T22:44:32.239Z",
+      "updatedAt": "2026-04-20T00:00:15.227Z",
       "url": "https://stspg.io/qlwclyv64k56",
       "updates": [
+        {
+          "status": "resolved",
+          "body": "This incident has been resolved.",
+          "createdAt": "2026-04-20T00:00:15.207Z"
+        },
         {
           "status": "investigating",
           "body": "We are currently investigating this issue.",
@@ -577,13 +439,6 @@
     }
   ],
   "history": [
-    {
-      "timestamp": "2026-04-13T22:36:18.667Z",
-      "miseryIndex": 2,
-      "statusIndicator": "none",
-      "postCount": 12,
-      "commentCount": 9
-    },
     {
       "timestamp": "2026-04-13T22:51:17.686Z",
       "miseryIndex": 2,
@@ -5280,6 +5135,19 @@
       "statusIndicator": "none",
       "postCount": 6,
       "commentCount": 10
+    },
+    {
+      "timestamp": "2026-04-20T00:06:42.164Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 10
     }
-  ]
+  ],
+  "breakdown": {
+    "status": 0,
+    "bluesky": 1,
+    "redditOutage": 1.6,
+    "redditUsage": 0.4
+  }
 }

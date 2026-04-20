@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-20T01:36:45.274Z",
+  "lastUpdated": "2026-04-20T01:51:43.910Z",
   "miseryIndex": 3,
   "lastLevel": "MINOR GRUMBLING",
   "lastLevelChangeTime": "2026-04-18T15:56:20.595Z",
@@ -114,26 +114,16 @@
     }
   },
   "social": {
-    "recentPosts": 6,
-    "recentComments": 12,
+    "recentPosts": 5,
+    "recentComments": 11,
     "topPosts": [
       {
         "title": "claude code is slowly becoming more and more unusable imo inside of serious code bases. not because its \"broken\" but bec...",
         "author": "hailey.at",
-        "score": 96,
+        "score": 98,
         "numComments": 5,
         "url": "https://bsky.app/profile/did:plc:oisofpd7lj26yvgiivf3lxsi/post/3mjufd73tz22f",
         "created": "2026-04-19T16:39:11.147Z",
-        "source": "bluesky",
-        "category": "outage"
-      },
-      {
-        "title": "Yeah this confusion is on BlueSky for their hubris in calling it \"April 2026 Outage Post-Mortem\" as if there wouldn't be...",
-        "author": "keithzg.ca",
-        "score": 5,
-        "numComments": 1,
-        "url": "https://bsky.app/profile/did:plc:kkkgp6ufbmtcfuytb5jrslnn/post/3mjstpnykvs2r",
-        "created": "2026-04-19T01:51:24.452Z",
         "source": "bluesky",
         "category": "outage"
       },
@@ -180,42 +170,12 @@
     ]
   },
   "reddit": {
-    "lastFetched": "2026-04-20T01:36:45.274Z",
-    "recentPosts": 6,
-    "outagePosts": 5,
+    "lastFetched": "2026-04-20T01:51:43.910Z",
+    "recentPosts": 5,
+    "outagePosts": 4,
     "usagePosts": 1,
-    "recentComments": 121,
+    "recentComments": 101,
     "topPosts": [
-      {
-        "title": "Hyrum's Law",
-        "author": "sketchdraft",
-        "score": 4,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
-        "created": "2026-04-19T11:14:41.000Z",
-        "subreddit": "ClaudeAI",
-        "source": "reddit",
-        "isMegathread": false,
-        "category": "outage"
-      },
-      {
-        "title": "No developer experience and I just created a fully-functioning app",
-        "author": "TooManyPoisons",
-        "score": 4,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
-        "created": "2026-04-18T01:35:09.000Z",
-        "subreddit": "ClaudeAI",
-        "source": "reddit",
-        "isMegathread": false,
-        "category": "usage",
-        "topComments": [
-          {
-            "author": "Witty0Gore",
-            "score": 18,
-            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
-            "created": "2026-04-18T01:49:42.000Z"
-          }
-        ]
-      },
       {
         "title": "PSA: Opus 4.7 thinking summaries silently stopped rendering in Claude Code v2.1.111, even with showThinkingSummaries",
         "author": "Fragrant-Street-4639",
@@ -239,22 +199,41 @@
         "category": "outage"
       },
       {
-        "title": "Am I shadow banned?",
-        "author": "fckdatcryptoworld",
-        "score": 1,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1sppjli/am_i_shadow_banned/",
-        "created": "2026-04-19T10:42:18.000Z",
+        "title": "Hyrum's Law",
+        "author": "sketchdraft",
+        "score": 3,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
+        "created": "2026-04-19T11:14:41.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
         "category": "outage"
       },
       {
-        "title": "Anyone actually used Claude Code + WordPress MCP for production site work? How did it go?",
-        "author": "gambirsg",
+        "title": "No developer experience and I just created a fully-functioning app",
+        "author": "TooManyPoisons",
+        "score": 3,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
+        "created": "2026-04-18T01:35:09.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "usage",
+        "topComments": [
+          {
+            "author": "Witty0Gore",
+            "score": 17,
+            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
+            "created": "2026-04-18T01:49:42.000Z"
+          }
+        ]
+      },
+      {
+        "title": "Am I shadow banned?",
+        "author": "fckdatcryptoworld",
         "score": 1,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1spnoo0/anyone_actually_used_claude_code_wordpress_mcp/",
-        "created": "2026-04-19T08:53:11.000Z",
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sppjli/am_i_shadow_banned/",
+        "created": "2026-04-19T10:42:18.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
@@ -450,13 +429,6 @@
     }
   ],
   "history": [
-    {
-      "timestamp": "2026-04-14T00:06:17.527Z",
-      "miseryIndex": 2,
-      "statusIndicator": "none",
-      "postCount": 12,
-      "commentCount": 9
-    },
     {
       "timestamp": "2026-04-14T00:09:31.080Z",
       "miseryIndex": 2,
@@ -5153,12 +5125,19 @@
       "statusIndicator": "none",
       "postCount": 6,
       "commentCount": 12
+    },
+    {
+      "timestamp": "2026-04-20T01:51:43.910Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 11
     }
   ],
   "breakdown": {
     "status": 0,
     "bluesky": 1,
-    "redditOutage": 1.7,
-    "redditUsage": 0.3
+    "redditOutage": 1.6,
+    "redditUsage": 0.4
   }
 }

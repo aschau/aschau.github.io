@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-20T00:21:41.361Z",
+  "lastUpdated": "2026-04-20T00:36:56.054Z",
   "miseryIndex": 3,
   "lastLevel": "MINOR GRUMBLING",
   "lastLevelChangeTime": "2026-04-18T15:56:20.595Z",
@@ -180,41 +180,22 @@
     ]
   },
   "reddit": {
-    "lastFetched": "2026-04-20T00:21:41.361Z",
-    "recentPosts": 5,
-    "outagePosts": 4,
+    "lastFetched": "2026-04-20T00:36:56.054Z",
+    "recentPosts": 6,
+    "outagePosts": 5,
     "usagePosts": 1,
-    "recentComments": 101,
+    "recentComments": 121,
     "topPosts": [
       {
         "title": "PSA: Opus 4.7 thinking summaries silently stopped rendering in Claude Code v2.1.111, even with showThinkingSummaries",
         "author": "Fragrant-Street-4639",
-        "score": 5,
+        "score": 4,
         "url": "https://reddit.com/r/ClaudeAI/comments/1snxxfr/psa_opus_47_thinking_summaries_silently_stopped/",
         "created": "2026-04-17T11:13:07.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
         "category": "outage"
-      },
-      {
-        "title": "No developer experience and I just created a fully-functioning app",
-        "author": "TooManyPoisons",
-        "score": 4,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
-        "created": "2026-04-18T01:35:09.000Z",
-        "subreddit": "ClaudeAI",
-        "source": "reddit",
-        "isMegathread": false,
-        "category": "usage",
-        "topComments": [
-          {
-            "author": "Witty0Gore",
-            "score": 18,
-            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
-            "created": "2026-04-18T01:49:42.000Z"
-          }
-        ]
       },
       {
         "title": "What am I missing",
@@ -239,11 +220,41 @@
         "category": "outage"
       },
       {
+        "title": "No developer experience and I just created a fully-functioning app",
+        "author": "TooManyPoisons",
+        "score": 2,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
+        "created": "2026-04-18T01:35:09.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "usage",
+        "topComments": [
+          {
+            "author": "Witty0Gore",
+            "score": 17,
+            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
+            "created": "2026-04-18T01:49:42.000Z"
+          }
+        ]
+      },
+      {
         "title": "Am I shadow banned?",
         "author": "fckdatcryptoworld",
         "score": 1,
         "url": "https://reddit.com/r/ClaudeAI/comments/1sppjli/am_i_shadow_banned/",
         "created": "2026-04-19T10:42:18.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "outage"
+      },
+      {
+        "title": "Anyone actually used Claude Code + WordPress MCP for production site work? How did it go?",
+        "author": "gambirsg",
+        "score": 1,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1spnoo0/anyone_actually_used_claude_code_wordpress_mcp/",
+        "created": "2026-04-19T08:53:11.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
@@ -439,13 +450,6 @@
     }
   ],
   "history": [
-    {
-      "timestamp": "2026-04-13T23:06:19.341Z",
-      "miseryIndex": 2,
-      "statusIndicator": "none",
-      "postCount": 12,
-      "commentCount": 9
-    },
     {
       "timestamp": "2026-04-13T23:21:18.971Z",
       "miseryIndex": 2,
@@ -5142,12 +5146,19 @@
       "statusIndicator": "none",
       "postCount": 6,
       "commentCount": 10
+    },
+    {
+      "timestamp": "2026-04-20T00:36:56.054Z",
+      "miseryIndex": 3,
+      "statusIndicator": "unknown",
+      "postCount": 6,
+      "commentCount": 10
     }
   ],
   "breakdown": {
     "status": 0,
     "bluesky": 1,
-    "redditOutage": 1.6,
-    "redditUsage": 0.4
+    "redditOutage": 1.7,
+    "redditUsage": 0.3
   }
 }

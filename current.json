@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-20T02:06:41.926Z",
+  "lastUpdated": "2026-04-20T02:21:41.263Z",
   "miseryIndex": 3,
   "lastLevel": "MINOR GRUMBLING",
   "lastLevelChangeTime": "2026-04-18T15:56:20.595Z",
@@ -170,7 +170,7 @@
     ]
   },
   "reddit": {
-    "lastFetched": "2026-04-20T02:06:41.926Z",
+    "lastFetched": "2026-04-20T02:21:41.263Z",
     "recentPosts": 5,
     "outagePosts": 4,
     "usagePosts": 1,
@@ -189,7 +189,7 @@
         "topComments": [
           {
             "author": "Witty0Gore",
-            "score": 18,
+            "score": 19,
             "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
             "created": "2026-04-18T01:49:42.000Z"
           }
@@ -207,22 +207,22 @@
         "category": "outage"
       },
       {
-        "title": "Hyrum's Law",
-        "author": "sketchdraft",
-        "score": 4,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
-        "created": "2026-04-19T11:14:41.000Z",
+        "title": "What am I missing",
+        "author": "TheHex77",
+        "score": 3,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1spsnu8/what_am_i_missing/",
+        "created": "2026-04-19T13:14:08.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
         "category": "outage"
       },
       {
-        "title": "What am I missing",
-        "author": "TheHex77",
-        "score": 3,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1spsnu8/what_am_i_missing/",
-        "created": "2026-04-19T13:14:08.000Z",
+        "title": "Hyrum's Law",
+        "author": "sketchdraft",
+        "score": 2,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
+        "created": "2026-04-19T11:14:41.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
@@ -429,13 +429,6 @@
     }
   ],
   "history": [
-    {
-      "timestamp": "2026-04-14T00:21:20.810Z",
-      "miseryIndex": 2,
-      "statusIndicator": "none",
-      "postCount": 12,
-      "commentCount": 9
-    },
     {
       "timestamp": "2026-04-14T00:36:20.739Z",
       "miseryIndex": 2,
@@ -5128,6 +5121,13 @@
     },
     {
       "timestamp": "2026-04-20T02:06:41.926Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 11
+    },
+    {
+      "timestamp": "2026-04-20T02:21:41.263Z",
       "miseryIndex": 3,
       "statusIndicator": "none",
       "postCount": 5,

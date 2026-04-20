@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-20T02:21:41.263Z",
+  "lastUpdated": "2026-04-20T02:36:41.397Z",
   "miseryIndex": 3,
   "lastLevel": "MINOR GRUMBLING",
   "lastLevelChangeTime": "2026-04-18T15:56:20.595Z",
@@ -170,31 +170,12 @@
     ]
   },
   "reddit": {
-    "lastFetched": "2026-04-20T02:21:41.263Z",
+    "lastFetched": "2026-04-20T02:36:41.397Z",
     "recentPosts": 5,
     "outagePosts": 4,
     "usagePosts": 1,
     "recentComments": 101,
     "topPosts": [
-      {
-        "title": "No developer experience and I just created a fully-functioning app",
-        "author": "TooManyPoisons",
-        "score": 5,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
-        "created": "2026-04-18T01:35:09.000Z",
-        "subreddit": "ClaudeAI",
-        "source": "reddit",
-        "isMegathread": false,
-        "category": "usage",
-        "topComments": [
-          {
-            "author": "Witty0Gore",
-            "score": 19,
-            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
-            "created": "2026-04-18T01:49:42.000Z"
-          }
-        ]
-      },
       {
         "title": "PSA: Opus 4.7 thinking summaries silently stopped rendering in Claude Code v2.1.111, even with showThinkingSummaries",
         "author": "Fragrant-Street-4639",
@@ -220,7 +201,7 @@
       {
         "title": "Hyrum's Law",
         "author": "sketchdraft",
-        "score": 2,
+        "score": 3,
         "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
         "created": "2026-04-19T11:14:41.000Z",
         "subreddit": "ClaudeAI",
@@ -238,6 +219,25 @@
         "source": "reddit",
         "isMegathread": false,
         "category": "outage"
+      },
+      {
+        "title": "No developer experience and I just created a fully-functioning app",
+        "author": "TooManyPoisons",
+        "score": 0,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1sojz4f/no_developer_experience_and_i_just_created_a/",
+        "created": "2026-04-18T01:35:09.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "usage",
+        "topComments": [
+          {
+            "author": "Witty0Gore",
+            "score": 18,
+            "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
+            "created": "2026-04-18T01:49:42.000Z"
+          }
+        ]
       }
     ]
   },
@@ -429,13 +429,6 @@
     }
   ],
   "history": [
-    {
-      "timestamp": "2026-04-14T00:36:20.739Z",
-      "miseryIndex": 2,
-      "statusIndicator": "none",
-      "postCount": 12,
-      "commentCount": 9
-    },
     {
       "timestamp": "2026-04-14T00:51:20.851Z",
       "miseryIndex": 2,
@@ -5128,6 +5121,13 @@
     },
     {
       "timestamp": "2026-04-20T02:21:41.263Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 5,
+      "commentCount": 11
+    },
+    {
+      "timestamp": "2026-04-20T02:36:41.397Z",
       "miseryIndex": 3,
       "statusIndicator": "none",
       "postCount": 5,

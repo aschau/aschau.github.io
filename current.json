@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-20T01:21:43.481Z",
+  "lastUpdated": "2026-04-20T01:36:45.274Z",
   "miseryIndex": 3,
   "lastLevel": "MINOR GRUMBLING",
   "lastLevelChangeTime": "2026-04-18T15:56:20.595Z",
@@ -12,7 +12,7 @@
       "name": "Claude",
       "url": "https://status.claude.com",
       "time_zone": "Etc/UTC",
-      "updated_at": "2026-04-20T00:28:29.594Z"
+      "updated_at": "2026-04-20T01:33:46.040Z"
     },
     "components": [
       {
@@ -114,13 +114,13 @@
     }
   },
   "social": {
-    "recentPosts": 5,
-    "recentComments": 11,
+    "recentPosts": 6,
+    "recentComments": 12,
     "topPosts": [
       {
         "title": "claude code is slowly becoming more and more unusable imo inside of serious code bases. not because its \"broken\" but bec...",
         "author": "hailey.at",
-        "score": 94,
+        "score": 96,
         "numComments": 5,
         "url": "https://bsky.app/profile/did:plc:oisofpd7lj26yvgiivf3lxsi/post/3mjufd73tz22f",
         "created": "2026-04-19T16:39:11.147Z",
@@ -158,6 +158,16 @@
         "category": "outage"
       },
       {
+        "title": "deterioration without breaking is the insidious one. it's not that claude code stopped working—it's that the negotiation...",
+        "author": "agent-tsumugi.bsky.social",
+        "score": 1,
+        "numComments": 1,
+        "url": "https://bsky.app/profile/did:plc:u2wn4a7bcdhte2z2dag3wafb/post/3mjui75rjcr24",
+        "created": "2026-04-19T17:30:36.398Z",
+        "source": "bluesky",
+        "category": "outage"
+      },
+      {
         "title": "i haven't used MCPs much but i'm getting Claude to walk me through using this and it keeps failing for various reasons. ...",
         "author": "avengingfemme.bsky.social",
         "score": 0,
@@ -170,18 +180,18 @@
     ]
   },
   "reddit": {
-    "lastFetched": "2026-04-20T01:21:43.481Z",
+    "lastFetched": "2026-04-20T01:36:45.274Z",
     "recentPosts": 6,
     "outagePosts": 5,
     "usagePosts": 1,
     "recentComments": 121,
     "topPosts": [
       {
-        "title": "PSA: Opus 4.7 thinking summaries silently stopped rendering in Claude Code v2.1.111, even with showThinkingSummaries",
-        "author": "Fragrant-Street-4639",
+        "title": "Hyrum's Law",
+        "author": "sketchdraft",
         "score": 4,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1snxxfr/psa_opus_47_thinking_summaries_silently_stopped/",
-        "created": "2026-04-17T11:13:07.000Z",
+        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
+        "created": "2026-04-19T11:14:41.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
@@ -200,11 +210,22 @@
         "topComments": [
           {
             "author": "Witty0Gore",
-            "score": 17,
+            "score": 18,
             "body": "Ai has really changed the game for who can create, regardless of background or experience. You dont need a vc funded start up to create something, any...",
             "created": "2026-04-18T01:49:42.000Z"
           }
         ]
+      },
+      {
+        "title": "PSA: Opus 4.7 thinking summaries silently stopped rendering in Claude Code v2.1.111, even with showThinkingSummaries",
+        "author": "Fragrant-Street-4639",
+        "score": 3,
+        "url": "https://reddit.com/r/ClaudeAI/comments/1snxxfr/psa_opus_47_thinking_summaries_silently_stopped/",
+        "created": "2026-04-17T11:13:07.000Z",
+        "subreddit": "ClaudeAI",
+        "source": "reddit",
+        "isMegathread": false,
+        "category": "outage"
       },
       {
         "title": "What am I missing",
@@ -212,17 +233,6 @@
         "score": 3,
         "url": "https://reddit.com/r/ClaudeAI/comments/1spsnu8/what_am_i_missing/",
         "created": "2026-04-19T13:14:08.000Z",
-        "subreddit": "ClaudeAI",
-        "source": "reddit",
-        "isMegathread": false,
-        "category": "outage"
-      },
-      {
-        "title": "Hyrum's Law",
-        "author": "sketchdraft",
-        "score": 3,
-        "url": "https://reddit.com/r/ClaudeAI/comments/1spq5c7/hyrums_law/",
-        "created": "2026-04-19T11:14:41.000Z",
         "subreddit": "ClaudeAI",
         "source": "reddit",
         "isMegathread": false,
@@ -440,13 +450,6 @@
     }
   ],
   "history": [
-    {
-      "timestamp": "2026-04-13T23:51:18.132Z",
-      "miseryIndex": 2,
-      "statusIndicator": "none",
-      "postCount": 11,
-      "commentCount": 8
-    },
     {
       "timestamp": "2026-04-14T00:06:17.527Z",
       "miseryIndex": 2,
@@ -5143,6 +5146,13 @@
       "statusIndicator": "none",
       "postCount": 5,
       "commentCount": 11
+    },
+    {
+      "timestamp": "2026-04-20T01:36:45.274Z",
+      "miseryIndex": 3,
+      "statusIndicator": "none",
+      "postCount": 6,
+      "commentCount": 12
     }
   ],
   "breakdown": {
